@@ -1,0 +1,200 @@
+{
+ "format": "mega-execution-fixture",
+ "schemaVersion": "1.0",
+ "caseId": "satin/state-gas/sstore-fresh-slot/minimum-bucket",
+ "specRef": {
+  "name": "megaeth/Satin",
+  "descriptor": "sha256:2980c959d5e53e4b2f6227ae59bfa6cf953a9ec68b0d862d3459741549678768"
+ },
+ "profile": "state-transition",
+ "requires": [
+  "feature:salt",
+  "group:gas-ledgers",
+  "group:limit",
+  "group:outcome",
+  "group:reads",
+  "group:receipts",
+  "group:resources",
+  "group:state"
+ ],
+ "rules": [
+  "SATIN-POOL-019",
+  "SATIN-STATE-008",
+  "SATIN-WIT-009"
+ ],
+ "assertions": [
+  {
+   "path": "/expected/gasLedgers",
+   "rules": [
+    "SATIN-POOL-019",
+    "SATIN-STATE-008"
+   ]
+  },
+  {
+   "path": "/expected/state",
+   "rules": [
+    "SATIN-STATE-008"
+   ]
+  },
+  {
+   "path": "/expected/reads/buckets",
+   "rules": [
+    "SATIN-WIT-009"
+   ]
+  }
+ ],
+ "input": {
+  "chain": {
+   "chainId": "0x1"
+  },
+  "block": {
+   "number": "0x2",
+   "timestamp": "0x6553f102",
+   "coinbase": "0x4200000000000000000000000000000000000011",
+   "gasLimit": "0x6fc23ac00",
+   "baseFee": "0xf4240",
+   "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+   "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+   "parentTimestamp": "0x6553f101",
+   "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+   "extraData": "0x",
+   "slotNumber": "0x0",
+   "blobBaseFee": "0x1",
+   "depositOnly": false,
+   "activation": false
+  },
+  "blockHashes": {},
+  "pre": {
+   "completeness": "witness",
+   "accounts": {
+    "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+     "nonce": "0x0",
+     "balance": "0xde0b6b3a7640000",
+     "code": "0x",
+     "storage": {},
+     "storageComplete": true
+    },
+    "0x00000000000000000000000000000000000c0de0": {
+     "nonce": "0x1",
+     "balance": "0x0",
+     "code": "0x600160005500",
+     "storage": {},
+     "storageComplete": true
+    }
+   }
+  },
+  "transaction": {
+   "kind": "signed",
+   "raw": "0xf86380830f4240830f42409400000000000000000000000000000000000c0de0808025a09618d3497bc7a68b346d5537800fba4f65ea9dbe42bcff0cbbf189085448bcb6a04be2eff250efdbb5d5d9bf46ceba8bc7fb8afae15edbc9ec186e7240e87cd8b8"
+  },
+  "salt": {
+   "mapping": "salt-v1",
+   "complete": true,
+   "buckets": {}
+  }
+ },
+ "expected": {
+  "outcome": {
+   "admission": {
+    "status": "admitted"
+   },
+   "execution": {
+    "status": "success",
+    "output": "0x",
+    "createdAddress": null
+   },
+   "commit": {
+    "status": "committed"
+   }
+  },
+  "state": {
+   "accounts": {
+    "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+     "nonce": "0x1",
+     "balance": "0xde0b690bab1a400",
+     "code": "0x",
+     "storage": {}
+    },
+    "0x00000000000000000000000000000000000c0de0": {
+     "nonce": "0x1",
+     "balance": "0x0",
+     "code": "0x600160005500",
+     "storage": {
+      "0x0000000000000000000000000000000000000000000000000000000000000000": "0x1"
+     }
+    }
+   }
+  },
+  "receipt": {
+   "type": "0x0",
+   "status": "0x1",
+   "gasUsed": "0x249f0",
+   "logs": [],
+   "depositNonce": null,
+   "depositReceiptVersion": null
+  },
+  "gasLedgers": {
+   "total": "0x249f0",
+   "regular": "0x9c40",
+   "state": "0x17e80",
+   "history": "0x2f30",
+   "historyBytes": "0x97",
+   "refund": "0x0",
+   "floor": "0x5208",
+   "gasUsed": "0x249f0",
+   "blockGas": "0x249f0"
+  },
+  "resources": {
+   "dataSize": {
+    "limit": "0xc80000",
+    "net": "151",
+    "reported": "0x97"
+   },
+   "kvUpdates": {
+    "limit": "0x7a120",
+    "net": "3",
+    "reported": "0x3"
+   },
+   "stateGrowth": {
+    "limit": "0x3e8",
+    "net": "1",
+    "reported": "0x1"
+   }
+  },
+  "limit": null,
+  "reads": {
+   "accounts": {
+    "0x4200000000000000000000000000000000000011": null,
+    "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+     "nonce": "0x0",
+     "balance": "0xde0b6b3a7640000",
+     "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+    },
+    "0x00000000000000000000000000000000000c0de0": {
+     "nonce": "0x1",
+     "balance": "0x0",
+     "codeHash": "0x0dd9fc23b9e0972b48f0c93ebb805660239a90ba27a337a9f24333a8703975cd"
+    }
+   },
+   "storage": {
+    "0x00000000000000000000000000000000000c0de0": {
+     "0x0000000000000000000000000000000000000000000000000000000000000000": "0x0"
+    }
+   },
+   "codes": [
+    "0x0dd9fc23b9e0972b48f0c93ebb805660239a90ba27a337a9f24333a8703975cd"
+   ],
+   "blockHashes": {},
+   "buckets": {
+    "0x2a": "0x100"
+   },
+   "oracle": [],
+   "hints": []
+  }
+ },
+ "provenance": {
+  "status": "example",
+  "note": "Expected values are illustrative: they show the shape of the format and have not been executed by an implementation or reviewed against the specification.",
+  "generator": "tools/make_examples.py"
+ }
+}

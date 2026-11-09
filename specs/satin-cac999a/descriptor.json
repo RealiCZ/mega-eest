@@ -1,0 +1,15 @@
+{
+  "base": "Optimism Karst (Ethereum Osaka), as SATIN-BASE-001 states",
+  "format": "mega-spec-descriptor",
+  "maturity": "unstable",
+  "name": "megaeth/Satin",
+  "registry": "sha256:c5dae40a0596b55ddb960f813d47ad12288dfd1cbc1d60f059f3847142c61a63",
+  "schemaVersion": "1.0",
+  "source": {
+    "commit": "cac999a7123d20bb801be98aed03cefecaaf8aea",
+    "committed": "2026-11-09T15:28:48+08:00",
+    "repository": "https://github.com/RealiCZ/mega-evm-satin-spec",
+    "root": "docs/spec/satin"
+  },
+  "sources": "sha256:a05ff235a1c261a410af13e5dbeb9402e8f64d41f5e14abb23750f51e8e68e65"
+}

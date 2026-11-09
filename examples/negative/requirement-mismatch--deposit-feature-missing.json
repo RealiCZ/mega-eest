@@ -1,0 +1,146 @@
+{
+  "format": "mega-execution-fixture",
+  "schemaVersion": "1.0",
+  "caseId": "satin/deposits/empty-caller/new-account-charged-once",
+  "specRef": {
+    "name": "megaeth/Satin",
+    "descriptor": "sha256:2980c959d5e53e4b2f6227ae59bfa6cf953a9ec68b0d862d3459741549678768"
+  },
+  "profile": "state-transition",
+  "requires": [
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-DEP-003",
+    "SATIN-DEP-009"
+  ],
+  "assertions": [
+    {
+      "path": "/expected/state/accounts/0x00000000000000000000000000000000000de905",
+      "rules": [
+        "SATIN-DEP-003"
+      ]
+    },
+    {
+      "path": "/expected/resources/stateGrowth",
+      "rules": [
+        "SATIN-DEP-003"
+      ]
+    },
+    {
+      "path": "/expected/receipt",
+      "rules": [
+        "SATIN-DEP-009"
+      ]
+    }
+  ],
+  "input": {
+    "chain": {
+      "chainId": "0x1"
+    },
+    "block": {
+      "number": "0x3",
+      "timestamp": "0x6553f103",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "gasLimit": "0x6fc23ac00",
+      "baseFee": "0xf4240",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f102",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "extraData": "0x",
+      "slotNumber": "0x0",
+      "blobBaseFee": "0x1",
+      "depositOnly": false,
+      "activation": false
+    },
+    "blockHashes": {},
+    "pre": {
+      "completeness": "complete",
+      "accounts": {}
+    },
+    "transaction": {
+      "kind": "deposit",
+      "raw": "0x7ef861a05e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e5e9400000000000000000000000000000000000de9059400000000000000000000000000000000000ba5e087038d7ea4c6800087038d7ea4c68000830186a08080"
+    }
+  },
+  "expected": {
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "execution": {
+        "status": "success",
+        "output": "0x",
+        "createdAddress": null
+      },
+      "commit": {
+        "status": "committed"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000de905": {
+          "nonce": "0x1",
+          "balance": "0x0",
+          "code": "0x",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000ba5e0": {
+          "nonce": "0x0",
+          "balance": "0x38d7ea4c68000",
+          "code": "0x",
+          "storage": {}
+        }
+      }
+    },
+    "receipt": {
+      "type": "0x7e",
+      "status": "0x1",
+      "gasUsed": "0x186a0",
+      "logs": [],
+      "depositNonce": "0x0",
+      "depositReceiptVersion": "0x1"
+    },
+    "gasLedgers": {
+      "total": "0x186a0",
+      "regular": "0x2ee0",
+      "state": "0x13ec0",
+      "history": "0x1900",
+      "historyBytes": "0x50",
+      "refund": "0x0",
+      "floor": "0x5208",
+      "gasUsed": "0x186a0",
+      "blockGas": "0x186a0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "80",
+        "reported": "0x50"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "2",
+        "reported": "0x2"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "2",
+        "reported": "0x2"
+      }
+    },
+    "limit": null
+  },
+  "provenance": {
+    "status": "example",
+    "note": "Expected values are illustrative: they show the shape of the format and have not been executed by an implementation or reviewed against the specification.",
+    "generator": "tools/make_examples.py",
+    "input": "A user deposit from an address the state holds no account for, minting and sending value to another empty address."
+  }
+}

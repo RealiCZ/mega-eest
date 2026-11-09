@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile stateless-block",
+  "description": "A block-import case replayed by a stateless validator from closed witness data: parent anchors, the sparse values of the read closure and, for proof verification, a versioned proof attachment. The oracle is read from the slot; no transcript is an input.",
+  "$defs": {
+    "Input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chain", "anchor", "pre", "ancestors", "blocks", "witness"],
+      "properties": {
+        "chain": {"$ref": "common.json#/$defs/ChainInput"},
+        "anchor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["header"],
+          "properties": {"header": {"$ref": "common.json#/$defs/Header"}}
+        },
+        "pre": {
+          "allOf": [
+            {"$ref": "common.json#/$defs/State"},
+            {"properties": {"completeness": {"const": "witness"}}}
+          ]
+        },
+        "ancestors": {"$ref": "common.json#/$defs/BlockHashes"},
+        "salt": {"$ref": "common.json#/$defs/Salt"},
+        "blocks": {"type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/BlockInput"}},
+        "witness": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["parentHash", "parentStateRoot", "proof"],
+          "properties": {
+            "parentHash": {"$ref": "common.json#/$defs/B256"},
+            "parentStateRoot": {"description": "The SALT state root the witness is anchored to.", "$ref": "common.json#/$defs/B256"},
+            "proof": {
+              "description": "null: a logical witness only, which tests sparse execution but not proof validation.",
+              "oneOf": [{"type": "null"}, {"$ref": "#/$defs/ProofAttachment"}]
+            }
+          }
+        }
+      }
+    },
+    "ProofAttachment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["codec", "digest", "size"],
+      "properties": {
+        "codec": {"description": "Codec id and version of the proof bytes.", "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*/[0-9]+$", "x-error": "invalid-value"},
+        "digest": {"$ref": "common.json#/$defs/Digest"},
+        "size": {"$ref": "common.json#/$defs/U64"}
+      }
+    },
+    "Expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["witness", "blocks", "head", "state"],
+      "properties": {
+        "witness": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {"status": {"enum": ["verified", "failed"]}},
+          "allOf": [
+            {"if": {"properties": {"status": {"const": "verified"}}}, "then": {
+              "type": "object", "additionalProperties": false, "required": ["status", "proof"],
+              "properties": {
+                "status": {"const": "verified"},
+                "proof": {"description": "valid: the attached proof verified; null: no proof attached.", "oneOf": [{"type": "null"}, {"const": "valid"}]}
+              }
+            }},
+            {"if": {"properties": {"status": {"const": "failed"}}}, "then": {
+              "type": "object", "additionalProperties": false, "required": ["status", "stage", "reason", "read"],
+              "properties": {
+                "status": {"const": "failed"},
+                "stage": {"enum": ["anchor", "proof", "closure", "replay"]},
+                "reason": {"enum": ["wrong-parent-anchor", "tampered-proof", "unsupported-codec", "missing-input", "undeclared-read", "replay-mismatch"]},
+                "read": {"description": "The read the failure concerns, for missing-input and undeclared-read.", "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/ProviderRead"}]}
+              }
+            }}
+          ]
+        },
+        "blocks": {"description": "null exactly when the witness failed.", "oneOf": [{"type": "null"}, {"type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/BlockResult"}}]},
+        "head": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/Head"}]},
+        "state": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/StateDiff"}]}
+      }
+    }
+  }
+}

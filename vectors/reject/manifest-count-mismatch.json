@@ -1,0 +1,111 @@
+{
+ "format": "mega-execution-manifest",
+ "schemaVersion": "1.0",
+ "suite": {
+  "name": "satin-examples",
+  "version": "0.0.0-example"
+ },
+ "schemas": {
+  "schema/block-build.json": "sha256:0f0ef875b9f4f0cb7285ea0d98abeccbe6c38c4f3288fb844975ba440f760289",
+  "schema/block-import.json": "sha256:3b4785f3d4bfd8e93f25f39d948a7a4e13f110025c32824387c2e9aafb3d89e0",
+  "schema/common.json": "sha256:22eb1e532d23f593a332666620ced431b5ab353c6369d99d726a8e9e789650c2",
+  "schema/fixture.json": "sha256:c56ff249ba2c0c415dc3006153700ef561459fe94558a660382272368818f5a7",
+  "schema/manifest.json": "sha256:deb06dd8c48b5b641479ffcaaa1497e23905e3f50a7910549ba11bae01292e0f",
+  "schema/state-transition.json": "sha256:23f93723be07a62239e12f138e6de2ebe465f7795a3cf3e846e69c7cf37dbdff",
+  "schema/stateless-block.json": "sha256:5b4e64205e469652b9c7c23890409f321ce2431348d3b5e437920d0ad0833630",
+  "schema/transaction-validation.json": "sha256:5055afe735744e750e58b87bcfae537768a0eccc35a2b3d46816f69edaf13378"
+ },
+ "specs": {
+  "sha256:2980c959d5e53e4b2f6227ae59bfa6cf953a9ec68b0d862d3459741549678768": {
+   "name": "megaeth/Satin",
+   "registry": "sha256:c5dae40a0596b55ddb960f813d47ad12288dfd1cbc1d60f059f3847142c61a63"
+  }
+ },
+ "cases": [
+  {
+   "caseId": "satin/deposits/empty-caller/new-account-charged-once",
+   "profile": "state-transition",
+   "requires": [
+    "feature:deposit",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+   ],
+   "path": "examples/deposit-state-transition-new-caller.json",
+   "file": "sha256:c61182854847587b767bd432e6127375aea429b94306faa0f0d88635ddb30a47",
+   "semantic": "sha256:69ed9cae07a70c5a9ae66fc019582f40c166a807500ca98bafc5d8e39c9c9ba0"
+  },
+  {
+   "caseId": "satin/sequencer-registry/foreign-code/block-invalid",
+   "profile": "block-import",
+   "requires": [
+    "feature:sparse-state",
+    "group:blocks",
+    "group:outcome",
+    "group:receipts",
+    "group:state"
+   ],
+   "path": "examples/invalid-block-foreign-registry-code.json",
+   "file": "sha256:37632f157e24ab59da6fc39426c55fabc3c84d9546e816a8a96796affe0a783e",
+   "semantic": "sha256:0cf46ff52699a74f82b1f88652206f61abea5e504a51c722ea1b506abffcdead"
+  },
+  {
+   "caseId": "satin/state-gas/sstore-fresh-slot/minimum-bucket",
+   "profile": "state-transition",
+   "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:reads",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+   ],
+   "path": "examples/state-transition-sstore-fresh-slot.json",
+   "file": "sha256:c6f64cd293907ddf8894d17fa7187f074285b249fc9092816fabeac830f60529",
+   "semantic": "sha256:bcc5b3e1f4ab84db919c0b47c5f588d0f9c888b008c56f40b28b810434c6fbcb"
+  },
+  {
+   "caseId": "satin/stateless-witness/parent-anchor/wrong-parent-hash",
+   "profile": "stateless-block",
+   "requires": [
+    "group:blocks",
+    "group:outcome",
+    "group:receipts",
+    "group:state",
+    "group:witness"
+   ],
+   "path": "examples/stateless-block-witness-wrong-parent-anchor.json",
+   "file": "sha256:d153b905993d404ffe321eaeb37fbf44f8cb2163e78f797af750943f2d4bcbd8",
+   "semantic": "sha256:1f1843009001c8b76ad1fbd712d02ea51c5ea955590ee8005f08467c50599739"
+  },
+  {
+   "caseId": "satin/transaction-validation/gas-limit-below-intrinsic-regular",
+   "profile": "transaction-validation",
+   "requires": [
+    "group:validation"
+   ],
+   "path": "examples/transaction-validation-gas-below-intrinsic.json",
+   "file": "sha256:f570a28ed741cac3040b0e78de1e9289309fd4b0f8048b33d0c0125339306e0c",
+   "semantic": "sha256:003f30a40fdd4f863ac2a37055ef4a1f16c5568faadebc5d7282aa6f7f4b78c7"
+  }
+ ],
+ "shards": {
+  "required": [
+   "satin/deposits/empty-caller/new-account-charged-once",
+   "satin/sequencer-registry/foreign-code/block-invalid",
+   "satin/state-gas/sstore-fresh-slot/minimum-bucket",
+   "satin/transaction-validation/gas-limit-below-intrinsic-regular"
+  ]
+ },
+ "blobs": {},
+ "files": {},
+ "counts": {
+  "cases": "0x6",
+  "blobs": "0x0"
+ }
+}

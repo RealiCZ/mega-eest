@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile block-build",
+  "description": "A builder's candidate and action sequence: execute, commit, abandon and continue. Builder policy limits are separate from fixed protocol limits; a skip is not an invalid on-chain transaction and leaves no receipt, state or counter contribution.",
+  "$defs": {
+    "Input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chain", "anchor", "pre", "ancestors", "block", "policy", "candidates", "actions"],
+      "properties": {
+        "chain": {"$ref": "common.json#/$defs/ChainInput"},
+        "anchor": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["header"],
+          "properties": {"header": {"$ref": "common.json#/$defs/Header"}}
+        },
+        "pre": {
+          "allOf": [
+            {"$ref": "common.json#/$defs/State"},
+            {"properties": {"completeness": {"enum": ["complete", "sparse"]}}}
+          ]
+        },
+        "ancestors": {"$ref": "common.json#/$defs/BlockHashes"},
+        "salt": {"$ref": "common.json#/$defs/Salt"},
+        "oracle": {"$ref": "common.json#/$defs/OracleTranscript"},
+        "faults": {"$ref": "common.json#/$defs/Faults"},
+        "block": {
+          "description": "The header fields the builder chooses.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["number", "timestamp", "beneficiary", "gasLimit", "baseFeePerGas", "prevRandao", "parentBeaconBlockRoot", "extraData"],
+          "properties": {
+            "number": {"$ref": "common.json#/$defs/U64"},
+            "timestamp": {"$ref": "common.json#/$defs/U64"},
+            "beneficiary": {"$ref": "common.json#/$defs/Address"},
+            "gasLimit": {"$ref": "common.json#/$defs/U64"},
+            "baseFeePerGas": {"$ref": "common.json#/$defs/U256"},
+            "prevRandao": {"$ref": "common.json#/$defs/B256"},
+            "parentBeaconBlockRoot": {"$ref": "common.json#/$defs/B256"},
+            "extraData": {"$ref": "common.json#/$defs/Bytes"}
+          }
+        },
+        "policy": {
+          "description": "Builder policy budgets; null: no budget beyond the protocol's.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["gas", "dataSize", "kvUpdates", "stateGrowth"],
+          "properties": {
+            "gas": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/U64"}]},
+            "dataSize": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/U64"}]},
+            "kvUpdates": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/U64"}]},
+            "stateGrowth": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/U64"}]}
+          }
+        },
+        "candidates": {"type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/EnvelopeTransaction"}},
+        "actions": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["op", "candidate"],
+            "properties": {
+              "op": {"enum": ["execute", "commit", "abandon"]},
+              "candidate": {"description": "Index into candidates.", "$ref": "common.json#/$defs/U64"}
+            }
+          }
+        }
+      }
+    },
+    "Expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decisions", "committed", "transactions", "counters", "commitments", "state"],
+      "properties": {
+        "decisions": {
+          "description": "One final decision per candidate, in candidate order.",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["decision", "reasons"],
+            "properties": {
+              "decision": {"enum": ["included", "skipped", "rejected"]},
+              "reasons": {"description": "Empty for an included candidate.", "type": "array", "items": {"$ref": "#/$defs/DecisionReason"}}
+            }
+          }
+        },
+        "committed": {"description": "Candidate indices in committed order.", "type": "array", "items": {"$ref": "common.json#/$defs/U64"}},
+        "transactions": {"description": "One result per committed candidate, in committed order.", "type": "array", "items": {"$ref": "common.json#/$defs/BlockTransaction"}},
+        "counters": {"$ref": "common.json#/$defs/Counters"},
+        "commitments": {"$ref": "common.json#/$defs/Commitments"},
+        "state": {"$ref": "common.json#/$defs/StateDiff"}
+      }
+    },
+    "DecisionReason": {
+      "enum": [
+        "malformed-envelope", "unsupported-type", "invalid-signature", "chain-id-mismatch",
+        "data-size-exceeded", "intrinsic-gas-too-low", "floor-exceeds-gas-limit", "not-system-shape",
+        "nonce-too-low", "nonce-too-high", "nonce-overflow", "insufficient-funds", "sender-has-code",
+        "fee-cap-below-base-fee", "priority-fee-above-fee-cap", "gas-limit-exceeds-block",
+        "block-gas-exhausted", "deposit-only-block", "initcode-too-large", "invalid-authorization-list",
+        "block-data-size", "block-kv-updates", "block-state-growth", "policy-limit",
+        "stale-candidate", "oracle-unreproducible"
+      ],
+      "x-error": "invalid-value"
+    }
+  }
+}

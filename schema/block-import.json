@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile block-import",
+  "description": "An anchor, a chain schedule and an ordered block sequence imported as a node imports them. A transaction present in a supplied block is never skipped: an inclusion the rules forbid invalidates the block, and a failed import leaves the previous head and state.",
+  "$defs": {
+    "Input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chain", "anchor", "pre", "ancestors", "blocks"],
+      "properties": {
+        "chain": {"$ref": "common.json#/$defs/ChainInput"},
+        "anchor": {
+          "description": "The parent of the first block, at whose state pre holds.",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["header"],
+          "properties": {"header": {"$ref": "common.json#/$defs/Header"}}
+        },
+        "pre": {
+          "allOf": [
+            {"$ref": "common.json#/$defs/State"},
+            {"properties": {"completeness": {"enum": ["complete", "sparse"]}}}
+          ]
+        },
+        "ancestors": {"description": "Hashes of the anchor's ancestors a block may read.", "$ref": "common.json#/$defs/BlockHashes"},
+        "salt": {"$ref": "common.json#/$defs/Salt"},
+        "faults": {"$ref": "common.json#/$defs/Faults"},
+        "blocks": {"type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/BlockInput"}}
+      }
+    },
+    "Expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blocks", "head", "state"],
+      "properties": {
+        "blocks": {"description": "One result per input block; import stops at the first invalid block, which is the last entry.", "type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/BlockResult"}},
+        "head": {"$ref": "common.json#/$defs/Head"},
+        "state": {"description": "From pre to the state of the last accepted block.", "$ref": "common.json#/$defs/StateDiff"}
+      }
+    }
+  }
+}

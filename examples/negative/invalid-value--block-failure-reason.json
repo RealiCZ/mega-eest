@@ -1,0 +1,150 @@
+{
+  "format": "mega-execution-fixture",
+  "schemaVersion": "1.0",
+  "caseId": "satin/sequencer-registry/foreign-code/block-invalid",
+  "specRef": {
+    "name": "megaeth/Satin",
+    "descriptor": "sha256:2980c959d5e53e4b2f6227ae59bfa6cf953a9ec68b0d862d3459741549678768"
+  },
+  "profile": "block-import",
+  "requires": [
+    "feature:sparse-state",
+    "group:blocks",
+    "group:outcome",
+    "group:receipts",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-REG-004"
+  ],
+  "assertions": [
+    {
+      "path": "/expected/blocks/0",
+      "rules": [
+        "SATIN-REG-004"
+      ]
+    },
+    {
+      "path": "/expected/head",
+      "rules": [
+        "SATIN-REG-004"
+      ]
+    },
+    {
+      "path": "/expected/state",
+      "rules": [
+        "SATIN-REG-004"
+      ]
+    }
+  ],
+  "input": {
+    "chain": {
+      "chainId": "0x1",
+      "schedule": [
+        {
+          "spec": {
+            "name": "megaeth/Satin",
+            "descriptor": "sha256:2980c959d5e53e4b2f6227ae59bfa6cf953a9ec68b0d862d3459741549678768"
+          },
+          "timestamp": "0x0"
+        }
+      ],
+      "rawConfig": null
+    },
+    "anchor": {
+      "header": {
+        "parentHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "ommersHash": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+        "beneficiary": "0x4200000000000000000000000000000000000011",
+        "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000005a17",
+        "transactionsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+        "receiptsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "difficulty": "0x0",
+        "number": "0x0",
+        "gasLimit": "0x6fc23ac00",
+        "gasUsed": "0x0",
+        "timestamp": "0x6553f100",
+        "extraData": "0x",
+        "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "nonce": "0x0000000000000000",
+        "baseFeePerGas": "0xf4240",
+        "withdrawalsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+        "blobGasUsed": "0x0",
+        "excessBlobGas": "0x0",
+        "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "pre": {
+      "completeness": "sparse",
+      "accounts": {
+        "0x6342000000000000000000000000000000000006": {
+          "nonce": "0x1",
+          "balance": "0x0",
+          "code": "0x00",
+          "storage": {},
+          "storageComplete": true
+        }
+      }
+    },
+    "ancestors": {},
+    "blocks": [
+      {
+        "encoding": "fields",
+        "header": {
+          "parentHash": "0xf47357413bdf054a072defece98fc382f54892332d0622df8b851de17f10bdf0",
+          "ommersHash": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+          "beneficiary": "0x4200000000000000000000000000000000000011",
+          "stateRoot": "0x0000000000000000000000000000000000000000000000000000000000005a18",
+          "transactionsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "receiptsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "difficulty": "0x0",
+          "number": "0x1",
+          "gasLimit": "0x6fc23ac00",
+          "gasUsed": "0x0",
+          "timestamp": "0x6553f101",
+          "extraData": "0x",
+          "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "nonce": "0x0000000000000000",
+          "baseFeePerGas": "0xf4240",
+          "withdrawalsRoot": "0x56e81f171bcc55a6ff8345e692c0f86e5b48e01b996cadc001622fb5e363b421",
+          "blobGasUsed": "0x0",
+          "excessBlobGas": "0x0",
+          "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "requestsHash": "0xe3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "transactions": []
+      }
+    ]
+  },
+  "expected": {
+    "blocks": [
+      {
+        "status": "invalid",
+        "activeSpec": "megaeth/Satin",
+        "depositOnly": false,
+        "activation": false,
+        "failure": {
+          "phase": "pre-block",
+          "reason": "invalid-sequencer",
+          "transactionIndex": null
+        }
+      }
+    ],
+    "head": {
+      "number": "0x0",
+      "hash": "0xf47357413bdf054a072defece98fc382f54892332d0622df8b851de17f10bdf0"
+    },
+    "state": {
+      "accounts": {}
+    }
+  },
+  "provenance": {
+    "status": "example",
+    "note": "Expected values are illustrative: they show the shape of the format and have not been executed by an implementation or reviewed against the specification.",
+    "generator": "tools/make_examples.py",
+    "input": "The SequencerRegistry's address holds one byte of foreign code when block 1 resolves the live system address."
+  }
+}
