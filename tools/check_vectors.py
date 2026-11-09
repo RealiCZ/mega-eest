@@ -67,7 +67,26 @@ def parse_strict(data: bytes):
     except RecursionError:
         raise Reject("invalid-json", "", "nesting too deep") from None
     _no_surrogates(value)
+    if _depth(value) > MAX_DEPTH:
+        raise Reject("invalid-json", "", "more than 256 nested arrays and objects")
     return value
+
+
+MAX_DEPTH = 256
+
+
+def _depth(value) -> int:
+    """The number of nested arrays and objects at the deepest point."""
+    deepest, stack = 0, [(value, 1)]
+    while stack:
+        v, d = stack.pop()
+        if isinstance(v, dict):
+            deepest = max(deepest, d)
+            stack.extend((x, d + 1) for x in v.values())
+        elif isinstance(v, list):
+            deepest = max(deepest, d)
+            stack.extend((x, d + 1) for x in v)
+    return deepest
 
 
 def _no_surrogates(value):

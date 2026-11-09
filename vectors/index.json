@@ -60,6 +60,13 @@
       "digest": "sha256:63d9cdae5e056fe7d8f2f1371f25f530f77cdcf38736bbf6bf7bb670f26dc27f"
     },
     {
+      "id": "json-nesting-256-levels",
+      "kind": "json",
+      "input": "accept/json-nesting-256-levels.in.json",
+      "canonical": "accept/json-nesting-256-levels.canonical.json",
+      "digest": "sha256:16e1f09fe39ef84af9b0c86c8349f04985cc71662bc582477ec7c7b458d1a58f"
+    },
+    {
       "id": "case-deposit-state-transition-new-caller",
       "kind": "case",
       "input": "accept/case-deposit-state-transition-new-caller.in.json",
@@ -246,6 +253,15 @@
       "id": "json-single-quotes",
       "kind": "json",
       "input": "reject/json-single-quotes.json",
+      "error": {
+        "code": "invalid-json",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-nesting-257-levels",
+      "kind": "json",
+      "input": "reject/json-nesting-257-levels.json",
       "error": {
         "code": "invalid-json",
         "path": ""

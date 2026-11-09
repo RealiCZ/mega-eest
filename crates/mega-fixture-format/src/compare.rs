@@ -107,3 +107,18 @@ fn reasons_match(expected: &Value, actual: &Value) -> bool {
         _ => false,
     }
 }
+
+/// The rules whose assertions cover `path`: those whose assertion path is `path` or one of its
+/// ancestors. A mismatch report cites them for the first differing path.
+pub fn rules_at<'a>(case: &'a Case, path: &str) -> Vec<&'a crate::model::RuleRef> {
+    let mut out: Vec<&crate::model::RuleRef> = case
+        .fixture
+        .assertions
+        .iter()
+        .filter(|a| path == a.path || path.starts_with(&format!("{}/", a.path)))
+        .flat_map(|a| a.rules.iter())
+        .collect();
+    out.sort();
+    out.dedup();
+    out
+}

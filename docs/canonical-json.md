@@ -17,7 +17,8 @@ A document is accepted when all of these hold:
 4. No object has two members with the same name after unescaping (`"a"` and `"a"` collide).
 5. Every `\u` escape of a UTF-16 surrogate is part of a high-low pair.
 
-Strings may use any JSON escape. Nesting deeper than 256 levels may be rejected as a syntax error.
+Strings may use any JSON escape. At most 256 arrays and objects may nest; a deeper document is
+rejected as `invalid-json`.
 
 ## Canonical form
 
@@ -64,7 +65,7 @@ may report any of them. Pointers of JSON-layer errors are informative only.
 | --- | --- |
 | `invalid-utf8` | The bytes are not UTF-8 |
 | `byte-order-mark` | The input starts with EF BB BF |
-| `invalid-json` | Syntax error, trailing content, control character in a string, `NaN`/`Infinity`, empty input |
+| `invalid-json` | Syntax error, trailing content, control character in a string, `NaN`/`Infinity`, empty input, nesting deeper than 256 |
 | `duplicate-key` | An object has two members with the same name |
 | `number-not-allowed` | A JSON number appears anywhere |
 | `invalid-unicode-escape` | An unpaired surrogate escape |

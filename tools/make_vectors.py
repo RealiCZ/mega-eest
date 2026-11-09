@@ -35,6 +35,7 @@ JSON_ACCEPT = {
     "json-empty-object": b"{}",
     "json-top-level-string": b'"0x0"',
     "json-nested-objects-sorted": b'{"outer":{"z":{"b":"1","a":"2"},"a":[{"d":"","c":""}]}}',
+    "json-nesting-256-levels": b"[" * 255 + b'{"a":"b"}' + b"]" * 255,
 }
 
 JSON_REJECT = {
@@ -54,6 +55,7 @@ JSON_REJECT = {
     "json-trailing-content": (b'{} {}', "invalid-json"),
     "json-empty-input": (b"", "invalid-json"),
     "json-single-quotes": (b"{'a':'1'}", "invalid-json"),
+    "json-nesting-257-levels": (b"[" * 256 + b'{"a":"b"}' + b"]" * 256, "invalid-json"),
 }
 
 

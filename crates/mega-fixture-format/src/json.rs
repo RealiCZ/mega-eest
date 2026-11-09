@@ -70,6 +70,7 @@ impl Value {
     }
 }
 
+/// At most this many arrays and objects may nest.
 const MAX_DEPTH: usize = 256;
 
 /// Parses strict JSON bytes.
@@ -119,8 +120,8 @@ impl Parser<'_> {
     }
 
     fn value(&mut self, depth: usize, path: &str) -> Result<Value, Error> {
-        if depth > MAX_DEPTH {
-            return Err(self.syntax("nesting deeper than 256"));
+        if depth >= MAX_DEPTH && matches!(self.peek(), Some(b'{' | b'[')) {
+            return Err(self.syntax("more than 256 nested arrays and objects"));
         }
         match self.peek() {
             None => Err(self.syntax("unexpected end of input")),

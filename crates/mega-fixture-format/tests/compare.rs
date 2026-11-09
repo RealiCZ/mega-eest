@@ -92,3 +92,11 @@ fn a_refusal_matches_any_one_listed_reason() {
     common::set(&mut actual, "/validation/reasons", Value::Array(vec![Value::String("nonce-too-low".into())]));
     assert!(matches!(compare(&c, &actual, &all()), Verdict::Fail { ref path, .. } if path == "/expected/validation/reasons"));
 }
+
+#[test]
+fn a_mismatch_cites_the_rules_whose_assertions_cover_its_path() {
+    let c = case();
+    let cited: Vec<String> = mega_fixture_format::compare::rules_at(&c, "/expected/gasLedgers/state").iter().map(|r| r.to_string()).collect();
+    assert_eq!(cited, ["SATIN-POOL-019", "SATIN-STATE-008"]);
+    assert!(mega_fixture_format::compare::rules_at(&c, "/expected/gasLedgersX").is_empty());
+}
