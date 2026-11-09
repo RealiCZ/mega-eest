@@ -15,7 +15,7 @@ directory:
     sources.json      every page read, with the SHA-256 digest of its bytes
     descriptor.json   the spec descriptor that fixtures reference by digest
 
-The rule text and its boundaries are defined in docs/rule-registry.md; this script is the
+The rule text and its boundaries are defined in docs/spec-identity.md; this script is the
 reference implementation of that definition. The script fails, writing nothing, when an id is
 stated twice, when the ids it finds differ from the specification's own generated index
 (`rules.md`), or when the commit does not resolve.
