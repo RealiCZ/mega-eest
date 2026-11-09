@@ -124,3 +124,42 @@ engine, node or transition tool.
 
 **D-26. No license file yet.** The repository is to become public; the owner chooses its license
 before publication.
+
+## Contract tightening after review
+
+A read-only review fuzzed both readers against each other (no disagreement found) and listed
+contradictions the format still accepted. These were closed:
+
+**D-27. Block-build actions form a state machine.** `commit` and `abandon` need a pending
+`execute` of the same candidate; `committed` is a subsequence of the `commit` actions' order,
+because a commit-time recheck (`SATIN-BLK-004`, `SATIN-BLK-005`) can refuse a commit the builder
+attempted.
+
+**D-28. The deposit feature comes from the bytes.** `feature:deposit` is derived from a `0x7e`
+type byte of any transaction bytes in the input, `fields`-encoded block transactions included, and a
+source's kind must agree with its bytes. A consumer without deposit support is told `unsupported`
+for block cases too (every OP block starts with a deposit).
+
+**D-29. `activeSpec` names a scheduled spec.** It must be the name of a schedule entry, and a
+schedule names each spec once; the name is then unambiguous within a case.
+
+**D-30. Assertions are ordered by path, one per path.** The last set-like array without an order
+now has one.
+
+**D-31. Failed imports and failed deposits are constrained.** With no accepted block, the head is
+the anchor's number and the state diff is empty (the head hash needs Keccak-256, which the format
+readers do not carry: consumers compare it); a failed deposit has no execution or a halted one; an
+invalid block's spec and flags may be `null`, and only when it failed to decode.
+
+**D-32. Synthetic messages must fit their type.** Fee fields, recipient, access list and
+authorization list are checked against the EIP-2718 type; `null` means "not part of this type",
+never zero.
+
+**D-33. The registry is checked on load.** Both readers recompute each rule's `textDigest`, refuse
+an unknown status or a non-string row, and require the descriptor to bind `sources.json` as well as
+`rules.json`.
+
+**D-34. Known limits of 1.0.** The header shape is the Satin-era header, every member required;
+headers of forks that lack a member need a feature in a later minor version. A header's
+`stateRoot` means what the chain's spec says it commits to; typed commitments in block results say
+which root a case asserts. Envelope members cannot be added in a minor version.

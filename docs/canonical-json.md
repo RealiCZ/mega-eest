@@ -108,7 +108,7 @@ and still reject the same inputs, with less specific errors.
 The checks of [format.md](format.md#semantic-checks), in their order, with codes
 `unknown-spec`, `spec-name-mismatch`, `unsorted-set`, `unknown-rule`, `unknown-rule-row`,
 `retired-rule`, `unbound-assertion`, `assertion-rule-not-cited`, `uncovered-rule`,
-`requirement-mismatch`, `inconsistent-outcome`, `zero-slot-in-complete-state`,
+`inconsistent-transaction`, `requirement-mismatch`, `inconsistent-outcome`, `zero-slot-in-complete-state`,
 `root-over-sparse-state` and `invalid-reference`.
 
 ## Digests

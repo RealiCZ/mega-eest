@@ -76,22 +76,31 @@ impl SpecStore {
             return Err(load_error("registry: missing rules".into()));
         };
         for (id, entry) in entries {
-            let status = str_member(entry, "status", id)?;
+            let active = match str_member(entry, "status", id)? {
+                "active" => true,
+                "retired" => false,
+                other => return Err(load_error(format!("{id}: unknown status {other:?}"))),
+            };
             let rows = match entry.get("rows") {
-                Some(Value::Array(rows)) => rows.iter().filter_map(Value::as_str).map(str::to_string).collect(),
+                Some(Value::Array(rows)) => rows
+                    .iter()
+                    .map(|r| r.as_str().map(str::to_string).ok_or_else(|| load_error(format!("{id}: a row is not a string"))))
+                    .collect::<Result<BTreeSet<String>, Error>>()?,
                 _ => return Err(load_error(format!("{id}: missing rows"))),
             };
-            rules.insert(
-                id.clone(),
-                RuleInfo { active: status == "active", rows, text_digest: str_member(entry, "textDigest", id)?.to_string() },
-            );
+            let text_digest = str_member(entry, "textDigest", id)?.to_string();
+            if sha256_digest(str_member(entry, "text", id)?.as_bytes()) != text_digest {
+                return Err(load_error(format!("{id}: textDigest is not the digest of its text")));
+            }
+            rules.insert(id.clone(), RuleInfo { active, rows, text_digest });
         }
         let spec = Spec { name, descriptor_digest: descriptor_digest.clone(), registry_digest, rules };
         self.specs.insert(descriptor_digest.clone(), spec);
         Ok(&self.specs[&descriptor_digest])
     }
 
-    /// Loads every `<dir>/*/descriptor.json` with its `rules.json`.
+    /// Loads every `<dir>/*/descriptor.json` with its `rules.json`, checking that the descriptor
+    /// binds both `rules.json` and `sources.json`.
     pub fn load_dir(dir: &Path) -> Result<SpecStore, Error> {
         let mut store = SpecStore::new();
         let entries = std::fs::read_dir(dir).map_err(|e| load_error(format!("{}: {e}", dir.display())))?;
@@ -103,7 +112,13 @@ impl SpecStore {
                 continue;
             }
             let read = |p: &Path| std::fs::read(p).map_err(|e| load_error(format!("{}: {e}", p.display())));
-            store.add(&read(&descriptor)?, &read(&path.join("rules.json"))?)?;
+            let descriptor_bytes = read(&descriptor)?;
+            let sources = json::parse(&read(&path.join("sources.json"))?)?;
+            let bound = json::parse(&descriptor_bytes)?;
+            if str_member(&bound, "sources", "descriptor")? != sha256_digest(&json::to_canonical(&sources)) {
+                return Err(load_error(format!("{}: the descriptor does not bind sources.json", path.display())));
+            }
+            store.add(&descriptor_bytes, &read(&path.join("rules.json"))?)?;
         }
         Ok(store)
     }

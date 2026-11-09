@@ -55,7 +55,9 @@ it the rule registry), `profile`, `requires`, `rules`, `assertions`, `input` and
 - Changing any input byte, any expected value, the set of required groups, a cited rule or the
   spec does.
 - Two cases with the same semantic digest are duplicates under different names; a release keeps
-  one.
+  one. Every set-like array of the format, assertions included, has one required order, so the
+  same content cannot be written two ways; a semantic duplicate with different wording (for
+  example an assertion split across two paths) is still possible and is a review matter.
 
 Provenance is still bound: the file digest covers the whole fixture, and the manifest binds every
 file digest and the provenance and coverage reports.

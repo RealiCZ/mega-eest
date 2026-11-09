@@ -125,6 +125,25 @@ def case_rejects() -> dict[str, tuple[bytes, str, str]]:
            lambda c: c.__setitem__("rules", list(reversed(c["rules"]))))
     mutate("case-unsorted-requires", "unsorted-set", "/requires",
            lambda c: c.__setitem__("requires", list(reversed(c["requires"]))))
+    def synthetic(c):
+        c["input"]["transaction"] = {
+            "kind": "synthetic", "type": "0x2", "chainId": "0x1", "nonce": "0x0", "sender": sender, "to": contract,
+            "value": "0x0", "data": "0x", "gasLimit": "0xf4240", "gasPrice": "0xf4240", "maxFeePerGas": "0xf4240",
+            "maxPriorityFeePerGas": "0x0", "accessList": [], "authorizationList": [],
+        }
+        c["requires"] = sorted(c["requires"] + ["feature:synthetic-transaction"])
+    mutate("case-synthetic-fee-fields-of-another-type", "inconsistent-transaction", "/input/transaction/gasPrice", synthetic)
+    mutate("case-deposit-kind-with-signed-bytes", "inconsistent-transaction", "/input/transaction/raw",
+           lambda c: c["input"]["transaction"].__setitem__("kind", "deposit"))
+    mutate("case-assertions-duplicate-path", "unsorted-set", "/assertions",
+           lambda c: c["assertions"].insert(1, copy.deepcopy(c["assertions"][0])))
+    build = load_example("block-build-policy-skip.json")
+    c = copy.deepcopy(build)
+    c["input"]["actions"].insert(2, {"op": "commit", "candidate": "0x0"})
+    out["case-build-commit-twice"] = (dump(c), "invalid-reference", "/input/actions/2")
+    c = copy.deepcopy(build)
+    c["input"]["actions"] = [{"op": "abandon", "candidate": "0x1"}] + c["input"]["actions"]
+    out["case-build-abandon-before-execute"] = (dump(c), "invalid-reference", "/input/actions/0")
     mutate("case-witness-state-in-state-transition", "invalid-value", "/input/pre/completeness",
            lambda c: c["input"]["pre"].__setitem__("completeness", "witness")
            or [a.__setitem__("storageComplete", True) for a in c["input"]["pre"]["accounts"].values()])
@@ -132,6 +151,7 @@ def case_rejects() -> dict[str, tuple[bytes, str, str]]:
 
 
 MANIFEST_EXAMPLES = [
+    "block-build-policy-skip.json",
     "deposit-state-transition-new-caller.json",
     "invalid-block-foreign-registry-code.json",
     "state-transition-sstore-fresh-slot.json",
@@ -261,7 +281,7 @@ def main(argv: list[str]) -> int:
     m["cases"] = list(reversed(m["cases"]))
     reject("manifest-unsorted-cases", "manifest", dump(m), "unsorted-set", "/cases")
     m = copy.deepcopy(manifest)
-    m["counts"]["cases"] = "0x6"
+    m["counts"]["cases"] = hex(len(entries) + 1)
     reject("manifest-count-mismatch", "manifest", dump(m), "invalid-reference", "/counts/cases")
     m = copy.deepcopy(manifest)
     m["shards"]["required"] = sorted(m["shards"]["required"] + ["satin/not/in-manifest"])

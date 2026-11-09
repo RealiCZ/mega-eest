@@ -49,7 +49,7 @@ consumers may declare a narrower set of optional groups and report the rest unsu
 
 | Feature | state-transition | transaction-validation | block-import | block-build | stateless-block |
 | --- | --- | --- | --- | --- | --- |
-| deposit | yes | yes | (inside blocks) | yes | (inside blocks) |
+| deposit | yes | yes | yes (`fields` blocks) | yes | yes (`fields` blocks) |
 | synthetic-transaction | yes | — | — | — | — |
 | salt | yes | — | yes | yes | yes |
 | oracle-transcript | yes | — | — | yes | — |

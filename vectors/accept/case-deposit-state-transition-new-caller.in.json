@@ -22,9 +22,9 @@
   ],
   "assertions": [
     {
-      "path": "/expected/state/accounts/0x00000000000000000000000000000000000de905",
+      "path": "/expected/receipt",
       "rules": [
-        "SATIN-DEP-003"
+        "SATIN-DEP-009"
       ]
     },
     {
@@ -34,9 +34,9 @@
       ]
     },
     {
-      "path": "/expected/receipt",
+      "path": "/expected/state/accounts/0x00000000000000000000000000000000000de905",
       "rules": [
-        "SATIN-DEP-009"
+        "SATIN-DEP-003"
       ]
     }
   ],

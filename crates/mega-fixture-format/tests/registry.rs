@@ -20,3 +20,17 @@ fn a_descriptor_that_does_not_bind_its_registry_is_refused() {
     let registry = String::from_utf8(common::read("specs/satin-cac999a/rules.json")).unwrap().replacen("\"active\"", "\"retired\"", 1);
     assert!(store.add(&descriptor, registry.as_bytes()).is_err());
 }
+
+#[test]
+fn a_registry_entry_whose_text_does_not_match_its_digest_or_status_is_refused() {
+    let descriptor = common::read("specs/satin-cac999a/descriptor.json");
+    let registry = String::from_utf8(common::read("specs/satin-cac999a/rules.json")).unwrap();
+    // Either edit also changes the registry digest, so rebind the descriptor to isolate the entry check.
+    for edited in [registry.replacen("\"status\": \"active\"", "\"status\": \"Active\"", 1), registry.replacen("MUST", "SHOULD", 1)] {
+        let digest = mega_fixture_format::sha256_digest(&mega_fixture_format::canonicalize(edited.as_bytes()).unwrap());
+        let mut d = mega_fixture_format::json::parse(&descriptor).unwrap();
+        common::set(&mut d, "/registry", mega_fixture_format::Value::String(digest));
+        let rebound = mega_fixture_format::json::to_canonical(&d);
+        assert!(mega_fixture_format::SpecStore::new().add(&rebound, edited.as_bytes()).is_err());
+    }
+}

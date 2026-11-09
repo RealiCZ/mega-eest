@@ -68,10 +68,13 @@ fn mpt_and_salt_roots_are_different_typed_commitments() {
     let valid = r#"{"status":"valid","activeSpec":"megaeth/Satin","depositOnly":false,"activation":false,"preBlock":[],"transactions":[],
         "counters":{"gasUsed":"0x0","dataSize":"0x0","kvUpdates":"0x0","stateGrowth":"0x0"},
         "commitments":{"salt-state-root":"0x0000000000000000000000000000000000000000000000000000000000005a18"},"state":{"accounts":{}}}"#;
-    let salt = with(&base, "/expected/blocks/0", valid, &store).unwrap();
-    let mpt = with(&base, "/expected/blocks/0", &valid.replace("salt-state-root", "mpt-state-root"), &store).unwrap_err();
+    // The block is accepted, so the head moves to block 1.
+    let mut accepted = base.clone();
+    common::set(&mut accepted.value, "/expected/head/number", json::Value::String("0x1".into()));
+    let salt = with(&accepted, "/expected/blocks/0", valid, &store).unwrap();
+    let mpt = with(&accepted, "/expected/blocks/0", &valid.replace("salt-state-root", "mpt-state-root"), &store).unwrap_err();
     assert_eq!(mpt.code, ErrorCode::RootOverSparseState, "an MPT root over sparse state is refused");
-    let unknown = with(&base, "/expected/blocks/0", &valid.replace("salt-state-root", "state-root"), &store).unwrap_err();
+    let unknown = with(&accepted, "/expected/blocks/0", &valid.replace("salt-state-root", "state-root"), &store).unwrap_err();
     assert_eq!(unknown.code, ErrorCode::UnknownCommitment, "an untyped root is refused");
     assert!(salt.semantic_digest().starts_with("sha256:"));
 }

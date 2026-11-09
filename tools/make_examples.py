@@ -309,7 +309,7 @@ def envelope(case_id, profile, requires, assertions, inp, expected, provenance_e
         "profile": profile,
         "requires": sorted(requires),
         "rules": rules,
-        "assertions": assertions,
+        "assertions": sorted(assertions, key=lambda a: a["path"]),
         "input": inp,
         "expected": expected,
         "provenance": prov,
@@ -509,12 +509,81 @@ def witness_case():
     )
 
 
+def block_build_case():
+    genesis = header(0, ZERO32, 1_700_000_000, h32(0x5A17))
+    to = bytes.fromhex("00000000000000000000000000000000000ba5e0")
+    small = signed_legacy(CHAIN_ID, 0, 1_000_000, 100_000, to, 10**15, b"")
+    large = signed_legacy(CHAIN_ID, 1, 1_000_000, 2_000_000, to, 0, b"\x01" * 4096)
+    return envelope(
+        "satin/block-building/policy-data-size/skip-and-continue",
+        "block-build",
+        ["group:blocks", "group:decisions", "group:state", "group:outcome", "group:receipts"],
+        [
+            {"path": "/expected/decisions", "rules": ["SATIN-BLK-011"]},
+            {"path": "/expected/committed", "rules": ["SATIN-BLK-011"]},
+        ],
+        {
+            "chain": chain(),
+            "anchor": {"header": genesis},
+            "pre": {
+                "completeness": "complete",
+                "accounts": {hx(SENDER): {"nonce": "0x0", "balance": q(10**18), "code": "0x", "storage": {}}},
+            },
+            "ancestors": {},
+            "block": {
+                "number": "0x1",
+                "timestamp": q(1_700_000_001),
+                "beneficiary": hx(COINBASE),
+                "gasLimit": q(30_000_000_000),
+                "baseFeePerGas": q(1_000_000),
+                "prevRandao": ZERO32,
+                "parentBeaconBlockRoot": ZERO32,
+                "extraData": "0x",
+            },
+            "policy": {"gas": None, "dataSize": q(2_048), "kvUpdates": None, "stateGrowth": None},
+            "candidates": [{"kind": "signed", "raw": hx(small)}, {"kind": "signed", "raw": hx(large)}],
+            "actions": [
+                {"op": "execute", "candidate": "0x0"},
+                {"op": "commit", "candidate": "0x0"},
+                {"op": "execute", "candidate": "0x1"},
+                {"op": "abandon", "candidate": "0x1"},
+            ],
+        },
+        {
+            "decisions": [
+                {"decision": "included", "reasons": []},
+                {"decision": "skipped", "reasons": ["policy-limit"]},
+            ],
+            "committed": ["0x0"],
+            "transactions": [{
+                "outcome": {
+                    "admission": {"status": "admitted"},
+                    "execution": {"status": "success", "output": "0x", "createdAddress": None},
+                    "commit": {"status": "committed"},
+                },
+                "receipt": {"type": "0x0", "status": "0x1", "gasUsed": q(52_000), "cumulativeGasUsed": q(52_000),
+                            "logs": [], "logsBloom": BLOOM0, "depositNonce": None, "depositReceiptVersion": None},
+            }],
+            "counters": {"gasUsed": q(52_000), "dataSize": q(150), "kvUpdates": "0x3", "stateGrowth": "0x1"},
+            "commitments": {"salt-state-root": h32(0x5A18), "mpt-receipts-root": h32(0x7EC1)},
+            "state": {
+                "accounts": {
+                    hx(SENDER): {"nonce": "0x1", "balance": q(10**18 - 10**15 - 52_000 * 1_000_000), "code": "0x", "storage": {}},
+                    hx(to): {"nonce": "0x0", "balance": q(10**15), "code": "0x", "storage": {}},
+                }
+            },
+        },
+        {"input": "The builder's policy holds the block to 2,048 bytes of data size; the second candidate's 4 KiB of calldata does not fit, so it is skipped and building continues. A skip leaves no receipt and is not an invalid transaction."},
+    )
+
+
 EXAMPLES = {
     "state-transition-sstore-fresh-slot.json": state_transition,
     "deposit-state-transition-new-caller.json": deposit_case,
     "transaction-validation-gas-below-intrinsic.json": validation_case,
     "invalid-block-foreign-registry-code.json": invalid_block_case,
     "stateless-block-witness-wrong-parent-anchor.json": witness_case,
+    "block-build-policy-skip.json": block_build_case,
 }
 
 
@@ -522,7 +591,7 @@ EXAMPLES = {
 # Negative examples: one defect each; the file name before "--" is the error code both readers
 # must report.
 
-def negatives(base: dict, deposit_base: dict, block_base: dict) -> dict[str, str]:
+def negatives(base: dict, deposit_base: dict, block_base: dict, build_base: dict) -> dict[str, str]:
     out: dict[str, str] = {}
 
     def add(name: str, case, raw: str | None = None):
@@ -578,8 +647,36 @@ def negatives(base: dict, deposit_base: dict, block_base: dict) -> dict[str, str
 
     c = copy.deepcopy(base)
     c["expected"]["limit"] = None
-    c["assertions"].append({"path": "/expected/limit/dimension", "rules": ["SATIN-STATE-008"]})
+    c["assertions"] = sorted(c["assertions"] + [{"path": "/expected/limit/dimension", "rules": ["SATIN-STATE-008"]}], key=lambda a: a["path"])
     add("unbound-assertion--path-into-null.json", c)
+
+    c = copy.deepcopy(base)
+    c["assertions"] = list(reversed(c["assertions"]))
+    add("unsorted-set--assertions-out-of-order.json", c)
+
+    c = copy.deepcopy(deposit_base)
+    c["input"]["transaction"]["kind"] = "signed"
+    add("inconsistent-transaction--deposit-bytes-as-signed.json", c)
+
+    c = copy.deepcopy(deposit_base)
+    c["expected"]["outcome"]["admission"] = {"status": "failed-deposit"}
+    add("inconsistent-outcome--failed-deposit-that-succeeded.json", c)
+
+    c = copy.deepcopy(block_base)
+    c["expected"]["blocks"][0]["activeSpec"] = "megaeth/Rex6"
+    add("spec-name-mismatch--active-spec-not-scheduled.json", c)
+
+    c = copy.deepcopy(block_base)
+    c["expected"]["head"]["number"] = "0x1"
+    add("inconsistent-outcome--head-moved-after-failed-import.json", c)
+
+    c = copy.deepcopy(build_base)
+    c["input"]["actions"] = [{"op": "commit", "candidate": "0x0"}, {"op": "execute", "candidate": "0x1"}, {"op": "abandon", "candidate": "0x1"}]
+    add("invalid-reference--commit-without-execute.json", c)
+
+    c = copy.deepcopy(build_base)
+    c["input"]["actions"] = [a for a in c["input"]["actions"] if a["op"] != "commit"]
+    add("inconsistent-outcome--committed-without-commit-action.json", c)
 
     c = copy.deepcopy(deposit_base)
     c["requires"].remove("feature:deposit")
@@ -617,6 +714,7 @@ def main(argv: list[str]) -> int:
         built["state-transition-sstore-fresh-slot.json"],
         built["deposit-state-transition-new-caller.json"],
         built["invalid-block-foreign-registry-code.json"],
+        built["block-build-policy-skip.json"],
     ).items():
         files[os.path.join("examples", "negative", name)] = text
     stale = []

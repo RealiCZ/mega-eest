@@ -324,9 +324,21 @@ class Specs:
                 descriptor = parse_strict(f.read())
             with open(os.path.join(directory, name, "rules.json"), "rb") as f:
                 registry = parse_strict(f.read())
+            with open(os.path.join(directory, name, "sources.json"), "rb") as f:
+                sources = parse_strict(f.read())
             if descriptor["registry"] != sha256(canonical(registry)):
                 raise SystemExit(f"{name}: the descriptor does not bind its registry")
-            rules = {rid: (e["status"] == "active", set(e["rows"])) for rid, e in registry["rules"].items()}
+            if descriptor["sources"] != sha256(canonical(sources)):
+                raise SystemExit(f"{name}: the descriptor does not bind its sources")
+            rules = {}
+            for rid, e in registry["rules"].items():
+                if e["status"] not in ("active", "retired"):
+                    raise SystemExit(f"{name}: {rid}: unknown status {e['status']!r}")
+                if not all(isinstance(r, str) for r in e["rows"]):
+                    raise SystemExit(f"{name}: {rid}: a row is not a string")
+                if sha256(e["text"].encode("utf-8")) != e["textDigest"]:
+                    raise SystemExit(f"{name}: {rid}: textDigest is not the digest of its text")
+                rules[rid] = (e["status"] == "active", set(e["rows"]))
             self.by_digest[sha256(canonical(descriptor))] = (descriptor["name"], rules)
 
 
@@ -348,6 +360,27 @@ def _rule_parts(ref: str):
     return rid, (row if "/" in ref else None)
 
 
+def _deposit(raw: str) -> bool:
+    return raw.startswith("0x7e")
+
+
+def _synthetic(tx, path):
+    t = tx["type"]
+    legacy_fee = t in ("0x0", "0x1")
+    checks = [
+        ("chainId", t == "0x0" or tx["chainId"] is not None),
+        ("to", t != "0x4" or tx["to"] is not None),
+        ("gasPrice", (tx["gasPrice"] is not None) == legacy_fee),
+        ("maxFeePerGas", (tx["maxFeePerGas"] is not None) != legacy_fee),
+        ("maxPriorityFeePerGas", (tx["maxPriorityFeePerGas"] is not None) != legacy_fee),
+        ("accessList", t != "0x0" or not tx["accessList"]),
+        ("authorizationList", (not tx["authorizationList"]) != (t == "0x4")),
+    ]
+    for field, ok in checks:
+        if not ok:
+            raise Reject("inconsistent-transaction", path + "/" + field, f"does not fit type {t}")
+
+
 def derive_requirements(profile, inp, exp) -> set:
     out = set()
     if profile == "state-transition":
@@ -355,24 +388,26 @@ def derive_requirements(profile, inp, exp) -> set:
         for key, group in (("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("checkpoints", "group:checkpoints")):
             if key in exp:
                 out.add(group)
-        kind = inp["transaction"]["kind"]
-        if kind == "deposit":
-            out.add("feature:deposit")
-        elif kind == "synthetic":
+        tx = inp["transaction"]
+        if tx["kind"] == "synthetic":
             out.add("feature:synthetic-transaction")
+        elif _deposit(tx["raw"]):
+            out.add("feature:deposit")
     elif profile == "transaction-validation":
         out.add("group:validation")
-        if inp["raw"].startswith("0x7e"):
+        if _deposit(inp["raw"]):
             out.add("feature:deposit")
     else:
         out |= {"group:blocks", "group:state", "group:outcome", "group:receipts"}
         if profile == "block-build":
             out.add("group:decisions")
             txs = list(exp["transactions"])
-            if any(c["kind"] == "deposit" for c in inp["candidates"]):
+            if any(_deposit(c["raw"]) for c in inp["candidates"]):
                 out.add("feature:deposit")
         else:
             txs = [t for b in (exp["blocks"] or []) for t in b.get("transactions", [])]
+        if any(_deposit(t) for b in inp.get("blocks", []) for t in b.get("transactions", [])):
+            out.add("feature:deposit")
         if profile == "stateless-block":
             out.add("group:witness")
             if inp["witness"]["proof"] is not None:
@@ -411,7 +446,7 @@ def _outcome(o, path) -> bool:
         if commit == "committed" and execution is not None:
             return True
         raise Reject("inconsistent-outcome", path, "admitted")
-    if commit == "committed":
+    if commit == "committed" and (execution is None or execution["status"] == "halt"):
         return True
     raise Reject("inconsistent-outcome", path, "failed deposit")
 
@@ -451,9 +486,16 @@ def semantic_checks(case, specs: Specs):
         for a, b in zip(schedule, schedule[1:]):
             if _qty(a["timestamp"]) >= _qty(b["timestamp"]):
                 raise Reject("unsorted-set", "/input/chain/schedule", "timestamps")
+        names = [e["spec"]["name"] for e in schedule]
+        if len(set(names)) != len(names):
+            raise Reject("invalid-reference", "/input/chain/schedule", "a spec named twice")
+        for i, block in enumerate(exp.get("blocks") or []):
+            if block["activeSpec"] is not None and block["activeSpec"] not in names:
+                raise Reject("spec-name-mismatch", f"/expected/blocks/{i}/activeSpec", "not in the schedule")
     # 2. Sorted sets of the envelope.
     _sorted_set(case["requires"], "/requires")
     _sorted_set(case["rules"], "/rules")
+    _sorted_set([a["path"] for a in case["assertions"]], "/assertions")
     for i, a in enumerate(case["assertions"]):
         _sorted_set(a["rules"], f"/assertions/{i}/rules")
     # 3. Rules resolve.
@@ -478,10 +520,21 @@ def semantic_checks(case, specs: Specs):
     for i, r in enumerate(case["rules"]):
         if r not in covered:
             raise Reject("uncovered-rule", f"/rules/{i}", r)
-    # 5. Requirements.
+    # 5. Transaction sources.
+    sources = []
+    if profile == "state-transition":
+        sources = [("/input/transaction", inp["transaction"])]
+    elif profile == "block-build":
+        sources = [(f"/input/candidates/{i}", c) for i, c in enumerate(inp["candidates"])]
+    for path, tx in sources:
+        if tx["kind"] == "synthetic":
+            _synthetic(tx, path)
+        elif (tx["kind"] == "deposit") != _deposit(tx["raw"]):
+            raise Reject("inconsistent-transaction", path + "/raw", "kind and bytes disagree")
+    # 6. Requirements.
     if derive_requirements(profile, inp, exp) != set(case["requires"]):
         raise Reject("requirement-mismatch", "/requires", "requires differs from the content")
-    # 6. Consistency.
+    # 7. Consistency.
     if profile == "state-transition":
         executed = _outcome(exp["outcome"], "/expected/outcome")
         groups = ["receipt", "gasLedgers", "resources"]
@@ -500,6 +553,10 @@ def semantic_checks(case, specs: Specs):
         for i, block in _valid_blocks(exp["blocks"]):
             for j, tx in enumerate(block["transactions"]):
                 _block_tx(tx, f"/expected/blocks/{i}/transactions/{j}")
+        for i, block in enumerate(exp["blocks"] or []):
+            underived = any(block[k] is None for k in ("activeSpec", "depositOnly", "activation"))
+            if underived and block["failure"]["phase"] != "decode":
+                raise Reject("inconsistent-outcome", f"/expected/blocks/{i}", "flags are derived for every block that decodes")
         if profile == "stateless-block":
             verified = exp["witness"]["status"] == "verified"
             for key in ("blocks", "head", "state"):
@@ -511,7 +568,7 @@ def semantic_checks(case, specs: Specs):
     elif profile == "block-build":
         for j, tx in enumerate(exp["transactions"]):
             _block_tx(tx, f"/expected/transactions/{j}")
-    # 7. State.
+    # 8. State.
     pre = inp.get("pre")
     completeness = pre.get("completeness") if isinstance(pre, dict) else None
     if completeness == "complete":
@@ -529,7 +586,7 @@ def semantic_checks(case, specs: Specs):
         for path, commitments in roots:
             if "mpt-state-root" in commitments:
                 raise Reject("root-over-sparse-state", path + "/mpt-state-root", "sparse")
-    # 8. Observation sets.
+    # 9. Observation sets.
     def tx_sets(tx, path):
         reasons = tx["outcome"]["admission"].get("reasons")
         if reasons is not None:
@@ -550,7 +607,7 @@ def semantic_checks(case, specs: Specs):
             _sorted_set(d["reasons"], f"/expected/decisions/{i}/reasons")
         for j, tx in enumerate(exp["transactions"]):
             tx_sets(tx, f"/expected/transactions/{j}")
-    # 9. References.
+    # 10. References.
     if profile in ("block-import", "stateless-block"):
         inputs, results = inp["blocks"], exp["blocks"] or []
         if results:
@@ -560,6 +617,17 @@ def semantic_checks(case, specs: Specs):
             last_valid = results[-1]["status"] == "valid"
             if (last_valid and len(results) != len(inputs)) or len(results) > len(inputs):
                 raise Reject("invalid-reference", "/expected/blocks", "count")
+            accepted = sum(1 for b in results if b["status"] == "valid")
+            if accepted == 0:
+                header = inp["anchor"]["header"]
+            elif inputs[accepted - 1]["encoding"] == "fields":
+                header = inputs[accepted - 1]["header"]
+            else:
+                header = None
+            if header is not None and _qty(header["number"]) != _qty(exp["head"]["number"]):
+                raise Reject("inconsistent-outcome", "/expected/head/number", "head")
+            if accepted == 0 and exp["state"]["accounts"]:
+                raise Reject("inconsistent-outcome", "/expected/state", "failed import changes nothing")
             for i, block in enumerate(results):
                 if inputs[i]["encoding"] != "fields":
                     continue
@@ -573,9 +641,19 @@ def semantic_checks(case, specs: Specs):
                         raise Reject("invalid-reference", f"/expected/blocks/{i}/failure/transactionIndex", "index")
     elif profile == "block-build":
         n = len(inp["candidates"])
+        executed, commits = set(), []
         for i, action in enumerate(inp["actions"]):
-            if _qty(action["candidate"]) >= n:
+            c = _qty(action["candidate"])
+            if c >= n:
                 raise Reject("invalid-reference", f"/input/actions/{i}/candidate", "index")
+            if action["op"] == "execute":
+                executed.add(c)
+                continue
+            if c not in executed:
+                raise Reject("invalid-reference", f"/input/actions/{i}", "no pending execution")
+            executed.discard(c)
+            if action["op"] == "commit":
+                commits.append(c)
         if len(exp["decisions"]) != n:
             raise Reject("invalid-reference", "/expected/decisions", "count")
         committed = set()
@@ -587,6 +665,10 @@ def semantic_checks(case, specs: Specs):
             included = d["decision"] == "included"
             if included != (i in committed) or included == bool(d["reasons"]):
                 raise Reject("inconsistent-outcome", f"/expected/decisions/{i}", "decision")
+        attempts = iter(commits)
+        for c in exp["committed"]:
+            if not any(a == _qty(c) for a in attempts):
+                raise Reject("inconsistent-outcome", "/expected/committed", "not in the order of the commit actions")
         if len(exp["transactions"]) != len(committed):
             raise Reject("invalid-reference", "/expected/transactions", "count")
 

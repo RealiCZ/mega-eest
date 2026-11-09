@@ -13,13 +13,13 @@ not an EEST fixture and unmodified EEST consumers do not accept it.
 | Member | Meaning |
 | --- | --- |
 | `format` | Always `mega-execution-fixture` |
-| `schemaVersion` | `1.<minor>`. A reader of 1.0 reads every 1.x file whose features it knows: a minor version adds constructs only behind a new `feature:` requirement, so an older reader stops at `unknown-requirement` instead of misreading. A different major is rejected |
+| `schemaVersion` | `1.<minor>`. A reader of 1.0 reads every 1.x file whose features it knows: a minor version adds constructs inside `input` and `expected` only behind a new `feature:` or `group:` requirement, so an older reader stops at `unknown-requirement` instead of misreading; a new profile stops it at `unknown-profile`. A new envelope member is a major change. A different major is rejected |
 | `caseId` | The logical name ([case-identity.md](case-identity.md)) |
 | `specRef` | `{name, descriptor}`: the spec name and the SHA-256 of its bundled descriptor ([spec-identity.md](spec-identity.md)). Never an unqualified "latest" |
 | `profile` | One of `state-transition`, `transaction-validation`, `block-import`, `block-build`, `stateless-block` ([profiles.md](profiles.md)) |
 | `requires` | Sorted set of every observation group the expected result carries and every input feature the case uses ([Requirements](#requirements)) |
 | `rules` | Sorted set of rule citations the case covers: exactly the union of its assertions' rules |
-| `assertions` | `{path, rules}`: a JSON Pointer into `expected` and the sorted rule citations whose distinguishing observation is the value there ([rule-mapping.md](rule-mapping.md)) |
+| `assertions` | `{path, rules}`, strictly ordered by path (one assertion per path): a JSON Pointer into `expected` and the sorted rule citations whose distinguishing observation is the value there ([rule-mapping.md](rule-mapping.md)) |
 | `input` | The profile's input |
 | `expected` | The profile's expected observations |
 | `provenance` | Non-normative and open: `status` (`example`, `candidate`, `approved`, `superseded`) and anything else (authoring intent, generator, seeds, aliases, review record, observations). Excluded from the semantic digest, bound by the file digest |
@@ -60,7 +60,7 @@ Features (input constructs a consumer must support):
 
 | Feature | Used when |
 | --- | --- |
-| `feature:deposit` | the transaction (state-transition), a candidate (block-build) or the raw bytes (transaction-validation, type `0x7e`) is a deposit |
+| `feature:deposit` | any transaction bytes of the input start with type `0x7e`: the transaction (state-transition), a candidate (block-build), the raw bytes (transaction-validation), or a transaction of a `fields`-encoded block (block-import, stateless-block). Raw `rlp` blocks are not inspected |
 | `feature:synthetic-transaction` | the transaction is a synthetic message |
 | `feature:salt` | `input.salt` is present |
 | `feature:oracle-transcript` | `input.oracle` is present |
@@ -138,7 +138,9 @@ A transaction source is tagged by `kind`:
   counts toward signature, envelope or validation coverage, and transaction-validation and block
   profiles do not accept it.
 
-Bytes are authoritative; any decoded view in provenance must match them.
+Bytes are authoritative; any decoded view in provenance must match them. A source's kind must agree
+with its bytes (a deposit's, and only a deposit's, start with `0x7e`), and a synthetic message's fee,
+recipient, access-list and authorization fields must fit its type (`inconsistent-transaction`).
 
 ## Block context
 
@@ -182,29 +184,39 @@ rejection.
 
 1. **Specs**: `specRef.descriptor` and every schedule entry's descriptor are bundled
    (`unknown-spec`) under the stated name (`spec-name-mismatch`); schedule timestamps strictly
-   increase (`unsorted-set`).
-2. **Envelope sets**: `requires`, `rules` and each assertion's `rules` are strictly ascending
-   (`unsorted-set`).
+   increase (`unsorted-set`); a schedule names each spec once (`invalid-reference`); every non-null
+   `activeSpec` of a block result is a spec of the schedule (`spec-name-mismatch`).
+2. **Envelope sets**: `requires`, `rules`, the assertions' paths and each assertion's `rules` are
+   strictly ascending (`unsorted-set`).
 3. **Rules**: each cited id is in the case's registry (`unknown-rule`), its row qualifier is a
    citable row (`unknown-rule-row`), and it is active at the case's spec (`retired-rule`).
 4. **Assertions**: each path resolves to a value, `null` included (`unbound-assertion`); each
    assertion rule is in `rules` (`assertion-rule-not-cited`); each cited rule is used by an
    assertion (`uncovered-rule`).
-5. **Requirements**: `requires` equals the derived set (`requirement-mismatch`).
-6. **Outcomes**: a refused transaction has no execution and is not committed; a faulted one has no
+5. **Transaction sources**: in state-transition and block-build, each source's kind agrees with
+   its bytes and each synthetic message's fields fit its type, checked in the order chain id,
+   recipient, gas price, max fee, max priority fee, access list, authorization list
+   (`inconsistent-transaction`).
+6. **Requirements**: `requires` equals the derived set (`requirement-mismatch`).
+7. **Outcomes**: a refused transaction has no execution and is not committed; a faulted one has no
    execution; an admitted one executes and commits unless a fault stops it; a failed deposit is
-   committed; a transaction without an outcome has no receipt, ledgers, resources, limit, pools or
+   committed and has no execution or a halted one; a transaction without an outcome has no receipt, ledgers, resources, limit, pools or
    detention, and an executed one has a receipt, ledgers and resources; the receipt status is
    `0x1` exactly when execution succeeded; every transaction of a valid block is executed or a
    failed deposit; a stateless case has block results exactly when its witness verified, and a
-   verified proof exactly when one is attached (`inconsistent-outcome`).
-7. **State**: no zero slot in complete state (`zero-slot-in-complete-state`); no MPT state root
+   verified proof exactly when one is attached; an invalid block's spec and flags are `null` only
+   when it failed to decode (`inconsistent-outcome`).
+8. **State**: no zero slot in complete state (`zero-slot-in-complete-state`); no MPT state root
    over sparse or witness state (`root-over-sparse-state`).
-8. **Observation sets**: refusal and decision `reasons` and `reads.codes` are strictly ascending
+9. **Observation sets**: refusal and decision `reasons` and `reads.codes` are strictly ascending
    (`unsorted-set`).
-9. **References**: block results stop at the first invalid block and otherwise match the input
-   blocks one to one, with one transaction result per transaction; block-build actions name
-   existing candidates, there is one decision per candidate, committed indices exist and are
-   unique, a candidate is included exactly when committed and has reasons exactly when not
-   included, and there is one transaction result per committed candidate (`invalid-reference`,
-   `inconsistent-outcome`).
+10. **References**: block results stop at the first invalid block and otherwise match the input
+    blocks one to one, with one transaction result per transaction; the head is the anchor when no
+    block was accepted (with an empty state diff) and otherwise has the number of the last accepted
+    `fields`-encoded block. Block-build actions name existing candidates and follow the action
+    machine: `execute` makes a candidate's execution pending, `commit` and `abandon` each need a
+    pending execution and end it; there is one decision per candidate; committed indices exist and
+    are unique; a candidate is included exactly when committed and has reasons exactly when not
+    included; `committed` lists candidates in the order of their `commit` actions (a commit-time
+    recheck may refuse a commit, so it is a subsequence of them); there is one transaction result
+    per committed candidate (`invalid-reference`, `inconsistent-outcome`).

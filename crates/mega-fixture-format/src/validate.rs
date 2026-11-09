@@ -74,11 +74,24 @@ pub fn validate(value: &Value, fixture: &Fixture, store: &SpecStore) -> Result<(
                 return Err(err(ErrorCode::UnsortedSet, "/input/chain/schedule", "activation timestamps must strictly increase"));
             }
         }
+        let names: Vec<&str> = schedule.iter().map(|e| str_of(get(get(e, "spec"), "name"))).collect();
+        let distinct: BTreeSet<&str> = names.iter().copied().collect();
+        if distinct.len() != names.len() {
+            return Err(err(ErrorCode::InvalidReference, "/input/chain/schedule", "a schedule names each spec once"));
+        }
+        for (i, block) in arr(get(expected, "blocks")).iter().enumerate() {
+            let active = get(block, "activeSpec");
+            if !is_null(active) && !distinct.contains(str_of(active)) {
+                return Err(err(ErrorCode::SpecNameMismatch, format!("/expected/blocks/{i}/activeSpec"), "not a spec of the schedule"));
+            }
+        }
     }
 
     // 2. Sorted sets of the envelope.
     check_sorted(arr(get(value, "requires")), "/requires")?;
     check_sorted(arr(get(value, "rules")), "/rules")?;
+    let paths: Vec<Value> = arr(get(value, "assertions")).iter().map(|a| get(a, "path").clone()).collect();
+    check_sorted(&paths, "/assertions")?;
     for (i, a) in arr(get(value, "assertions")).iter().enumerate() {
         check_sorted(arr(get(a, "rules")), &format!("/assertions/{i}/rules"))?;
     }
@@ -117,7 +130,10 @@ pub fn validate(value: &Value, fixture: &Fixture, store: &SpecStore) -> Result<(
         }
     }
 
-    // 5. requires lists exactly the groups carried and the features used.
+    // 5. Transaction sources are consistent with their bytes and their type.
+    check_transactions(fixture.profile, input)?;
+
+    // 6. requires lists exactly the groups carried and the features used.
     let derived = derive_requirements(fixture.profile, input, expected)?;
     let listed: BTreeSet<String> = arr(get(value, "requires")).iter().map(|v| str_of(v).to_string()).collect();
     if derived != listed {
@@ -126,17 +142,60 @@ pub fn validate(value: &Value, fixture: &Fixture, store: &SpecStore) -> Result<(
         return Err(err(ErrorCode::RequirementMismatch, "/requires", format!("missing {missing:?}, not used {extra:?}")));
     }
 
-    // 6. Outcomes are consistent with the other groups.
+    // 7. Outcomes are consistent with the other groups.
     check_consistency(fixture.profile, input, expected)?;
 
-    // 7. State checks.
+    // 8. State checks.
     check_state(fixture.profile, input, expected)?;
 
-    // 8. Remaining sorted sets.
+    // 9. Remaining sorted sets.
     check_observation_sets(fixture.profile, expected)?;
 
-    // 9. References between input and expected.
+    // 10. References between input and expected.
     check_references(fixture.profile, input, expected)
+}
+
+fn is_deposit_bytes(raw: &Value) -> bool {
+    str_of(raw).starts_with("0x7e")
+}
+
+/// A source's kind agrees with its bytes, and a synthetic message's fields agree with its type.
+fn check_transactions(profile: Profile, input: &Value) -> Result<()> {
+    let sources: Vec<(String, &Value)> = match profile {
+        Profile::StateTransition => vec![("/input/transaction".to_string(), get(input, "transaction"))],
+        Profile::BlockBuild => arr(get(input, "candidates")).iter().enumerate().map(|(i, c)| (index("/input/candidates", i), c)).collect(),
+        _ => Vec::new(),
+    };
+    for (path, tx) in sources {
+        let kind = str_of(get(tx, "kind"));
+        if kind == "synthetic" {
+            check_synthetic(tx, &path)?;
+        } else if (kind == "deposit") != is_deposit_bytes(get(tx, "raw")) {
+            return Err(err(ErrorCode::InconsistentTransaction, child(&path, "raw"), "a deposit's bytes, and only a deposit's, start with type 0x7e"));
+        }
+    }
+    Ok(())
+}
+
+fn check_synthetic(tx: &Value, path: &str) -> Result<()> {
+    let tx_type = str_of(get(tx, "type"));
+    let legacy_fee = matches!(tx_type, "0x0" | "0x1");
+    let present = |k: &str| !is_null(get(tx, k));
+    let rules: [(&str, bool); 7] = [
+        ("chainId", tx_type == "0x0" || present("chainId")),
+        ("to", tx_type != "0x4" || present("to")),
+        ("gasPrice", present("gasPrice") == legacy_fee),
+        ("maxFeePerGas", present("maxFeePerGas") != legacy_fee),
+        ("maxPriorityFeePerGas", present("maxPriorityFeePerGas") != legacy_fee),
+        ("accessList", tx_type != "0x0" || arr(get(tx, "accessList")).is_empty()),
+        ("authorizationList", arr(get(tx, "authorizationList")).is_empty() != (tx_type == "0x4")),
+    ];
+    for (field, ok) in rules {
+        if !ok {
+            return Err(err(ErrorCode::InconsistentTransaction, child(path, field), format!("does not fit a type {tx_type} transaction")));
+        }
+    }
+    Ok(())
 }
 
 /// The group and feature requirements a case's content implies.
@@ -174,15 +233,16 @@ pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Va
                     add(group);
                 }
             }
-            match str_of(get(get(input, "transaction"), "kind")) {
-                "deposit" => add("feature:deposit"),
-                "synthetic" => add("feature:synthetic-transaction"),
-                _ => {}
+            let tx = get(input, "transaction");
+            if str_of(get(tx, "kind")) == "synthetic" {
+                add("feature:synthetic-transaction");
+            } else if is_deposit_bytes(get(tx, "raw")) {
+                add("feature:deposit");
             }
         }
         Profile::TransactionValidation => {
             add("group:validation");
-            if str_of(get(input, "raw")).starts_with("0x7e") {
+            if is_deposit_bytes(get(input, "raw")) {
                 add("feature:deposit");
             }
         }
@@ -194,13 +254,17 @@ pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Va
             if profile == Profile::BlockBuild {
                 add("group:decisions");
                 txs.extend(arr(get(expected, "transactions")));
-                if arr(get(input, "candidates")).iter().any(|c| str_of(get(c, "kind")) == "deposit") {
+                if arr(get(input, "candidates")).iter().any(|c| is_deposit_bytes(get(c, "raw"))) {
                     add("feature:deposit");
                 }
             } else {
                 for block in arr(get(expected, "blocks")) {
                     txs.extend(arr(get(block, "transactions")));
                 }
+            }
+            let block_deposit = arr(get(input, "blocks")).iter().any(|b| arr(get(b, "transactions")).iter().any(is_deposit_bytes));
+            if block_deposit {
+                add("feature:deposit");
             }
             if profile == Profile::StatelessBlock {
                 add("group:witness");
@@ -247,7 +311,8 @@ fn check_outcome(outcome: &Value, path: &str) -> Result<bool> {
         (_, "fault") => bad("a faulted transaction has no execution outcome"),
         ("admitted", "committed") if !is_null(execution) => Ok(true),
         ("admitted", _) => bad("an admitted transaction executes and commits unless a fault stops it"),
-        ("failed-deposit", "committed") => Ok(true),
+        ("failed-deposit", "committed") if is_null(execution) || str_of(get(execution, "status")) == "halt" => Ok(true),
+        ("failed-deposit", "committed") => bad("a failed deposit has no execution, or its own frame halted"),
         _ => bad("a failed deposit is committed"),
     }
 }
@@ -309,6 +374,12 @@ fn check_consistency(profile: Profile, input: &Value, expected: &Value) -> Resul
             for (i, block) in valid_blocks(blocks) {
                 for (j, tx) in arr(get(block, "transactions")).iter().enumerate() {
                     check_block_tx(tx, &format!("/expected/blocks/{i}/transactions/{j}"))?;
+                }
+            }
+            for (i, block) in arr(blocks).iter().enumerate() {
+                let underived = ["activeSpec", "depositOnly", "activation"].iter().any(|k| is_null(get(block, k)));
+                if underived && str_of(get(get(block, "failure"), "phase")) != "decode" {
+                    return Err(err(ErrorCode::InconsistentOutcome, format!("/expected/blocks/{i}"), "spec and flags are derived for every block that decodes"));
                 }
             }
             if profile == Profile::StatelessBlock {
@@ -437,6 +508,23 @@ fn check_references(profile: Profile, input: &Value, expected: &Value) -> Result
             if (last_valid && results.len() != inputs.len()) || results.len() > inputs.len() {
                 return Err(err(ErrorCode::InvalidReference, "/expected/blocks", "one result per imported block"));
             }
+            let accepted = results.iter().filter(|b| str_of(get(b, "status")) == "valid").count();
+            let head_number = quantity(get(get(expected, "head"), "number"));
+            let head_header = if accepted == 0 {
+                Some(get(get(input, "anchor"), "header"))
+            } else if str_of(get(&inputs[accepted - 1], "encoding")) == "fields" {
+                Some(get(&inputs[accepted - 1], "header"))
+            } else {
+                None
+            };
+            if let Some(header) = head_header {
+                if quantity(get(header, "number")) != head_number {
+                    return Err(err(ErrorCode::InconsistentOutcome, "/expected/head/number", "the head is the last accepted block"));
+                }
+            }
+            if accepted == 0 && !matches!(get(get(expected, "state"), "accounts"), Value::Object(m) if m.is_empty()) {
+                return Err(err(ErrorCode::InconsistentOutcome, "/expected/state", "a failed import leaves the state as it was"));
+            }
             for (i, block) in results.iter().enumerate() {
                 let txs_in = get(&inputs[i], "transactions");
                 if str_of(get(&inputs[i], "encoding")) != "fields" {
@@ -457,9 +545,25 @@ fn check_references(profile: Profile, input: &Value, expected: &Value) -> Result
         }
         Profile::BlockBuild => {
             let candidates = arr(get(input, "candidates")).len() as u64;
+            let mut executed = BTreeSet::new();
+            let mut commits = Vec::new();
             for (i, action) in arr(get(input, "actions")).iter().enumerate() {
-                if quantity(get(action, "candidate")) >= candidates {
+                let c = quantity(get(action, "candidate"));
+                if c >= candidates {
                     return Err(err(ErrorCode::InvalidReference, format!("/input/actions/{i}/candidate"), "no such candidate"));
+                }
+                match str_of(get(action, "op")) {
+                    "execute" => {
+                        executed.insert(c);
+                    }
+                    op => {
+                        if !executed.remove(&c) {
+                            return Err(err(ErrorCode::InvalidReference, format!("/input/actions/{i}"), format!("{op} of a candidate with no pending execution")));
+                        }
+                        if op == "commit" {
+                            commits.push(c);
+                        }
+                    }
                 }
             }
             let decisions = arr(get(expected, "decisions"));
@@ -478,6 +582,12 @@ fn check_references(profile: Profile, input: &Value, expected: &Value) -> Result
                 let has_reasons = !arr(get(d, "reasons")).is_empty();
                 if included != committed.contains(&(i as u64)) || included == has_reasons {
                     return Err(err(ErrorCode::InconsistentOutcome, format!("/expected/decisions/{i}"), "included exactly when committed, with reasons exactly when not included"));
+                }
+            }
+            let mut attempts = commits.iter();
+            for c in arr(get(expected, "committed")).iter().map(quantity) {
+                if !attempts.any(|a| *a == c) {
+                    return Err(err(ErrorCode::InconsistentOutcome, "/expected/committed", "committed in the order of the commit actions, only candidates a commit action names"));
                 }
             }
             if arr(get(expected, "transactions")).len() != committed.len() {

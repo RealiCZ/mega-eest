@@ -9,6 +9,7 @@ One fixture per profile, written by `tools/make_examples.py`:
 | `transaction-validation-gas-below-intrinsic.json` | transaction-validation | a refusal at step 2 of `SATIN-VAL-003`, with its set of acceptable reasons |
 | `invalid-block-foreign-registry-code.json` | block-import | an invalid block (foreign code at the SequencerRegistry, `SATIN-REG-004`): the failure phase and reason, and the previous head kept |
 | `stateless-block-witness-wrong-parent-anchor.json` | stateless-block | a witness anchored to another parent: a typed witness failure and no block results |
+| `block-build-policy-skip.json` | block-build | a candidate skipped for building policy (`SATIN-BLK-011`) after another was committed: decisions, the action sequence and the committed order |
 
 The encodings are real: transactions are signed with Ethereum's well-known test key
 (`0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b`), deposits and headers are RLP-encoded, and block

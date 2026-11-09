@@ -823,9 +823,9 @@
       "required": ["status", "activeSpec", "depositOnly", "activation", "failure"],
       "properties": {
         "status": {"const": "invalid"},
-        "activeSpec": {"$ref": "#/$defs/SpecName"},
-        "depositOnly": {"type": "boolean"},
-        "activation": {"type": "boolean"},
+        "activeSpec": {"description": "null only when the block failed to decode, so its spec and flags cannot be derived.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/SpecName"}]},
+        "depositOnly": {"oneOf": [{"type": "null"}, {"type": "boolean"}]},
+        "activation": {"oneOf": [{"type": "null"}, {"type": "boolean"}]},
         "failure": {
           "type": "object",
           "additionalProperties": false,

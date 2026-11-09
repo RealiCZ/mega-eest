@@ -1476,10 +1476,12 @@ pub enum BlockResult {
         commitments: Commitments,
         state: StateDiff,
     },
+    /// `active_spec`, `deposit_only` and `activation` are `None` only for a block that failed to
+    /// decode.
     Invalid {
-        active_spec: String,
-        deposit_only: bool,
-        activation: bool,
+        active_spec: Option<String>,
+        deposit_only: Option<bool>,
+        activation: Option<bool>,
         phase: String,
         reason: String,
         transaction_index: Option<u64>,
@@ -1504,12 +1506,12 @@ fn block_result(v: &Value, p: &str) -> Result<BlockResult> {
         o.shape(&["status", "activeSpec", "depositOnly", "activation", "failure"], &[])?;
     }
     let (a, ap) = o.req("activeSpec");
-    let active_spec = spec_name(a, &ap)?;
     let (d, dp) = o.req("depositOnly");
-    let deposit_only = boolean(d, &dp)?;
     let (ac, acp) = o.req("activation");
-    let activation = boolean(ac, &acp)?;
     if valid {
+        let active_spec = spec_name(a, &ap)?;
+        let deposit_only = boolean(d, &dp)?;
+        let activation = boolean(ac, &acp)?;
         let (pb, pbp) = o.req("preBlock");
         let pre_block = array(pb, &pbp, 0, None, |v, p| {
             let mut o = Obj::new(v, p)?;
@@ -1536,6 +1538,9 @@ fn block_result(v: &Value, p: &str) -> Result<BlockResult> {
             state: state_diff(st, &stp)?,
         })
     } else {
+        let active_spec = nullable(a, &ap, spec_name)?;
+        let deposit_only = nullable(d, &dp, boolean)?;
+        let activation = nullable(ac, &acp, boolean)?;
         let (f, fp) = o.req("failure");
         let mut fo = Obj::new(f, &fp)?;
         fo.shape(&["phase", "reason", "transactionIndex"], &[])?;

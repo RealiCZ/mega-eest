@@ -67,12 +67,20 @@
       "digest": "sha256:16e1f09fe39ef84af9b0c86c8349f04985cc71662bc582477ec7c7b458d1a58f"
     },
     {
+      "id": "case-block-build-policy-skip",
+      "kind": "case",
+      "input": "accept/case-block-build-policy-skip.in.json",
+      "canonical": "accept/case-block-build-policy-skip.canonical.json",
+      "fileDigest": "sha256:02a7d9afd6283e6eef5e3f69872bfcddd7e855c450d7158101c90e4366f72a34",
+      "semanticDigest": "sha256:398fe585dba4a26ee074b52e35f705d1c50c3c562f6623e2864f7f5aa7d1b536"
+    },
+    {
       "id": "case-deposit-state-transition-new-caller",
       "kind": "case",
       "input": "accept/case-deposit-state-transition-new-caller.in.json",
       "canonical": "accept/case-deposit-state-transition-new-caller.canonical.json",
-      "fileDigest": "sha256:c61182854847587b767bd432e6127375aea429b94306faa0f0d88635ddb30a47",
-      "semanticDigest": "sha256:69ed9cae07a70c5a9ae66fc019582f40c166a807500ca98bafc5d8e39c9c9ba0"
+      "fileDigest": "sha256:18515110006378ba00749db56f7e14b25878ebcadce0daab11ed9cfa75f9151b",
+      "semanticDigest": "sha256:cddbf199a7d82c84e62469455a3fd9d68617bb626f38dfdc86270a5e62a803af"
     },
     {
       "id": "case-invalid-block-foreign-registry-code",
@@ -87,8 +95,8 @@
       "kind": "case",
       "input": "accept/case-state-transition-sstore-fresh-slot.in.json",
       "canonical": "accept/case-state-transition-sstore-fresh-slot.canonical.json",
-      "fileDigest": "sha256:c6f64cd293907ddf8894d17fa7187f074285b249fc9092816fabeac830f60529",
-      "semanticDigest": "sha256:bcc5b3e1f4ab84db919c0b47c5f588d0f9c888b008c56f40b28b810434c6fbcb"
+      "fileDigest": "sha256:1b713166e76badac97bb0cc621712e7bc09162d96acec2087b78e261bf4b0f32",
+      "semanticDigest": "sha256:4d7f85917e327fb10521d5b52ac2c5551d194b8d8fc4719d8bfae820825c8c6e"
     },
     {
       "id": "case-stateless-block-witness-wrong-parent-anchor",
@@ -111,8 +119,8 @@
       "kind": "case",
       "input": "accept/case-same-semantics-other-name.in.json",
       "canonical": "accept/case-same-semantics-other-name.canonical.json",
-      "fileDigest": "sha256:62307bc4d164d007a9e872e8bd654b548af7f20a9084e8d5f72c0ac9669bd4e8",
-      "semanticDigest": "sha256:bcc5b3e1f4ab84db919c0b47c5f588d0f9c888b008c56f40b28b810434c6fbcb"
+      "fileDigest": "sha256:04b68e51e3845cd8217a165395dfb3c426486cbda65ec34668349d83cc313298",
+      "semanticDigest": "sha256:4d7f85917e327fb10521d5b52ac2c5551d194b8d8fc4719d8bfae820825c8c6e"
     },
     {
       "id": "json-duplicate-key",
@@ -466,6 +474,51 @@
       }
     },
     {
+      "id": "case-synthetic-fee-fields-of-another-type",
+      "kind": "case",
+      "input": "reject/case-synthetic-fee-fields-of-another-type.json",
+      "error": {
+        "code": "inconsistent-transaction",
+        "path": "/input/transaction/gasPrice"
+      }
+    },
+    {
+      "id": "case-deposit-kind-with-signed-bytes",
+      "kind": "case",
+      "input": "reject/case-deposit-kind-with-signed-bytes.json",
+      "error": {
+        "code": "inconsistent-transaction",
+        "path": "/input/transaction/raw"
+      }
+    },
+    {
+      "id": "case-assertions-duplicate-path",
+      "kind": "case",
+      "input": "reject/case-assertions-duplicate-path.json",
+      "error": {
+        "code": "unsorted-set",
+        "path": "/assertions"
+      }
+    },
+    {
+      "id": "case-build-commit-twice",
+      "kind": "case",
+      "input": "reject/case-build-commit-twice.json",
+      "error": {
+        "code": "invalid-reference",
+        "path": "/input/actions/2"
+      }
+    },
+    {
+      "id": "case-build-abandon-before-execute",
+      "kind": "case",
+      "input": "reject/case-build-abandon-before-execute.json",
+      "error": {
+        "code": "invalid-reference",
+        "path": "/input/actions/0"
+      }
+    },
+    {
       "id": "case-witness-state-in-state-transition",
       "kind": "case",
       "input": "reject/case-witness-state-in-state-transition.json",
@@ -479,7 +532,7 @@
       "kind": "manifest",
       "input": "accept/manifest-examples.in.json",
       "canonical": "accept/manifest-examples.canonical.json",
-      "digest": "sha256:a227d1108e808082ab800e18c3e0e922c62fb3b19dc5a2d275590acef870ca2a"
+      "digest": "sha256:f427a3e359fb64a2ee96393d4ab3c3b9c2ac9a08e70957ac431e710ac8b0acf9"
     },
     {
       "id": "manifest-unsorted-cases",
@@ -505,7 +558,7 @@
       "input": "reject/manifest-shard-member-missing.json",
       "error": {
         "code": "invalid-reference",
-        "path": "/shards/required/1"
+        "path": "/shards/required/2"
       }
     },
     {

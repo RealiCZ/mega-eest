@@ -66,6 +66,7 @@ codes! {
     AssertionRuleNotCited => "assertion-rule-not-cited",
     UncoveredRule => "uncovered-rule",
     InconsistentOutcome => "inconsistent-outcome",
+    InconsistentTransaction => "inconsistent-transaction",
     ZeroSlotInCompleteState => "zero-slot-in-complete-state",
     RootOverSparseState => "root-over-sparse-state",
     InvalidReference => "invalid-reference",

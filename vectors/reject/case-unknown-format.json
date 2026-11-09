@@ -31,15 +31,15 @@
    ]
   },
   {
-   "path": "/expected/state",
-   "rules": [
-    "SATIN-STATE-008"
-   ]
-  },
-  {
    "path": "/expected/reads/buckets",
    "rules": [
     "SATIN-WIT-009"
+   ]
+  },
+  {
+   "path": "/expected/state",
+   "rules": [
+    "SATIN-STATE-008"
    ]
   }
  ],

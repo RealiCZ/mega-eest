@@ -8,7 +8,7 @@
  "schemas": {
   "schema/block-build.json": "sha256:0f0ef875b9f4f0cb7285ea0d98abeccbe6c38c4f3288fb844975ba440f760289",
   "schema/block-import.json": "sha256:3b4785f3d4bfd8e93f25f39d948a7a4e13f110025c32824387c2e9aafb3d89e0",
-  "schema/common.json": "sha256:22eb1e532d23f593a332666620ced431b5ab353c6369d99d726a8e9e789650c2",
+  "schema/common.json": "sha256:ad3a91a1935437cfd5db4220084cce10df7716a33009a572b85feeb314f4b7e9",
   "schema/fixture.json": "sha256:c56ff249ba2c0c415dc3006153700ef561459fe94558a660382272368818f5a7",
   "schema/manifest.json": "sha256:deb06dd8c48b5b641479ffcaaa1497e23905e3f50a7910549ba11bae01292e0f",
   "schema/state-transition.json": "sha256:23f93723be07a62239e12f138e6de2ebe465f7795a3cf3e846e69c7cf37dbdff",
@@ -23,6 +23,20 @@
  },
  "cases": [
   {
+   "caseId": "satin/block-building/policy-data-size/skip-and-continue",
+   "profile": "block-build",
+   "requires": [
+    "group:blocks",
+    "group:decisions",
+    "group:outcome",
+    "group:receipts",
+    "group:state"
+   ],
+   "path": "examples/block-build-policy-skip.json",
+   "file": "sha256:02a7d9afd6283e6eef5e3f69872bfcddd7e855c450d7158101c90e4366f72a34",
+   "semantic": "sha256:398fe585dba4a26ee074b52e35f705d1c50c3c562f6623e2864f7f5aa7d1b536"
+  },
+  {
    "caseId": "satin/deposits/empty-caller/new-account-charged-once",
    "profile": "state-transition",
    "requires": [
@@ -35,8 +49,8 @@
     "group:state"
    ],
    "path": "examples/deposit-state-transition-new-caller.json",
-   "file": "sha256:c61182854847587b767bd432e6127375aea429b94306faa0f0d88635ddb30a47",
-   "semantic": "sha256:69ed9cae07a70c5a9ae66fc019582f40c166a807500ca98bafc5d8e39c9c9ba0"
+   "file": "sha256:18515110006378ba00749db56f7e14b25878ebcadce0daab11ed9cfa75f9151b",
+   "semantic": "sha256:cddbf199a7d82c84e62469455a3fd9d68617bb626f38dfdc86270a5e62a803af"
   },
   {
    "caseId": "satin/sequencer-registry/foreign-code/block-invalid",
@@ -66,8 +80,8 @@
     "group:state"
    ],
    "path": "examples/state-transition-sstore-fresh-slot.json",
-   "file": "sha256:c6f64cd293907ddf8894d17fa7187f074285b249fc9092816fabeac830f60529",
-   "semantic": "sha256:bcc5b3e1f4ab84db919c0b47c5f588d0f9c888b008c56f40b28b810434c6fbcb"
+   "file": "sha256:1b713166e76badac97bb0cc621712e7bc09162d96acec2087b78e261bf4b0f32",
+   "semantic": "sha256:4d7f85917e327fb10521d5b52ac2c5551d194b8d8fc4719d8bfae820825c8c6e"
   },
   {
    "caseId": "satin/stateless-witness/parent-anchor/wrong-parent-hash",
@@ -96,6 +110,7 @@
  ],
  "shards": {
   "required": [
+   "satin/block-building/policy-data-size/skip-and-continue",
    "satin/deposits/empty-caller/new-account-charged-once",
    "satin/sequencer-registry/foreign-code/block-invalid",
    "satin/state-gas/sstore-fresh-slot/minimum-bucket",
@@ -105,7 +120,7 @@
  "blobs": {},
  "files": {},
  "counts": {
-  "cases": "0x5",
+  "cases": "0x6",
   "blobs": "0x0"
  }
 }
