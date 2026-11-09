@@ -4,6 +4,9 @@ mod common;
 
 use mega_fixture_format::{canonicalize, json, sha256_digest, Case, ErrorCode, Manifest, Value};
 
+/// What a reader produces for an accepted vector: canonical bytes and the named digests.
+type Produced<'a> = Result<(Vec<u8>, Vec<(&'a str, String)>), mega_fixture_format::Error>;
+
 const JSON_LAYER: [&str; 6] = ["invalid-utf8", "byte-order-mark", "invalid-json", "duplicate-key", "number-not-allowed", "invalid-unicode-escape"];
 
 fn s<'a>(v: &'a Value, k: &str) -> &'a str {
@@ -21,7 +24,7 @@ fn every_vector_is_reproduced() {
         let id = s(v, "id");
         let input = common::read(&format!("vectors/{}", s(v, "input")));
         let kind = s(v, "kind");
-        let result: Result<(Vec<u8>, Vec<(&str, String)>), mega_fixture_format::Error> = match kind {
+        let result: Produced = match kind {
             "json" => canonicalize(&input).map(|c| {
                 let d = sha256_digest(&c);
                 (c, vec![("digest", d)])

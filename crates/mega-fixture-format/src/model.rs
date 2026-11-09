@@ -273,6 +273,8 @@ pub struct Fixture {
 }
 
 /// The profile-specific input and expected result.
+// A fixture is decoded once and held whole; boxing the larger variants would buy nothing.
+#[allow(clippy::large_enum_variant)]
 #[derive(Clone, Debug, PartialEq)]
 pub enum Body {
     StateTransition { input: StateTransitionInput, expected: StateTransitionExpected },
