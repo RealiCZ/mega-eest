@@ -1,0 +1,10 @@
+[package]
+name = "mega-fixture-format"
+version = "0.1.0"
+description = "Wire contract of MegaETH execution fixtures: strict decoding, validation, canonical JSON, digests and comparison. Depends on no execution engine."
+edition.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+sha2 = "0.10"

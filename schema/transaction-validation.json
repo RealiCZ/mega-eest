@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile transaction-validation",
+  "description": "Raw EIP-2718 bytes, malformed ones included, decoded and validated against the chain and, where validation depends on it, explicit pre-state. No execution receipt is fabricated for a refused transaction.",
+  "$defs": {
+    "Input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chain", "block", "pre", "raw"],
+      "properties": {
+        "chain": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["chainId"],
+          "properties": {"chainId": {"$ref": "common.json#/$defs/U64"}}
+        },
+        "block": {"description": "null: validation that needs no block context.", "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/BlockEnv"}]},
+        "pre": {
+          "description": "null: stateless validation.",
+          "oneOf": [
+            {"type": "null"},
+            {"allOf": [
+              {"$ref": "common.json#/$defs/State"},
+              {"properties": {"completeness": {"enum": ["complete", "sparse"]}}}
+            ]}
+          ]
+        },
+        "raw": {"$ref": "common.json#/$defs/Bytes"}
+      }
+    },
+    "Expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validation"],
+      "properties": {
+        "validation": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {"status": {"enum": ["accepted", "rejected"]}},
+          "allOf": [
+            {"if": {"properties": {"status": {"const": "accepted"}}}, "then": {"$ref": "#/$defs/Accepted"}},
+            {"if": {"properties": {"status": {"const": "rejected"}}}, "then": {"$ref": "#/$defs/Rejected"}}
+          ]
+        }
+      }
+    },
+    "Accepted": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "sender", "hash", "intrinsic"],
+      "properties": {
+        "status": {"const": "accepted"},
+        "sender": {"$ref": "common.json#/$defs/Address"},
+        "hash": {"$ref": "common.json#/$defs/B256"},
+        "intrinsic": {
+          "description": "null: the transaction has no intrinsic charge (a deposit).",
+          "oneOf": [
+            {"type": "null"},
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["regular", "history", "floor"],
+              "properties": {
+                "regular": {"$ref": "common.json#/$defs/U64"},
+                "history": {"$ref": "common.json#/$defs/U64"},
+                "floor": {"$ref": "common.json#/$defs/U64"}
+              }
+            }
+          ]
+        }
+      }
+    },
+    "Rejected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "phase", "reasons"],
+      "properties": {
+        "status": {"const": "rejected"},
+        "phase": {"enum": ["decode", "validation"]},
+        "reasons": {"type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/RefusalReason"}}
+      }
+    }
+  }
+}

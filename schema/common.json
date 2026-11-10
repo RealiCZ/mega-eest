@@ -1,0 +1,849 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MegaETH execution fixture: shared definitions",
+  "description": "Scalars and objects shared by the envelope and the profiles of mega-execution-fixture 1.x. Keywords starting with x- are annotations for the error codes of docs/canonical-json.md; a standard validator ignores them.",
+  "$defs": {
+    "U64": {
+      "description": "Nonnegative integer below 2^64: minimal lowercase hex, 0x0 for zero.",
+      "type": "string",
+      "pattern": "^0x(0|[1-9a-f][0-9a-f]{0,15})$",
+      "x-hex": "quantity",
+      "x-bits": "64"
+    },
+    "U256": {
+      "description": "Nonnegative integer below 2^256: minimal lowercase hex, 0x0 for zero.",
+      "type": "string",
+      "pattern": "^0x(0|[1-9a-f][0-9a-f]{0,63})$",
+      "x-hex": "quantity",
+      "x-bits": "256"
+    },
+    "Bytes": {
+      "description": "Byte string: even-length lowercase hex, 0x for none.",
+      "type": "string",
+      "pattern": "^0x([0-9a-f]{2})*$",
+      "x-hex": "bytes"
+    },
+    "Address": {
+      "type": "string",
+      "pattern": "^0x[0-9a-f]{40}$",
+      "x-hex": "fixed",
+      "x-bytes": "20"
+    },
+    "B256": {
+      "description": "32 bytes at full width: hashes, roots and storage keys.",
+      "type": "string",
+      "pattern": "^0x[0-9a-f]{64}$",
+      "x-hex": "fixed",
+      "x-bytes": "32"
+    },
+    "B8": {
+      "type": "string",
+      "pattern": "^0x[0-9a-f]{16}$",
+      "x-hex": "fixed",
+      "x-bytes": "8"
+    },
+    "Bloom": {
+      "type": "string",
+      "pattern": "^0x[0-9a-f]{512}$",
+      "x-hex": "fixed",
+      "x-bytes": "256"
+    },
+    "Digest": {
+      "description": "SHA-256 of canonical bytes or of a blob.",
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$",
+      "x-hex": "digest"
+    },
+    "SignedInt": {
+      "description": "Signed integer in [-2^127, 2^127-1] as canonical decimal: no plus sign, no leading zero, no -0.",
+      "type": "string",
+      "pattern": "^(0|-?[1-9][0-9]{0,38})$",
+      "x-error": "invalid-signed-integer",
+      "x-signed": "128"
+    },
+    "Name": {
+      "description": "A lowercase identifier made of ASCII letters, digits and single hyphens.",
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "x-error": "invalid-value"
+    },
+    "CaseId": {
+      "description": "Logical case identity (docs/case-identity.md): three to eight slash-separated lowercase segments, at most 160 characters.",
+      "type": "string",
+      "maxLength": 160,
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*){2,7}$",
+      "x-error": "invalid-case-id"
+    },
+    "SpecName": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*/[A-Za-z0-9]+([.-][A-Za-z0-9]+)*$",
+      "x-error": "invalid-value"
+    },
+    "RuleRef": {
+      "description": "A rule id, optionally qualified by the first cell of one of its table rows: SATIN-KEY-005/step-12.",
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9]*-[A-Z][A-Z0-9]*-[0-9]{3}(/[^/]+)?$",
+      "x-error": "invalid-rule-ref"
+    },
+    "Operation": {
+      "description": "An opcode mnemonic or a named protocol operation.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9]+(-[A-Za-z0-9]+)*$",
+      "x-error": "invalid-value"
+    },
+    "SpecRef": {
+      "description": "A protocol spec: its name and the digest of its bundled descriptor, which binds the rule registry.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "descriptor"],
+      "properties": {
+        "name": {"$ref": "#/$defs/SpecName"},
+        "descriptor": {"$ref": "#/$defs/Digest"}
+      }
+    },
+    "Storage": {
+      "description": "Storage slots: full-width key to value.",
+      "type": "object",
+      "propertyNames": {"$ref": "#/$defs/B256"},
+      "additionalProperties": {"$ref": "#/$defs/U256"}
+    },
+    "BlockHashes": {
+      "description": "Historical block hashes by block number.",
+      "type": "object",
+      "propertyNames": {"$ref": "#/$defs/U64"},
+      "additionalProperties": {"$ref": "#/$defs/B256"}
+    },
+    "CompleteAccount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nonce", "balance", "code", "storage"],
+      "properties": {
+        "nonce": {"$ref": "#/$defs/U64"},
+        "balance": {"$ref": "#/$defs/U256"},
+        "code": {"$ref": "#/$defs/Bytes"},
+        "storage": {"$ref": "#/$defs/Storage"}
+      }
+    },
+    "SparseAccount": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nonce", "balance", "code", "storage", "storageComplete"],
+      "properties": {
+        "nonce": {"$ref": "#/$defs/U64"},
+        "balance": {"$ref": "#/$defs/U256"},
+        "code": {"$ref": "#/$defs/Bytes"},
+        "storage": {"$ref": "#/$defs/Storage"},
+        "storageComplete": {"type": "boolean"}
+      }
+    },
+    "State": {
+      "description": "Pre-state with its completeness (docs/format.md, State completeness).",
+      "type": "object",
+      "required": ["completeness"],
+      "properties": {
+        "completeness": {"enum": ["complete", "sparse", "witness"]}
+      },
+      "allOf": [
+        {"if": {"properties": {"completeness": {"const": "complete"}}}, "then": {"$ref": "#/$defs/CompleteState"}},
+        {"if": {"properties": {"completeness": {"enum": ["sparse", "witness"]}}}, "then": {"$ref": "#/$defs/SparseState"}}
+      ]
+    },
+    "CompleteState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completeness", "accounts"],
+      "properties": {
+        "completeness": {"const": "complete"},
+        "accounts": {
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/Address"},
+          "additionalProperties": {"$ref": "#/$defs/CompleteAccount"}
+        }
+      }
+    },
+    "SparseState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completeness", "accounts"],
+      "properties": {
+        "completeness": {"enum": ["sparse", "witness"]},
+        "accounts": {
+          "description": "null: the account is known to be absent.",
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/Address"},
+          "additionalProperties": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/SparseAccount"}]}
+        }
+      }
+    },
+    "Salt": {
+      "description": "SALT bucket capacities. complete: an unlisted bucket has the minimum capacity; otherwise an unlisted bucket is a missing input.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mapping", "complete", "buckets"],
+      "properties": {
+        "mapping": {"enum": ["salt-v1"], "x-error": "invalid-value"},
+        "complete": {"type": "boolean"},
+        "buckets": {
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/U64"},
+          "additionalProperties": {"$ref": "#/$defs/U64"}
+        }
+      }
+    },
+    "OracleTranscript": {
+      "description": "The oracle service's answers, for engine-isolation profiles only.",
+      "type": "object",
+      "required": ["mode"],
+      "properties": {"mode": {"enum": ["recorded", "disabled"]}},
+      "allOf": [
+        {"if": {"properties": {"mode": {"const": "recorded"}}}, "then": {"$ref": "#/$defs/RecordedOracle"}},
+        {"if": {"properties": {"mode": {"const": "disabled"}}}, "then": {"$ref": "#/$defs/DisabledOracle"}}
+      ]
+    },
+    "RecordedOracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "entries"],
+      "properties": {
+        "mode": {"const": "recorded"},
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["slot", "answer"],
+            "properties": {
+              "slot": {"$ref": "#/$defs/B256"},
+              "answer": {"description": "null: the service answers none.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/U256"}]}
+            }
+          }
+        }
+      }
+    },
+    "DisabledOracle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {"mode": {"const": "disabled"}}
+    },
+    "ProviderRead": {
+      "description": "The key of a provider read: an injected failure or the read a fault reports.",
+      "type": "object",
+      "required": ["source"],
+      "properties": {"source": {"enum": ["account", "storage", "code", "block-hash", "bucket"]}},
+      "allOf": [
+        {"if": {"properties": {"source": {"const": "account"}}}, "then": {"$ref": "#/$defs/AccountReadKey"}},
+        {"if": {"properties": {"source": {"const": "storage"}}}, "then": {"$ref": "#/$defs/StorageReadKey"}},
+        {"if": {"properties": {"source": {"const": "code"}}}, "then": {"$ref": "#/$defs/CodeReadKey"}},
+        {"if": {"properties": {"source": {"const": "block-hash"}}}, "then": {"$ref": "#/$defs/BlockHashReadKey"}},
+        {"if": {"properties": {"source": {"const": "bucket"}}}, "then": {"$ref": "#/$defs/BucketReadKey"}}
+      ]
+    },
+    "AccountReadKey": {
+      "type": "object", "additionalProperties": false, "required": ["source", "address"],
+      "properties": {"source": {"const": "account"}, "address": {"$ref": "#/$defs/Address"}}
+    },
+    "StorageReadKey": {
+      "type": "object", "additionalProperties": false, "required": ["source", "address", "slot"],
+      "properties": {"source": {"const": "storage"}, "address": {"$ref": "#/$defs/Address"}, "slot": {"$ref": "#/$defs/B256"}}
+    },
+    "CodeReadKey": {
+      "type": "object", "additionalProperties": false, "required": ["source", "codeHash"],
+      "properties": {"source": {"const": "code"}, "codeHash": {"$ref": "#/$defs/B256"}}
+    },
+    "BlockHashReadKey": {
+      "type": "object", "additionalProperties": false, "required": ["source", "number"],
+      "properties": {"source": {"const": "block-hash"}, "number": {"$ref": "#/$defs/U64"}}
+    },
+    "BucketReadKey": {
+      "type": "object", "additionalProperties": false, "required": ["source", "bucket"],
+      "properties": {"source": {"const": "bucket"}, "bucket": {"$ref": "#/$defs/U64"}}
+    },
+    "Faults": {
+      "description": "Provider reads injected to fail. Any other missing input is a harness error, never an expected outcome.",
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/ProviderRead"}
+    },
+    "AccessListEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "storageKeys"],
+      "properties": {
+        "address": {"$ref": "#/$defs/Address"},
+        "storageKeys": {"type": "array", "items": {"$ref": "#/$defs/B256"}}
+      }
+    },
+    "SyntheticAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chainId", "address", "nonce", "authority"],
+      "properties": {
+        "chainId": {"$ref": "#/$defs/U256"},
+        "address": {"$ref": "#/$defs/Address"},
+        "nonce": {"$ref": "#/$defs/U64"},
+        "authority": {"description": "The recovered authority; null: the signature does not recover.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/Address"}]}
+      }
+    },
+    "Transaction": {
+      "description": "A transaction source: signed EIP-2718 bytes, an unsigned deposit envelope, or a synthetic execution message.",
+      "type": "object",
+      "required": ["kind"],
+      "properties": {"kind": {"enum": ["signed", "deposit", "synthetic"]}},
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "signed"}}}, "then": {"$ref": "#/$defs/SignedTransaction"}},
+        {"if": {"properties": {"kind": {"const": "deposit"}}}, "then": {"$ref": "#/$defs/DepositTransaction"}},
+        {"if": {"properties": {"kind": {"const": "synthetic"}}}, "then": {"$ref": "#/$defs/SyntheticTransaction"}}
+      ]
+    },
+    "EnvelopeTransaction": {
+      "description": "A transaction source with authoritative bytes: signed or deposit.",
+      "type": "object",
+      "required": ["kind"],
+      "properties": {"kind": {"enum": ["signed", "deposit"]}},
+      "allOf": [
+        {"if": {"properties": {"kind": {"const": "signed"}}}, "then": {"$ref": "#/$defs/SignedTransaction"}},
+        {"if": {"properties": {"kind": {"const": "deposit"}}}, "then": {"$ref": "#/$defs/DepositTransaction"}}
+      ]
+    },
+    "SignedTransaction": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "raw"],
+      "properties": {"kind": {"const": "signed"}, "raw": {"$ref": "#/$defs/Bytes"}}
+    },
+    "DepositTransaction": {
+      "type": "object", "additionalProperties": false, "required": ["kind", "raw"],
+      "properties": {"kind": {"const": "deposit"}, "raw": {"$ref": "#/$defs/Bytes"}}
+    },
+    "SyntheticTransaction": {
+      "description": "A pre-recovered execution message. Never counts toward signature or envelope coverage.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "type", "chainId", "nonce", "sender", "to", "value", "data", "gasLimit", "gasPrice", "maxFeePerGas", "maxPriorityFeePerGas", "accessList", "authorizationList"],
+      "properties": {
+        "kind": {"const": "synthetic"},
+        "type": {"enum": ["0x0", "0x1", "0x2", "0x4"], "x-error": "invalid-value"},
+        "chainId": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U64"}]},
+        "nonce": {"$ref": "#/$defs/U64"},
+        "sender": {"$ref": "#/$defs/Address"},
+        "to": {"description": "null: a creation.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/Address"}]},
+        "value": {"$ref": "#/$defs/U256"},
+        "data": {"$ref": "#/$defs/Bytes"},
+        "gasLimit": {"$ref": "#/$defs/U64"},
+        "gasPrice": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U256"}]},
+        "maxFeePerGas": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U256"}]},
+        "maxPriorityFeePerGas": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U256"}]},
+        "accessList": {"type": "array", "items": {"$ref": "#/$defs/AccessListEntry"}},
+        "authorizationList": {"type": "array", "items": {"$ref": "#/$defs/SyntheticAuthorization"}}
+      }
+    },
+    "BlockEnv": {
+      "description": "Block context for engine isolation; depositOnly and activation are explicit inputs here.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["number", "timestamp", "coinbase", "gasLimit", "baseFee", "prevRandao", "parentHash", "parentTimestamp", "parentBeaconBlockRoot", "extraData", "slotNumber", "blobBaseFee", "depositOnly", "activation"],
+      "properties": {
+        "number": {"$ref": "#/$defs/U64"},
+        "timestamp": {"$ref": "#/$defs/U64"},
+        "coinbase": {"$ref": "#/$defs/Address"},
+        "gasLimit": {"$ref": "#/$defs/U64"},
+        "baseFee": {"$ref": "#/$defs/U256"},
+        "prevRandao": {"$ref": "#/$defs/B256"},
+        "parentHash": {"$ref": "#/$defs/B256"},
+        "parentTimestamp": {"$ref": "#/$defs/U64"},
+        "parentBeaconBlockRoot": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/B256"}]},
+        "extraData": {"$ref": "#/$defs/Bytes"},
+        "slotNumber": {"$ref": "#/$defs/U64"},
+        "blobBaseFee": {"$ref": "#/$defs/U256"},
+        "depositOnly": {"type": "boolean"},
+        "activation": {"type": "boolean"}
+      }
+    },
+    "Header": {
+      "description": "A block header in decoded form; the codec of the chain's spec descriptor encodes it.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["parentHash", "ommersHash", "beneficiary", "stateRoot", "transactionsRoot", "receiptsRoot", "logsBloom", "difficulty", "number", "gasLimit", "gasUsed", "timestamp", "extraData", "mixHash", "nonce", "baseFeePerGas", "withdrawalsRoot", "blobGasUsed", "excessBlobGas", "parentBeaconBlockRoot", "requestsHash"],
+      "properties": {
+        "parentHash": {"$ref": "#/$defs/B256"},
+        "ommersHash": {"$ref": "#/$defs/B256"},
+        "beneficiary": {"$ref": "#/$defs/Address"},
+        "stateRoot": {"$ref": "#/$defs/B256"},
+        "transactionsRoot": {"$ref": "#/$defs/B256"},
+        "receiptsRoot": {"$ref": "#/$defs/B256"},
+        "logsBloom": {"$ref": "#/$defs/Bloom"},
+        "difficulty": {"$ref": "#/$defs/U256"},
+        "number": {"$ref": "#/$defs/U64"},
+        "gasLimit": {"$ref": "#/$defs/U64"},
+        "gasUsed": {"$ref": "#/$defs/U64"},
+        "timestamp": {"$ref": "#/$defs/U64"},
+        "extraData": {"$ref": "#/$defs/Bytes"},
+        "mixHash": {"$ref": "#/$defs/B256"},
+        "nonce": {"$ref": "#/$defs/B8"},
+        "baseFeePerGas": {"$ref": "#/$defs/U256"},
+        "withdrawalsRoot": {"$ref": "#/$defs/B256"},
+        "blobGasUsed": {"$ref": "#/$defs/U64"},
+        "excessBlobGas": {"$ref": "#/$defs/U64"},
+        "parentBeaconBlockRoot": {"$ref": "#/$defs/B256"},
+        "requestsHash": {"$ref": "#/$defs/B256"}
+      }
+    },
+    "Log": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["address", "topics", "data"],
+      "properties": {
+        "address": {"$ref": "#/$defs/Address"},
+        "topics": {"type": "array", "maxItems": 4, "items": {"$ref": "#/$defs/B256"}},
+        "data": {"$ref": "#/$defs/Bytes"}
+      }
+    },
+    "RefusalReason": {
+      "enum": [
+        "malformed-envelope", "unsupported-type", "invalid-signature", "chain-id-mismatch",
+        "data-size-exceeded", "intrinsic-gas-too-low", "floor-exceeds-gas-limit", "not-system-shape",
+        "nonce-too-low", "nonce-too-high", "nonce-overflow", "insufficient-funds", "sender-has-code",
+        "fee-cap-below-base-fee", "priority-fee-above-fee-cap", "gas-limit-exceeds-block",
+        "block-gas-exhausted", "deposit-only-block", "initcode-too-large", "invalid-authorization-list"
+      ],
+      "x-error": "invalid-value"
+    },
+    "Refusal": {
+      "description": "A transaction refusal: the phase and the reasons any one of which the refusal may report (one when the specification names it).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "phase", "reasons"],
+      "properties": {
+        "status": {"const": "refused"},
+        "phase": {"enum": ["decode", "validation", "inclusion"]},
+        "reasons": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/RefusalReason"}}
+      }
+    },
+    "Admission": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {"status": {"enum": ["admitted", "failed-deposit", "refused"]}},
+      "allOf": [
+        {"if": {"properties": {"status": {"enum": ["admitted", "failed-deposit"]}}}, "then": {
+          "type": "object", "additionalProperties": false, "required": ["status"],
+          "properties": {"status": {"enum": ["admitted", "failed-deposit"]}}
+        }},
+        {"if": {"properties": {"status": {"const": "refused"}}}, "then": {"$ref": "#/$defs/Refusal"}}
+      ]
+    },
+    "Execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "output", "createdAddress"],
+      "properties": {
+        "status": {"enum": ["success", "revert", "halt"]},
+        "output": {"$ref": "#/$defs/Bytes"},
+        "createdAddress": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/Address"}]}
+      }
+    },
+    "Commit": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {"status": {"enum": ["committed", "not-committed", "fault"]}},
+      "allOf": [
+        {"if": {"properties": {"status": {"enum": ["committed", "not-committed"]}}}, "then": {
+          "type": "object", "additionalProperties": false, "required": ["status"],
+          "properties": {"status": {"enum": ["committed", "not-committed"]}}
+        }},
+        {"if": {"properties": {"status": {"const": "fault"}}}, "then": {"$ref": "#/$defs/Fault"}}
+      ]
+    },
+    "Fault": {
+      "description": "A provider read that failed: the transaction gets no outcome and is not settled.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "stage", "read", "report"],
+      "properties": {
+        "status": {"const": "fault"},
+        "stage": {"enum": ["validation", "pre-frame", "execution", "settlement", "block"]},
+        "read": {"$ref": "#/$defs/ProviderRead"},
+        "report": {"enum": ["internal-error", "invalid-block"]}
+      }
+    },
+    "Outcome": {
+      "description": "Admission, execution and commit outcomes, kept apart.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["admission", "execution", "commit"],
+      "properties": {
+        "admission": {"$ref": "#/$defs/Admission"},
+        "execution": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/Execution"}]},
+        "commit": {"$ref": "#/$defs/Commit"}
+      }
+    },
+    "PostAccount": {
+      "description": "An account after the change: its whole nonce, balance and code, and only the slots that changed (0x0: cleared).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nonce", "balance", "code", "storage"],
+      "properties": {
+        "nonce": {"$ref": "#/$defs/U64"},
+        "balance": {"$ref": "#/$defs/U256"},
+        "code": {"$ref": "#/$defs/Bytes"},
+        "storage": {"$ref": "#/$defs/Storage"}
+      }
+    },
+    "StateDiff": {
+      "description": "The complete semantic change set: every changed account, null for one absent after the change; an account not listed is unchanged.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accounts"],
+      "properties": {
+        "accounts": {
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/Address"},
+          "additionalProperties": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/PostAccount"}]}
+        }
+      }
+    },
+    "TxReceipt": {
+      "description": "Receipt facts of one transaction; RPC decorations are excluded.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "status", "gasUsed", "logs", "depositNonce", "depositReceiptVersion"],
+      "properties": {
+        "type": {"$ref": "#/$defs/U64"},
+        "status": {"enum": ["0x0", "0x1"], "x-error": "invalid-value"},
+        "gasUsed": {"$ref": "#/$defs/U64"},
+        "logs": {"type": "array", "items": {"$ref": "#/$defs/Log"}},
+        "depositNonce": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U64"}]},
+        "depositReceiptVersion": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U64"}]}
+      }
+    },
+    "BlockReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "status", "gasUsed", "cumulativeGasUsed", "logs", "logsBloom", "depositNonce", "depositReceiptVersion"],
+      "properties": {
+        "type": {"$ref": "#/$defs/U64"},
+        "status": {"enum": ["0x0", "0x1"], "x-error": "invalid-value"},
+        "gasUsed": {"$ref": "#/$defs/U64"},
+        "cumulativeGasUsed": {"$ref": "#/$defs/U64"},
+        "logs": {"type": "array", "items": {"$ref": "#/$defs/Log"}},
+        "logsBloom": {"$ref": "#/$defs/Bloom"},
+        "depositNonce": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U64"}]},
+        "depositReceiptVersion": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U64"}]}
+      }
+    },
+    "PoolBalance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["initial", "final"],
+      "properties": {"initial": {"$ref": "#/$defs/U64"}, "final": {"$ref": "#/$defs/U64"}}
+    },
+    "GasPools": {
+      "description": "Where gas was available and paid from: the two pools at the transaction's start and end, what regular gas paid of state and history charges, and what returned to the sender.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["regular", "reservoir", "spilled", "returned"],
+      "properties": {
+        "regular": {"$ref": "#/$defs/PoolBalance"},
+        "reservoir": {"$ref": "#/$defs/PoolBalance"},
+        "spilled": {"$ref": "#/$defs/U64"},
+        "returned": {"$ref": "#/$defs/U64"}
+      }
+    },
+    "GasLedgers": {
+      "description": "What the gas was spent on (SATIN-POOL-018 to SATIN-POOL-020): regular = total - state - history.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "regular", "state", "history", "historyBytes", "refund", "floor", "gasUsed", "blockGas"],
+      "properties": {
+        "total": {"$ref": "#/$defs/U64"},
+        "regular": {"$ref": "#/$defs/U64"},
+        "state": {"$ref": "#/$defs/U64"},
+        "history": {"$ref": "#/$defs/U64"},
+        "historyBytes": {"$ref": "#/$defs/U64"},
+        "refund": {"$ref": "#/$defs/U64"},
+        "floor": {"$ref": "#/$defs/U64"},
+        "gasUsed": {"$ref": "#/$defs/U64"},
+        "blockGas": {"$ref": "#/$defs/U64"}
+      }
+    },
+    "Dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["limit", "net", "reported"],
+      "properties": {
+        "limit": {"$ref": "#/$defs/U64"},
+        "net": {"$ref": "#/$defs/SignedInt"},
+        "reported": {"$ref": "#/$defs/U64"}
+      }
+    },
+    "Resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dataSize", "kvUpdates", "stateGrowth"],
+      "properties": {
+        "dataSize": {"$ref": "#/$defs/Dimension"},
+        "kvUpdates": {"$ref": "#/$defs/Dimension"},
+        "stateGrowth": {"$ref": "#/$defs/Dimension"}
+      }
+    },
+    "CallPath": {
+      "description": "Child ordinal under each parent, from the transaction's own frame; [] is the transaction's own frame.",
+      "type": "array",
+      "items": {"$ref": "#/$defs/U64"}
+    },
+    "LimitStop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "scope", "limit", "callPath", "operation", "phase", "returnData", "operationCommitted", "enclosingCommitted"],
+      "properties": {
+        "dimension": {"enum": ["data-size", "kv-updates", "state-growth", "compute"]},
+        "scope": {"enum": ["transaction", "frame"]},
+        "limit": {"$ref": "#/$defs/U64"},
+        "callPath": {"$ref": "#/$defs/CallPath"},
+        "operation": {"$ref": "#/$defs/Operation"},
+        "phase": {"enum": ["pre-frame", "frame-start", "execution", "frame-return"]},
+        "returnData": {"$ref": "#/$defs/Bytes"},
+        "operationCommitted": {"type": "boolean"},
+        "enclosingCommitted": {"type": "boolean"}
+      }
+    },
+    "VolatileRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["category", "status", "callPath", "computeAtRead", "cap"],
+      "properties": {
+        "category": {"enum": ["block-env", "beneficiary", "oracle"]},
+        "status": {"enum": ["admitted", "failed"]},
+        "callPath": {"$ref": "#/$defs/CallPath"},
+        "computeAtRead": {"$ref": "#/$defs/U64"},
+        "cap": {"$ref": "#/$defs/U64"}
+      }
+    },
+    "Detention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reads", "limit", "withheld", "released", "burned"],
+      "properties": {
+        "reads": {"type": "array", "items": {"$ref": "#/$defs/VolatileRead"}},
+        "limit": {"description": "The final compute limit; null: no volatile read lowered it.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/U64"}]},
+        "withheld": {"$ref": "#/$defs/U64"},
+        "released": {"$ref": "#/$defs/U64"},
+        "burned": {"$ref": "#/$defs/U64"}
+      }
+    },
+    "AccountRead": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nonce", "balance", "codeHash"],
+      "properties": {
+        "nonce": {"$ref": "#/$defs/U64"},
+        "balance": {"$ref": "#/$defs/U256"},
+        "codeHash": {"$ref": "#/$defs/B256"}
+      }
+    },
+    "Reads": {
+      "description": "Logical reads the specification requires a node to load and export; not physical database calls.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accounts", "storage", "codes", "blockHashes", "buckets", "oracle", "hints"],
+      "properties": {
+        "accounts": {
+          "description": "null: the account was read and is absent.",
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/Address"},
+          "additionalProperties": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/AccountRead"}]}
+        },
+        "storage": {
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/Address"},
+          "additionalProperties": {"$ref": "#/$defs/Storage"}
+        },
+        "codes": {"description": "Code hashes loaded; strictly ascending.", "type": "array", "items": {"$ref": "#/$defs/B256"}},
+        "blockHashes": {"$ref": "#/$defs/BlockHashes"},
+        "buckets": {
+          "description": "SALT capacities served, by bucket id.",
+          "type": "object",
+          "propertyNames": {"$ref": "#/$defs/U64"},
+          "additionalProperties": {"$ref": "#/$defs/U64"}
+        },
+        "oracle": {
+          "description": "Oracle reads in the order made, with the value each pushed.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["slot", "value"],
+            "properties": {"slot": {"$ref": "#/$defs/B256"}, "value": {"$ref": "#/$defs/U256"}}
+          }
+        },
+        "hints": {
+          "description": "Admitted oracle hints in order.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "topic", "data"],
+            "properties": {"from": {"$ref": "#/$defs/Address"}, "topic": {"$ref": "#/$defs/B256"}, "data": {"$ref": "#/$defs/Bytes"}}
+          }
+        }
+      }
+    },
+    "Checkpoint": {
+      "description": "A semantic ledger checkpoint at a boundary a cited rule defines.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["callPath", "phase", "ordinal", "regular", "reservoir", "state", "history"],
+      "properties": {
+        "callPath": {"$ref": "#/$defs/CallPath"},
+        "phase": {"enum": ["pre-frame", "start-charge", "child-merge", "detention-update", "rollback", "settlement"]},
+        "ordinal": {"$ref": "#/$defs/U64"},
+        "regular": {"$ref": "#/$defs/U64"},
+        "reservoir": {"$ref": "#/$defs/U64"},
+        "state": {"$ref": "#/$defs/SignedInt"},
+        "history": {"$ref": "#/$defs/SignedInt"}
+      }
+    },
+    "Commitments": {
+      "description": "Typed commitments: an MPT state root, a SALT state root and a bundle digest are different values.",
+      "type": "object",
+      "propertyNames": {"enum": ["mpt-state-root", "salt-state-root", "mpt-receipts-root", "mpt-transactions-root", "mpt-withdrawals-storage-root", "block-hash"], "x-error": "unknown-commitment"},
+      "additionalProperties": {"$ref": "#/$defs/B256"}
+    },
+    "ChainInput": {
+      "description": "The chain descriptor of a block profile: chain id and the spec schedule the node derives each block's spec from.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chainId", "schedule", "rawConfig"],
+      "properties": {
+        "chainId": {"$ref": "#/$defs/U64"},
+        "schedule": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["spec", "timestamp"],
+            "properties": {"spec": {"$ref": "#/$defs/SpecRef"}, "timestamp": {"$ref": "#/$defs/U64"}}
+          }
+        },
+        "rawConfig": {"description": "The chain configuration's original bytes, for configuration-stage cases; null otherwise.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/Bytes"}]}
+      }
+    },
+    "BlockInput": {
+      "type": "object",
+      "required": ["encoding"],
+      "properties": {"encoding": {"enum": ["fields", "rlp"]}},
+      "allOf": [
+        {"if": {"properties": {"encoding": {"const": "fields"}}}, "then": {
+          "type": "object", "additionalProperties": false, "required": ["encoding", "header", "transactions"],
+          "properties": {
+            "encoding": {"const": "fields"},
+            "header": {"$ref": "#/$defs/Header"},
+            "transactions": {"description": "EIP-2718 bytes of each transaction, in block order.", "type": "array", "items": {"$ref": "#/$defs/Bytes"}}
+          }
+        }},
+        {"if": {"properties": {"encoding": {"const": "rlp"}}}, "then": {
+          "type": "object", "additionalProperties": false, "required": ["encoding", "raw"],
+          "properties": {"encoding": {"const": "rlp"}, "raw": {"$ref": "#/$defs/Bytes"}}
+        }}
+      ]
+    },
+    "PreBlockStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["step", "state"],
+      "properties": {
+        "step": {"enum": ["beacon-root", "history-storage", "system-contracts", "sequencer-registry"]},
+        "state": {"$ref": "#/$defs/StateDiff"}
+      }
+    },
+    "Counters": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gasUsed", "dataSize", "kvUpdates", "stateGrowth"],
+      "properties": {
+        "gasUsed": {"$ref": "#/$defs/U64"},
+        "dataSize": {"$ref": "#/$defs/U64"},
+        "kvUpdates": {"$ref": "#/$defs/U64"},
+        "stateGrowth": {"$ref": "#/$defs/U64"}
+      }
+    },
+    "BlockTransaction": {
+      "description": "Observations of one included transaction. Optional groups appear exactly when the case requires them.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "receipt"],
+      "properties": {
+        "outcome": {"$ref": "#/$defs/Outcome"},
+        "receipt": {"$ref": "#/$defs/BlockReceipt"},
+        "gasPools": {"$ref": "#/$defs/GasPools"},
+        "gasLedgers": {"$ref": "#/$defs/GasLedgers"},
+        "resources": {"$ref": "#/$defs/Resources"},
+        "limit": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/LimitStop"}]},
+        "detention": {"$ref": "#/$defs/Detention"},
+        "reads": {"$ref": "#/$defs/Reads"}
+      }
+    },
+    "BlockFailureReason": {
+      "enum": [
+        "malformed-block", "invalid-header", "invalid-transaction", "deposit-only-block",
+        "block-gas-limit", "block-data-size", "block-kv-updates", "block-state-growth",
+        "missing-factory", "invalid-registry", "state-root-mismatch", "receipts-root-mismatch",
+        "gas-used-mismatch", "logs-bloom-mismatch", "invalid-configuration"
+      ],
+      "x-error": "invalid-value"
+    },
+    "BlockResult": {
+      "description": "One block of a block-import or stateless-block case.",
+      "type": "object",
+      "required": ["status"],
+      "properties": {"status": {"enum": ["valid", "invalid"]}},
+      "allOf": [
+        {"if": {"properties": {"status": {"const": "valid"}}}, "then": {"$ref": "#/$defs/ValidBlock"}},
+        {"if": {"properties": {"status": {"const": "invalid"}}}, "then": {"$ref": "#/$defs/InvalidBlock"}}
+      ]
+    },
+    "ValidBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "activeSpec", "depositOnly", "activation", "preBlock", "transactions", "counters", "commitments", "state"],
+      "properties": {
+        "status": {"const": "valid"},
+        "activeSpec": {"$ref": "#/$defs/SpecName"},
+        "depositOnly": {"type": "boolean"},
+        "activation": {"type": "boolean"},
+        "preBlock": {"type": "array", "items": {"$ref": "#/$defs/PreBlockStep"}},
+        "transactions": {"type": "array", "items": {"$ref": "#/$defs/BlockTransaction"}},
+        "counters": {"$ref": "#/$defs/Counters"},
+        "commitments": {"$ref": "#/$defs/Commitments"},
+        "state": {"$ref": "#/$defs/StateDiff"}
+      }
+    },
+    "InvalidBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "activeSpec", "depositOnly", "activation", "failure"],
+      "properties": {
+        "status": {"const": "invalid"},
+        "activeSpec": {"description": "null only when the block failed to decode, so its spec and flags cannot be derived.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/SpecName"}]},
+        "depositOnly": {"oneOf": [{"type": "null"}, {"type": "boolean"}]},
+        "activation": {"oneOf": [{"type": "null"}, {"type": "boolean"}]},
+        "failure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["phase", "reason", "transactionIndex"],
+          "properties": {
+            "phase": {"enum": ["decode", "header", "pre-block", "transaction", "post-block", "commitment"]},
+            "reason": {"$ref": "#/$defs/BlockFailureReason"},
+            "transactionIndex": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U64"}]}
+          }
+        }
+      }
+    },
+    "Head": {
+      "description": "The last accepted block: a failed import leaves the previous head.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["number", "hash"],
+      "properties": {"number": {"$ref": "#/$defs/U64"}, "hash": {"$ref": "#/$defs/B256"}}
+    }
+  }
+}

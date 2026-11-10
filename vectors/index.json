@@ -1,0 +1,574 @@
+{
+  "format": "mega-fixture-vectors",
+  "schemaVersion": "1.0",
+  "specs": "specs",
+  "vectors": [
+    {
+      "id": "json-key-order-and-whitespace",
+      "kind": "json",
+      "input": "accept/json-key-order-and-whitespace.in.json",
+      "canonical": "accept/json-key-order-and-whitespace.canonical.json",
+      "digest": "sha256:84ae81e230d730d16b28ac7640c3467eab46697a6d6d477f00b25ba49bac9b38"
+    },
+    {
+      "id": "json-code-point-key-order",
+      "kind": "json",
+      "input": "accept/json-code-point-key-order.in.json",
+      "canonical": "accept/json-code-point-key-order.canonical.json",
+      "digest": "sha256:5cf4f0a2b705364106c2d12e0816f747ace2ebff971d012e63ca937e3b884372"
+    },
+    {
+      "id": "json-string-escapes",
+      "kind": "json",
+      "input": "accept/json-string-escapes.in.json",
+      "canonical": "accept/json-string-escapes.canonical.json",
+      "digest": "sha256:e1b2db2bfd349e0c74073e396743dde1c9b20510aca64d94b39bbedb30e9a791"
+    },
+    {
+      "id": "json-raw-non-ascii-kept",
+      "kind": "json",
+      "input": "accept/json-raw-non-ascii-kept.in.json",
+      "canonical": "accept/json-raw-non-ascii-kept.canonical.json",
+      "digest": "sha256:0dc9dfcbe865d337a721022ae26df9bf60f541794f5c5227930b0ace4fa8d1eb"
+    },
+    {
+      "id": "json-array-order-kept",
+      "kind": "json",
+      "input": "accept/json-array-order-kept.in.json",
+      "canonical": "accept/json-array-order-kept.canonical.json",
+      "digest": "sha256:28ccf187adb772d988bac75adf3999c16da68cfd1adadcec15d06c0946aff92b"
+    },
+    {
+      "id": "json-empty-object",
+      "kind": "json",
+      "input": "accept/json-empty-object.in.json",
+      "canonical": "accept/json-empty-object.canonical.json",
+      "digest": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    {
+      "id": "json-top-level-string",
+      "kind": "json",
+      "input": "accept/json-top-level-string.in.json",
+      "canonical": "accept/json-top-level-string.canonical.json",
+      "digest": "sha256:900238c4b70206173dcafad0d497ed0bebd778006f3b81be8c97a5f117295fb3"
+    },
+    {
+      "id": "json-nested-objects-sorted",
+      "kind": "json",
+      "input": "accept/json-nested-objects-sorted.in.json",
+      "canonical": "accept/json-nested-objects-sorted.canonical.json",
+      "digest": "sha256:63d9cdae5e056fe7d8f2f1371f25f530f77cdcf38736bbf6bf7bb670f26dc27f"
+    },
+    {
+      "id": "json-nesting-256-levels",
+      "kind": "json",
+      "input": "accept/json-nesting-256-levels.in.json",
+      "canonical": "accept/json-nesting-256-levels.canonical.json",
+      "digest": "sha256:16e1f09fe39ef84af9b0c86c8349f04985cc71662bc582477ec7c7b458d1a58f"
+    },
+    {
+      "id": "case-block-build-policy-skip",
+      "kind": "case",
+      "input": "accept/case-block-build-policy-skip.in.json",
+      "canonical": "accept/case-block-build-policy-skip.canonical.json",
+      "fileDigest": "sha256:02a7d9afd6283e6eef5e3f69872bfcddd7e855c450d7158101c90e4366f72a34",
+      "semanticDigest": "sha256:398fe585dba4a26ee074b52e35f705d1c50c3c562f6623e2864f7f5aa7d1b536"
+    },
+    {
+      "id": "case-deposit-state-transition-new-caller",
+      "kind": "case",
+      "input": "accept/case-deposit-state-transition-new-caller.in.json",
+      "canonical": "accept/case-deposit-state-transition-new-caller.canonical.json",
+      "fileDigest": "sha256:18515110006378ba00749db56f7e14b25878ebcadce0daab11ed9cfa75f9151b",
+      "semanticDigest": "sha256:cddbf199a7d82c84e62469455a3fd9d68617bb626f38dfdc86270a5e62a803af"
+    },
+    {
+      "id": "case-invalid-block-foreign-registry-code",
+      "kind": "case",
+      "input": "accept/case-invalid-block-foreign-registry-code.in.json",
+      "canonical": "accept/case-invalid-block-foreign-registry-code.canonical.json",
+      "fileDigest": "sha256:37632f157e24ab59da6fc39426c55fabc3c84d9546e816a8a96796affe0a783e",
+      "semanticDigest": "sha256:0cf46ff52699a74f82b1f88652206f61abea5e504a51c722ea1b506abffcdead"
+    },
+    {
+      "id": "case-state-transition-sstore-fresh-slot",
+      "kind": "case",
+      "input": "accept/case-state-transition-sstore-fresh-slot.in.json",
+      "canonical": "accept/case-state-transition-sstore-fresh-slot.canonical.json",
+      "fileDigest": "sha256:1b713166e76badac97bb0cc621712e7bc09162d96acec2087b78e261bf4b0f32",
+      "semanticDigest": "sha256:4d7f85917e327fb10521d5b52ac2c5551d194b8d8fc4719d8bfae820825c8c6e"
+    },
+    {
+      "id": "case-stateless-block-witness-wrong-parent-anchor",
+      "kind": "case",
+      "input": "accept/case-stateless-block-witness-wrong-parent-anchor.in.json",
+      "canonical": "accept/case-stateless-block-witness-wrong-parent-anchor.canonical.json",
+      "fileDigest": "sha256:d153b905993d404ffe321eaeb37fbf44f8cb2163e78f797af750943f2d4bcbd8",
+      "semanticDigest": "sha256:1f1843009001c8b76ad1fbd712d02ea51c5ea955590ee8005f08467c50599739"
+    },
+    {
+      "id": "case-transaction-validation-gas-below-intrinsic",
+      "kind": "case",
+      "input": "accept/case-transaction-validation-gas-below-intrinsic.in.json",
+      "canonical": "accept/case-transaction-validation-gas-below-intrinsic.canonical.json",
+      "fileDigest": "sha256:f570a28ed741cac3040b0e78de1e9289309fd4b0f8048b33d0c0125339306e0c",
+      "semanticDigest": "sha256:003f30a40fdd4f863ac2a37055ef4a1f16c5568faadebc5d7282aa6f7f4b78c7"
+    },
+    {
+      "id": "case-same-semantics-other-name",
+      "kind": "case",
+      "input": "accept/case-same-semantics-other-name.in.json",
+      "canonical": "accept/case-same-semantics-other-name.canonical.json",
+      "fileDigest": "sha256:04b68e51e3845cd8217a165395dfb3c426486cbda65ec34668349d83cc313298",
+      "semanticDigest": "sha256:4d7f85917e327fb10521d5b52ac2c5551d194b8d8fc4719d8bfae820825c8c6e"
+    },
+    {
+      "id": "json-duplicate-key",
+      "kind": "json",
+      "input": "reject/json-duplicate-key.json",
+      "error": {
+        "code": "duplicate-key",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-duplicate-key-after-unescaping",
+      "kind": "json",
+      "input": "reject/json-duplicate-key-after-unescaping.json",
+      "error": {
+        "code": "duplicate-key",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-integer",
+      "kind": "json",
+      "input": "reject/json-integer.json",
+      "error": {
+        "code": "number-not-allowed",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-float",
+      "kind": "json",
+      "input": "reject/json-float.json",
+      "error": {
+        "code": "number-not-allowed",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-negative-number",
+      "kind": "json",
+      "input": "reject/json-negative-number.json",
+      "error": {
+        "code": "number-not-allowed",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-exponent",
+      "kind": "json",
+      "input": "reject/json-exponent.json",
+      "error": {
+        "code": "number-not-allowed",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-nan",
+      "kind": "json",
+      "input": "reject/json-nan.json",
+      "error": {
+        "code": "invalid-json",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-byte-order-mark",
+      "kind": "json",
+      "input": "reject/json-byte-order-mark.json",
+      "error": {
+        "code": "byte-order-mark",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-invalid-utf8",
+      "kind": "json",
+      "input": "reject/json-invalid-utf8.json",
+      "error": {
+        "code": "invalid-utf8",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-lone-high-surrogate",
+      "kind": "json",
+      "input": "reject/json-lone-high-surrogate.json",
+      "error": {
+        "code": "invalid-unicode-escape",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-lone-low-surrogate",
+      "kind": "json",
+      "input": "reject/json-lone-low-surrogate.json",
+      "error": {
+        "code": "invalid-unicode-escape",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-trailing-comma",
+      "kind": "json",
+      "input": "reject/json-trailing-comma.json",
+      "error": {
+        "code": "invalid-json",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-raw-control-character",
+      "kind": "json",
+      "input": "reject/json-raw-control-character.json",
+      "error": {
+        "code": "invalid-json",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-trailing-content",
+      "kind": "json",
+      "input": "reject/json-trailing-content.json",
+      "error": {
+        "code": "invalid-json",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-empty-input",
+      "kind": "json",
+      "input": "reject/json-empty-input.json",
+      "error": {
+        "code": "invalid-json",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-single-quotes",
+      "kind": "json",
+      "input": "reject/json-single-quotes.json",
+      "error": {
+        "code": "invalid-json",
+        "path": ""
+      }
+    },
+    {
+      "id": "json-nesting-257-levels",
+      "kind": "json",
+      "input": "reject/json-nesting-257-levels.json",
+      "error": {
+        "code": "invalid-json",
+        "path": ""
+      }
+    },
+    {
+      "id": "case-duplicate-key",
+      "kind": "case",
+      "input": "reject/case-duplicate-key.json",
+      "error": {
+        "code": "duplicate-key",
+        "path": ""
+      }
+    },
+    {
+      "id": "case-float",
+      "kind": "case",
+      "input": "reject/case-float.json",
+      "error": {
+        "code": "number-not-allowed",
+        "path": ""
+      }
+    },
+    {
+      "id": "case-non-minimal-quantity",
+      "kind": "case",
+      "input": "reject/case-non-minimal-quantity.json",
+      "error": {
+        "code": "non-minimal-quantity",
+        "path": "/input/pre/accounts/0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b/balance"
+      }
+    },
+    {
+      "id": "case-zero-as-empty-quantity",
+      "kind": "case",
+      "input": "reject/case-zero-as-empty-quantity.json",
+      "error": {
+        "code": "non-minimal-quantity",
+        "path": "/expected/gasLedgers/refund"
+      }
+    },
+    {
+      "id": "case-uppercase-hex-hash",
+      "kind": "case",
+      "input": "reject/case-uppercase-hex-hash.json",
+      "error": {
+        "code": "uppercase-hex",
+        "path": "/expected/reads/codes/0"
+      }
+    },
+    {
+      "id": "case-uppercase-hex-quantity",
+      "kind": "case",
+      "input": "reject/case-uppercase-hex-quantity.json",
+      "error": {
+        "code": "uppercase-hex",
+        "path": "/expected/receipt/gasUsed"
+      }
+    },
+    {
+      "id": "case-unknown-required-feature",
+      "kind": "case",
+      "input": "reject/case-unknown-required-feature.json",
+      "error": {
+        "code": "unknown-requirement",
+        "path": "/requires/0"
+      }
+    },
+    {
+      "id": "case-unknown-group",
+      "kind": "case",
+      "input": "reject/case-unknown-group.json",
+      "error": {
+        "code": "unknown-requirement",
+        "path": "/requires/2"
+      }
+    },
+    {
+      "id": "case-schema-major-2",
+      "kind": "case",
+      "input": "reject/case-schema-major-2.json",
+      "error": {
+        "code": "unsupported-schema-version",
+        "path": "/schemaVersion"
+      }
+    },
+    {
+      "id": "case-unknown-format",
+      "kind": "case",
+      "input": "reject/case-unknown-format.json",
+      "error": {
+        "code": "unsupported-format",
+        "path": "/format"
+      }
+    },
+    {
+      "id": "case-unknown-field",
+      "kind": "case",
+      "input": "reject/case-unknown-field.json",
+      "error": {
+        "code": "unknown-field",
+        "path": "/expected/inspected"
+      }
+    },
+    {
+      "id": "case-unknown-profile",
+      "kind": "case",
+      "input": "reject/case-unknown-profile.json",
+      "error": {
+        "code": "unknown-profile",
+        "path": "/profile"
+      }
+    },
+    {
+      "id": "case-odd-length-bytes",
+      "kind": "case",
+      "input": "reject/case-odd-length-bytes.json",
+      "error": {
+        "code": "odd-length-bytes",
+        "path": "/input/pre/accounts/0x00000000000000000000000000000000000c0de0/code"
+      }
+    },
+    {
+      "id": "case-short-address",
+      "kind": "case",
+      "input": "reject/case-short-address.json",
+      "error": {
+        "code": "wrong-width",
+        "path": "/input/block/coinbase"
+      }
+    },
+    {
+      "id": "case-quantity-overflow",
+      "kind": "case",
+      "input": "reject/case-quantity-overflow.json",
+      "error": {
+        "code": "quantity-overflow",
+        "path": "/input/block/gasLimit"
+      }
+    },
+    {
+      "id": "case-missing-hex-prefix",
+      "kind": "case",
+      "input": "reject/case-missing-hex-prefix.json",
+      "error": {
+        "code": "missing-hex-prefix",
+        "path": "/input/block/number"
+      }
+    },
+    {
+      "id": "case-invalid-digest",
+      "kind": "case",
+      "input": "reject/case-invalid-digest.json",
+      "error": {
+        "code": "invalid-digest",
+        "path": "/specRef/descriptor"
+      }
+    },
+    {
+      "id": "case-negative-zero",
+      "kind": "case",
+      "input": "reject/case-negative-zero.json",
+      "error": {
+        "code": "invalid-signed-integer",
+        "path": "/expected/resources/kvUpdates/net"
+      }
+    },
+    {
+      "id": "case-null-for-required-object",
+      "kind": "case",
+      "input": "reject/case-null-for-required-object.json",
+      "error": {
+        "code": "wrong-type",
+        "path": "/expected/state"
+      }
+    },
+    {
+      "id": "case-unknown-spec",
+      "kind": "case",
+      "input": "reject/case-unknown-spec.json",
+      "error": {
+        "code": "unknown-spec",
+        "path": "/specRef/descriptor"
+      }
+    },
+    {
+      "id": "case-unsorted-rules",
+      "kind": "case",
+      "input": "reject/case-unsorted-rules.json",
+      "error": {
+        "code": "unsorted-set",
+        "path": "/rules"
+      }
+    },
+    {
+      "id": "case-unsorted-requires",
+      "kind": "case",
+      "input": "reject/case-unsorted-requires.json",
+      "error": {
+        "code": "unsorted-set",
+        "path": "/requires"
+      }
+    },
+    {
+      "id": "case-synthetic-fee-fields-of-another-type",
+      "kind": "case",
+      "input": "reject/case-synthetic-fee-fields-of-another-type.json",
+      "error": {
+        "code": "inconsistent-transaction",
+        "path": "/input/transaction/gasPrice"
+      }
+    },
+    {
+      "id": "case-deposit-kind-with-signed-bytes",
+      "kind": "case",
+      "input": "reject/case-deposit-kind-with-signed-bytes.json",
+      "error": {
+        "code": "inconsistent-transaction",
+        "path": "/input/transaction/raw"
+      }
+    },
+    {
+      "id": "case-assertions-duplicate-path",
+      "kind": "case",
+      "input": "reject/case-assertions-duplicate-path.json",
+      "error": {
+        "code": "unsorted-set",
+        "path": "/assertions"
+      }
+    },
+    {
+      "id": "case-build-commit-twice",
+      "kind": "case",
+      "input": "reject/case-build-commit-twice.json",
+      "error": {
+        "code": "invalid-reference",
+        "path": "/input/actions/2"
+      }
+    },
+    {
+      "id": "case-build-abandon-before-execute",
+      "kind": "case",
+      "input": "reject/case-build-abandon-before-execute.json",
+      "error": {
+        "code": "invalid-reference",
+        "path": "/input/actions/0"
+      }
+    },
+    {
+      "id": "case-witness-state-in-state-transition",
+      "kind": "case",
+      "input": "reject/case-witness-state-in-state-transition.json",
+      "error": {
+        "code": "invalid-value",
+        "path": "/input/pre/completeness"
+      }
+    },
+    {
+      "id": "manifest-examples",
+      "kind": "manifest",
+      "input": "accept/manifest-examples.in.json",
+      "canonical": "accept/manifest-examples.canonical.json",
+      "digest": "sha256:f427a3e359fb64a2ee96393d4ab3c3b9c2ac9a08e70957ac431e710ac8b0acf9"
+    },
+    {
+      "id": "manifest-unsorted-cases",
+      "kind": "manifest",
+      "input": "reject/manifest-unsorted-cases.json",
+      "error": {
+        "code": "unsorted-set",
+        "path": "/cases"
+      }
+    },
+    {
+      "id": "manifest-count-mismatch",
+      "kind": "manifest",
+      "input": "reject/manifest-count-mismatch.json",
+      "error": {
+        "code": "invalid-reference",
+        "path": "/counts/cases"
+      }
+    },
+    {
+      "id": "manifest-shard-member-missing",
+      "kind": "manifest",
+      "input": "reject/manifest-shard-member-missing.json",
+      "error": {
+        "code": "invalid-reference",
+        "path": "/shards/required/2"
+      }
+    },
+    {
+      "id": "manifest-unsafe-path",
+      "kind": "manifest",
+      "input": "reject/manifest-unsafe-path.json",
+      "error": {
+        "code": "invalid-value",
+        "path": "/cases/0/path"
+      }
+    }
+  ]
+}

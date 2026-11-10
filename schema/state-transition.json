@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Profile state-transition",
+  "description": "One concrete transaction against the state immediately before it (after any earlier transactions and pre-block steps of its block), executed in engine isolation.",
+  "$defs": {
+    "Input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chain", "block", "blockHashes", "pre", "transaction"],
+      "properties": {
+        "chain": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["chainId"],
+          "properties": {"chainId": {"$ref": "common.json#/$defs/U64"}}
+        },
+        "block": {"$ref": "common.json#/$defs/BlockEnv"},
+        "blockHashes": {"$ref": "common.json#/$defs/BlockHashes"},
+        "pre": {
+          "allOf": [
+            {"$ref": "common.json#/$defs/State"},
+            {"properties": {"completeness": {"enum": ["complete", "sparse"]}}}
+          ]
+        },
+        "transaction": {"$ref": "common.json#/$defs/Transaction"},
+        "salt": {"$ref": "common.json#/$defs/Salt"},
+        "oracle": {"$ref": "common.json#/$defs/OracleTranscript"},
+        "faults": {"$ref": "common.json#/$defs/Faults"}
+      }
+    },
+    "Expected": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["outcome", "state", "receipt", "gasLedgers", "resources", "limit"],
+      "properties": {
+        "outcome": {"$ref": "common.json#/$defs/Outcome"},
+        "state": {"$ref": "common.json#/$defs/StateDiff"},
+        "receipt": {"description": "null: no receipt (refused or faulted).", "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/TxReceipt"}]},
+        "gasLedgers": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/GasLedgers"}]},
+        "resources": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/Resources"}]},
+        "limit": {"description": "null: no limit stopped the transaction.", "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/LimitStop"}]},
+        "gasPools": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/GasPools"}]},
+        "detention": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/Detention"}]},
+        "reads": {"$ref": "common.json#/$defs/Reads"},
+        "checkpoints": {"type": "array", "items": {"$ref": "common.json#/$defs/Checkpoint"}}
+      }
+    }
+  }
+}
