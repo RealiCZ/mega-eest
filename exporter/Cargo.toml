@@ -1,0 +1,22 @@
+# Dumps the engine-neutral scenarios of the evm2-based implementation's differential gates
+# (mega-evm next/diff/shared, the crate mega-evm2-scenarios) as JSON lines, one scenario per line,
+# for tools/export_scenarios.py to convert into candidate fixtures. Its own workspace: the scenario
+# crate is read from vendor/ (tools/fetch-implementations.sh), at the implementation's pin.
+[workspace]
+
+[package]
+name = "mega-eest-scenario-dump"
+description = "Dumps mega-evm2-scenarios as JSON lines for the candidate exporter."
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[[bin]]
+name = "scenario-dump"
+path = "src/main.rs"
+
+[dependencies]
+mega-evm2-scenarios = { path = "../vendor/mega-evm/next/diff/shared" }
+alloy-primitives = { version = "1.6", default-features = false, features = ["std"] }

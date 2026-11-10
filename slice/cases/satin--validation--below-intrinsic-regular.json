@@ -1,0 +1,151 @@
+{
+  "assertions": [
+    {
+      "path": "/expected/outcome",
+      "rules": [
+        "SATIN-VAL-002"
+      ]
+    }
+  ],
+  "caseId": "satin/validation/below-intrinsic-regular",
+  "expected": {
+    "gasLedgers": null,
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "phase": "validation",
+        "reasons": [
+          "intrinsic-gas-too-low"
+        ],
+        "status": "refused"
+      },
+      "commit": {
+        "status": "not-committed"
+      },
+      "execution": null
+    },
+    "receipt": null,
+    "resources": null,
+    "state": {
+      "accounts": {}
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x00",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf85f8080823a979400000000000000000000000000000000000c0de1808025a0d339ca537bdd8964890f17603187e5a5ee617bbb54289e3c54bb70c316736a20a051f81a2f9a70788fd25616d2f3cf4d1f3571f036c7cf5589c10f56b58d04d942"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "one below the intrinsic regular gas",
+      "intent": "a gas limit below the intrinsic regular gas"
+    },
+    "derivation": [
+      {
+        "path": "/expected/outcome",
+        "rules": [
+          "SATIN-VAL-002"
+        ],
+        "steps": [
+          "refused at validation: gas limit 14,999 < intrinsic regular gas 15,000 (SATIN-VAL-003 step 2)"
+        ]
+      }
+    ],
+    "evidence": "derived from the specification by tools/satin_model.py, an executable restatement of the cited rules that shares no code with either implementation; implementation runs are cross-checks only",
+    "generator": "tools/make_slice.py",
+    "review": {
+      "decision": "pending: approval is the owner's",
+      "ruleTexts": {
+        "SATIN-VAL-002": "sha256:87f9c4347ef064d5689b807ca858f0d75ab0a362e1d93cb147563ad4bc88ea9d"
+      },
+      "spec": {
+        "commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd",
+        "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05"
+      }
+    },
+    "status": "candidate",
+    "transaction": {
+      "data": "0x",
+      "gasLimit": "0x3a97",
+      "nonce": "0x0",
+      "sender": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+      "to": "0x00000000000000000000000000000000000c0de1",
+      "type": "0x0",
+      "value": "0x0"
+    }
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-VAL-002"
+  ],
+  "schemaVersion": "1.0",
+  "specRef": {
+    "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05",
+    "name": "megaeth/Satin"
+  }
+}

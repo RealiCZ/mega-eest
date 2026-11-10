@@ -1,0 +1,346 @@
+{
+  "assertions": [
+    {
+      "path": "/expected/gasLedgers",
+      "rules": [
+        "SATIN-HIST-002",
+        "SATIN-HIST-003",
+        "SATIN-HIST-004",
+        "SATIN-HIST-005",
+        "SATIN-HIST-022",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-POOL-024",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-SCHED-008",
+        "SATIN-SCHED-011",
+        "SATIN-STATE-001",
+        "SATIN-STATE-003"
+      ]
+    },
+    {
+      "path": "/expected/outcome",
+      "rules": [
+        "SATIN-SCHED-011"
+      ]
+    },
+    {
+      "path": "/expected/receipt",
+      "rules": [
+        "SATIN-POOL-018"
+      ]
+    },
+    {
+      "path": "/expected/resources",
+      "rules": [
+        "SATIN-ACCT-002",
+        "SATIN-ACCT-005",
+        "SATIN-ACCT-012",
+        "SATIN-ACCT-013",
+        "SATIN-ACCT-014",
+        "SATIN-HIST-003",
+        "SATIN-LIM-001",
+        "SATIN-LIM-007"
+      ]
+    }
+  ],
+  "caseId": "satin/creation/code-bucket-x2",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x6780",
+      "floor": "0x6780",
+      "gasUsed": "0x69786",
+      "history": "0x8668",
+      "historyBytes": "0x187",
+      "refund": "0x0",
+      "regular": "0x5ed6",
+      "state": "0x5b248",
+      "total": "0x69786"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": "0x6295ee1b4f6dd65047762f924ecd367c17eabf8f",
+        "output": "0x6000",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x69786",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "391",
+        "reported": "0x187"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "1",
+        "reported": "0x1"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x6295ee1b4f6dd65047762f924ecd367c17eabf8f": {
+          "balance": "0x0",
+          "code": "0x6000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {
+        "0xb11473": "0x200"
+      },
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8738080830f42408080a77f60000000000000000000000000000000000000000000000000000000000000005f5260025ff326a02883d3126c535fc0227706c9dc665e2d5bf2771d748ea0e3a2e610773e2a2e68a04514f260c35479d02bda61c21691dc777061be610db59787907a2a4c75402d8c"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a creation whose account bucket has twice the minimum capacity"
+    },
+    "derivation": [
+      {
+        "path": "/expected/gasLedgers",
+        "rules": [
+          "SATIN-HIST-002",
+          "SATIN-HIST-003",
+          "SATIN-HIST-004",
+          "SATIN-HIST-005",
+          "SATIN-HIST-022",
+          "SATIN-POOL-005",
+          "SATIN-POOL-006",
+          "SATIN-POOL-007",
+          "SATIN-POOL-018",
+          "SATIN-POOL-019",
+          "SATIN-POOL-020",
+          "SATIN-POOL-024",
+          "SATIN-SCHED-005",
+          "SATIN-SCHED-006",
+          "SATIN-SCHED-008",
+          "SATIN-SCHED-011",
+          "SATIN-STATE-001",
+          "SATIN-STATE-003"
+        ],
+        "steps": [
+          "intrinsic regular gas = TX_BASE_COST 12,000 + CREATE_ACCESS 12,000 + initcode 2 words x 2 + calldata 31 zero x 4 + 8 non-zero x 16 = 252 = 24,256",
+          "floor = base 24,000 + 64 x 39 calldata and access-list bytes = 26,496",
+          "body = TX_BODY_SIZE 310 + 39 calldata bytes + 0 access-list bytes = 349 bytes; its history gas 349 x 88 = 30,712",
+          "pools: regular budget min(1,000,000, 200,000,000) - 24,256 = 975,744, reservoir 0",
+          "body history 30,712: 0 from the reservoir, 30,712 from the regular budget",
+          "the first frame's start record (created account): 40 x 88 = 3,520 history gas before the frame",
+          "created-account state gas 183,600 x m=2 = 367,200 at step 4, no legacy share",
+          "frame opcodes: PUSH32 3, PUSH0 2, MSTORE 3 + memory to 1 words, PUSH1 3, PUSH0 2, RETURN 2 bytes; regular charges of the frame 16",
+          "code deposit of 2 bytes: hashing 1 words x 6 = 6; state 1530 x m=2 x 2 = 6,120; history 88 x 2 = 176",
+          "ledgers: state 373,320, history 34,408 (391 bytes), regular = total 432,006 - state - history = 24,278",
+          "gas used max(432,006 - 0, floor 26,496) = 432,006; the block counts max(regular 24,278, floor 26,496) = 26,496"
+        ]
+      },
+      {
+        "path": "/expected/outcome",
+        "rules": [
+          "SATIN-SCHED-011"
+        ],
+        "steps": [
+          "admitted; the frame succeeds and creates 0x6295ee1b4f6dd65047762f924ecd367c17eabf8f"
+        ]
+      },
+      {
+        "path": "/expected/receipt",
+        "rules": [
+          "SATIN-POOL-018"
+        ],
+        "steps": [
+          "status 0x1, gas used 432,006, 0 logs in execution order"
+        ]
+      },
+      {
+        "path": "/expected/resources",
+        "rules": [
+          "SATIN-ACCT-002",
+          "SATIN-ACCT-005",
+          "SATIN-ACCT-012",
+          "SATIN-ACCT-013",
+          "SATIN-ACCT-014",
+          "SATIN-HIST-003",
+          "SATIN-LIM-001",
+          "SATIN-LIM-007"
+        ],
+        "steps": [
+          "data size starts at the body's 349 bytes; its five fixed records are not KV updates",
+          "the created account: one write record and one unit of state growth",
+          "deposited code adds 2 bytes of data size, no state growth of its own",
+          "kept: data size 391 bytes, 1 KV updates, state growth 1; the limits are the protocol's 13,107,200, 500,000 and 1,000"
+        ]
+      }
+    ],
+    "evidence": "derived from the specification by tools/satin_model.py, an executable restatement of the cited rules that shares no code with either implementation; implementation runs are cross-checks only",
+    "generator": "tools/make_slice.py",
+    "review": {
+      "decision": "pending: approval is the owner's",
+      "ruleTexts": {
+        "SATIN-ACCT-002": "sha256:15a57f42e12a7c6edb72a991fef190eaa0672b3193e8745a64ec5f631fc370ba",
+        "SATIN-ACCT-005": "sha256:6ec8ef3871ebcd87273370b62509d609b4765b403953f287778a8443265b1110",
+        "SATIN-ACCT-012": "sha256:d5b25ab3bab59b0e29a130178677245e965255d13a4374addfc07db8c3ea3d90",
+        "SATIN-ACCT-013": "sha256:6db64fd3450f09f453ad8be51daec4535b7395c8a639159342dbf74327488580",
+        "SATIN-ACCT-014": "sha256:e3569ed14851df607a1027550a946a125cf316cc80176f7c8f6cb58595a5a6f6",
+        "SATIN-HIST-002": "sha256:25b81f15f444a2b56d289e489301321d295bec49cc486f3356d4826da584fb22",
+        "SATIN-HIST-003": "sha256:5c278d629bff537ddefd0d3b1192dfd67dab5ea126eeaeda86d21e7f72a867b1",
+        "SATIN-HIST-004": "sha256:ed165b75e64fdae2ff1c9f97dd815ea124b28818647c873db13e217eac046d90",
+        "SATIN-HIST-005": "sha256:8a8dbfa5e5c22def20eaf41cf18cdf37ec73266927d6ebf9d8214b2979d566e8",
+        "SATIN-HIST-022": "sha256:297c3750e19b202dea5b7e729c925d236e8b6180328cd13373e17ed70079f84a",
+        "SATIN-LIM-001": "sha256:3373ca5b61edec132530b7106ded735fb8430ffabeaa013ce4fe7e8bda446b62",
+        "SATIN-LIM-007": "sha256:5a1c7ff7c36129b99db578bfd7913d56aa93ad57cd18b1530c6fcbe09490a4f6",
+        "SATIN-POOL-005": "sha256:3fb2a1aee19ce0ce816e028227a038b092eff061a3711fe323382d439bc69ded",
+        "SATIN-POOL-006": "sha256:a3ef2a7daef0ac743b5581692a8aad5d7c508be2cc0fa8bbc93e6bccb29c60b7",
+        "SATIN-POOL-007": "sha256:0727d784afe6cf7658f76fede2b54204435850b4cc343eb9f685ce6e6bee73c1",
+        "SATIN-POOL-018": "sha256:9929e1b284b53eb5dd9b3c870e652f11c100b50a1c6acff271d50ba638518478",
+        "SATIN-POOL-019": "sha256:29ce57179b04bda39ba5b35739aa657f50fe1a9d5a671d52b79cc66500167baf",
+        "SATIN-POOL-020": "sha256:21f6377838f6381cc57d4daa30eded2538857412c73e493ed0ab47fc528e40a8",
+        "SATIN-POOL-024": "sha256:26190f3a06d202e9eb2012e91a3779cd1900628d59732850c8d0378d5ac390f4",
+        "SATIN-SCHED-005": "sha256:9c958ad26a39a4bb6413a53e299363ad184444ec66b99ab6cb95ababc23209dd",
+        "SATIN-SCHED-006": "sha256:1cde42c8c0e514cf680d32dfc4864612338ee9675f296b388c1f5068cd823d6d",
+        "SATIN-SCHED-008": "sha256:e644bb4259a9a3eb1cad697eb3e6a600c37ef2fdbb69edc8eaab1c8caaeaa4b7",
+        "SATIN-SCHED-011": "sha256:0e8a09026032a88ba95b00d71927d3df780bd34cad095d90ab8906a7584407d7",
+        "SATIN-STATE-001": "sha256:c75240c85359984c6b8ab8a49da56f4b3d7a21aebe11cd2d630d0187dd5aea5e",
+        "SATIN-STATE-003": "sha256:df60f4cd36fc5585dac928b4679685192ba8c1d242cc74e5755e45cad303bf28"
+      },
+      "spec": {
+        "commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd",
+        "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05"
+      }
+    },
+    "status": "candidate",
+    "transaction": {
+      "data": "0x7f60000000000000000000000000000000000000000000000000000000000000005f5260025ff3",
+      "gasLimit": "0xf4240",
+      "nonce": "0x0",
+      "sender": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+      "to": null,
+      "type": "0x0",
+      "value": "0x0"
+    }
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-002",
+    "SATIN-ACCT-005",
+    "SATIN-ACCT-012",
+    "SATIN-ACCT-013",
+    "SATIN-ACCT-014",
+    "SATIN-HIST-002",
+    "SATIN-HIST-003",
+    "SATIN-HIST-004",
+    "SATIN-HIST-005",
+    "SATIN-HIST-022",
+    "SATIN-LIM-001",
+    "SATIN-LIM-007",
+    "SATIN-POOL-005",
+    "SATIN-POOL-006",
+    "SATIN-POOL-007",
+    "SATIN-POOL-018",
+    "SATIN-POOL-019",
+    "SATIN-POOL-020",
+    "SATIN-POOL-024",
+    "SATIN-SCHED-005",
+    "SATIN-SCHED-006",
+    "SATIN-SCHED-008",
+    "SATIN-SCHED-011",
+    "SATIN-STATE-001",
+    "SATIN-STATE-003"
+  ],
+  "schemaVersion": "1.0",
+  "specRef": {
+    "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05",
+    "name": "megaeth/Satin"
+  }
+}
