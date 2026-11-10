@@ -1,0 +1,34 @@
+{
+  "format": "mega-spec-sources",
+  "pages": {
+    "evm/compute-gas.md": "sha256:3d166b8e5c1416019d545c9128635e0dce1d7edbd6b6083eb5555b2a6e44acb0",
+    "evm/contract-limits.md": "sha256:6866751be427082405dc8c6406fbc97644e3ec27d734b45cb556c87c199f2332",
+    "evm/dual-gas-model.md": "sha256:0007696b5fc4ef6415d52e178d1a87234b24dd955df49a9595bae0b6830e729d",
+    "evm/gas-detention.md": "sha256:f2b8e3d12c771157378088c9e22a6e5290c63eb5a521c24473d7d10d2292e543",
+    "evm/gas-forwarding.md": "sha256:cb82bae408cffb66ceeaf2f146790d7613cdb3d19b777d9cc318406b5c4462cb",
+    "evm/overview.md": "sha256:c4990a800d69e2c77ff51e33bcf67173e06c1a0abd505f9d08be275bccdf07c0",
+    "evm/precompiles.md": "sha256:c0647a4f64b840bb01a5b82e6e73e8700b6c5db65177dba3f61a11e030fa28c2",
+    "evm/resource-accounting.md": "sha256:a5740829ed02ce9860c725dd8034ee32ba570335a860299cd634b6bc98803647",
+    "evm/resource-limits.md": "sha256:00e4b143a960d143d3f3971c06293726a50bb29c2bb819e9c876a36621c4e7ae",
+    "evm/selfdestruct.md": "sha256:0dc3243a3b8d62a0ae16dd9d9588167fde8fefc3f8469b616aa2f1ec3e2572e1",
+    "glossary.md": "sha256:7c777ab898bbacd253feb57af699afe266d5a94b69002ac7027b8a5c234ae498",
+    "hardfork-spec.md": "sha256:0a3b76823bebd5a7855dff733651b8609b7bc7e92b6e064f687d605649f44584",
+    "overview.md": "sha256:2580101d9f6a6d11a05688d1b62c71a85484306d8719b63ebeb8eccfdb34c9fc",
+    "system-contracts/high-precision-timestamp.md": "sha256:76d033df1d35ee57917ba72a748a5997414b824c61cf931c4aec2fa324e8dbad",
+    "system-contracts/interception.md": "sha256:c54ea2b743d65970c119f89b89e1c0343e4c161ab56be44ca7818adaff697a65",
+    "system-contracts/keyless-deploy.md": "sha256:e8a0e95fbd731ea71ff483c7c16fdb1b31b2ee2ecccab2108292421c870e2c9c",
+    "system-contracts/mega-access-control.md": "sha256:a43ae03e1539ac4adb1c51be5950720d5626001926fa8c12896653ace39fe875",
+    "system-contracts/mega-limit-control.md": "sha256:bd5e1ba42fa9fd6fdcb1195f97e86a38e00749179f0eec081253a40525ffdd36",
+    "system-contracts/oracle.md": "sha256:3fc873dbc7514c9b9317a6632d80dad70dc3e572ad8b3d567013f986f1c2ed1a",
+    "system-contracts/overview.md": "sha256:54e8a58792845613464d368f6bd4c30286ed023869fffd6dfb109b1801174f1b",
+    "system-contracts/sequencer-registry.md": "sha256:686895b5272c659ad71b34a367f5b626b0ff79666d206945ed716ee6d70ee52b",
+    "system-contracts/system-tx.md": "sha256:075f6873a78d9ef66b03cf147d1ac1aa73d4360616d7ee6048cfd53f86ddad59"
+  },
+  "schemaVersion": "1.0",
+  "source": {
+    "commit": "d4c913c5ff3383a4721cce7ebc59c9e05d7b005e",
+    "committed": "2026-10-30T01:39:44+08:00",
+    "repository": "https://github.com/megaeth-labs/mega-evm",
+    "root": "docs/spec"
+  }
+}

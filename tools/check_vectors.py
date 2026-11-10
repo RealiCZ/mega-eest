@@ -774,13 +774,39 @@ def main(argv: list[str]) -> int:
                         failures.append(f"examples/negative/{name}: expected {want}, got {r}")
                     else:
                         examples += 1
+    # The vertical slice: every case, quarantined case and deliberately wrong expectation is a
+    # valid fixture (a wrong expectation is a failure of a consumer, not of the format), and its
+    # file digest is the one slice/index.json records.
+    slice_cases = 0
+    slice_dir = os.path.join(root, "slice")
+    if os.path.isdir(slice_dir):
+        with open(os.path.join(slice_dir, "index.json"), "rb") as f:
+            slice_index = parse_strict(f.read())
+        recorded = {e["file"]: e["fileDigest"] for e in slice_index["cases"] + slice_index["quarantine"]}
+        for sub in ("cases", "quarantine", "negative"):
+            d = os.path.join(slice_dir, sub)
+            for name in sorted(os.listdir(d)) if os.path.isdir(d) else []:
+                if not name.endswith(".json"):
+                    continue
+                rel = f"{sub}/{name}"
+                with open(os.path.join(d, name), "rb") as f:
+                    try:
+                        _, file_digest, _ = check_case(f.read(), schemas, specs)
+                    except Reject as r:
+                        failures.append(f"slice/{rel}: rejected: {r}")
+                        continue
+                if rel in recorded and recorded[rel] != file_digest:
+                    failures.append(f"slice/{rel}: file digest differs from slice/index.json")
+                    continue
+                slice_cases += 1
     for failure in failures:
         print("FAIL " + failure)
     total = len(index["vectors"])
     if failures:
         print(f"check_vectors: FAILED: {len(failures)} problem(s); {passed}/{total} vectors agree")
         return 1
-    print(f"check_vectors: ok: {passed}/{total} vectors reproduced, {examples} examples checked")
+    print(f"check_vectors: ok: {passed}/{total} vectors reproduced, {examples} examples checked, "
+          f"{slice_cases} slice fixtures checked")
     return 0
 
 

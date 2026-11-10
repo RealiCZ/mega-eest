@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
 members = ["crates/mega-fixture-format"]
+# The adapters and the exporter are workspaces of their own, so the format crate stays engine-free.
+exclude = ["adapters", "exporter", "vendor"]
 
 [workspace.package]
 edition = "2021"

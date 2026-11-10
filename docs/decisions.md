@@ -163,3 +163,150 @@ an unknown status or a non-string row, and require the descriptor to bind `sourc
 headers of forks that lack a member need a feature in a later minor version. A header's
 `stateRoot` means what the chain's spec says it commits to; typed commitments in block results say
 which root a case asserts. Envelope members cannot be added in a minor version.
+
+## Phase 2: the vertical slice
+
+**D-35. The registry follows the specification's main; older snapshots stay.** Two snapshots are
+added beside `specs/satin-cac999a`: `specs/satin-22a5f4b` (407 ids; eight rules reworded around the
+oracle service for deposits, Mega System Transactions and system calls) and `specs/satin-d34e626`
+(408 ids, 399 active, 9 retired: `SATIN-BASE-011` added for a value transfer that would overflow
+its recipient's balance, and `SATIN-ORCL-004` to `-006` reworded). The slice pins `d34e626`, the
+newest; none of the rules it cites changed text between `22a5f4b` and `d34e626`. The older
+snapshots are unchanged, because pinned material references their descriptor digests (the
+examples and vectors reference `cac999a`'s): each case resolves against the registry it was
+written for.
+
+**D-36. Rex6 rule ids are assigned, mechanically.** The Rex6 text (mega-evm `d4c913c5`,
+`docs/spec/`) names no rule ids. `tools/gen_rex6_registry.py` makes every normative block of the
+`## Specification` section of each `spec: Rex6` page a rule: a paragraph or top-level list item
+that uses a BCP 14 keyword in capitals, with the table or fenced block directly under it. The id is
+`REX6-<AREA>-<NNN>`: the page's area code (the Satin code where the page has a Satin counterpart:
+`LIM`, `ACCT`, `DET`, `KEY`, ...) and the block's ordinal on the page. The upgrade pages are
+summaries without a `spec` field and give no rules. Rex6 is frozen, so the ordinals are stable for
+this snapshot and every rule is active; a reworded Rex6 text would be a new registry, and its ids
+would be assigned again. The result is 358 ids in 18 areas. The ids are this suite's, not the
+specification's: a Rex6 case resolves them against this registry only, and a Satin id never
+resolves under Rex6.
+
+**D-37. Descriptors bind the codecs and the SALT mapping by value.** The descriptors of
+`satin-22a5f4b` and `rex6-d4c913c5` carry `codecs` (the header's RLP field order and hash, the
+EIP-2718 transaction types with the deposit, the receipt encodings with the deposit receipt's
+nonce and version, and both trie roots) and `salt`: the mapping `salt-v1` stated as SALT defines
+it (AHash 0.8.12's fallback hasher with fixed seeds, the 20-byte account key and the 52-byte slot
+key, `hash mod (2^24 - 2^16) + 2^16`, the minimum bucket of 256, the multiplier), with hash and
+bucket vectors and the reference implementation it was read from. `tools/salt_mapping.py` is a
+standard-library port. Its bucket ids are the ones both implementations charge: the slice's
+multiplier cases would be priced at the minimum bucket under any other mapping, and
+`satin/sstore/fresh-slot/bucket-x16` lists its bucket alone with `complete: false`, so any other
+bucket would be a missing input. The
+members come from `tools/descriptor-members/`, passed with `--members`; the `cac999a` descriptor
+has none and keeps its digest.
+
+**D-38. An absent `salt` or `oracle` is no input, not a default.** In `state-transition`, a case
+without `salt` states no capacity, so any bucket read is a missing input and the consumer reports
+`error`; `{"complete": true, "buckets": {}}` is the way to say that every bucket is minimal. A case
+without `oracle` states no service, so any oracle request is a missing input; `{"mode":
+"disabled"}` is the way to say that the service answers nothing. Each meaning has one encoding.
+
+**D-39. The adapter process interface.** An adapter is a program: `capabilities` prints its
+declaration (profiles, specs by name, supported requirements, modes, and its build identity: the
+implementation's repository and commit as its build resolved them, the compiler, the profile), and
+`run [--instrumented]` reads one run request on standard input and prints one response. The run
+request is the case's `caseId`, `specRef`, `profile`, `requires` and `input`, and nothing else, so
+no adapter can read an expectation. The response carries the status (`ok`, `unsupported`,
+`error`), the digest of the input the adapter ran, the observations and non-normative
+diagnostics. The consumer refuses a response whose input digest is not the case's
+(docs/adapter-protocol.md).
+
+**D-40. Observation definitions the first adapters fixed.** Where the format named a value but not
+its exact source, the definition is: a creation's `execution.output` is what its initcode returned
+(the deposited code); `gasLedgers.refund` is the refund the receipt's gas used applies, zero when
+the floor sets the gas used (`SATIN-POOL-018`); `gasLedgers.blockGas` is `max(regular, floor)`
+(`SATIN-POOL-020`); a resource's `net` is the transaction's signed net at its end and `reported`
+its `max(net, 0)` (`SATIN-LIM-007`), which coincide at the transaction's end, where no net is
+negative; a deposit receipt's `depositNonce` is its sender's nonce before the deposit and its
+`depositReceiptVersion` is 1; a failed deposit has no `execution`. Both adapters implement each
+definition independently.
+
+**D-41. Limit-stop cases wait for an observation the implementations do not expose.** The `limit`
+group needs a stop's scope, call path, operation, phase and commit flags. Neither implementation's
+public result carries more than the stop's dimension and limit, and deriving the rest through an
+inspector would let instrumentation supply values the plain run cannot produce. Each adapter
+therefore reports `error` for a case that ends in a limit stop, and the slice has none: a
+limit-stop or rollback case needs an engine-side observation first.
+
+**D-42. A synthetic message has no envelope.** Adapters run a synthetic message with empty
+enveloped bytes, so its L1 data fee is that of an empty envelope; a case whose L1 fee matters
+carries signed bytes. The slice uses signed transactions and deposit envelopes throughout, with
+the L1 block contract present and its fee parameters zero.
+
+**D-43. The slice's expectations come from an executable model of the rules.** `tools/satin_model.py`
+restates the cited rules for the slice's class of transactions (one frame, a fixed set of opcodes,
+calls, value transfers, creations, deposits, refusals), with every charge a step that names its
+rule. `tools/make_slice.py` derives each case's expectation from it and records the derivation of
+every assertion in `provenance.derivation`, and the text digest of every cited rule in
+`provenance.review.ruleTexts`. The model was written from the rule text before either
+implementation ran; one definition was corrected afterwards, a creation's output (D-40), which no
+rule states. Cases stay `candidate` until the owner approves them.
+
+**D-44. A disagreement is settled by the rule text, and a defect is quarantined, never outvoted.**
+The revm-based implementation charges a deposit no history gas; `SATIN-HIST-016` and
+`SATIN-DEP-001` make a deposit pay it for its body as any transaction does, and the evm2-based
+implementation and the derivation agree with the rule. The three deposit cases keep the rule's
+expectation, are kept out of the gating slice in `slice/quarantine/`, and record the implementation,
+the first differing path and both values; `tools/run-slice.sh` checks that they still fail
+exactly so on that implementation and pass on the other. When the implementation is fixed, they
+move back.
+
+**D-45. The evm2-based adapter declares no oracle transcript.** That implementation's oracle
+service is a map from slot to value, which can check neither a transcript's order nor an answer of
+none; the adapter says `unsupported` rather than approximate a transcript. The revm-based adapter
+answers from the transcript in order and fails a request it does not answer or an entry no request
+used.
+
+**D-46. The exporter converts hand-written scenarios only.** `exporter/` dumps the hand-written
+scenarios of the evm2-based implementation's differential crate at its pin; the fuzz batches stay
+a discovery lane. Their senders have no keys, so every converted transaction is a synthetic
+message; a scenario with a limit override, a simulation switch, earlier transactions of its block,
+oracle answers without their order or an L1 fee is excluded with that reason, and so is one that
+cites no active rule of the pinned registry. A converted candidate cites the scenario's rules
+through one unreviewed assertion over the whole expected result and keeps its name and group as
+aliases.
+
+**D-47. The corpus archive is verified, not mirrored.** The release archive's bytes match the
+published digest; its member inventory and the rule that maps an old member to a new case are in
+[corpus-archive.md](corpus-archive.md). Where it is mirrored is the owner's decision.
+
+**D-48. Each implementation is pinned by commit and built with its own toolchain.** The revm-based
+implementation is a cargo git dependency at `5e3f30ad` with the patches of its own root manifest;
+the evm2-based implementation and its evm2 fork are checked out by `tools/fetch-implementations.sh`
+under the git-ignored `vendor/`, laid out so their relative `../../evm2` path resolves, and the
+script refuses a fork pin that differs from the implementation's own `next/evm2-fork.env`. The
+evm2-based pin moved from `6ef8c136` (fork `28e20011`) to `9e55185f` (fork `1a70ed94`, on upstream
+evm2 `e0d398a6`) with no change to the slice's results. Each
+adapter's lockfile starts from its implementation's own and builds `--locked`, with the
+implementation's toolchain (`nightly-2026-04-23`). Neither adapter is a member of the root
+workspace, so the format crate depends on no engine.
+
+**D-49. The slice's file layout.** A case file is named by its `caseId` with `/` written as `--`;
+`slice/index.json` lists the gating cases with their area, rules and file digest, the quarantine
+with its recorded failure, and the negative case with the path it is wrong at. Both readers
+validate every slice file, and the Python reader checks the recorded file digests.
+
+From the review of the slice's derivations:
+
+**D-50. In engine isolation, a gas limit above the block's is a refusal at inclusion.**
+`SATIN-BLK-009` and `SATIN-BLK-013` make a transaction whose declared gas limit does not fit in
+what the block's gas limit has left a skip for the current block, not an invalid transaction.
+A `state-transition` case runs one transaction against an explicit block environment, whose gas
+limit is all left; it reports that skip as `refused` at phase `inclusion` with reason
+`gas-limit-exceeds-block`. Both adapters map the implementations' error to that phase. The
+`block-build` profile, where a skip is a decision, is where the packing behaviour itself is tested.
+
+**D-51. A halted frame's state and history charges are on the regular ledger.**
+`SATIN-POOL-019` puts on the state and history ledgers the charges the transaction kept, and
+`SATIN-POOL-014` consumes a halting frame's regular gas with the part of its charges regular gas
+paid. A halted frame keeps none of its charges, so what regular gas paid of them is regular gas on
+the ledgers: after a halt, the state ledger holds the charges kept before the frame and the history
+ledger the body's, as `SATIN-DEP-005` has it for a failed deposit. The halt cases of the slice say
+so in their intent; the specification's owner may confirm the reading.

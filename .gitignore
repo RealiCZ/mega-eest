@@ -1,2 +1,4 @@
 .orchestration/
 target/
+vendor/
+candidates/
