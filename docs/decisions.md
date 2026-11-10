@@ -281,7 +281,9 @@ published digest; its member inventory and the rule that maps an old member to a
 implementation is a cargo git dependency at `5e3f30ad` with the patches of its own root manifest;
 the evm2-based implementation and its evm2 fork are checked out by `tools/fetch-implementations.sh`
 under the git-ignored `vendor/`, laid out so their relative `../../evm2` path resolves, and the
-script refuses a fork pin that differs from the implementation's own `next/evm2-fork.env`. Each
+script refuses a fork pin that differs from the implementation's own `next/evm2-fork.env`. The
+evm2-based pin moved from `6ef8c136` (fork `28e20011`) to `9e55185f` (fork `1a70ed94`, on upstream
+evm2 `e0d398a6`) with no change to the slice's results. Each
 adapter's lockfile starts from its implementation's own and builds `--locked`, with the
 implementation's toolchain (`nightly-2026-04-23`). Neither adapter is a member of the root
 workspace, so the format crate depends on no engine.
