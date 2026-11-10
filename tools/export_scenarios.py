@@ -45,7 +45,7 @@ import make_examples as ex  # noqa: E402
 import salt_mapping  # noqa: E402
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-SPEC_DIR = os.path.join(ROOT, "specs", "satin-22a5f4b")
+SPEC_DIR = os.path.join(ROOT, "specs", "satin-d34e626")
 SOURCE = {
     "crate": "mega-evm2-scenarios",
     "repository": "https://github.com/RealiCZ/mega-evm",

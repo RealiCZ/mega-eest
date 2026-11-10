@@ -2,7 +2,7 @@
 """A small executable model of Satin's transaction rules, for deriving expected values.
 
 This is the independent evidence behind the vertical slice's expectations: it restates, from the
-specification at `22a5f4b` (`specs/satin-22a5f4b`), the arithmetic a `state-transition` case's
+specification at `d34e626` (`specs/satin-d34e626`), the arithmetic a `state-transition` case's
 observations follow, for the narrow class of transactions the slice uses:
 
 - one frame (the transaction's own): the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`,
@@ -228,8 +228,12 @@ class Run:
                     f"gas limit {fmt(tx.gas_limit)} < intrinsic regular gas {fmt(intrinsic)} + body history gas "
                     f"{fmt(body_history)} = {fmt(intrinsic + body_history)} (SATIN-VAL-003 step 5)")
         if tx.gas_limit > env.block_gas_limit:
-            return ("validation", "gas-limit-exceeds-block", "SATIN-BASE-002",
-                    f"gas limit {fmt(tx.gas_limit)} > the block's gas limit {fmt(env.block_gas_limit)}")
+            # SATIN-BLK-009 and SATIN-BLK-013: a transaction whose gas limit does not fit in what the
+            # block's gas limit has left is skipped for the block; in engine isolation the block has
+            # all of its gas left, and the skip is reported as a refusal at inclusion (D-50).
+            return ("inclusion", "gas-limit-exceeds-block", ("SATIN-BLK-009", "SATIN-BLK-013", "SATIN-BASE-002"),
+                    f"gas limit {fmt(tx.gas_limit)} > the {fmt(env.block_gas_limit)} the block's gas limit has left: "
+                    "skipped for the block, a refusal at inclusion in engine isolation")
         if sender.code:
             return ("validation", "sender-has-code", "SATIN-VAL-007",
                     "the sender's account has code (EIP-3607, a base-layer check)")
@@ -295,7 +299,8 @@ class Run:
         refusal = self.validate(intrinsic, floor, body_history)
         if refusal:
             phase, reason, rule, why = refusal
-            d.add("outcome", f"refused at {phase}: {why}", rule)
+            rules = rule if isinstance(rule, tuple) else (rule,)
+            d.add("outcome", f"refused at {phase}: {why}", *rules)
             return Result(refused(phase, reason), d)
 
         d.add("gasLedgers", f"intrinsic regular gas = {' + '.join(parts)} = {fmt(intrinsic)}", "SATIN-SCHED-006")
@@ -439,8 +444,9 @@ class Run:
                 raise Unmodelled("a halt after start charges the reservoir paid")
             total = tx.gas_limit - frame["reservoir_at_start"]
             d.add("gasLedgers", f"halt: every regular gas the frame held is consumed, the reservoir {fmt(frame['reservoir_at_start'])} "
-                  f"returns; total = gas limit {fmt(tx.gas_limit)} - {fmt(frame['reservoir_at_start'])} = {fmt(total)}",
-                  "SATIN-POOL-014", "SATIN-POOL-017")
+                  f"returns; total = gas limit {fmt(tx.gas_limit)} - {fmt(frame['reservoir_at_start'])} = {fmt(total)}; the "
+                  "frame's state and history charges are not kept, so what regular gas paid of them is on the regular "
+                  "ledger (D-51)", "SATIN-POOL-014", "SATIN-POOL-017")
             del spent_regular, reservoir_left
             self.refund = 0
             execution = {"status": "halt", "output": "0x", "createdAddress": None}
@@ -487,8 +493,9 @@ class Run:
             if tip:
                 self.state.setdefault(env.coinbase, Account()).balance += tip
             d.add("state", f"fees: the sender pays {fmt(gas_used)} x {fmt(price)}; the base fee vault receives "
-                  f"{fmt(gas_used)} x {fmt(env.base_fee)}, the beneficiary {fmt(gas_used)} x {fmt(price - env.base_fee)}",
-                  "SATIN-BASE-001")
+                  f"{fmt(gas_used)} x {fmt(env.base_fee)}, the beneficiary {fmt(gas_used)} x {fmt(price - env.base_fee)}; "
+                  "the L1 data fee and the operator fee are zero, the L1 block contract's fee parameters being zero",
+                  "SATIN-BASE-001", "SATIN-BASE-010")
 
         ledgers = {"total": q(total), "regular": q(regular_ledger), "state": q(self.state_gas), "history": q(self.history_gas),
                    "historyBytes": q(self.history_bytes), "refund": q(refund), "floor": q(floor), "gasUsed": q(gas_used),
@@ -843,7 +850,8 @@ class Run:
         gas_used = max(total - refund, floor)
         regular_ledger = total - self.state_gas - self.history_gas
         d.add("gasLedgers", f"ledgers: state {fmt(self.state_gas)}, history {fmt(self.history_gas)} (the deposit pays history "
-              f"as any transaction), regular {fmt(regular_ledger)}, total {fmt(total)}", "SATIN-POOL-019", "SATIN-HIST-016", "SATIN-DEP-001")
+              f"as any transaction; {self.history_bytes} history bytes), regular {fmt(regular_ledger)}, total {fmt(total)}",
+              "SATIN-POOL-019", "SATIN-HIST-016", "SATIN-DEP-001", "SATIN-HIST-022")
         d.add("gasLedgers", f"gas used {fmt(gas_used)}, block gas max({fmt(regular_ledger)}, {fmt(floor)})", "SATIN-POOL-018", "SATIN-POOL-020")
         ledgers = {"total": q(total), "regular": q(regular_ledger), "state": q(self.state_gas), "history": q(self.history_gas),
                    "historyBytes": q(self.history_bytes), "refund": q(refund), "floor": q(floor), "gasUsed": q(gas_used),
@@ -855,8 +863,9 @@ class Run:
         receipt = {"type": "0x7e", "status": "0x1", "gasUsed": q(gas_used),
                    "logs": [{"address": h(a), "topics": [h(t) for t in ts], "data": h(dt)} for a, ts, dt in self.logs],
                    "depositNonce": q(nonce_before), "depositReceiptVersion": "0x1"}
-        d.add("receipt", f"a deposit receipt: its nonce before the deposit ({nonce_before}) and receipt version 1; the mint is not logged",
-              "SATIN-LOG-004")
+        d.add("receipt", f"a deposit receipt (the base layer's, type 0x7e): its nonce before the deposit ({nonce_before}) and "
+              f"receipt version 1 (D-40); gas used {fmt(gas_used)}, which the deposit does not pay; the mint is not logged",
+              "SATIN-BASE-001", "SATIN-POOL-018", "SATIN-DEP-009", "SATIN-LOG-004")
         d.add("outcome", "admitted; the deposit's frame succeeds", "SATIN-DEP-007")
         outcome = {"admission": {"status": "admitted"},
                    "execution": {"status": "success", "output": h(output), "createdAddress": None},

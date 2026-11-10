@@ -594,7 +594,8 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         Ok(outcome) => executed_observations(&outcome, &facts, &pre)?,
         Err(EVMError::Transaction(e)) => {
             let reason = refusal_reason(&format!("{e:?}")).ok_or_else(|| bad(format!("unmapped refusal {e:?}")))?;
-            refused("validation", reason)
+            // A gas limit above what the block has left is a skip at inclusion (SATIN-BLK-013).
+            refused(if reason == "gas-limit-exceeds-block" { "inclusion" } else { "validation" }, reason)
         }
         Err(e) => return Err(bad(format!("the implementation failed: {e}"))),
     };

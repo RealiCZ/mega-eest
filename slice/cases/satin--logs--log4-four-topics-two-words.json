@@ -277,8 +277,8 @@
         "SATIN-SCHED-006": "sha256:1cde42c8c0e514cf680d32dfc4864612338ee9675f296b388c1f5068cd823d6d"
       },
       "spec": {
-        "commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd",
-        "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05"
+        "commit": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+        "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2"
       }
     },
     "status": "candidate",
@@ -325,7 +325,7 @@
   ],
   "schemaVersion": "1.0",
   "specRef": {
-    "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05",
+    "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
     "name": "megaeth/Satin"
   }
 }

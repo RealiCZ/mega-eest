@@ -194,7 +194,7 @@
           "body = TX_BODY_SIZE 310 + 0 calldata bytes + 0 access-list bytes = 310 bytes; its history gas 310 x 88 = 27,280",
           "pools: regular budget min(210,000,000, 200,000,000) - 15,000 = 199,985,000, reservoir 10,000,000",
           "body history 27,280: 27,280 from the reservoir, 0 from the regular budget",
-          "halt: every regular gas the frame held is consumed, the reservoir 9,972,720 returns; total = gas limit 210,000,000 - 9,972,720 = 200,027,280",
+          "halt: every regular gas the frame held is consumed, the reservoir 9,972,720 returns; total = gas limit 210,000,000 - 9,972,720 = 200,027,280; the frame's state and history charges are not kept, so what regular gas paid of them is on the regular ledger (D-51)",
           "ledgers: state 0, history 27,280 (310 bytes), regular = total 200,027,280 - state - history = 200,000,000",
           "gas used max(200,027,280 - 0, floor 15,000) = 200,027,280; the block counts max(regular 200,000,000, floor 15,000) = 200,000,000"
         ]
@@ -257,8 +257,8 @@
         "SATIN-SCHED-006": "sha256:1cde42c8c0e514cf680d32dfc4864612338ee9675f296b388c1f5068cd823d6d"
       },
       "spec": {
-        "commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd",
-        "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05"
+        "commit": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+        "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2"
       }
     },
     "status": "candidate",
@@ -303,7 +303,7 @@
   ],
   "schemaVersion": "1.0",
   "specRef": {
-    "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05",
+    "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
     "name": "megaeth/Satin"
   }
 }

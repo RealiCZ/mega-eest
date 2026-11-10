@@ -10,6 +10,7 @@
         "SATIN-HIST-004",
         "SATIN-HIST-006",
         "SATIN-HIST-016",
+        "SATIN-HIST-022",
         "SATIN-POOL-005",
         "SATIN-POOL-006",
         "SATIN-POOL-007",
@@ -36,7 +37,10 @@
     {
       "path": "/expected/receipt",
       "rules": [
-        "SATIN-LOG-004"
+        "SATIN-BASE-001",
+        "SATIN-DEP-009",
+        "SATIN-LOG-004",
+        "SATIN-POOL-018"
       ]
     },
     {
@@ -206,6 +210,7 @@
           "SATIN-HIST-004",
           "SATIN-HIST-006",
           "SATIN-HIST-016",
+          "SATIN-HIST-022",
           "SATIN-POOL-005",
           "SATIN-POOL-006",
           "SATIN-POOL-007",
@@ -230,7 +235,7 @@
           "body history 27,280: 0 from the reservoir, 27,280 from the regular budget",
           "SSTORE slot 1 0->0->1: cold access 2,100 + fresh-slot write 10,000; state gas 97,920 x m=1 = 97,920 (10,000 legacy share first); write record history 3,520",
           "frame opcodes: PUSH1 3, PUSH1 3, SSTORE 12,100, STOP 0; regular charges of the frame 12,106",
-          "ledgers: state 97,920, history 30,800 (the deposit pays history as any transaction), regular 27,106, total 155,826",
+          "ledgers: state 97,920, history 30,800 (the deposit pays history as any transaction; 350 history bytes), regular 27,106, total 155,826",
           "gas used 155,826, block gas max(27,106, 15,000)"
         ]
       },
@@ -246,10 +251,13 @@
       {
         "path": "/expected/receipt",
         "rules": [
-          "SATIN-LOG-004"
+          "SATIN-BASE-001",
+          "SATIN-DEP-009",
+          "SATIN-LOG-004",
+          "SATIN-POOL-018"
         ],
         "steps": [
-          "a deposit receipt: its nonce before the deposit (3) and receipt version 1; the mint is not logged"
+          "a deposit receipt (the base layer's, type 0x7e): its nonce before the deposit (3) and receipt version 1 (D-40); gas used 155,826, which the deposit does not pay; the mint is not logged"
         ]
       },
       {
@@ -287,7 +295,7 @@
       "adapter": "mega-eest-adapter-revm",
       "expected": "0x260b2",
       "path": "/expected/gasLedgers/gasUsed",
-      "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas for its body as any transaction does, and SATIN-HIST-022 has a deposit report its body's 310 bytes; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 (the body's 310 bytes at 88 gas) below the rule's"
+      "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 (the body's 310 bytes at 88 gas) below the rule's"
     },
     "review": {
       "decision": "pending: approval is the owner's",
@@ -297,14 +305,17 @@
         "SATIN-ACCT-004": "sha256:f6ab3f7f8f05d6d4e21678a5e6f6d175f67c7d7ace27e10b64b57f4efde6f104",
         "SATIN-ACCT-012": "sha256:d5b25ab3bab59b0e29a130178677245e965255d13a4374addfc07db8c3ea3d90",
         "SATIN-ACCT-016": "sha256:a1a4d7c9b074f47581f991bdbafbffc9571e9cc136879daf2d8b711532c96545",
+        "SATIN-BASE-001": "sha256:5ab02a18b23f42264b9f600e2fa209856029fb395a430a461f5a9b4182635b90",
         "SATIN-DEP-001": "sha256:a15e0b4341504434dfe7e83ce55bf7ade90687647a02ffb24f7e497f91bd4133",
         "SATIN-DEP-004": "sha256:138a41510e01af72ad0a34404dd4dbf6b2a9568d868303a1823f9fea384f8fe4",
         "SATIN-DEP-007": "sha256:fe49613af3cb5c1c5d773cc218d329ea80810670c8156bf762598b4511588f21",
+        "SATIN-DEP-009": "sha256:a88b5a795f4ba9c4ccac608d038926847e06ec9edfb0f3595490f3374a0df300",
         "SATIN-HIST-002": "sha256:25b81f15f444a2b56d289e489301321d295bec49cc486f3356d4826da584fb22",
         "SATIN-HIST-003": "sha256:5c278d629bff537ddefd0d3b1192dfd67dab5ea126eeaeda86d21e7f72a867b1",
         "SATIN-HIST-004": "sha256:ed165b75e64fdae2ff1c9f97dd815ea124b28818647c873db13e217eac046d90",
         "SATIN-HIST-006": "sha256:110fa88704ed4751b02dc78858036548f6bc46604eaf90893eccb2b9ceca3e45",
         "SATIN-HIST-016": "sha256:02d5bcd2c29b8675f1ec10b747ab2df70e6b5cecb9527c68d8e052c063a1a8a9",
+        "SATIN-HIST-022": "sha256:297c3750e19b202dea5b7e729c925d236e8b6180328cd13373e17ed70079f84a",
         "SATIN-LIM-007": "sha256:5a1c7ff7c36129b99db578bfd7913d56aa93ad57cd18b1530c6fcbe09490a4f6",
         "SATIN-LOG-004": "sha256:ee65fd0123da127877e6dd247c6a86dc95ee5d1e3014edcba1df37d9a5c995c6",
         "SATIN-POOL-005": "sha256:3fb2a1aee19ce0ce816e028227a038b092eff061a3711fe323382d439bc69ded",
@@ -324,8 +335,8 @@
         "SATIN-STATE-012": "sha256:aada2e980b7aeb5ddb323fd52d195eaab72347a4bf83eb259a5943e358662a64"
       },
       "spec": {
-        "commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd",
-        "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05"
+        "commit": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+        "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2"
       }
     },
     "status": "candidate",
@@ -357,14 +368,17 @@
     "SATIN-ACCT-004",
     "SATIN-ACCT-012",
     "SATIN-ACCT-016",
+    "SATIN-BASE-001",
     "SATIN-DEP-001",
     "SATIN-DEP-004",
     "SATIN-DEP-007",
+    "SATIN-DEP-009",
     "SATIN-HIST-002",
     "SATIN-HIST-003",
     "SATIN-HIST-004",
     "SATIN-HIST-006",
     "SATIN-HIST-016",
+    "SATIN-HIST-022",
     "SATIN-LIM-007",
     "SATIN-LOG-004",
     "SATIN-POOL-005",
@@ -385,7 +399,7 @@
   ],
   "schemaVersion": "1.0",
   "specRef": {
-    "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05",
+    "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
     "name": "megaeth/Satin"
   }
 }

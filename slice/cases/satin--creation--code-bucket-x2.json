@@ -287,8 +287,8 @@
         "SATIN-STATE-003": "sha256:df60f4cd36fc5585dac928b4679685192ba8c1d242cc74e5755e45cad303bf28"
       },
       "spec": {
-        "commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd",
-        "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05"
+        "commit": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+        "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2"
       }
     },
     "status": "candidate",
@@ -340,7 +340,7 @@
   ],
   "schemaVersion": "1.0",
   "specRef": {
-    "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05",
+    "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
     "name": "megaeth/Satin"
   }
 }

@@ -4,7 +4,7 @@
 Each case is authored here — its setup, the transaction (real signed bytes, or a deposit
 envelope), the SALT capacities its state lands in — and its expected observations come from
 `tools/satin_model.py`, an executable restatement of the cited rules of the pinned specification
-(`specs/satin-22a5f4b`). No implementation is run: the filler's output is a candidate to compare
+(`specs/satin-d34e626`). No implementation is run: the filler's output is a candidate to compare
 with, never the source of these values (`tools/run-slice.sh` runs both implementations against
 them).
 
@@ -39,7 +39,7 @@ import salt_mapping  # noqa: E402
 import satin_model as model  # noqa: E402
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-SPEC_DIR = os.path.join(ROOT, "specs", "satin-22a5f4b")
+SPEC_DIR = os.path.join(ROOT, "specs", "satin-d34e626")
 OUT = os.path.join(ROOT, "slice")
 
 KEY = ex.TEST_KEY
@@ -146,7 +146,7 @@ class Case:
     def __init__(self, case_id: str, intent: str, *, code: bytes = STOP, to=CONTRACT, value=0, data=b"", gas=1_000_000,
                  gas_price=0, base_fee=0, ty=0, max_priority=0, max_fee=0, nonce=0, sender_nonce=0, sender_balance=ETH,
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
-                 deposit=None, absent_sender=False, boundary=""):
+                 deposit=None, absent_sender=False, boundary="", salt_complete=True):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -159,6 +159,7 @@ class Case:
         self.chain_id = chain_id
         self.deposit = deposit  # (mint, gas)
         self.absent_sender = absent_sender
+        self.salt_complete = salt_complete  # False: every bucket the case reads must be listed
 
 
 def cases() -> list[Case]:
@@ -198,8 +199,10 @@ def cases() -> list[Case]:
              "97,920 state gas with its 10,000 legacy share", code=sstore(1, 1) + STOP))
     add(Case("satin/sstore/fresh-slot/bucket-x2", "a fresh slot whose bucket has twice the minimum capacity",
              code=sstore(1, 1) + STOP, salt={(CONTRACT, 1): 2}))
-    add(Case("satin/sstore/fresh-slot/bucket-x16", "a fresh slot whose bucket has sixteen times the minimum capacity",
-             code=sstore(1, 1) + STOP, salt={(CONTRACT, 1): 16}))
+    add(Case("satin/sstore/fresh-slot/bucket-x16", "a fresh slot whose bucket has sixteen times the minimum capacity; "
+             "the SALT input lists that bucket alone and is incomplete, so a node mapping the slot to any other bucket "
+             "meets a missing input", code=sstore(1, 1) + STOP, salt={(CONTRACT, 1): 16}, salt_complete=False,
+             gas=3_000_000))
     add(Case("satin/sstore/fresh-slot/capacity-between-multiples", "a bucket of 3.5 minimum buckets: m is the floor, 3",
              code=sstore(1, 1) + STOP, salt={(CONTRACT, 1): 3.5}, boundary="capacity between two multiples"))
     add(Case("satin/sstore/fresh-slot/with-reservoir", "a gas limit 10,000,000 above the execution cap: the body's history "
@@ -247,8 +250,9 @@ def cases() -> list[Case]:
     add(Case("satin/outcomes/return/one-word", "a RETURN of one word", code=mstore(0, 0x1234) + ret(0, 32)))
     add(Case("satin/outcomes/halt/invalid-opcode", "INVALID halts: the gas limit is used", code=INVALID, gas=100_000))
     add(Case("satin/outcomes/halt/after-fresh-slot", "a halt after a fresh slot: nothing of the slot is kept, the gas limit is "
-             "used", code=sstore(1, 1) + INVALID, gas=300_000))
-    add(Case("satin/outcomes/halt/out-of-gas-at-sstore", "too little gas for a fresh slot's state gas: out of gas",
+             "used; the charges regular gas paid for it are on the regular ledger (D-51)", code=sstore(1, 1) + INVALID, gas=300_000))
+    add(Case("satin/outcomes/halt/out-of-gas-at-sstore", "too little gas for a fresh slot's state gas: out of gas; what regular gas "
+             "paid of the charge is on the regular ledger (D-51)",
              code=sstore(1, 1) + STOP, gas=60_000, boundary="below the slot's state gas"))
     add(Case("satin/outcomes/halt/with-reservoir", "a halt with a reservoir: the regular budget is used, the reservoir is "
              "returned", code=INVALID, gas=210_000_000))
@@ -275,7 +279,8 @@ def cases() -> list[Case]:
              data=b"\x01" * 100, gas=20_000))
     add(Case("satin/validation/body-history-uncovered", "a gas limit that covers the intrinsic regular gas and the floor, "
              "not the body's history", gas=42_279, boundary="one below intrinsic plus body history"))
-    add(Case("satin/validation/gas-limit-above-block", "a gas limit above the block's", gas=BLOCK_GAS_LIMIT + 1))
+    add(Case("satin/validation/gas-limit-above-block", "a gas limit above what the block's gas limit has left: skipped for the block, "
+             "reported in engine isolation as a refusal at inclusion (D-50)", gas=BLOCK_GAS_LIMIT + 1))
     add(Case("satin/validation/chain-id-mismatch", "a transaction signed for chain 2", chain_id=2))
     add(Case("satin/validation/sender-has-code", "a sender with code (EIP-3607)", sender_code=b"\x00"))
     add(Case("satin/validation/fee-cap-below-base-fee", "a gas price below the base fee", gas_price=999_999, base_fee=1_000_000))
@@ -353,7 +358,7 @@ def build(c: Case):
         "pre": {"completeness": "complete",
                 "accounts": {h(a): account(x.nonce, x.balance, x.code, x.storage) for a, x in sorted(pre.items())}},
         "transaction": source,
-        "salt": {"mapping": "salt-v1", "complete": True, "buckets": {q(b): q(cap) for b, cap in sorted(buckets.items())}},
+        "salt": {"mapping": "salt-v1", "complete": c.salt_complete, "buckets": {q(b): q(cap) for b, cap in sorted(buckets.items())}},
     }
     decoded = {"type": q(tx.ty), "sender": h(sender), "to": h(c.to) if c.to else None, "nonce": q(tx.nonce),
                "gasLimit": q(tx.gas_limit), "value": q(tx.value), "data": h(tx.data)}
@@ -368,9 +373,10 @@ def build(c: Case):
 # implementation is fixed; tools/run-slice.sh checks that each still fails exactly as recorded and
 # that the other implementation passes it.
 DEPOSIT_HISTORY = (
-    "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas for its body as any transaction does, and "
-    "SATIN-HIST-022 has a deposit report its body's 310 bytes; the revm-based implementation at 5e3f30ad charges a "
-    "deposit no history gas, so its gas used is 27,280 (the body's 310 bytes at 88 gas) below the rule's"
+    "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among "
+    "the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based "
+    "implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 (the body's 310 bytes "
+    "at 88 gas) below the rule's"
 )
 QUARANTINE = {
     "satin/deposits/new-caller/minimum-bucket": {
@@ -422,7 +428,7 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict) -> dict:
             "evidence": "derived from the specification by tools/satin_model.py, an executable restatement of the cited "
                         "rules that shares no code with either implementation; implementation runs are cross-checks only",
             "review": {
-                "spec": {"commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd", "descriptor": descriptor_digest},
+                "spec": {"commit": "d34e6266e6d7b69963701baa5ae25ccb8a548260", "descriptor": descriptor_digest},
                 "ruleTexts": {r: rule_texts[r] for r in rules},
                 "decision": "pending: approval is the owner's",
             },

@@ -551,7 +551,11 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
         Ok(executed) => executed,
         Err(HandlerError::Database(e)) => return error(format!("the implementation could not read its input: {e}")),
         Err(e) => match reason_of(&e) {
-            Some(reason) => return Ok((refusal("validation", reason), object([]))),
+            // A gas limit above what the block has left is a skip at inclusion (SATIN-BLK-013).
+            Some(reason) => {
+                let phase = if reason == "gas-limit-exceeds-block" { "inclusion" } else { "validation" };
+                return Ok((refusal(phase, reason), object([])));
+            }
             None => return error(format!("unmapped refusal or failure: {e:?}")),
         },
     };

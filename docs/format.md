@@ -111,12 +111,15 @@ a sparse or witness pre-state (`root-over-sparse-state`): a root over a partial 
 ## External inputs
 
 - **SALT** (`salt`): `{mapping, complete, buckets}`. `mapping` names SALT's key-to-bucket mapping
-  (`salt-v1`, the mapping of the pinned spec); `buckets` maps a bucket id to its capacity; with
-  `complete: true` an unlisted bucket has the minimum capacity, otherwise it is a missing input.
+  (`salt-v1`, which the spec descriptor's `salt` member states by value); `buckets` maps a bucket
+  id to its capacity; with `complete: true` an unlisted bucket has the minimum capacity, otherwise
+  it is a missing input. A case without `salt` states no capacity: any bucket read is a missing
+  input (decision D-38).
 - **Oracle transcript** (`oracle`, engine-isolation profiles only: state-transition and
   block-build): `{mode: "recorded", entries: [{slot, answer}]}` in request order, `answer: null`
   being the service answering none; or `{mode: "disabled"}`, no service. In recorded mode an
-  unexpected request or an unused entry fails the case. Validators run no oracle service: Satin's
+  unexpected request or an unused entry fails the case. A case without `oracle` states no service:
+  any oracle request is a missing input (decision D-38). Validators run no oracle service: Satin's
   front-running model persists answers on chain before the reading transaction, so block-import and
   stateless-block take the oracle's values from state and carry no transcript.
 - **Injected faults** (`faults`): provider reads made to fail, each
@@ -172,6 +175,11 @@ states it.
 | `detention` | each volatile read (category, admitted or failed, call path, compute at the read, cap), the final compute limit (`null` if none), gas withheld, released and burned |
 | `reads` | logical reads the spec requires a node to load and export: accounts (`null`: read and absent), slots with the value read (explicit zero), code hashes, block hashes, SALT capacities served, oracle reads in order with their values, admitted hints in order |
 | `checkpoints` | ledger checkpoints at rule-defined boundaries, keyed by call path (child ordinal under each parent), phase and ordinal |
+
+What each value means where an implementation's result could be read two ways — a creation's
+output, the refund when the floor binds, the block-gas figure, the signed net and the reported
+count, a deposit receipt's fields — is fixed in
+[adapter-protocol.md](adapter-protocol.md#mapping-definitions).
 
 Raw opcode traces, cache behaviour, timing, backend names, inspector-only frames and debug strings
 are never observations. A refused or faulted transaction has no receipt, ledgers or resources

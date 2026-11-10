@@ -179,7 +179,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "a halt after a fresh slot: nothing of the slot is kept, the gas limit is used"
+      "intent": "a halt after a fresh slot: nothing of the slot is kept, the gas limit is used; the charges regular gas paid for it are on the regular ledger (D-51)"
     },
     "derivation": [
       {
@@ -215,7 +215,7 @@
           "pools: regular budget min(300,000, 200,000,000) - 15,000 = 285,000, reservoir 0",
           "body history 27,280: 0 from the reservoir, 27,280 from the regular budget",
           "SSTORE slot 1 0->0->1: cold access 2,100 + fresh-slot write 10,000; state gas 97,920 x m=1 = 97,920 (10,000 legacy share first); write record history 3,520",
-          "halt: every regular gas the frame held is consumed, the reservoir 0 returns; total = gas limit 300,000 - 0 = 300,000",
+          "halt: every regular gas the frame held is consumed, the reservoir 0 returns; total = gas limit 300,000 - 0 = 300,000; the frame's state and history charges are not kept, so what regular gas paid of them is on the regular ledger (D-51)",
           "ledgers: state 0, history 27,280 (310 bytes), regular = total 300,000 - state - history = 272,720",
           "gas used max(300,000 - 0, floor 15,000) = 300,000; the block counts max(regular 272,720, floor 15,000) = 272,720"
         ]
@@ -292,8 +292,8 @@
         "SATIN-STATE-012": "sha256:aada2e980b7aeb5ddb323fd52d195eaab72347a4bf83eb259a5943e358662a64"
       },
       "spec": {
-        "commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd",
-        "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05"
+        "commit": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+        "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2"
       }
     },
     "status": "candidate",
@@ -348,7 +348,7 @@
   ],
   "schemaVersion": "1.0",
   "specRef": {
-    "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05",
+    "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
     "name": "megaeth/Satin"
   }
 }

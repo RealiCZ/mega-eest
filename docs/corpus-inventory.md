@@ -72,11 +72,32 @@ formats listed in the index are not in the copy.
 | Transaction tests | 720 (92 for Osaka) | **Convert** for `transaction-validation` once obtained; not in the shared copy |
 | `ethereum/legacytests` (36,535 files) | — | **Excluded**: covered by EEST's static re-fills |
 
-## 4. Not inspected here
+## 4. The full corpus archive and the first export
 
-The design also names the full differential corpus release (`mega-evm2-corpus`, release
-`corpus-2026-11-05`, archive SHA-256
-`7dabbefe274971eede5ac9191ff5ea36d6c9f9bad27237db40a4cf59f5778529` as reported by its release
-metadata) and stateless-validator's `test_data/` (genesis, contracts, blocks and witness files).
-Both are inventoried by reference: the archive is verified member by member and mirrored before any
-conversion, and proof files keep their original bytes with an explicit codec id and version.
+The full differential corpus release `corpus-2026-11-10` was downloaded and verified against its
+published digest (`7a6e3dd2512e5631d18ac8367a8b6a8ea1ad5a255d456b13321fb50268da62fa`); its member
+inventory and the rule that maps an old member to a new case are in
+[corpus-archive.md](corpus-archive.md). It is not mirrored yet (D-47). The earlier release named by
+the design (`corpus-2026-11-05`) is superseded by it for conversion purposes.
+
+The exporter (`exporter/`, `tools/export_scenarios.py`, run by `tools/export-scenarios.sh`)
+converts the scenario crate at the evm2-based implementation's pin (`6ef8c136`), which defines
+3,850 hand-written scenarios, into `state-transition` candidates under the git-ignored
+`candidates/exported/`. Against the `d34e626` registry:
+
+| Disposition | Scenarios |
+| --- | --- |
+| Converted into a candidate authoring document | 867 |
+| Limit or detention-cap override: parameterized-model lane (D-11) | 1,033 |
+| Cites no active rule of the pinned registry: needs authored rules and assertions | 1,877 |
+| Earlier transactions of its block: needs a block profile | 44 |
+| Oracle answers without their request order: a transcript needs a recorded run | 21 |
+| Simulation switch (`skip_nonce_check`, `skip_eip3607`) | 7 |
+| An L1 fee: needs signed bytes the keyless sender cannot give | 1 |
+
+`summary.json` lists every excluded scenario by name under its reason. A converted candidate's
+transaction is a synthetic message (the scenario senders have no keys) or a deposit envelope; it
+cites the scenario's own rule ids through one unreviewed assertion over the whole expected result,
+and keeps its name and group as aliases. `mega-fixture fill` completes it with an implementation's
+observations into `candidates/filled/<adapter>/`; none is promoted without review. stateless-validator's
+`test_data/` is still inventoried by reference only; it belongs to the proof profile of phase 3.

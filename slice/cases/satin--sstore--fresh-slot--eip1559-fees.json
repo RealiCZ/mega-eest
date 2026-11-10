@@ -53,7 +53,8 @@
     {
       "path": "/expected/state",
       "rules": [
-        "SATIN-BASE-001"
+        "SATIN-BASE-001",
+        "SATIN-BASE-010"
       ]
     }
   ],
@@ -283,10 +284,11 @@
       {
         "path": "/expected/state",
         "rules": [
-          "SATIN-BASE-001"
+          "SATIN-BASE-001",
+          "SATIN-BASE-010"
         ],
         "steps": [
-          "fees: the sender pays 155,826 x 3,000,000; the base fee vault receives 155,826 x 1,000,000, the beneficiary 155,826 x 2,000,000"
+          "fees: the sender pays 155,826 x 3,000,000; the base fee vault receives 155,826 x 1,000,000, the beneficiary 155,826 x 2,000,000; the L1 data fee and the operator fee are zero, the L1 block contract's fee parameters being zero"
         ]
       }
     ],
@@ -300,6 +302,7 @@
         "SATIN-ACCT-012": "sha256:d5b25ab3bab59b0e29a130178677245e965255d13a4374addfc07db8c3ea3d90",
         "SATIN-ACCT-016": "sha256:a1a4d7c9b074f47581f991bdbafbffc9571e9cc136879daf2d8b711532c96545",
         "SATIN-BASE-001": "sha256:5ab02a18b23f42264b9f600e2fa209856029fb395a430a461f5a9b4182635b90",
+        "SATIN-BASE-010": "sha256:85e1a51c9c0b9dac2b0459981ec613bda699d1dfb6fec3e6f28f3ef059e12986",
         "SATIN-HIST-002": "sha256:25b81f15f444a2b56d289e489301321d295bec49cc486f3356d4826da584fb22",
         "SATIN-HIST-003": "sha256:5c278d629bff537ddefd0d3b1192dfd67dab5ea126eeaeda86d21e7f72a867b1",
         "SATIN-HIST-004": "sha256:ed165b75e64fdae2ff1c9f97dd815ea124b28818647c873db13e217eac046d90",
@@ -325,8 +328,8 @@
         "SATIN-STATE-012": "sha256:aada2e980b7aeb5ddb323fd52d195eaab72347a4bf83eb259a5943e358662a64"
       },
       "spec": {
-        "commit": "22a5f4bc95dd2abbcc9e75146e24be781e08aadd",
-        "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05"
+        "commit": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+        "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2"
       }
     },
     "status": "candidate",
@@ -355,6 +358,7 @@
     "SATIN-ACCT-012",
     "SATIN-ACCT-016",
     "SATIN-BASE-001",
+    "SATIN-BASE-010",
     "SATIN-HIST-002",
     "SATIN-HIST-003",
     "SATIN-HIST-004",
@@ -381,7 +385,7 @@
   ],
   "schemaVersion": "1.0",
   "specRef": {
-    "descriptor": "sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05",
+    "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
     "name": "megaeth/Satin"
   }
 }
