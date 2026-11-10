@@ -1,0 +1,54 @@
+# Adapter of the revm-based Satin implementation (mega-evm, on MegaETH's revm fork) to the fixture
+# format. Its own workspace: the root workspace holds the format crate alone, which depends on no
+# engine; this crate depends on the format crate, never the other way round.
+[workspace]
+
+[package]
+name = "mega-eest-adapter-revm"
+description = "Runs mega-execution-fixture cases on the revm-based Satin implementation."
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[[bin]]
+name = "adapter-revm"
+path = "src/main.rs"
+
+[dependencies]
+# The wire contract: strict JSON and the fixture model.
+mega-fixture-format = { path = "../../crates/mega-fixture-format" }
+
+# The implementation, pinned by commit (adapters/implementations.env: REVM_IMPL_REV).
+mega-evm = { git = "https://github.com/megaeth-labs/mega-evm", rev = "5e3f30ad4692f3815105dea1368f789f032ddd2b", features = ["test-utils"] }
+
+# The versions mega-evm's own root manifest pins at that revision.
+revm = { version = "=40.0.3" }
+op-revm = { git = "https://github.com/ethereum-optimism/optimism", rev = "f67d87cd5c9992b62d215c043917b94e3f019629" }
+alloy-consensus = { version = "2.0.5" }
+alloy-eips = { version = "2.0.5" }
+alloy-evm = { version = "0.36.0" }
+alloy-op-evm = { git = "https://github.com/ethereum-optimism/optimism", rev = "f67d87cd5c9992b62d215c043917b94e3f019629" }
+alloy-primitives = { version = "1.6.0" }
+alloy-rlp = { version = "0.3" }
+op-alloy-consensus = { git = "https://github.com/ethereum-optimism/optimism", rev = "f67d87cd5c9992b62d215c043917b94e3f019629" }
+
+# Patches are not inherited from a dependency: these repeat the blocks of mega-evm's own root
+# Cargo.toml at the pinned revision.
+[patch.crates-io]
+revm = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-primitives = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-interpreter = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-context = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-context-interface = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-handler = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-database = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-database-interface = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-state = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-bytecode = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-precompile = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+revm-inspector = { git = "https://github.com/megaeth-labs/revm", rev = "4c8f0d43b70f2175f9ce0132cc343283f9a29548" }
+
+[patch."https://github.com/ethereum-optimism/optimism"]
+op-revm = { git = "https://github.com/megaeth-labs/op-revm", rev = "8c0db939291e1c4cbf2375782d1483bc371d6b94" }

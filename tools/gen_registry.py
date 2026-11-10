@@ -21,8 +21,12 @@ stated twice, when the ids it finds differ from the specification's own generate
 (`rules.md`), or when the commit does not resolve.
 
 Usage:
-    tools/gen_registry.py <spec-checkout> <commit> <out-dir>
-    tools/gen_registry.py <spec-checkout> <commit> <out-dir> --check
+    tools/gen_registry.py <spec-checkout> <commit> <out-dir> [--members <file>]
+    tools/gen_registry.py <spec-checkout> <commit> <out-dir> [--members <file>] --check
+
+`--members` adds the members of a JSON object to the descriptor: the codecs and the SALT mapping
+a consumer needs to run the spec's cases (tools/descriptor-members/). A descriptor written
+without it has no such members, as the descriptor of `cac999a` has none.
 
 Standard library only. Requires `git` on PATH.
 """
@@ -143,7 +147,7 @@ def table_rows(block: list[str]) -> list[str]:
     return rows
 
 
-def build(repo: str, commit: str):
+def build(repo: str, commit: str, members: dict | None = None):
     full = git(repo, "rev-parse", "--verify", f"{commit}^{{commit}}").decode().strip()
     committed = git(repo, "show", "-s", "--format=%cI", full).decode().strip()
     names = git(repo, "ls-tree", "-r", "--name-only", full, SECTION).decode().split("\n")
@@ -215,7 +219,31 @@ def build(repo: str, commit: str):
         "registry": sha256(canonical(registry)),
         "sources": sha256(canonical(source_list)),
     }
+    add_members(descriptor, members, errors)
     return registry, source_list, descriptor, errors
+
+
+def add_members(descriptor: dict, members: dict | None, errors: list[str]) -> None:
+    """Adds the members of `members` to `descriptor`, refusing to replace one it has."""
+    for key, value in sorted((members or {}).items()):
+        if key in descriptor:
+            errors.append(f"--members: {key!r} is a member the generator writes")
+        else:
+            descriptor[key] = value
+
+
+def load_members(argv: list[str]) -> tuple[list[str], dict | None]:
+    """Takes `--members <file>` out of the arguments and loads the file."""
+    if "--members" not in argv:
+        return argv, None
+    i = argv.index("--members")
+    if i + 1 >= len(argv):
+        raise SystemExit("gen_registry: --members needs a file")
+    with open(argv[i + 1], encoding="utf-8") as f:
+        members = json.load(f)
+    if not isinstance(members, dict):
+        raise SystemExit("gen_registry: --members: not a JSON object")
+    return argv[:i] + argv[i + 2:], members
 
 
 def pretty(value) -> str:
@@ -223,13 +251,14 @@ def pretty(value) -> str:
 
 
 def main(argv: list[str]) -> int:
+    argv, members = load_members(argv)
     args = [a for a in argv[1:] if not a.startswith("--")]
     check = "--check" in argv[1:]
     if len(args) != 3:
         print(__doc__, file=sys.stderr)
         return 2
     repo, commit, out = args
-    registry, source_list, descriptor, errors = build(repo, commit)
+    registry, source_list, descriptor, errors = build(repo, commit, members)
     if errors:
         for error in errors:
             print(f"gen_registry: {error}", file=sys.stderr)

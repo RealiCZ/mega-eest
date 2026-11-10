@@ -15,6 +15,7 @@
 //! ```
 
 pub mod compare;
+pub mod consume;
 mod decode;
 pub mod error;
 pub mod hex;

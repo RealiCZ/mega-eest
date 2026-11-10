@@ -149,6 +149,11 @@ impl Profile {
     pub fn as_str(self) -> &'static str {
         PROFILES.iter().find(|(_, p)| *p == self).map(|(n, _)| *n).expect("listed")
     }
+
+    /// The profile named `name`.
+    pub fn parse(name: &str) -> Option<Profile> {
+        PROFILES.iter().find(|(n, _)| *n == name).map(|(_, p)| *p)
+    }
 }
 
 /// An entry of `requires`: an observation group or a format feature.

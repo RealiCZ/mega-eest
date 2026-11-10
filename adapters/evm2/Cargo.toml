@@ -1,0 +1,36 @@
+# Adapter of the evm2-based Satin implementation (mega-evm's next/ workspace on the evm2 fork) to
+# the fixture format. Its own workspace: the root workspace holds the format crate alone.
+#
+# The implementation is not a plain git dependency: its crates find evm2 by the relative path
+# ../../evm2, so tools/fetch-implementations.sh checks it and its evm2 fork out at their pins
+# under vendor/ (git-ignored), and the paths below point there.
+[workspace]
+
+[package]
+name = "mega-eest-adapter-evm2"
+description = "Runs mega-execution-fixture cases on the evm2-based Satin implementation."
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[[bin]]
+name = "adapter-evm2"
+path = "src/main.rs"
+
+[dependencies]
+# The wire contract: strict JSON and the fixture model.
+mega-fixture-format = { path = "../../crates/mega-fixture-format" }
+
+# The implementation (adapters/implementations.env: EVM2_IMPL_REV and EVM2_FORK_REV). Its
+# default SALT mapping is the production one; the scenarios' test hasher is not enabled.
+mega-evm2 = { path = "../../vendor/mega-evm/next/mega-evm2", features = ["witness"] }
+op-evm2 = { path = "../../vendor/mega-evm/next/op-evm2", features = ["std"] }
+evm2 = { path = "../../vendor/evm2/crates/evm2", features = ["std"] }
+
+# The versions the implementation's workspace uses.
+alloy-consensus = { version = "2.5.0", features = ["std", "k256"] }
+alloy-eips = { version = "2.5.0", features = ["std"] }
+alloy-primitives = { version = "1.7.0", features = ["std"] }
+alloy-rlp = { version = "0.3" }

@@ -1,0 +1,3 @@
+# The implementation's own toolchain (next/rust-toolchain.toml at the pinned revision).
+[toolchain]
+channel = "nightly-2026-04-23"
