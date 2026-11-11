@@ -3,13 +3,17 @@
 //!
 //! The process interface is docs/adapter-protocol.md's: `capabilities`, and `run
 //! [--instrumented]` with one run request on standard input. The implementation is driven through
-//! `Evm::transact` with the configuration its block executor uses (`satin_version`, Satin's
-//! transaction limits, the production SALT mapping). Nothing here is shared with the adapter of
-//! the revm-based implementation.
+//! the single-transaction EVM its factory makes (`SatinFactory::evm`: Satin's version for the
+//! case's chain id, Satin's transaction limits, the production SALT mapping, the live system
+//! address resolved from the pre-state), then `Evm::transact`. SALT capacities come from the
+//! case's `salt` input as a snapshot of the parent state. Nothing here is shared with the adapter
+//! of the revm-based implementation.
 
+use std::cell::Cell;
 use std::collections::{BTreeMap, HashMap};
 use std::io::{Read, Write};
 use std::process::ExitCode;
+use std::sync::Arc;
 
 use alloy_consensus::{
     transaction::{Recovered, SignerRecoverable},
@@ -25,9 +29,13 @@ use evm2::{
     inspector::Inspector,
     interpreter::{Interpreter, Message, MessageResult, Word},
     registry::HandlerError,
-    Evm, ExecutionConfig, TxResult,
+    TxResult,
 };
-use mega_evm2::{MegaSpec, MegaTypes};
+use mega_evm2::{
+    chain::{BootstrapInput, ChainConfig},
+    factory::SatinFactory,
+    BucketId, MegaTypes, SaltReadError, SaltSnapshot, SnapshotId, MIN_BUCKET_SIZE,
+};
 use mega_fixture_format::json::{self, Value};
 use op_evm2::{OpTxEnvelope, TxDeposit};
 
@@ -212,6 +220,72 @@ impl Database for PreState {
         let n: u64 = (*number).try_into().map_err(|_| Missing(format!("block hash {number}")))?;
         self.block_hashes.get(&n).copied().ok_or_else(|| Missing(format!("block hash {n}")))
     }
+}
+
+/// The case's SALT input as the implementation reads it: a snapshot of the parent state's bucket
+/// capacities. A listed bucket has its capacity; an unlisted one has the minimum capacity when the
+/// input is complete, and is otherwise a missing input, as is every bucket of a case without
+/// `salt` (docs/format.md). The first bucket refused is kept, to report the missing input by name.
+struct FixtureSalt {
+    id: SnapshotId,
+    buckets: HashMap<u64, u64>,
+    complete: bool,
+    refused: Cell<Option<u64>>,
+}
+
+impl FixtureSalt {
+    fn read(salt: Option<Reader<'_>>, parent_hash: B256) -> Result<Self, Stop> {
+        let mut snapshot = FixtureSalt {
+            id: SnapshotId { parent_hash, state_root: B256::ZERO },
+            buckets: HashMap::new(),
+            complete: false,
+            refused: Cell::new(None),
+        };
+        if let Some(salt) = salt {
+            if salt.at("mapping")?.str()? != "salt-v1" {
+                return Err(Stop::Unsupported("a SALT mapping other than salt-v1".into()));
+            }
+            for (id, capacity) in salt.at("buckets")?.map()? {
+                let id: u64 = word(id)?.try_into().or_else(|_| error("bucket id"))?;
+                snapshot.buckets.insert(id, Reader(capacity, "capacity").u64()?);
+            }
+            snapshot.complete = salt.at("complete")?.boolean()?;
+        }
+        Ok(snapshot)
+    }
+}
+
+impl SaltSnapshot for FixtureSalt {
+    fn id(&self) -> SnapshotId {
+        self.id
+    }
+
+    fn capacity(&self, bucket: BucketId) -> Result<u64, SaltReadError> {
+        let id = u64::from(bucket);
+        match self.buckets.get(&id) {
+            Some(capacity) => Ok(*capacity),
+            None if self.complete => Ok(MIN_BUCKET_SIZE),
+            None => {
+                if self.refused.get().is_none() {
+                    self.refused.set(Some(id));
+                }
+                Err(SaltReadError::Missing)
+            }
+        }
+    }
+}
+
+/// The chain the case runs on: Satin and every fork below it active from genesis, at the case's
+/// chain id. The registry bootstrap values a validated configuration carries seed a new registry in
+/// a block's pre-block sequence, which a single transaction's EVM never runs; these are
+/// placeholders and reach no observation.
+fn chain(chain_id: u64) -> Result<ChainConfig, Stop> {
+    let bootstrap = BootstrapInput {
+        initial_sequencer: Some(Address::repeat_byte(0x5e)),
+        initial_admin: Some(Address::repeat_byte(0xad)),
+        min_rotation_delay: Some(1),
+    };
+    ChainConfig::satin_from_genesis(chain_id, bootstrap).or_else(|e| error(format!("chain configuration: {e:?}")))
 }
 
 /// An account as the case's pre-state lists it.
@@ -506,9 +580,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
         Err(Undecodable(reason)) => return Ok((refusal("decode", reason), object([]))),
     };
 
-    let mut version = mega_evm2::satin_version();
-    version.chain_id = input.at("chain")?.at("chainId")?.u64()?;
-    let config = ExecutionConfig::<MegaTypes>::for_spec_and_version(MegaSpec::Satin, version);
+    let factory = SatinFactory::new(chain(input.at("chain")?.at("chainId")?.u64()?)?);
     let env = BlockEnv::<MegaTypes> {
         number: U256::from(block.at("number")?.u64()?),
         timestamp: U256::from(block.at("timestamp")?.u64()?),
@@ -520,36 +592,29 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
         beneficiary: block.at("coinbase")?.address()?,
         ..BlockEnv::<MegaTypes>::default()
     };
-    let mut evm = Evm::<MegaTypes>::new_with_execution_config(
-        config,
-        MegaSpec::Satin,
-        env,
-        mega_evm2::tx::registry(),
-        evm2::evm::Db::new(db),
-        mega_evm2::precompiles(),
-    );
-    evm.state_mut().set_read_absent_storage(true);
-    let (salt_known, salt_complete) = match input.opt("salt") {
-        None => (false, false),
-        Some(salt) => {
-            if salt.at("mapping")?.str()? != "salt-v1" {
-                return Err(Stop::Unsupported("a SALT mapping other than salt-v1".into()));
-            }
-            for (id, capacity) in salt.at("buckets")?.map()? {
-                let id: u64 = word(id)?.try_into().or_else(|_| error("bucket id"))?;
-                evm.ext_mut().cfg.buckets.insert(id, Reader(capacity, "capacity").u64()?);
-            }
-            (true, salt.at("complete")?.boolean()?)
-        }
+    // The engine's snapshot trait asks for no thread bound and this run is single-threaded; the
+    // factory takes the snapshot in an `Arc`.
+    #[allow(clippy::arc_with_non_send_sync)]
+    let salt = Arc::new(FixtureSalt::read(input.opt("salt"), block.at("parentHash")?.hash()?)?);
+    // The factory installs Satin's version, limits, registry and precompiles, has storage of an
+    // account the database lacks read, and resolves the live system address from the pre-state's
+    // SequencerRegistry, as a block resolves it once (SATIN-REG-002).
+    let mut evm = match factory.evm(env, evm2::evm::Db::new(db), salt.clone()) {
+        Ok(evm) => evm,
+        Err(e) => return error(format!("the implementation could not start the transaction's EVM: {e:?}")),
     };
-    evm.ext_mut().limits = mega_evm2::TxLimits::SATIN;
     if instrumented {
         evm.set_inspector(Messages::default());
     }
 
+    let missing_bucket = |salt: &FixtureSalt| salt.refused.get().map(|b| format!("missing input: SALT bucket {b:#x}"));
     let executed = match evm.transact(&sent.tx) {
         Ok(executed) => executed,
-        Err(HandlerError::Database(e)) => return error(format!("the implementation could not read its input: {e}")),
+        // A capacity the snapshot could not give fails the transaction as an internal error.
+        Err(_) if salt.refused.get().is_some() => return error(missing_bucket(&salt).unwrap_or_default()),
+        Err(e) if mega_evm2::error::database_error(&e).is_some() => {
+            return error(format!("the implementation could not read its input: {e:?}"))
+        }
         Err(e) => match reason_of(&e) {
             // A gas limit above what the block has left is a skip at inclusion (SATIN-BLK-013).
             Some(reason) => {
@@ -584,11 +649,8 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     if oracle.is_none() && ext.oracle_reads > 0 {
         return error("missing input: the transaction asked the oracle service and the case states no oracle input");
     }
-    if salt_known && !salt_complete || !salt_known {
-        let listed_buckets: Vec<u64> = ext.cfg.buckets.keys().copied().collect();
-        if let Some(b) = ext.bucket_reads.iter().find(|b| !listed_buckets.contains(b)) {
-            return error(format!("missing input: SALT bucket {b:#x}"));
-        }
+    if let Some(missing) = missing_bucket(&salt) {
+        return error(missing);
     }
     if let Some((k, l)) = ext.top_stop {
         if !r.status && r.output.as_ref() == mega_evm2::limit_exceeded_output(k, l).as_slice() {
@@ -792,5 +854,49 @@ fn main() -> ExitCode {
             print(&object([("status", str_value("error")), ("error", Value::String(why))]));
             ExitCode::FAILURE
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn salt(input: &str) -> FixtureSalt {
+        let v = json::parse(input.as_bytes()).expect("json");
+        FixtureSalt::read(Some(Reader(&v, "salt")), B256::ZERO).expect("a SALT input")
+    }
+
+    fn bucket(id: u32) -> BucketId {
+        BucketId::new(id).expect("a bucket id")
+    }
+
+    #[test]
+    fn a_listed_bucket_has_its_capacity_and_a_complete_input_the_minimum_elsewhere() {
+        let s = salt(r#"{"mapping":"salt-v1","complete":true,"buckets":{"0x10000":"0x400"}}"#);
+        assert_eq!(s.capacity(bucket(0x10000)), Ok(0x400));
+        assert_eq!(s.capacity(bucket(0x10001)), Ok(MIN_BUCKET_SIZE));
+        assert_eq!(s.refused.get(), None);
+    }
+
+    #[test]
+    fn an_unlisted_bucket_of_an_incomplete_input_is_a_missing_input_named_by_the_first_refusal() {
+        let s = salt(r#"{"mapping":"salt-v1","complete":false,"buckets":{"0x10000":"0x400"}}"#);
+        assert_eq!(s.capacity(bucket(0x10000)), Ok(0x400));
+        assert_eq!(s.capacity(bucket(0x20000)), Err(SaltReadError::Missing));
+        assert_eq!(s.capacity(bucket(0x30000)), Err(SaltReadError::Missing));
+        assert_eq!(s.refused.get(), Some(0x20000));
+    }
+
+    #[test]
+    fn a_case_without_salt_states_no_capacity() {
+        let s = FixtureSalt::read(None, B256::ZERO).expect("no SALT input");
+        assert_eq!(s.capacity(bucket(0x10000)), Err(SaltReadError::Missing));
+        assert_eq!(s.refused.get(), Some(0x10000));
+    }
+
+    #[test]
+    fn another_mapping_is_unsupported() {
+        let v = json::parse(br#"{"mapping":"salt-v2","complete":true,"buckets":{}}"#).expect("json");
+        assert!(matches!(FixtureSalt::read(Some(Reader(&v, "salt")), B256::ZERO), Err(Stop::Unsupported(_))));
     }
 }

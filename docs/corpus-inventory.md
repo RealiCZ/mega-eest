@@ -81,13 +81,13 @@ inventory and the rule that maps an old member to a new case are in
 the design (`corpus-2026-11-05`) is superseded by it for conversion purposes.
 
 The exporter (`exporter/`, `tools/export_scenarios.py`, run by `tools/export-scenarios.sh`)
-converts the scenario crate at the evm2-based implementation's pin (`9e55185f`), which defines
-3,856 hand-written scenarios, into `state-transition` candidates under the git-ignored
+converts the scenario crate at the evm2-based implementation's pin (`f3d84454`), which defines
+3,857 hand-written scenarios, into `state-transition` candidates under the git-ignored
 `candidates/exported/`. Against the `d34e626` registry:
 
 | Disposition | Scenarios |
 | --- | --- |
-| Converted into a candidate authoring document | 870 |
+| Converted into a candidate authoring document | 871 |
 | Limit or detention-cap override: parameterized-model lane (D-11) | 1,035 |
 | Cites no active rule of the pinned registry: needs authored rules and assertions | 1,877 |
 | Earlier transactions of its block: needs a block profile | 44 |
