@@ -25,9 +25,12 @@ mega-fixture-format = { path = "../../crates/mega-fixture-format" }
 
 # The implementation (adapters/implementations.env: EVM2_IMPL_REV and EVM2_FORK_REV). Its
 # default SALT mapping is the production one; the scenarios' test hasher is not enabled.
-mega-evm2 = { path = "../../vendor/mega-evm/next/mega-evm2", features = ["witness"] }
-op-evm2 = { path = "../../vendor/mega-evm/next/op-evm2", features = ["std"] }
-evm2 = { path = "../../vendor/evm2/crates/evm2", features = ["std"] }
+# Neither evm2's nor op-evm2's default features: the implementation's workspace turns them off
+# and its members choose their own (evm2's precompile backends among them), so the engine is
+# built here as it builds there.
+mega-evm2 = { path = "../../vendor/mega-evm/next/mega-evm2" }
+op-evm2 = { path = "../../vendor/mega-evm/next/op-evm2", default-features = false, features = ["std"] }
+evm2 = { path = "../../vendor/evm2/crates/evm2", default-features = false, features = ["std"] }
 
 # The versions the implementation's workspace uses.
 alloy-consensus = { version = "2.5.0", features = ["std", "k256"] }

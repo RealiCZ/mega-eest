@@ -283,7 +283,7 @@ the evm2-based implementation and its evm2 fork are checked out by `tools/fetch-
 under the git-ignored `vendor/`, laid out so their relative `../../evm2` path resolves, and the
 script refuses a fork pin that differs from the implementation's own `next/evm2-fork.env`. The
 evm2-based pin moved from `6ef8c136` (fork `28e20011`) to `9e55185f` (fork `1a70ed94`, on upstream
-evm2 `e0d398a6`) with no change to the slice's results. Each
+evm2 `e0d398a6`) with no change to the slice's results, then to `f3d84454` (D-52). Each
 adapter's lockfile starts from its implementation's own and builds `--locked`, with the
 implementation's toolchain (`nightly-2026-04-23`). Neither adapter is a member of the root
 workspace, so the format crate depends on no engine.
@@ -310,3 +310,30 @@ paid. A halted frame keeps none of its charges, so what regular gas paid of them
 the ledgers: after a halt, the state ledger holds the charges kept before the frame and the history
 ledger the body's, as `SATIN-DEP-005` has it for a failed deposit. The halt cases of the slice say
 so in their intent; the specification's owner may confirm the reading.
+
+From the move of the evm2-based pin:
+
+**D-52. The evm2-based adapter makes its EVM through the implementation's factory.** The
+evm2-based pin moved from `9e55185f` (fork `1a70ed94`) to `f3d84454` (fork `390a3876`, on upstream
+evm2 `66687c18`). At that revision the implementation makes every EVM through a factory over a
+validated chain configuration, prices state by a SALT snapshot of the parent state that the caller
+supplies, and resolves the live system address once, when a single transaction's EVM is made, from
+the SequencerRegistry in the state it runs on (`SATIN-REG-002`). The adapter supplies what the case
+defines:
+
+- the chain: Satin and every fork below it active from genesis, at the case's chain id. A validated
+  configuration also carries the registry's bootstrap values, which seed a new registry in a
+  block's pre-block sequence; a single transaction's EVM runs no such sequence, so the adapter's
+  placeholders reach no observation;
+- the SALT snapshot: the case's `salt` input as the format defines it (a listed bucket at its
+  capacity; an unlisted one at the minimum when the input is complete, otherwise a missing input,
+  as is every bucket of a case without `salt`, D-38). A capacity the snapshot cannot give fails the
+  transaction inside the implementation, and the adapter reports the missing input by bucket;
+- the live system address: whatever the pre-state's SequencerRegistry names, read by the
+  implementation itself.
+
+The adapter also builds evm2 and op-evm2 without their default features, as the implementation's
+own workspace does, so the engine's precompile backends are the ones its members choose; the
+adapter's lockfile is the implementation's, less what the adapter does not build, plus the adapter
+and the format crate. Every observation of every slice case, the quarantined and the negative
+included, is byte-identical to the one at `9e55185f`.

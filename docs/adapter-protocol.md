@@ -127,7 +127,7 @@ adapter implements them on its own (decisions D-40, D-41):
 | Adapter | Implementation | Pinned by | Build |
 | --- | --- | --- | --- |
 | `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `5e3f30ad`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
-| `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `9e55185f` with `RealiCZ/evm2` at `1a70ed94`, through `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
+| `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `f3d84454` with `RealiCZ/evm2` at `390a3876`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
 Both declare `state-transition` with its mandatory groups and the features `deposit`, `salt` and
 `synthetic-transaction`; the revm-based adapter also runs a recorded `oracle-transcript`, which
@@ -135,5 +135,10 @@ the other implementation's map-based oracle service cannot check (D-45). Neither
 pre-states, injected faults, or engine isolation of a deposit-only or activation block. Both use
 the production SALT mapping and the implementation's own toolchain, and each reports its build
 identity from what its build resolved (the lockfile's commit, the `vendor/` checkouts' heads).
+Each hands its implementation the case's SALT input as the format defines it (a listed bucket at
+its capacity; an unlisted one at the minimum when the input is complete, otherwise a missing
+input), through the revm-based implementation's SALT environment and the evm2-based
+implementation's SALT snapshot of the parent state. The evm2-based implementation resolves the live
+system address from the pre-state's SequencerRegistry when its EVM is made (D-52).
 Instrumented runs attach a recorder of every frame start and end; `tools/run-slice.sh` holds the
 plain and instrumented observations of every case to the same bytes.
