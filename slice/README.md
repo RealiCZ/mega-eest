@@ -53,8 +53,8 @@ system contracts a call can reach (D-55).
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: fifteen cases the revm-based implementation fails against a decided rule it has
-  not made yet, each passing on the evm2-based implementation:
+- `quarantine/`: twenty-two cases the revm-based implementation fails against a decided rule it
+  has not made yet, each passing on the evm2-based implementation:
   - four deposit cases. `SATIN-HIST-016` and `SATIN-DEP-001` make a deposit pay history gas for its
     body, its logs and its write records; the revm-based implementation charges none. The
     verdicts of the first three name the build they were first recorded against, `5e3f30ad`; all
@@ -73,6 +73,15 @@ system contracts a call can reach (D-55).
     off. `SATIN-MAC-003` and `SATIN-MAC-004` refuse it before any charge; the revm-based
     implementation charges the static cost first, and runs out of gas when the frame cannot pay
     it.
+  - seven cases that carry `reads` (D-61): a two-entry EIP-7702 list that runs out of gas at its
+    first entry and the same list applied, both authorities loaded by the list's simulation
+    (`SATIN-AUTH-005`); a delegate not loaded when its cold surcharge cannot be paid and loaded
+    when it can (`SATIN-SCHED-008`); a cold `BALANCE` whose access cannot be paid, which loads
+    nothing, and one whose access is paid (`SATIN-WIT-012`); and a deposit's Oracle slot, loaded
+    before its charge (`SATIN-ORCL-004`). The revm-based implementation reads the
+    SequencerRegistry in every transaction's validation, which `SATIN-REG-002` excludes, and its
+    reads differ at the registry's account; the list case also lacks its second authority, and the
+    deposit its Oracle slot and its history.
 
   The expectation is the rule's; the cases stay out of the gating slice until that implementation
   is fixed, and `tools/run-slice.sh` checks that each still fails exactly as `index.json` records
@@ -85,10 +94,11 @@ system contracts a call can reach (D-55).
 Limit stops of the transaction's own frame (neither implementation's result carries what the
 `limit` group needs, D-41), gas detention beyond `TIMESTAMP`, a deposit's Oracle read and `BALANCE`,
 nested frames beyond a call to a system contract, a refused call or a detained child, EIP-7702
-lists beyond one accepted entry, an Oracle read that asks the oracle service (the evm2-based
-adapter runs no oracle transcript), the reservoir and the read set as observations (no adapter
-reports them), and every block, building and witness profile: they need observations or consumers
-the next phases add.
+lists beyond one accepted entry or two applied ones, an Oracle read that asks the oracle service
+(the evm2-based adapter runs no oracle transcript), the reservoir as an observation (no adapter
+reports it), a gating case with `reads` (the revm-based implementation reads the SequencerRegistry
+in every transaction, D-61), and every block, building and witness profile: they need observations
+or consumers the next phases add.
 
 ## Running it
 

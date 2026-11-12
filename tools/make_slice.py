@@ -6,8 +6,8 @@ envelope), the SALT capacities its state lands in — and its expected observati
 `tools/satin_model.py`, an executable restatement of the cited rules of the pinned specification
 (`specs/satin-d34e626`; the cases added for interception, the keyless decoder and EIP-7702
 existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
-principles, gas detention, the Oracle's reads and the refused volatile read `specs/satin-5fb2688`,
-D-59 and D-60). No implementation is run: the filler's output is a candidate to compare
+principles, gas detention, the Oracle's reads, the refused volatile read and the reads group
+`specs/satin-5fb2688`, D-59 to D-61). No implementation is run: the filler's output is a candidate to compare
 with, never the source of these values (`tools/run-slice.sh` runs both implementations against
 them).
 
@@ -64,6 +64,8 @@ REGISTRY = bytes.fromhex("6342000000000000000000000000000000000006")
 COINBASE = bytes.fromhex("4200000000000000000000000000000000000011")
 AUTH_KEY = 0x3C2AD3B4B9F1E7A6D5C4B3A29180F7E6D5C4B3A29180F7E6D5C4B3A29180F7E6
 AUTHORITY = ex.address_of(AUTH_KEY)
+SECOND_AUTH_KEY = 0x5D4C3B2A19F8E7D6C5B4A39281706F5E4D3C2B1A09F8E7D6C5B4A39281706F5E
+SECOND_AUTHORITY = ex.address_of(SECOND_AUTH_KEY)
 EMPTY_LEAF = bytes.fromhex("000000000000000000000000000000000000e3e7")
 PLAIN = bytes.fromhex("00000000000000000000000000000000000c0de2")  # a contract with code, no system contract
 DELEGATED = bytes.fromhex("0000000000000000000000000000000000de1e9a")  # an account holding a delegation
@@ -205,7 +207,7 @@ class Case:
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
                  contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
-                 params=None, retune=None):
+                 params=None, retune=None, reads=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -234,6 +236,7 @@ class Case:
         # and "pad" a run of JUMPDESTs, one compute each: what the pad would hold beyond a word's cost moves
         # into the burn (`settle_burn`).
         self.make, self.params, self.retune = make, dict(params or {}), list(retune or [])
+        self.reads = reads  # the case carries the reads group (D-61)
         if make:
             self.code = make(**self.params)
 
@@ -383,6 +386,7 @@ def cases() -> list[Case]:
     out += interception_cases()
     out += ordering_cases()
     out += detention_cases()
+    out += reads_cases()
     return out
 
 
@@ -763,6 +767,59 @@ def detention_cases() -> list[Case]:
     return out
 
 
+# --- Reads: what a transaction loads (the stateless witness) ----------------------------------------
+
+
+def reads_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = ORDERING_SPEC
+    entries = [(AUTH_KEY, CHAIN_ID, DELEGATE, 0), (SECOND_AUTH_KEY, CHAIN_ID, DELEGATE, 0)]
+    both = {AUTHORITY: model.Account(balance=1), SECOND_AUTHORITY: model.Account(balance=1)}
+    # Every authorization list is simulated, the whole list walked: each authority it consults is loaded
+    # whether or not the list is then applied (SATIN-AUTH-005, SATIN-WIT-004).
+    add(Case("satin/reads/list-simulated-out-of-gas", "a two-entry EIP-7702 list whose first entry's ACCOUNT_WRITE, "
+             f"{fmt(model.ACCOUNT_WRITE)}, is one gas beyond the regular gas left: the transaction runs out of gas before "
+             "its first frame with nothing of the list applied, and both authorities are in the reads, the list's "
+             "simulation having loaded them; the recipient, whose load is at step 4, is not", spec=spec, ty=4, to=EOA,
+             code=b"", gas=500_000, authorizations=entries, accounts=both, reads=True,
+             tune=("list", model.ACCOUNT_WRITE - 1)))
+    add(Case("satin/reads/list-simulated-applied", "the same two-entry list with the gas to apply it: both authorities and "
+             "the recipient are in the reads", spec=spec, ty=4, to=EOA, code=b"", gas=500_000, authorizations=entries,
+             accounts=both, reads=True))
+    # The delegate is loaded at step 5 only once its access is paid (SATIN-SCHED-008).
+    delegation = model.DELEGATION_PREFIX + DELEGATE
+    held = {DELEGATED: model.Account(nonce=1, code=delegation), DELEGATE: model.Account(nonce=1, code=STOP)}
+    cold = model.WARM_READ + model.COLD_ACCOUNT_SURCHARGE
+    for short in (True, False):
+        left = cold - 1 if short else cold
+        add(Case(f"satin/reads/delegate-{'not-loaded' if short else 'loaded'}", f"a transaction to an account delegating to "
+                 f"an account that is not warm, with {fmt(left)} of regular gas left for the delegate's access: " +
+                 ("the cold surcharge cannot be paid, so the delegate is not loaded and is not in the reads" if short else
+                  "the access is paid, so the delegate is loaded and is in the reads"),
+                 boundary=f"the regular gas left for the delegate's access {'one below' if short else 'at'} {fmt(cold)}",
+                 spec=spec, to=DELEGATED, code=None, accounts=held, gas=100_000, reads=True, tune=("delegate", left)))
+    # The Oracle's SLOAD loads its slot before its charge (SATIN-ORCL-004).
+    get_slot = mstore(0, int.from_bytes(model.selector("getSlot(uint256)"), "big") << 224)
+    add(Case("satin/reads/oracle-slot-before-charge", "a deposit's call to the Oracle's getSlot holds 50 of regular gas at "
+             f"the SLOAD, under the warm base {model.WARM_READ}: the slot is loaded before the charge runs the frame out of "
+             "gas, and is in the reads", spec=spec, system=True, deposit=(0, 1_000_000), sender_nonce=3, reads=True,
+             make=lambda gas: get_slot + call(gas, model.ORACLE, 0, 36) + STOP, params={"gas": 1_000},
+             retune=[("oracle-sload", 50, "gas", 1)]))
+    # A cold account load the gas cannot pay is not made (SATIN-WIT-012).
+    for short in (True, False):
+        left = cold - 1 if short else cold
+        add(Case(f"satin/reads/balance-cold-{'unpaid' if short else 'paid'}", f"a BALANCE of an account that is not warm "
+                 f"with {fmt(left)} of regular gas: " +
+                 ("the static cost is paid and the cold access is not, so the frame runs out of gas without loading the "
+                  "account, which is not in the reads" if short else "the access is paid and the account, absent, is in "
+                  "the reads as read and absent"),
+                 boundary=f"the regular gas at BALANCE {'one below' if short else 'at'} {fmt(cold)}", spec=spec,
+                 code=push(int.from_bytes(UNTOUCHED, "big")) + b"\x31" + STOP, gas=100_000, reads=True,
+                 tune=("balance", left)))
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -820,7 +877,7 @@ def build(c: Case):
                       max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list,
                       authorizations=[(cid, target, n, ex.address_of(k)) for k, cid, target, n in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
-    run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS)
+    run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads)
     result = run.run()
     result.probe = run.probe
 
@@ -925,6 +982,24 @@ ORACLE_RUNS = {  # case -> the regular ledger the revm-based implementation repo
 }
 
 
+# The reads cases the revm-based implementation fails. It reads the SequencerRegistry's account and slot 0 in
+# every transaction's validation, to classify it, where SATIN-REG-002 has the block resolve the live system
+# address once and no transaction read the registry: the registry's account is the first difference of each
+# non-deposit case, derived from the case's pre-state (D-61). Where the case's own edge differs too, the verdict
+# says so. The deposit's first difference is its history, which that implementation does not charge.
+READS_QUARANTINE = {
+    "satin/reads/list-simulated-out-of-gas": "; it also skips the simulation of a list too short to cross a limit "
+        "(SATIN-AUTH-005, SATIN-WIT-004), so the list that runs out of gas at its first entry leaves the second "
+        "authority unloaded and out of its reads",
+    "satin/reads/list-simulated-applied": "",
+    "satin/reads/delegate-not-loaded": "",
+    "satin/reads/delegate-loaded": "",
+    "satin/reads/balance-cold-unpaid": "",
+    "satin/reads/balance-cold-paid": "",
+    "satin/reads/oracle-slot-before-charge": None,
+}
+
+
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -954,6 +1029,27 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
                    f"{DEPOSIT_HISTORY[c.case_id]} {history_bytes - body} at {price} gas, ({body} + {history_bytes - body}) x "
                    f"{price} = {fmt(history)}")
         return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used), "actual": q(used - history),
+                "verdict": verdict}
+    if c.case_id in READS_QUARANTINE:
+        registry = fx["input"]["pre"]["accounts"][h(REGISTRY)]
+        read = {"balance": registry["balance"], "codeHash": h(ex.keccak256(bytes.fromhex(registry["code"][2:]))),
+                "nonce": registry["nonce"]}
+        reg = ("SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no "
+               "transaction read the registry for its classification, so a transaction's reads hold neither the "
+               f"registry's account nor its slot 0; the revm-based implementation at {REVM_PIN} reads both in every "
+               "transaction's validation")
+        extra = READS_QUARANTINE[c.case_id]
+        if extra is None:
+            ledgers = fx["expected"]["gasLedgers"]
+            used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
+            verdict = ("SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas, and the revm-based implementation "
+                       f"at {REVM_PIN} charges it none, so its gas used is {fmt(history)} below the rule's, the first "
+                       f"difference; its reads differ too: {reg}, and it skips the Oracle read it cannot pay the cold "
+                       "access of (SATIN-ORCL-004), so its reads lack the Oracle's slot")
+            return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
+                    "actual": q(used - history), "verdict": verdict}
+        verdict = f"{reg}, so its reads hold the registry's account, the first difference{extra}"
+        return {"adapter": adapter, "path": f"/expected/reads/accounts/{h(REGISTRY)}", "expected": None, "actual": read,
                 "verdict": verdict}
     if c.case_id in REFUSALS or c.case_id in ORACLE_RUNS:
         block = int(fx["expected"]["gasLedgers"]["blockGas"], 16)
@@ -993,7 +1089,7 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
     return None
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
-               "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources"}
+               "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources", "reads": "/expected/reads"}
 
 
 def settle_burn(params: dict) -> None:
@@ -1060,7 +1156,7 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str 
     if unknown:
         raise SystemExit(f"{c.case_id}: cites rules the registry does not have: {unknown}")
     requires = ["group:gas-ledgers", "group:limit", "group:outcome", "group:receipts", "group:resources", "group:state",
-                "feature:salt"] + (["feature:deposit"] if c.deposit else [])
+                "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else [])
     return {
         "format": "mega-execution-fixture",
         "schemaVersion": "1.0",
