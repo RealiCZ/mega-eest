@@ -173,6 +173,8 @@ pub enum Group {
     GasLedgers,
     GasPools,
     Limit,
+    LimitDiagnostics,
+    LimitStop,
     Outcome,
     Reads,
     Receipts,
@@ -196,7 +198,7 @@ pub enum Feature {
     SyntheticTransaction,
 }
 
-pub const REQUIREMENTS: [(&str, Requirement); 23] = [
+pub const REQUIREMENTS: [(&str, Requirement); 25] = [
     ("feature:deposit", Requirement::Feature(Feature::Deposit)),
     ("feature:injected-faults", Requirement::Feature(Feature::InjectedFaults)),
     ("feature:oracle-transcript", Requirement::Feature(Feature::OracleTranscript)),
@@ -213,6 +215,8 @@ pub const REQUIREMENTS: [(&str, Requirement); 23] = [
     ("group:gas-ledgers", Requirement::Group(Group::GasLedgers)),
     ("group:gas-pools", Requirement::Group(Group::GasPools)),
     ("group:limit", Requirement::Group(Group::Limit)),
+    ("group:limit-diagnostics", Requirement::Group(Group::LimitDiagnostics)),
+    ("group:limit-stop", Requirement::Group(Group::LimitStop)),
     ("group:outcome", Requirement::Group(Group::Outcome)),
     ("group:reads", Requirement::Group(Group::Reads)),
     ("group:receipts", Requirement::Group(Group::Receipts)),
@@ -1209,45 +1213,51 @@ fn resources(v: &Value, p: &str) -> Result<Resources> {
     Ok(Resources { data_size: dim(d, &dp)?, kv_updates: dim(k, &kp)?, state_growth: dim(s, &sp)? })
 }
 
-/// A limit stop.
+/// The members of a limit stop every reader requires: what both implementations' results expose.
+pub const LIMIT_STOP_MEMBERS: [&str; 3] = ["dimension", "limit", "returnData"];
+
+/// The members of a limit stop that are diagnostics: from schema 1.1 on each is optional, carried
+/// behind `group:limit-diagnostics`; a 1.0 stop carries all of them.
+pub const LIMIT_DIAGNOSTICS: [&str; 6] = ["scope", "callPath", "operation", "phase", "operationCommitted", "enclosingCommitted"];
+
+/// The stop kinds of `MegaLimitExceeded(uint8 kind, uint64 limit)`, by dimension.
+pub const LIMIT_KINDS: [(&str, u8); 4] = [("data-size", 0), ("kv-updates", 1), ("compute", 2), ("state-growth", 3)];
+
+/// A limit stop: its dimension, its limit and its return data, and the diagnostics a producer could
+/// supply.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct LimitStop {
     pub dimension: String,
-    pub scope: String,
     pub limit: u64,
-    pub call_path: Vec<u64>,
-    pub operation: String,
-    pub phase: String,
     pub return_data: Vec<u8>,
-    pub operation_committed: bool,
-    pub enclosing_committed: bool,
+    pub scope: Option<String>,
+    pub call_path: Option<Vec<u64>>,
+    pub operation: Option<String>,
+    pub phase: Option<String>,
+    pub operation_committed: Option<bool>,
+    pub enclosing_committed: Option<bool>,
 }
 
 fn limit_stop(v: &Value, p: &str) -> Result<LimitStop> {
     let mut o = Obj::new(v, p)?;
-    o.shape(
-        &["dimension", "scope", "limit", "callPath", "operation", "phase", "returnData", "operationCommitted", "enclosingCommitted"],
-        &[],
-    )?;
+    o.shape(&LIMIT_STOP_MEMBERS, &LIMIT_DIAGNOSTICS)?;
     let (d, dp) = o.req("dimension");
-    let (s, sp) = o.req("scope");
     let (l, lp) = o.req("limit");
-    let (c, cp) = o.req("callPath");
-    let (op, opp) = o.req("operation");
-    let (ph, php) = o.req("phase");
     let (r, rp) = o.req("returnData");
-    let (oc, ocp) = o.req("operationCommitted");
-    let (ec, ecp) = o.req("enclosingCommitted");
+    let dimensions: Vec<&str> = LIMIT_KINDS.iter().map(|(d, _)| *d).collect();
     Ok(LimitStop {
-        dimension: closed_word(d, &dp, &["data-size", "kv-updates", "state-growth", "compute"], ErrorCode::InvalidValue)?,
-        scope: closed_word(s, &sp, &["transaction", "frame"], ErrorCode::InvalidValue)?,
+        dimension: closed_word(d, &dp, &dimensions, ErrorCode::InvalidValue)?,
         limit: u64q(l, &lp)?,
-        call_path: call_path(c, &cp)?,
-        operation: operation(op, &opp)?,
-        phase: closed_word(ph, &php, &["pre-frame", "frame-start", "execution", "frame-return"], ErrorCode::InvalidValue)?,
         return_data: bytes(r, &rp)?,
-        operation_committed: boolean(oc, &ocp)?,
-        enclosing_committed: boolean(ec, &ecp)?,
+        scope: o.opt("scope").map(|(s, sp)| closed_word(s, &sp, &["transaction", "frame"], ErrorCode::InvalidValue)).transpose()?,
+        call_path: o.opt("callPath").map(|(c, cp)| call_path(c, &cp)).transpose()?,
+        operation: o.opt("operation").map(|(op, opp)| operation(op, &opp)).transpose()?,
+        phase: o
+            .opt("phase")
+            .map(|(ph, php)| closed_word(ph, &php, &["pre-frame", "frame-start", "execution", "frame-return"], ErrorCode::InvalidValue))
+            .transpose()?,
+        operation_committed: o.opt("operationCommitted").map(|(oc, ocp)| boolean(oc, &ocp)).transpose()?,
+        enclosing_committed: o.opt("enclosingCommitted").map(|(ec, ecp)| boolean(ec, &ecp)).transpose()?,
     })
 }
 

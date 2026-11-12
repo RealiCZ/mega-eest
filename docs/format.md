@@ -1,4 +1,4 @@
-# The fixture format: `mega-execution-fixture` 1.0
+# The fixture format: `mega-execution-fixture` 1.1
 
 A fixture is one filled case: a concrete input, the spec it runs under, the observations a
 conforming implementation must produce, the rules those observations cover, and non-normative
@@ -13,7 +13,7 @@ not an EEST fixture and unmodified EEST consumers do not accept it.
 | Member | Meaning |
 | --- | --- |
 | `format` | Always `mega-execution-fixture` |
-| `schemaVersion` | `1.<minor>`. A reader of 1.0 reads every 1.x file whose features it knows: a minor version adds constructs inside `input` and `expected` only behind a new `feature:` or `group:` requirement, so an older reader stops at `unknown-requirement` instead of misreading; a new profile stops it at `unknown-profile`. A new envelope member is a major change. A different major is rejected |
+| `schemaVersion` | `1.<minor>`. A reader of 1.0 reads every 1.x file whose features it knows: a minor version adds constructs inside `input` and `expected` only behind a new `feature:` or `group:` requirement, so an older reader stops at `unknown-requirement` instead of misreading; a new profile stops it at `unknown-profile`. A new envelope member is a major change. A different major is rejected. 1.1 adds the limit stop's requirements (`group:limit-stop`, `group:limit-diagnostics`, below); a 1.0 file means what it meant |
 | `caseId` | The logical name ([case-identity.md](case-identity.md)) |
 | `specRef` | `{name, descriptor}`: the spec name and the SHA-256 of its bundled descriptor ([spec-identity.md](spec-identity.md)). Never an unqualified "latest" |
 | `profile` | One of `state-transition`, `transaction-validation`, `block-import`, `block-build`, `stateless-block` ([profiles.md](profiles.md)) |
@@ -44,6 +44,8 @@ Observation groups:
 | `group:gas-ledgers` | `gasLedgers` |
 | `group:resources` | `resources` |
 | `group:limit` | `limit` |
+| `group:limit-stop` | a stop in `limit` (schema 1.1): its `dimension`, `limit` and `returnData` |
+| `group:limit-diagnostics` | a stop's diagnostic members in `limit` (schema 1.1): `scope`, `callPath`, `operation`, `phase`, `operationCommitted`, `enclosingCommitted` |
 | `group:detention` | `detention` |
 | `group:reads` | `reads` |
 | `group:checkpoints` | `checkpoints` (state-transition) |
@@ -171,7 +173,7 @@ states it.
 | `gasPools` | regular and reservoir balances at the start and end, gas regular paid for state and history charges (`spilled`), gas returned to the sender |
 | `gasLedgers` | `total`, `regular`, `state`, `history`, `historyBytes`, `refund`, `floor`, the receipt's `gasUsed`, and the block-gas contribution; regular = total − state − history |
 | `resources` | data size, KV updates and state growth: the transaction limit, the signed net and the reported count |
-| `limit` | the stop that ended the transaction's own frame: dimension, transaction or frame scope, limit, call path, operation, phase, return data, and whether the operation and the enclosing writes committed; `null` when none |
+| `limit` | the stop that ended the transaction's own frame, `null` when none. Every stop carries its `dimension` (`data-size`, `kv-updates`, `compute`, `state-growth`), its `limit` and its `returnData`, `MegaLimitExceeded(kind, limit)` of the two, which is the execution's revert output; these are what an implementation's result exposes. Its diagnostics, the transaction or frame `scope`, the `callPath`, `operation` and `phase` and whether the operation and the enclosing writes committed, are optional from schema 1.1 on, carried behind `group:limit-diagnostics` and compared only where the case carries them; a 1.0 stop carries all of them (D-62) |
 | `detention` | each volatile read (category, admitted or failed, call path, compute at the read, cap), the final compute limit (`null` if none), gas withheld, released and burned |
 | `reads` | logical reads the spec requires a node to load and export: accounts (`null`: read and absent), slots with the value read (explicit zero), code hashes, block hashes, SALT capacities served, oracle reads in order with their values, admitted hints in order. For a transaction these are its loads in the stateless witness's sense (`SATIN-WIT-001`, `-008`): values as the state held them before it, the code hash of every account read that has code, compared as an exact set ([adapter-protocol.md](adapter-protocol.md#reads), D-61) |
 | `checkpoints` | ledger checkpoints at rule-defined boundaries, keyed by call path (child ordinal under each parent), phase and ordinal |

@@ -233,7 +233,7 @@ group needs a stop's scope, call path, operation, phase and commit flags. Neithe
 public result carries more than the stop's dimension and limit, and deriving the rest through an
 inspector would let instrumentation supply values the plain run cannot produce. Each adapter
 therefore reports `error` for a case that ends in a limit stop, and the slice has none: a
-limit-stop or rollback case needs an engine-side observation first.
+limit-stop or rollback case needs an engine-side observation first. Superseded by D-62.
 
 **D-42. A synthetic message has no envelope.** Adapters run a synthetic message with empty
 enveloped bytes, so its L1 data fee is that of an empty envelope; a case whose L1 fee matters
@@ -566,3 +566,34 @@ gas skipped (`SATIN-WIT-012`) and a delegate not loaded (`SATIN-SCHED-008` step 
 - `oracle` lists the service's answers to a recorded transcript; the cases are deposits, whose
   reads ask no service (`SATIN-ORCL-005`), and the evm2-based adapter runs no transcript, so no
   case pins it. `hints` lists the hints each implementation hands its service.
+
+**D-62. The `limit` group keeps what the implementations expose; D-41 is superseded.** D-41 held
+limit-stop cases out of the slice because the stop record required a scope, call path, operation,
+phase and commit flags that neither implementation's public result carries. The cost was that no
+case stopped the transaction's own frame, so the resource-limit and stop rules (`SATIN-LIM-*`,
+`SATIN-STOP-*`) were pinned only through stops a caller caught. The owner approved splitting the
+record, and schema 1.1 does so:
+
+- **Mandatory.** A stop carries its `dimension`, its `limit` and its `returnData`,
+  `MegaLimitExceeded(kind, limit)` of the two. Both implementations report the stop of a
+  transaction's own frame by its kind and limit (`SATIN-STOP-021`: the revert data alone is not
+  the stop), and the frame's revert output is the return data. A reader checks that the output,
+  the return data and the dimension and limit agree.
+- **Optional diagnostics.** `scope`, `callPath`, `operation`, `phase`, `operationCommitted` and
+  `enclosingCommitted` are each optional, carried behind `group:limit-diagnostics`, and compared
+  only where a case carries them. An adapter supplies one only where its implementation's result
+  carries it, never from an inspector; neither adapter supplies any today.
+- **Versioning.** The change is a minor version (`docs/versioning.md`): a 1.1 stop requires
+  `group:limit-stop`, so a 1.0 reader stops at `unknown-requirement` instead of misreading it. A
+  1.0 file means what it meant: a 1.0 stop carries every member and requires neither new group, and
+  every existing fixture, whose `limit` is `null`, stays 1.0 and byte-identical. Only a case whose
+  expected `limit` is a stop is written as 1.1.
+- **Adapters.** Each reports a stop of the transaction's own frame from its implementation's report
+  of it (the revm-based implementation's `limit_stop()`, the evm2-based implementation's top-frame
+  stop when the frame's result is that stop's revert) instead of `error`, and declares
+  `group:limit-stop`.
+- **The model** settles a stop of the transaction's own frame as a revert (`SATIN-STOP-009`,
+  `-011`): gas detention's crossing (`SATIN-DET-018`), and the limits on an `SSTORE`'s record and a
+  log's bytes, held to the frame's budget and then the transaction's limit in the order of
+  `SATIN-LIM-010` and `-011`, the frame's budget being what the transaction had left when it started
+  (`SATIN-LIM-002`) and an admitted hint on no frame (`SATIN-LIM-012`, `SATIN-STOP-012`).

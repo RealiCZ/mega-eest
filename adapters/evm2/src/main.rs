@@ -58,6 +58,7 @@ const CAPABILITIES: &[&str] = &[
     "feature:synthetic-transaction",
     "group:gas-ledgers",
     "group:limit",
+    "group:limit-stop",
     "group:outcome",
     "group:reads",
     "group:receipts",
@@ -743,15 +744,28 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     if let Some(missing) = missing_bucket(&salt) {
         return error(missing);
     }
-    if let Some((k, l)) = ext.top_stop {
-        if !r.status && r.output.as_ref() == mega_evm2::limit_exceeded_output(k, l).as_slice() {
-            return error(
-                "a limit stop: the implementation reports its kind and limit, not the scope, call path, operation, phase \
-                 and commit flags the limit group needs",
-            );
+    // The `limit` group: the stop the implementation reports for the transaction's own frame, when the
+    // frame's result is that stop's revert (a stop a caller caught, or a contract's own revert with the
+    // same bytes, is none: SATIN-STOP-021), by its kind and limit, with the frame's return data. The
+    // implementation reports no scope, call path, operation, phase or commit flag, so the stop carries
+    // no diagnostics (decision D-62).
+    let limit = match ext.top_stop {
+        Some((k, l)) if !r.status && r.is_revert() && r.output.as_ref() == mega_evm2::limit_exceeded_output(k, l).as_slice() => {
+            let dimension = match k {
+                0 => "data-size",
+                1 => "kv-updates",
+                2 => "compute",
+                3 => "state-growth",
+                _ => return error(format!("a limit stop of kind {k}")),
+            };
+            object([("dimension", str_value(dimension)), ("limit", q(l)), ("returnData", hexs(&r.output))])
         }
-    }
+        _ => Value::Null,
+    };
     let mut observations = observe(&r, ext, &sent, &listed, &touched);
+    if let Value::Object(m) = &mut observations {
+        m.insert("limit".into(), limit);
+    }
     if wants_reads {
         if let Value::Object(m) = &mut observations {
             m.insert("reads".into(), reads(&loaded.borrow(), &listed, &ext.mechanisms.hints));

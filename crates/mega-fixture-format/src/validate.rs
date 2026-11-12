@@ -4,7 +4,7 @@
 
 use crate::error::{child, index, Error, ErrorCode};
 use crate::json::Value;
-use crate::model::{Fixture, Profile, RuleRef};
+use crate::model::{Fixture, Profile, RuleRef, LIMIT_DIAGNOSTICS, LIMIT_KINDS};
 use crate::registry::SpecStore;
 use std::collections::BTreeSet;
 
@@ -134,7 +134,7 @@ pub fn validate(value: &Value, fixture: &Fixture, store: &SpecStore) -> Result<(
     check_transactions(fixture.profile, input)?;
 
     // 6. requires lists exactly the groups carried and the features used.
-    let derived = derive_requirements(fixture.profile, input, expected)?;
+    let derived = derive_requirements_at(fixture.profile, input, expected, fixture.schema_minor)?;
     let listed: BTreeSet<String> = arr(get(value, "requires")).iter().map(|v| str_of(v).to_string()).collect();
     if derived != listed {
         let missing: Vec<_> = derived.difference(&listed).collect();
@@ -198,9 +198,37 @@ fn check_synthetic(tx: &Value, path: &str) -> Result<()> {
     Ok(())
 }
 
-/// The group and feature requirements a case's content implies.
+/// The requirements a transaction result's `limit` implies. From schema 1.1 on a stop requires
+/// `group:limit-stop`, and one that carries a diagnostic member `group:limit-diagnostics`; a 1.0
+/// stop carries every member and implies neither (docs/format.md, decision D-62).
+fn limit_requirements(stop: &Value, path: &str, schema_minor: u32, out: &mut BTreeSet<String>) -> Result<()> {
+    let Value::Object(members) = stop else { return Ok(()) };
+    if schema_minor == 0 {
+        if let Some(missing) = LIMIT_DIAGNOSTICS.iter().find(|k| !members.contains_key(**k)) {
+            return Err(err(ErrorCode::MissingField, child(path, missing), "a schema 1.0 limit stop carries every member"));
+        }
+        return Ok(());
+    }
+    out.insert("group:limit-stop".to_string());
+    if LIMIT_DIAGNOSTICS.iter().any(|k| members.contains_key(*k)) {
+        out.insert("group:limit-diagnostics".to_string());
+    }
+    Ok(())
+}
+
+/// The schema minor version this crate writes: 1.1 adds the limit stop's requirements.
+pub(crate) const SCHEMA_MINOR: u32 = 1;
+
+/// The group and feature requirements a case's content implies, at the schema version this crate
+/// writes.
 pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Value) -> Result<BTreeSet<String>> {
+    derive_requirements_at(profile, input, expected, SCHEMA_MINOR)
+}
+
+/// The group and feature requirements a case's content implies, at schema version 1.`schema_minor`.
+pub(crate) fn derive_requirements_at(profile: Profile, input: &Value, expected: &Value, schema_minor: u32) -> Result<BTreeSet<String>> {
     let mut out = BTreeSet::new();
+    let mut limits = BTreeSet::new();
     let mut add = |s: &str| {
         out.insert(s.to_string());
     };
@@ -233,6 +261,7 @@ pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Va
                     add(group);
                 }
             }
+            limit_requirements(get(expected, "limit"), "/expected/limit", schema_minor, &mut limits)?;
             let tx = get(input, "transaction");
             if str_of(get(tx, "kind")) == "synthetic" {
                 add("feature:synthetic-transaction");
@@ -280,6 +309,9 @@ pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Va
                 add("feature:raw-chain-config");
             }
             tx_groups(&txs, &mut out)?;
+            for tx in &txs {
+                limit_requirements(get(tx, "limit"), "/expected", schema_minor, &mut limits)?;
+            }
         }
     }
     if input.get("salt").is_some() {
@@ -294,6 +326,7 @@ pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Va
     if str_of(get(get(input, "pre"), "completeness")) == "sparse" {
         out.insert("feature:sparse-state".into());
     }
+    out.extend(limits);
     Ok(out)
 }
 
@@ -337,6 +370,36 @@ fn check_block_tx(tx: &Value, path: &str) -> Result<()> {
     check_receipt_status(outcome, get(tx, "receipt"), &format!("{path}/receipt/status"))
 }
 
+/// `MegaLimitExceeded(uint8,uint64)`'s selector, the first four bytes of its keccak256.
+const LIMIT_EXCEEDED_SELECTOR: [u8; 4] = [0x84, 0xb9, 0x02, 0x67];
+
+/// A stop of the transaction's own frame is its result: the frame reverted, its output the stop's
+/// return data, which is `MegaLimitExceeded(kind, limit)` for the stop's dimension and limit.
+fn check_limit_stop(execution: &Value, stop: &Value, path: &str) -> Result<()> {
+    if is_null(stop) {
+        return Ok(());
+    }
+    let bad = |why: &str| Err(err(ErrorCode::InconsistentOutcome, path, why.to_string()));
+    if str_of(get(execution, "status")) != "revert" {
+        return bad("a limit stop ends the transaction's own frame with a revert");
+    }
+    let data = str_of(get(stop, "returnData"));
+    if str_of(get(execution, "output")) != data {
+        return bad("a limit stop's return data is the execution's output");
+    }
+    let kind = LIMIT_KINDS.iter().find(|(d, _)| *d == str_of(get(stop, "dimension"))).map(|(_, k)| *k).unwrap_or(u8::MAX);
+    let limit = str_of(get(stop, "limit")).strip_prefix("0x").and_then(|h| u64::from_str_radix(h, 16).ok()).unwrap_or(0);
+    let mut want = String::from("0x");
+    for b in LIMIT_EXCEEDED_SELECTOR {
+        want.push_str(&format!("{b:02x}"));
+    }
+    want.push_str(&format!("{:064x}{:064x}", kind, limit));
+    if data != want {
+        return bad("a limit stop's return data is MegaLimitExceeded(kind, limit) of its dimension and limit");
+    }
+    Ok(())
+}
+
 fn valid_blocks(blocks: &Value) -> impl Iterator<Item = (usize, &Value)> {
     arr(blocks).iter().enumerate().filter(|(_, b)| str_of(get(b, "status")) == "valid")
 }
@@ -366,6 +429,7 @@ fn check_consistency(profile: Profile, input: &Value, expected: &Value) -> Resul
                     }
                 }
                 check_receipt_status(outcome, get(expected, "receipt"), "/expected/receipt/status")?;
+                check_limit_stop(get(outcome, "execution"), get(expected, "limit"), "/expected/limit")?;
             }
         }
         Profile::TransactionValidation => {}

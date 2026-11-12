@@ -5,7 +5,7 @@
 
 use crate::error::{child, index, Error};
 use crate::json::Value;
-use crate::model::{decode_expected, Profile, Requirement, BLOCK_TX_OPTIONAL};
+use crate::model::{decode_expected, Profile, Requirement, BLOCK_TX_OPTIONAL, LIMIT_DIAGNOSTICS};
 use crate::Case;
 use std::collections::BTreeSet;
 
@@ -41,15 +41,22 @@ pub fn compare(case: &Case, actual: &Value, supported: &BTreeSet<Requirement>) -
 
 type Difference = (String, Option<Value>, Option<Value>);
 
-/// Optional groups a container may carry beyond what the case requires.
+/// Optional groups a container may carry beyond what the case requires, and a limit stop's optional
+/// diagnostics.
 fn optional_groups(profile: Profile, path: &str) -> &'static [&'static str] {
     let segments: Vec<&str> = path.split('/').skip(1).collect();
     let block_tx = matches!(segments.as_slice(), ["expected", "blocks", _, "transactions", _])
         || matches!(segments.as_slice(), ["expected", "transactions", _]);
+    let limit = matches!(segments.as_slice(), ["expected", "limit"] if profile == Profile::StateTransition)
+        || matches!(segments.as_slice(), ["expected", "blocks", _, "transactions", _, "limit"])
+        || matches!(segments.as_slice(), ["expected", "transactions", _, "limit"]);
     if profile == Profile::StateTransition && path == "/expected" {
         &["gasPools", "detention", "reads", "checkpoints"]
     } else if block_tx {
         &BLOCK_TX_OPTIONAL
+    } else if limit {
+        // A stop's diagnostics the case does not expect are not compared (decision D-62).
+        &LIMIT_DIAGNOSTICS
     } else {
         &[]
     }

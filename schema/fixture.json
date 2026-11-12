@@ -81,6 +81,8 @@
         "group:gas-ledgers",
         "group:gas-pools",
         "group:limit",
+        "group:limit-diagnostics",
+        "group:limit-stop",
         "group:outcome",
         "group:reads",
         "group:receipts",
