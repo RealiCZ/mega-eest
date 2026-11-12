@@ -13,6 +13,10 @@
 //! database and the SALT snapshot record every load that reaches them while the transaction runs,
 //! in plain and instrumented runs alike, and a run builds them afresh, so the first load of each
 //! item is what the run read (docs/adapter-protocol.md, "Reads").
+//!
+//! A case that requires `group:gas-pools` is answered with the pools of the transaction's first
+//! message, read by a passive recorder at the message's start and end, in plain and instrumented
+//! runs alike (docs/adapter-protocol.md, "Gas pools").
 
 use std::cell::{Cell, RefCell};
 use std::collections::{BTreeMap, BTreeSet, HashMap};
@@ -23,6 +27,7 @@ use std::sync::Arc;
 
 use alloy_consensus::{
     transaction::{Recovered, SignerRecoverable},
+    Transaction as _,
     TxEip1559, TxEip2930, TxEip7702, TxEnvelope, TxLegacy,
 };
 use alloy_eips::eip2718::Decodable2718;
@@ -57,6 +62,7 @@ const CAPABILITIES: &[&str] = &[
     "feature:salt",
     "feature:synthetic-transaction",
     "group:gas-ledgers",
+    "group:gas-pools",
     "group:limit",
     "group:limit-stop",
     "group:outcome",
@@ -545,25 +551,62 @@ fn transaction(t: &Reader<'_>) -> Result<Result<Sent, Undecodable>, Stop> {
 struct Messages {
     depth: i64,
     seen: u64,
+    /// The first message's regular gas and reservoir at its start, and its tracker's remaining
+    /// gas, reservoir and `state_gas_spilled` at its end (decision D-64).
+    start: Option<(u64, u64)>,
+    end: Option<(u64, u64, u64)>,
+}
+
+impl Messages {
+    fn started(&mut self, m: &Message<MegaTypes>) {
+        if self.depth == 0 {
+            self.start = Some((m.gas_limit, m.reservoir));
+        }
+        self.depth += 1;
+        self.seen += 1;
+    }
+    fn ended(&mut self, r: &MessageResult<MegaTypes>) {
+        self.depth -= 1;
+        if self.depth == 0 {
+            self.end = Some((r.gas.remaining(), r.gas.reservoir(), r.gas.state_gas_spilled()));
+        }
+    }
 }
 
 impl Inspector<MegaTypes> for Messages {
-    fn call(&mut self, _: &mut Interpreter<'_, '_, MegaTypes>, _: &mut Message<MegaTypes>) -> Option<MessageResult<MegaTypes>> {
-        self.depth += 1;
-        self.seen += 1;
+    fn call(&mut self, _: &mut Interpreter<'_, '_, MegaTypes>, m: &mut Message<MegaTypes>) -> Option<MessageResult<MegaTypes>> {
+        self.started(m);
         None
     }
-    fn call_end(&mut self, _: &mut Interpreter<'_, '_, MegaTypes>, _: &Message<MegaTypes>, _: &mut MessageResult<MegaTypes>) {
-        self.depth -= 1;
+    fn call_end(&mut self, _: &mut Interpreter<'_, '_, MegaTypes>, _: &Message<MegaTypes>, r: &mut MessageResult<MegaTypes>) {
+        self.ended(r);
     }
-    fn create(&mut self, _: &mut Interpreter<'_, '_, MegaTypes>, _: &mut Message<MegaTypes>) -> Option<MessageResult<MegaTypes>> {
-        self.depth += 1;
-        self.seen += 1;
+    fn create(&mut self, _: &mut Interpreter<'_, '_, MegaTypes>, m: &mut Message<MegaTypes>) -> Option<MessageResult<MegaTypes>> {
+        self.started(m);
         None
     }
-    fn create_end(&mut self, _: &mut Interpreter<'_, '_, MegaTypes>, _: &Message<MegaTypes>, _: &mut MessageResult<MegaTypes>) {
-        self.depth -= 1;
+    fn create_end(&mut self, _: &mut Interpreter<'_, '_, MegaTypes>, _: &Message<MegaTypes>, r: &mut MessageResult<MegaTypes>) {
+        self.ended(r);
     }
+}
+
+/// The `gasPools` group of the transaction's first message (decision D-64). A transaction that ran
+/// no message has no frame pools: what the charges before its first frame left is its reservoir,
+/// which returns to the sender, and its regular gas is consumed.
+fn pools(m: &Messages, gas_limit: u64, gas_used: u64) -> Result<Value, Stop> {
+    let Some(returned) = gas_limit.checked_sub(gas_used) else { return error("gas used above the gas limit") };
+    let ((regular, reservoir), (regular_end, reservoir_end, spilled)) = match (m.start, m.end) {
+        (Some(s), Some(e)) => (s, e),
+        (None, None) => ((0, returned), (0, returned, 0)),
+        _ => return error("instrumentation: a first message without its end"),
+    };
+    let pool = |initial: u64, last: u64| object([("initial", q(initial)), ("final", q(last))]);
+    Ok(object([
+        ("regular", pool(regular, regular_end)),
+        ("reservoir", pool(reservoir, reservoir_end)),
+        ("spilled", q(spilled)),
+        ("returned", q(returned)),
+    ]))
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -676,7 +719,8 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
         Ok(evm) => evm,
         Err(e) => return error(format!("the implementation could not start the transaction's EVM: {e:?}")),
     };
-    if instrumented {
+    let wants_pools = matches!(req.at("requires")?.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some("group:gas-pools")));
+    if instrumented || wants_pools {
         evm.set_inspector(Messages::default());
     }
     loaded.borrow_mut().recording = true;
@@ -728,14 +772,22 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
         })
         .collect();
     let r: TxResult<MegaTypes> = executed.commit();
-    let diagnostics = if instrumented {
+    let recorded = if instrumented || wants_pools {
         let m = evm.clear_inspector_as::<Messages>().ok_or_else(|| Stop::Error("instrumentation: recorder lost".into()))?;
         if m.depth != 0 {
             return error("instrumentation: unbalanced messages");
         }
-        object([("messages", q(m.seen))])
+        Some(m)
     } else {
-        object([])
+        None
+    };
+    let diagnostics = match (&recorded, instrumented) {
+        (Some(m), true) => object([("messages", q(m.seen))]),
+        _ => object([]),
+    };
+    let gas_pools = match (&recorded, wants_pools) {
+        (Some(m), true) => Some(pools(m, sent.tx.gas_limit(), r.tx_gas_used())?),
+        _ => None,
     };
     let ext = evm.ext();
     if oracle.is_none() && ext.oracle_reads > 0 {
@@ -765,6 +817,9 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     let mut observations = observe(&r, ext, &sent, &listed, &touched);
     if let Value::Object(m) = &mut observations {
         m.insert("limit".into(), limit);
+        if let Some(p) = gas_pools {
+            m.insert("gasPools".into(), p);
+        }
     }
     if wants_reads {
         if let Value::Object(m) = &mut observations {
