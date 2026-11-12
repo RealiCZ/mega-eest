@@ -36,12 +36,12 @@ fn a_registry_entry_whose_text_does_not_match_its_digest_or_status_is_refused() 
 }
 
 #[test]
-fn the_four_satin_snapshots_and_the_rex6_registry_are_bundled() {
+fn the_five_satin_snapshots_and_the_rex6_registry_are_bundled() {
     let store = common::store();
     let names: Vec<&str> = store.specs().map(|s| s.name.as_str()).collect();
-    assert_eq!(names.iter().filter(|n| **n == "megaeth/Satin").count(), 4, "{names:?}");
+    assert_eq!(names.iter().filter(|n| **n == "megaeth/Satin").count(), 5, "{names:?}");
     let ids: Vec<usize> = store.specs().filter(|s| s.name == "megaeth/Satin").map(|s| s.rules.len()).collect();
-    assert!(ids.contains(&407) && ids.contains(&408) && ids.contains(&409), "{ids:?}");
+    assert!(ids.contains(&407) && ids.contains(&408) && ids.contains(&409) && ids.contains(&410), "{ids:?}");
     let rex6 = store.specs().find(|s| s.name == "megaeth/Rex6").expect("Rex6 is bundled");
     assert_eq!(rex6.rules.len(), 358);
     assert!(rex6.rules.values().all(|r| r.active), "a frozen spec retires nothing");
@@ -52,7 +52,7 @@ fn the_four_satin_snapshots_and_the_rex6_registry_are_bundled() {
 /// out-of-band knowledge of them.
 #[test]
 fn the_current_descriptors_bind_codecs_and_the_salt_mapping() {
-    for dir in ["specs/satin-22a5f4b", "specs/satin-d34e626", "specs/satin-d334ef8", "specs/rex6-d4c913c5"] {
+    for dir in ["specs/satin-22a5f4b", "specs/satin-d34e626", "specs/satin-d334ef8", "specs/satin-5fb2688", "specs/rex6-d4c913c5"] {
         let d = mega_fixture_format::json::parse(&common::read(&format!("{dir}/descriptor.json"))).unwrap();
         for member in ["/codecs/header/fields", "/codecs/receipt/encoding", "/codecs/transaction/types", "/salt/seeds"] {
             assert!(d.pointer(member).is_some(), "{dir}: {member}");
