@@ -363,3 +363,95 @@ revision its mapping was read from, `5e3f30ad`. The mapping's source
 (`crates/mega-evm/src/external/hasher`) is byte-identical at `4e39cfd6`, so the member's data is
 the same at both revisions, and the member keeps the revision it was read at: the descriptor
 digest, which every case's `specRef` carries, does not move with an implementation's pin.
+
+From the cases for interception, the keyless decoder and EIP-7702 existence:
+
+**D-54. Cases added after the first slice cite the newest snapshot.** The cases added for
+interception before the frame start, the keylessDeploy decoder and EIP-7702 existence cite
+`specs/satin-d334ef8`, which states `SATIN-ICPT-007`; the first 63 cases, the quarantine and the
+negative case keep `specs/satin-d34e626` and stay byte-identical. Each case carries its own
+`specRef`, and an entry of `slice/index.json` names its spec when it is not the index's.
+
+**D-55. A case's pre-state carries the code of every system contract a call can reach.** The new
+cases hold the Oracle 2.0.0, KeylessDeploy 1.0.0, MegaAccessControl 1.0.0 and MegaLimitControl
+1.0.0 at their addresses, with the code the specification names by hash (its system-contracts
+overview at `d334ef8`), nonce zero and no balance, as the pre-block deployment leaves an address
+that held no account. `tools/system-contracts.json` holds that code, read from the revm-based
+implementation's versioned artifacts at `4e39cfd6`, and `tools/make_slice.py` refuses an entry
+whose keccak256 is not the specification's hash. The first 63 cases make no call: the L1 block
+contract and the SequencerRegistry hold a placeholder (`0xfe`) there that no call reaches.
+
+**D-56. Readings the call derivations fix.**
+
+- A start its frame start refuses (a value the caller cannot fund) and a call an interceptor
+  answers return the child's whole regular gas to the caller, `CALL_STIPEND` included: the
+  child's gas is the forward plus the stipend (`SATIN-FWD-003`), the forwarded gas returns
+  untouched (`SATIN-ICPT-004`), and the caller's regular gas rises by what the child returns
+  (`SATIN-POOL-012`). This is an owner decision, and it is the base layer's behaviour: a call that
+  starts no frame returns the stipend with the rest of the child's gas, and both implementations
+  do so. Such a value call therefore costs its caller 9,000 of the value transfer's 11,300.
+- A value start's records, the caller's account and the callee's, are charged by the calling
+  opcode after the forward, which they do not reduce (`SATIN-HIST-009`, `SATIN-HIST-010` step 4),
+  and before the depth gate, interception and the frame start (D-58), as the state stands: a value
+  the caller cannot fund makes no record and is charged none (`SATIN-HIST-015`). When a start
+  that makes records does not happen, or the child fails, their history goes back into the
+  caller's reservoir (`SATIN-HIST-007`, `-012`), never into its regular gas. The caller's next state charge pays its
+  legacy share from regular gas first, and only then draws that reservoir (`SATIN-POOL-008`); a
+  history charge, which has no legacy share, draws it first.
+- An authority's `ACCOUNT_WRITE` is regular gas: `SATIN-TAKE-008` puts it in the regular-gas
+  column of an authorization list's writes, and `SATIN-SCHED-003` lists it, EIP-2780's account
+  write, among the gas schedule's entries at 9,000. `SATIN-AUTH-015` says when it is charged:
+  before the first frame, and only for an authority whose write the transaction has not paid.
+  The delegation indicator's state gas is `DELEGATION_STATE_BYTES` × 1,530 at the authority's
+  bucket, 35,190 at the minimum.
+- The data-size stop of a hint is reached without a 13 MB fixture: twelve admitted hints of 1 MiB,
+  each forwarded 1 gas and halting at the Oracle's first opcode, count 12,582,912 bytes, so the
+  thirteenth would cross `TX_DATA_LIMIT`.
+
+**D-57. Every figure in the slice's text follows the model's constants.** A figure in a case's
+intent or boundary, its derivation, a quarantine verdict or `slice/README.md` that depends on a
+constant of the specification is written from that constant in `tools/satin_model.py` or
+`tools/make_slice.py`, never typed: prices, the products and sums of them, the inherited opcode
+costs the interpreter charges, and the inputs a case derives from them (a gas limit one below a
+threshold, the number of hints that fit under the data-size limit). The worked example of
+`SATIN-POOL-019` is computed from the constants by its own arithmetic, and the slice refuses a
+derivation that does not reproduce it. `tools/check_derived_text.py` regenerates the slice with
+`COST_PER_HISTORY_BYTE`, `COST_PER_STATE_BYTE` and `KEYLESS_DEPLOY_OVERHEAD_GAS` each changed in
+turn and fails if any text still shows a figure computed from the old value; `tools/run-slice.sh`
+runs it. The quarantine's recorded failures (`knownFail`'s expected and actual values) are records
+of an implementation's run, not text, and stay as recorded.
+
+**D-58. Orders the owner decided for calls and for the charges before the first frame.** The
+specification at `d334ef8` leaves these orders implicit; the owner decided them as both
+implementations already run them, and the specification is to state them as a principle in its
+next round. `tools/satin_model.py` follows them.
+
+- History before interception. A calling opcode charges the history of the records its start
+  would make, as the state stands when the opcode runs, with its other charges: after the forward
+  (`SATIN-HIST-010` step 4), which it does not reduce, and before the depth gate, interception
+  and the frame start (`SATIN-ICPT-007`). `SATIN-HIST-015` holds, and the model follows it: a
+  value the caller cannot fund makes no record, so the opcode charges no record history for it
+  and has none to give back, as both implementations do. A start whose records exist, the caller
+  able to fund the value, and which does not happen (an interceptor's answer, a hint's data-size
+  stop) gives that charge back into the caller's reservoir when the call returns
+  (`SATIN-HIST-012`); a refusal for depth is unreachable under the execution cap. A start that
+  happens makes the records at the frame start, where nothing more is charged for them. The
+  model used to charge the records at the frame start, so an answered call was charged nothing.
+  No figure of a case moved. In the three interception cases whose caller can fund its value,
+  the caller's regular gas pays the records' history in the opcode, and its reservoir holds that
+  history after the call (an interceptor's answer, or a child that reverts), pays part of the
+  next state charge once regular gas has paid its legacy share, and returns what is left to the
+  sender. The four whose caller cannot fund it, the hint stopped for the data-size limit among
+  them, are charged no record history.
+- The delegate's access. A transaction whose recipient holds an EIP-7702 delegation once the
+  list is applied pays its delegate's access before the first frame, after step 4 of
+  `SATIN-SCHED-008`, in regular gas, as the base layer charges it under EIP-2780: the warm read,
+  then the cold account surcharge when the delegate is not warm (`SATIN-SCHED-003`). The
+  delegate is loaded only when the regular gas left after the warm read pays the surcharge; a
+  transaction that cannot pay it takes the out-of-gas path before the first frame, which the
+  model leaves unmodelled. The delegate's code runs in the recipient's frame. No case sends a
+  transaction to a delegated recipient, so no figure moved.
+- The authorities' records first. Of the history charged before the first frame
+  (`SATIN-SCHED-008` step 3), the applied authorities' records draw the reservoir first, as the
+  list is applied, and the first frame's start record draws what they left (`SATIN-POOL-024`).
+  The model already charged them in that order.

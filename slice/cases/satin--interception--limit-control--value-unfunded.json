@@ -1,0 +1,436 @@
+{
+  "assertions": [
+    {
+      "path": "/expected/gasLedgers",
+      "rules": [
+        "SATIN-ACCT-004",
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-HIST-002",
+        "SATIN-HIST-003",
+        "SATIN-HIST-004",
+        "SATIN-HIST-006",
+        "SATIN-HIST-010",
+        "SATIN-HIST-015",
+        "SATIN-HIST-022",
+        "SATIN-ICPT-004",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-012",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-SCHED-002",
+        "SATIN-SCHED-003",
+        "SATIN-SCHED-004",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-STATE-001",
+        "SATIN-STATE-002",
+        "SATIN-STATE-008",
+        "SATIN-STATE-012"
+      ]
+    },
+    {
+      "path": "/expected/outcome",
+      "rules": [
+        "SATIN-ICPT-001",
+        "SATIN-ICPT-003",
+        "SATIN-ICPT-007",
+        "SATIN-OUT-001"
+      ]
+    },
+    {
+      "path": "/expected/receipt",
+      "rules": [
+        "SATIN-POOL-018"
+      ]
+    },
+    {
+      "path": "/expected/resources",
+      "rules": [
+        "SATIN-ACCT-002",
+        "SATIN-ACCT-004",
+        "SATIN-ACCT-012",
+        "SATIN-ACCT-016",
+        "SATIN-HIST-003",
+        "SATIN-LIM-001",
+        "SATIN-LIM-007"
+      ]
+    }
+  ],
+  "caseId": "satin/interception/limit-control/value-unfunded",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xd08f",
+      "floor": "0x3a98",
+      "gasUsed": "0x4539f",
+      "history": "0x8610",
+      "historyBytes": "0x186",
+      "refund": "0x0",
+      "regular": "0xd08f",
+      "state": "0x2fd00",
+      "total": "0x4539f"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x4539f",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "390",
+        "reported": "0x186"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "2",
+        "reported": "0x2"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "2",
+        "reported": "0x2"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f02be4d84000000000000000000000000000000000000000000000000000000005f525f5f60045f6001736342000000000000000000000000000000000005620186a0f15f553d6001553d5f5f3e3d5f2060025500",
+          "nonce": "0x1",
+          "storage": {
+            "0x0000000000000000000000000000000000000000000000000000000000000001": "0x4",
+            "0x0000000000000000000000000000000000000000000000000000000000000002": "0x4a2e5b182214706f3e7f3eb8e70362792efd76fb6386a26ded9c0f3ba16f6a14"
+          }
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f02be4d84000000000000000000000000000000000000000000000000000000005f525f5f60045f6001736342000000000000000000000000000000000005620186a0f15f553d6001553d5f5f3e3d5f2060025500",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000001": {
+          "balance": "0x0",
+          "code": "0x608060405234801561000f575f5ffd5b50600436106100b9575f3560e01c80637eba7ba61161007257806399bd21151161005857806399bd211514610193578063a21e2d69146101d3578063fbc0d035146101f3575f5ffd5b80637eba7ba6146101605780638d4909dc14610180575f5ffd5b8063348a0cdc116100a2578063348a0cdc146100e557806354fd4d501461010e57806366cdf82f1461014d575f5ffd5b806301caec13146100bd578063138f5ec5146100d2575b5f5ffd5b6100d06100cb366004610649565b610206565b005b6100d06100e03660046106b5565b610282565b6100f86100f33660046106fd565b6102cc565b6040516101059190610788565b60405180910390f35b604080518082018252600581527f322e302e30000000000000000000000000000000000000000000000000000000602082015290516101059190610809565b6100d061015b366004610822565b505050565b61017261016e366004610899565b5490565b604051908152602001610105565b6100d061018e366004610822565b610443565b6101ae73634200000000000000000000000000000000000681565b60405173ffffffffffffffffffffffffffffffffffffffff9091168152602001610105565b6101e66101e13660046106fd565b610456565b60405161010591906108b0565b6100d06102013660046108f2565b6104cc565b82811461024e576040517f5b7232fa00000000000000000000000000000000000000000000000000000000815260048101849052602481018290526044015b60405180910390fd5b8382845f5b818110156102705760208102838101359085013555600101610253565b5050505061027c6104db565b50505050565b805f5b818110156102c2576102ba858585848181106102a3576102a3610912565b90506020028101906102b5919061093f565b6105c2565b600101610285565b505061015b6104db565b60608167ffffffffffffffff8111156102e7576102e76109a0565b60405190808252806020026020018201604052801561031a57816020015b60608152602001906001900390816103055790505b5090505f5b8281101561043c575f803086868581811061033c5761033c610912565b905060200281019061034e919061093f565b60405161035c9291906109cd565b5f60405180830381855af49150503d805f8114610394576040519150601f19603f3d011682016040523d82523d5f602084013e610399565b606091505b509150915081610414578051156103b257805181602001fd5b6040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152601660248201527f4d756c746963616c6c3a2063616c6c206661696c6564000000000000000000006044820152606401610245565b8084848151811061042757610427610912565b6020908102919091010152505060010161031f565b5092915050565b61044e8383836105c2565b61015b6104db565b60608167ffffffffffffffff811115610471576104716109a0565b60405190808252806020026020018201604052801561049a578160200160208202803683370190505b5090506020810183835f5b818110156104c257602081028381013554908501526001016104a5565b5050505092915050565b8082556104d76104db565b5050565b73634200000000000000000000000000000000000673ffffffffffffffffffffffffffffffffffffffff1663de7a36af6040518163ffffffff1660e01b8152600401602060405180830381865afa158015610538573d5f5f3e3d5ffd5b505050506040513d601f19601f8201168201806040525081019061055c91906109dc565b73ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff16146105c0576040517f5e742c5a00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b565b827fda678492695e6a825d786c2375f7fdf3c1dc012451c61c1804227f499b0fc53e83836040516105f4929190610a0f565b60405180910390a2505050565b5f5f83601f840112610611575f5ffd5b50813567ffffffffffffffff811115610628575f5ffd5b6020830191508360208260051b8501011115610642575f5ffd5b9250929050565b5f5f5f5f6040858703121561065c575f5ffd5b843567ffffffffffffffff811115610672575f5ffd5b61067e87828801610601565b909550935050602085013567ffffffffffffffff81111561069d575f5ffd5b6106a987828801610601565b95989497509550505050565b5f5f5f604084860312156106c7575f5ffd5b83359250602084013567ffffffffffffffff8111156106e4575f5ffd5b6106f086828701610601565b9497909650939450505050565b5f5f6020838503121561070e575f5ffd5b823567ffffffffffffffff811115610724575f5ffd5b61073085828601610601565b90969095509350505050565b5f81518084528060208401602086015e5f6020828601015260207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f83011685010191505092915050565b5f602082016020835280845180835260408501915060408160051b8601019250602086015f5b828110156107fd577fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffc08786030184526107e885835161073c565b945060209384019391909101906001016107ae565b50929695505050505050565b602081525f61081b602083018461073c565b9392505050565b5f5f5f60408486031215610834575f5ffd5b83359250602084013567ffffffffffffffff811115610851575f5ffd5b8401601f81018613610861575f5ffd5b803567ffffffffffffffff811115610877575f5ffd5b866020828401011115610888575f5ffd5b939660209190910195509293505050565b5f602082840312156108a9575f5ffd5b5035919050565b602080825282518282018190525f918401906040840190835b818110156108e75783518352602093840193909201916001016108c9565b509095945050505050565b5f5f60408385031215610903575f5ffd5b50508035926020909101359150565b7f4e487b71000000000000000000000000000000000000000000000000000000005f52603260045260245ffd5b5f5f83357fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe1843603018112610972575f5ffd5b83018035915067ffffffffffffffff82111561098c575f5ffd5b602001915036819003821315610642575f5ffd5b7f4e487b71000000000000000000000000000000000000000000000000000000005f52604160045260245ffd5b818382375f9101908152919050565b5f602082840312156109ec575f5ffd5b815173ffffffffffffffffffffffffffffffffffffffff8116811461081b575f5ffd5b60208152816020820152818360408301375f818301604090810191909152601f9092017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe016010191905056fea164736f6c634300081e000a",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000003": {
+          "balance": "0x0",
+          "code": "0x608060405234801561000f575f5ffd5b5060043610610034575f3560e01c806354fd4d5014610038578063846365d514610080575b5f5ffd5b604080518082018252600581527f312e302e30000000000000000000000000000000000000000000000000000000602082015290516100779190610124565b60405180910390f35b61009361008e36600461013d565b6100a2565b604051610077939291906101af565b5f5f60606040517f1894f07600000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b5f81518084528060208401602086015e5f6020828601015260207fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f83011685010191505092915050565b602081525f61013660208301846100d8565b9392505050565b5f5f5f6040848603121561014f575f5ffd5b833567ffffffffffffffff811115610165575f5ffd5b8401601f81018613610175575f5ffd5b803567ffffffffffffffff81111561018b575f5ffd5b86602082840101111561019c575f5ffd5b6020918201979096509401359392505050565b67ffffffffffffffff8416815273ffffffffffffffffffffffffffffffffffffffff83166020820152606060408201525f6101ed60608301846100d8565b9594505050505056fea164736f6c634300081e000a",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000004": {
+          "balance": "0x0",
+          "code": "0x60806040526004361061003e575f3560e01c8063143d63fd1461007057806315f952801461008657806354fd4d50146100af578063c62e8daf14610070575b6040517f1894f07600000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b34801561007b575f5ffd5b5061008461003e565b005b348015610091575f5ffd5b5061009a6100fa565b60405190151581526020015b60405180910390f35b3480156100ba575f5ffd5b50604080518082018252600581527f312e302e30000000000000000000000000000000000000000000000000000000602082015290516100a6919061012d565b5f6040517f1894f07600000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b602081525f82518060208401528060208501604085015e5f6040828501015260407fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8301168401019150509291505056fea164736f6c634300081e000a",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000005": {
+          "balance": "0x0",
+          "code": "0x608060405260043610610028575f3560e01c806302be4d841461005a57806354fd4d501461008c575b6040517f1894f07600000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b348015610065575f5ffd5b5061006e6100d7565b60405167ffffffffffffffff90911681526020015b60405180910390f35b348015610097575f5ffd5b50604080518082018252600581527f312e302e3000000000000000000000000000000000000000000000000000000060208201529051610083919061010a565b5f6040517f1894f07600000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b602081525f82518060208401528060208501604085015e5f6040828501015260407fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8301168401019150509291505056fea164736f6c634300081e000a",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1808026a037abd59b2ae917db9ae6528f8e6a7e588b445bd1372ea295b330cecfdb76351da00af281f0a2f8216a03102560bc82b936a2cb1e51b7b5052600045195e427b885"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "remainingComputeGas() called with a value its caller cannot fund: answered NonZeroTransfer() before the frame start"
+    },
+    "derivation": [
+      {
+        "path": "/expected/gasLedgers",
+        "rules": [
+          "SATIN-ACCT-004",
+          "SATIN-FWD-001",
+          "SATIN-FWD-002",
+          "SATIN-FWD-003",
+          "SATIN-HIST-002",
+          "SATIN-HIST-003",
+          "SATIN-HIST-004",
+          "SATIN-HIST-006",
+          "SATIN-HIST-010",
+          "SATIN-HIST-015",
+          "SATIN-HIST-022",
+          "SATIN-ICPT-004",
+          "SATIN-POOL-005",
+          "SATIN-POOL-006",
+          "SATIN-POOL-007",
+          "SATIN-POOL-008",
+          "SATIN-POOL-012",
+          "SATIN-POOL-018",
+          "SATIN-POOL-019",
+          "SATIN-POOL-020",
+          "SATIN-SCHED-002",
+          "SATIN-SCHED-003",
+          "SATIN-SCHED-004",
+          "SATIN-SCHED-005",
+          "SATIN-SCHED-006",
+          "SATIN-STATE-001",
+          "SATIN-STATE-002",
+          "SATIN-STATE-008",
+          "SATIN-STATE-012"
+        ],
+        "steps": [
+          "intrinsic regular gas = TX_BASE_COST 12,000 + COLD_ACCOUNT_ACCESS 3,000 = 15,000",
+          "floor = base 15,000 + 64 x 0 calldata and access-list bytes = 15,000",
+          "body = TX_BODY_SIZE 310 + 0 calldata bytes + 0 access-list bytes = 310 bytes; its history gas 310 x 88 = 27,280",
+          "pools: regular budget min(1,000,000, 200,000,000) - 15,000 = 985,000, reservoir 0",
+          "body history 27,280: 0 from the reservoir, 27,280 from the regular budget",
+          "CALL to 0x6342000000000000000000000000000000000005 with value 1: the opcode's own charges 14,300 = warm read 100 + value transfer 11,300 + cold surcharge 2,900; forward min(100,000, 943,391 - 943,391 x 2 / 100 = 924,524) = 100,000, the child's gas 100,000 + CALL_STIPEND 2300 = 102,300",
+          "the caller's balance 0 cannot fund the value 1: as the state stands, the start would make no record, so the opcode charges no record history and has none to give back",
+          "the answer charges nothing: the child's 102,300 regular gas returns untouched",
+          "the call returns 102,300 regular gas to its caller; success 0, 4 bytes of return data",
+          "SSTORE slot 0 0->0->0: cold access 2,100",
+          "SSTORE slot 1 0->0->4: cold access 2,100 + fresh-slot write 10,000; state gas 97,920 x m=1 = 97,920 (10,000 legacy share first); write record history 3,520",
+          "SSTORE slot 2 0->0->33553054469686822486576054413755991259854283150388251173599094063956499589652: cold access 2,100 + fresh-slot write 10,000; state gas 97,920 x m=1 = 97,920 (10,000 legacy share first); write record history 3,520",
+          "frame opcodes: PUSH32 3, PUSH0 2, MSTORE 3 + memory to 1 words, PUSH0 2, PUSH0 2, PUSH1 3, PUSH0 2, PUSH1 3, PUSH20 3, PUSH3 3, CALL 12,000 net, PUSH0 2, SSTORE 2,100, RETURNDATASIZE 2, PUSH1 3, SSTORE 12,100, RETURNDATASIZE 2, PUSH0 2, PUSH0 2, RETURNDATACOPY 6 + memory to 1 words, RETURNDATASIZE 2, PUSH0 2, KECCAK256 36 + memory to 1 words, PUSH1 3, SSTORE 12,100, STOP 0; regular charges of the frame 38,391",
+          "ledgers: state 195,840, history 34,320 (390 bytes), regular = total 283,551 - state - history = 53,391",
+          "gas used max(283,551 - 0, floor 15,000) = 283,551; the block counts max(regular 53,391, floor 15,000) = 53,391"
+        ]
+      },
+      {
+        "path": "/expected/outcome",
+        "rules": [
+          "SATIN-ICPT-001",
+          "SATIN-ICPT-003",
+          "SATIN-ICPT-007",
+          "SATIN-OUT-001"
+        ],
+        "steps": [
+          "interception: an intercepted method of 0x6342000000000000000000000000000000000005 called with value 1 is answered NonZeroTransfer() before any value moves and before the frame start, whether or not the caller can fund the value; the method's answer is not made",
+          "admitted; the frame succeeds"
+        ]
+      },
+      {
+        "path": "/expected/receipt",
+        "rules": [
+          "SATIN-POOL-018"
+        ],
+        "steps": [
+          "status 0x1, gas used 283,551, 0 logs in execution order"
+        ]
+      },
+      {
+        "path": "/expected/resources",
+        "rules": [
+          "SATIN-ACCT-002",
+          "SATIN-ACCT-004",
+          "SATIN-ACCT-012",
+          "SATIN-ACCT-016",
+          "SATIN-HIST-003",
+          "SATIN-LIM-001",
+          "SATIN-LIM-007"
+        ],
+        "steps": [
+          "data size starts at the body's 310 bytes; its five fixed records are not KV updates",
+          "slot 1 filled from zero: state growth +1",
+          "slot 1 differs from its original: one write record, 40 bytes",
+          "slot 2 filled from zero: state growth +1",
+          "slot 2 differs from its original: one write record, 40 bytes",
+          "kept: data size 390 bytes, 2 KV updates, state growth 2; the limits are the protocol's 13,107,200, 500,000 and 1,000"
+        ]
+      }
+    ],
+    "evidence": "derived from the specification by tools/satin_model.py, an executable restatement of the cited rules that shares no code with either implementation; implementation runs are cross-checks only",
+    "generator": "tools/make_slice.py",
+    "review": {
+      "decision": "pending: approval is the owner's",
+      "ruleTexts": {
+        "SATIN-ACCT-002": "sha256:15a57f42e12a7c6edb72a991fef190eaa0672b3193e8745a64ec5f631fc370ba",
+        "SATIN-ACCT-004": "sha256:f6ab3f7f8f05d6d4e21678a5e6f6d175f67c7d7ace27e10b64b57f4efde6f104",
+        "SATIN-ACCT-012": "sha256:d5b25ab3bab59b0e29a130178677245e965255d13a4374addfc07db8c3ea3d90",
+        "SATIN-ACCT-016": "sha256:a1a4d7c9b074f47581f991bdbafbffc9571e9cc136879daf2d8b711532c96545",
+        "SATIN-FWD-001": "sha256:6c7659d5a302e9beb6d1379a57a73907facb6acba3f77cfe52f96433789d0e7c",
+        "SATIN-FWD-002": "sha256:b8ef24f501a7e16e7f0278caff0d8ccc33d434731a56bf0a6d1b6cf636641031",
+        "SATIN-FWD-003": "sha256:d48c3e97738bf0cc86df4e884fc91f4ad71665b9a8ce4f2baf91b504ccd65ea3",
+        "SATIN-HIST-002": "sha256:25b81f15f444a2b56d289e489301321d295bec49cc486f3356d4826da584fb22",
+        "SATIN-HIST-003": "sha256:5c278d629bff537ddefd0d3b1192dfd67dab5ea126eeaeda86d21e7f72a867b1",
+        "SATIN-HIST-004": "sha256:ed165b75e64fdae2ff1c9f97dd815ea124b28818647c873db13e217eac046d90",
+        "SATIN-HIST-006": "sha256:110fa88704ed4751b02dc78858036548f6bc46604eaf90893eccb2b9ceca3e45",
+        "SATIN-HIST-010": "sha256:293454e21a8ce7c810c1b35cf40412e98404d1867088fe0beaddef8b9fb17443",
+        "SATIN-HIST-015": "sha256:188c88f97a0c111a02a5450adcd7fd4175cd70b3dbfb8d9956368fb225585aa6",
+        "SATIN-HIST-022": "sha256:297c3750e19b202dea5b7e729c925d236e8b6180328cd13373e17ed70079f84a",
+        "SATIN-ICPT-001": "sha256:f43076613d98bf9c0e04892b0f2d820e85fda0bb11c1722d68ceef09f78f9f51",
+        "SATIN-ICPT-003": "sha256:79f45329bc7a55d9aeb4c08be0355744fd84366546bc2796ff5e1b11dff8a234",
+        "SATIN-ICPT-004": "sha256:ec772eeb2be5cab2928c20cb51b6251f40b9a39c89e554a599449735a87fcd1c",
+        "SATIN-ICPT-007": "sha256:9e9da22a4bdcb17bd04246b7d26b31f4d365716a7afdb9f8c4fc41372c0afd0e",
+        "SATIN-LIM-001": "sha256:3373ca5b61edec132530b7106ded735fb8430ffabeaa013ce4fe7e8bda446b62",
+        "SATIN-LIM-007": "sha256:5a1c7ff7c36129b99db578bfd7913d56aa93ad57cd18b1530c6fcbe09490a4f6",
+        "SATIN-OUT-001": "sha256:46f617445fce43654529b3eb3b0509ebccef494605755e6ae683334594d0fc97",
+        "SATIN-POOL-005": "sha256:3fb2a1aee19ce0ce816e028227a038b092eff061a3711fe323382d439bc69ded",
+        "SATIN-POOL-006": "sha256:a3ef2a7daef0ac743b5581692a8aad5d7c508be2cc0fa8bbc93e6bccb29c60b7",
+        "SATIN-POOL-007": "sha256:0727d784afe6cf7658f76fede2b54204435850b4cc343eb9f685ce6e6bee73c1",
+        "SATIN-POOL-008": "sha256:1f3023c7eca86214914f52636e35ef94935ffef091b35d3a56aadd8316eae082",
+        "SATIN-POOL-012": "sha256:54962ec44e339c902280b6f3a1bcf2dd1b1d40eed405513acadf49689e4dce18",
+        "SATIN-POOL-018": "sha256:9929e1b284b53eb5dd9b3c870e652f11c100b50a1c6acff271d50ba638518478",
+        "SATIN-POOL-019": "sha256:29ce57179b04bda39ba5b35739aa657f50fe1a9d5a671d52b79cc66500167baf",
+        "SATIN-POOL-020": "sha256:21f6377838f6381cc57d4daa30eded2538857412c73e493ed0ab47fc528e40a8",
+        "SATIN-SCHED-002": "sha256:1c2b3f8de03bf18e2aeee6021a522e9d6f843ec8e8929e580d4992c651b54c6d",
+        "SATIN-SCHED-003": "sha256:67aa0b10b4ad03935766594cae480e33b6921b7e7c5a7eca814493024d28bcc7",
+        "SATIN-SCHED-004": "sha256:d6337609262bd64af363f66a13f1608834d423b86335c940bb05f76a2ba509d2",
+        "SATIN-SCHED-005": "sha256:9c958ad26a39a4bb6413a53e299363ad184444ec66b99ab6cb95ababc23209dd",
+        "SATIN-SCHED-006": "sha256:1cde42c8c0e514cf680d32dfc4864612338ee9675f296b388c1f5068cd823d6d",
+        "SATIN-STATE-001": "sha256:c75240c85359984c6b8ab8a49da56f4b3d7a21aebe11cd2d630d0187dd5aea5e",
+        "SATIN-STATE-002": "sha256:61d0b5bc476fc629ce8a90046a6545ffda4a5b11fc4e02053462498a2a322799",
+        "SATIN-STATE-008": "sha256:22d43696dd7e946b765bca3a4988de17091c2cf96b8fe0b12b33a82130f7e0be",
+        "SATIN-STATE-012": "sha256:aada2e980b7aeb5ddb323fd52d195eaab72347a4bf83eb259a5943e358662a64"
+      },
+      "spec": {
+        "commit": "d334ef8748a6fb09dfcf1162704539fe22373aef",
+        "descriptor": "sha256:6fa989a0bb4e83353b71c6c30f75a5e77c27a07f73b97f786514b975429aeea2"
+      }
+    },
+    "status": "candidate",
+    "transaction": {
+      "data": "0x",
+      "gasLimit": "0xf4240",
+      "nonce": "0x0",
+      "sender": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+      "to": "0x00000000000000000000000000000000000c0de1",
+      "type": "0x0",
+      "value": "0x0"
+    }
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-002",
+    "SATIN-ACCT-004",
+    "SATIN-ACCT-012",
+    "SATIN-ACCT-016",
+    "SATIN-FWD-001",
+    "SATIN-FWD-002",
+    "SATIN-FWD-003",
+    "SATIN-HIST-002",
+    "SATIN-HIST-003",
+    "SATIN-HIST-004",
+    "SATIN-HIST-006",
+    "SATIN-HIST-010",
+    "SATIN-HIST-015",
+    "SATIN-HIST-022",
+    "SATIN-ICPT-001",
+    "SATIN-ICPT-003",
+    "SATIN-ICPT-004",
+    "SATIN-ICPT-007",
+    "SATIN-LIM-001",
+    "SATIN-LIM-007",
+    "SATIN-OUT-001",
+    "SATIN-POOL-005",
+    "SATIN-POOL-006",
+    "SATIN-POOL-007",
+    "SATIN-POOL-008",
+    "SATIN-POOL-012",
+    "SATIN-POOL-018",
+    "SATIN-POOL-019",
+    "SATIN-POOL-020",
+    "SATIN-SCHED-002",
+    "SATIN-SCHED-003",
+    "SATIN-SCHED-004",
+    "SATIN-SCHED-005",
+    "SATIN-SCHED-006",
+    "SATIN-STATE-001",
+    "SATIN-STATE-002",
+    "SATIN-STATE-008",
+    "SATIN-STATE-012"
+  ],
+  "schemaVersion": "1.0",
+  "specRef": {
+    "descriptor": "sha256:6fa989a0bb4e83353b71c6c30f75a5e77c27a07f73b97f786514b975429aeea2",
+    "name": "megaeth/Satin"
+  }
+}

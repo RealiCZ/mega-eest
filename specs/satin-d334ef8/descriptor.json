@@ -1,0 +1,116 @@
+{
+  "base": "Optimism Karst (Ethereum Osaka), as SATIN-BASE-001 states",
+  "codecs": {
+    "header": {
+      "base": "Optimism Karst (Ethereum Osaka)",
+      "encoding": "the RLP list of the header's fields in this order",
+      "fields": [
+        "parentHash",
+        "ommersHash",
+        "beneficiary",
+        "stateRoot",
+        "transactionsRoot",
+        "receiptsRoot",
+        "logsBloom",
+        "difficulty",
+        "number",
+        "gasLimit",
+        "gasUsed",
+        "timestamp",
+        "extraData",
+        "mixHash",
+        "nonce",
+        "baseFeePerGas",
+        "withdrawalsRoot",
+        "blobGasUsed",
+        "excessBlobGas",
+        "parentBeaconBlockRoot",
+        "requestsHash"
+      ],
+      "hash": "keccak256 of the encoding: the block hash",
+      "id": "rlp-header-prague"
+    },
+    "receipt": {
+      "encoding": "rlp([status, cumulativeGasUsed, logsBloom, logs]) for type 0x0; the type byte followed by that list for 0x1, 0x2 and 0x4; 0x7e followed by rlp([status, cumulativeGasUsed, logsBloom, logs, depositNonce, depositReceiptVersion]) for a deposit",
+      "id": "eip-2718-receipt-op",
+      "log": "rlp([address, topics, data])",
+      "root": "receiptsRoot: the ordered Merkle-Patricia trie keyed by the RLP of each index"
+    },
+    "transaction": {
+      "encoding": "EIP-2718 envelopes: legacy (0x0, with or without EIP-155), EIP-2930 (0x1), EIP-1559 (0x2), EIP-7702 (0x4) and the OP Stack deposit (0x7e: sourceHash, from, to, mint, value, gas, isSystemTx, data)",
+      "id": "eip-2718-op",
+      "root": "transactionsRoot: the ordered Merkle-Patricia trie keyed by the RLP of each index",
+      "types": [
+        "0x0",
+        "0x1",
+        "0x2",
+        "0x4",
+        "0x7e"
+      ]
+    }
+  },
+  "format": "mega-spec-descriptor",
+  "maturity": "unstable",
+  "name": "megaeth/Satin",
+  "registry": "sha256:c930551351f5986fbdfef9d905c61ec5f3b8b35a9c9dd5b516ce6bd417254ce5",
+  "salt": {
+    "accountKey": "the account's 20 address bytes",
+    "bucketVectors": [
+      {
+        "account": "0x0000000000000000000000000000000000000001",
+        "bucket": "0xbf1f5c"
+      },
+      {
+        "account": "0x0000000000000000000000000000000000000001",
+        "bucket": "0x94992",
+        "slot": "0x0"
+      },
+      {
+        "account": "0x0000000000000000000000000000000000000001",
+        "bucket": "0xe57722",
+        "slot": "0x1"
+      }
+    ],
+    "buckets": "0x1000000",
+    "definition": "SALT's own key-to-bucket mapping, which SATIN-STATE-010 takes as an input: bucket = ahash(key) mod (buckets - metaBuckets) + metaBuckets",
+    "hash": "ahash-0.8.12-fallback",
+    "hashVectors": [
+      {
+        "hash": "0xe41439719c45fff",
+        "input": "0x68656c6c6f"
+      },
+      {
+        "hash": "0x2071e0d8da6cc4c0",
+        "input": "0x776f726c64"
+      },
+      {
+        "hash": "0x1d5fbd0cb122bca8",
+        "input": "0x686173682074657374"
+      }
+    ],
+    "mapping": "salt-v1",
+    "metaBuckets": "0x10000",
+    "minimumBucketSize": "0x100",
+    "multiplier": "floor(capacity / minimumBucketSize)",
+    "reference": {
+      "commit": "5e3f30ad4692f3815105dea1368f789f032ddd2b",
+      "path": "crates/mega-evm/src/external/hasher",
+      "repository": "https://github.com/megaeth-labs/mega-evm"
+    },
+    "seeds": [
+      "0x921321f4",
+      "0x2ccb667e",
+      "0x60d68842",
+      "0x77ada9d"
+    ],
+    "slotKey": "the account's 20 address bytes followed by the slot as 32 big-endian bytes"
+  },
+  "schemaVersion": "1.0",
+  "source": {
+    "commit": "d334ef8748a6fb09dfcf1162704539fe22373aef",
+    "committed": "2026-11-11T22:52:39+08:00",
+    "repository": "https://github.com/RealiCZ/mega-evm-satin-spec",
+    "root": "docs/spec/satin"
+  },
+  "sources": "sha256:4a413161486c0b7006dba4253cfd8f2083539d57a3087f93fd3d161d9cf35571"
+}
