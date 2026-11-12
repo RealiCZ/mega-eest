@@ -5,9 +5,9 @@
 //! mega-fixture canon  FILE                    write the canonical bytes of strict JSON to stdout
 //! mega-fixture digest FILE                    print the SHA-256 of the canonical bytes
 //! mega-fixture manifest FILE                  validate a manifest and print its digest
-//! mega-fixture consume --adapter PROG [--instrumented] [--specs DIR] [--report FILE] PATH...
+//! mega-fixture consume --adapter PROG [--instrumented] [--jobs N] [--specs DIR] [--report FILE] PATH...
 //!                                             run cases on an adapter and compare, read-only
-//! mega-fixture fill --adapter PROG --out DIR [--instrumented] [--specs DIR] FILE...
+//! mega-fixture fill --adapter PROG --out DIR [--instrumented] [--jobs N] [--specs DIR] FILE...
 //!                                             fill candidate expectations into DIR
 //! ```
 //!
@@ -25,8 +25,8 @@ use std::process::ExitCode;
 fn usage() -> ExitCode {
     eprintln!(
         "usage: mega-fixture check [--specs DIR] FILE... | canon FILE | digest FILE | manifest FILE\n       \
-         mega-fixture consume --adapter PROG [--instrumented] [--specs DIR] [--report FILE] PATH...\n       \
-         mega-fixture fill --adapter PROG --out DIR [--instrumented] [--specs DIR] FILE..."
+         mega-fixture consume --adapter PROG [--instrumented] [--jobs N] [--specs DIR] [--report FILE] PATH...\n       \
+         mega-fixture fill --adapter PROG --out DIR [--instrumented] [--jobs N] [--specs DIR] FILE..."
     );
     ExitCode::from(2)
 }
@@ -69,7 +69,11 @@ fn main() -> ExitCode {
                     }
                 }
             }
-            if failed { ExitCode::from(1) } else { ExitCode::SUCCESS }
+            if failed {
+                ExitCode::from(1)
+            } else {
+                ExitCode::SUCCESS
+            }
         }
         "canon" | "digest" if args.len() == 2 => match read(&args[1]).and_then(|b| canonicalize(&b).map_err(|e| e.to_string())) {
             Ok(bytes) => {
@@ -111,6 +115,7 @@ fn main() -> ExitCode {
 struct Options {
     adapter: PathBuf,
     instrumented: bool,
+    jobs: std::num::NonZeroUsize,
     specs: PathBuf,
     report: Option<PathBuf>,
     out: Option<PathBuf>,
@@ -119,11 +124,20 @@ struct Options {
 
 impl Options {
     fn parse(args: &[String]) -> Option<Options> {
-        let mut o = Options { adapter: PathBuf::new(), instrumented: false, specs: PathBuf::from("specs"), report: None, out: None, paths: Vec::new() };
+        let mut o = Options {
+            adapter: PathBuf::new(),
+            instrumented: false,
+            jobs: std::num::NonZeroUsize::new(1).expect("one job"),
+            specs: PathBuf::from("specs"),
+            report: None,
+            out: None,
+            paths: Vec::new(),
+        };
         let mut i = 0;
         while i < args.len() {
             let value = || args.get(i + 1).map(PathBuf::from);
             match args[i].as_str() {
+                "--jobs" => o.jobs = args.get(i + 1)?.parse().ok()?,
                 "--adapter" => o.adapter = value()?,
                 "--specs" => o.specs = value()?,
                 "--report" => o.report = Some(value()?),
@@ -174,9 +188,29 @@ fn case_files(paths: &[String]) -> Result<Vec<PathBuf>, String> {
 
 fn load(o: &Options) -> Result<(SpecStore, ProcessAdapter, Capabilities), String> {
     let store = SpecStore::load_dir(&o.specs).map_err(|e| format!("specs: {e}"))?;
-    let adapter = ProcessAdapter { program: o.adapter.clone() };
+    let adapter = ProcessAdapter::new(o.adapter.clone());
     let caps = Capabilities::from_value(adapter.capabilities()?)?;
     Ok((store, adapter, caps))
+}
+
+/// Executes at most `jobs` operations at once and delivers results in input order.
+fn ordered_jobs<T: Sync, R: Send>(items: &[T], jobs: std::num::NonZeroUsize, run: impl Fn(&T) -> R + Sync, mut emit: impl FnMut(&T, R)) {
+    if jobs.get() == 1 {
+        for item in items {
+            emit(item, run(item));
+        }
+        return;
+    }
+    // Bound both active processes and buffered results. Emission (including filler writes)
+    // stays on this thread, so duplicate output paths retain serial overwrite semantics.
+    for batch in items.chunks(jobs.get()) {
+        std::thread::scope(|scope| {
+            let handles: Vec<_> = batch.iter().map(|item| scope.spawn(|| run(item))).collect();
+            for (item, handle) in batch.iter().zip(handles) {
+                emit(item, handle.join().expect("case worker panicked"));
+            }
+        });
+    }
 }
 
 fn run_consume(o: Options) -> ExitCode {
@@ -197,34 +231,41 @@ fn run_consume(o: Options) -> ExitCode {
     let mode = if o.instrumented { "instrumented" } else { "plain" };
     let mut counts = std::collections::BTreeMap::<&str, usize>::new();
     let mut reports = Vec::new();
-    for file in &files {
-        let name = file.display().to_string();
-        let report = match std::fs::read(file) {
-            Ok(bytes) => consume::consume_case(&name, &bytes, &store, &adapter, &caps, o.instrumented),
-            Err(e) => {
-                let mut r = consume::consume_case(&name, b"", &store, &adapter, &caps, o.instrumented);
-                r.status = Status::Error { message: format!("{name}: {e}") };
-                r
+    ordered_jobs(
+        &files,
+        o.jobs,
+        |file| {
+            let name = file.display().to_string();
+            match std::fs::read(file) {
+                Ok(bytes) => consume::consume_case(&name, &bytes, &store, &adapter, &caps, o.instrumented),
+                Err(e) => {
+                    let mut r = consume::consume_case(&name, b"", &store, &adapter, &caps, o.instrumented);
+                    r.status = Status::Error { message: format!("{name}: {e}") };
+                    r
+                }
             }
-        };
-        *counts.entry(report.status.name()).or_default() += 1;
-        let id = report.case_id.clone().unwrap_or_else(|| name.clone());
-        let input = report.input_digest.clone().unwrap_or_default();
-        println!("{} {id} input={input}", report.status.name());
-        match &report.status {
-            Status::Fail { path, expected, actual, rules } => {
-                let show = |v: &Option<json::Value>| v.as_ref().map_or("(absent)".to_string(), |v| String::from_utf8_lossy(&json::to_canonical(v)).into_owned());
-                println!("  first difference at {path}: expected {} actual {}", show(expected), show(actual));
-                println!("  rules: {}", if rules.is_empty() { "(none)".to_string() } else { rules.join(", ") });
-                println!("  case file={} semantic={}", report.file_digest.clone().unwrap_or_default(), report.semantic_digest.clone().unwrap_or_default());
-                println!("  observations={}", report.observations_digest.clone().unwrap_or_default());
+        },
+        |file, report| {
+            *counts.entry(report.status.name()).or_default() += 1;
+            let id = report.case_id.clone().unwrap_or_else(|| file.display().to_string());
+            let input = report.input_digest.clone().unwrap_or_default();
+            println!("{} {id} input={input}", report.status.name());
+            match &report.status {
+                Status::Fail { path, expected, actual, rules } => {
+                    let show =
+                        |v: &Option<json::Value>| v.as_ref().map_or("(absent)".to_string(), |v| String::from_utf8_lossy(&json::to_canonical(v)).into_owned());
+                    println!("  first difference at {path}: expected {} actual {}", show(expected), show(actual));
+                    println!("  rules: {}", if rules.is_empty() { "(none)".to_string() } else { rules.join(", ") });
+                    println!("  case file={} semantic={}", report.file_digest.clone().unwrap_or_default(), report.semantic_digest.clone().unwrap_or_default());
+                    println!("  observations={}", report.observations_digest.clone().unwrap_or_default());
+                }
+                Status::Unsupported { missing } => println!("  missing: {}", missing.join(", ")),
+                Status::Error { message } => println!("  {message}"),
+                Status::Pass => {}
             }
-            Status::Unsupported { missing } => println!("  missing: {}", missing.join(", ")),
-            Status::Error { message } => println!("  {message}"),
-            Status::Pass => {}
-        }
-        reports.push(report);
-    }
+            reports.push(report);
+        },
+    );
     let get = |k: &str| counts.get(k).copied().unwrap_or(0);
     println!(
         "CONSUME adapter={} mode={mode} cases={} pass={} fail={} unsupported={} error={}",
@@ -248,7 +289,11 @@ fn run_consume(o: Options) -> ExitCode {
             return ExitCode::from(2);
         }
     }
-    if get("pass") == files.len() { ExitCode::SUCCESS } else { ExitCode::from(1) }
+    if get("pass") == files.len() {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::from(1)
+    }
 }
 
 fn run_fill(o: Options) -> ExitCode {
@@ -276,10 +321,11 @@ fn run_fill(o: Options) -> ExitCode {
     };
     let mut failed = 0usize;
     let mut written = 0usize;
-    for file in &o.paths {
-        let result = read(file)
-            .and_then(|b| json::parse(&b).map_err(|e| e.to_string()))
-            .and_then(|authoring| {
+    ordered_jobs(
+        &o.paths,
+        o.jobs,
+        |file| {
+            read(file).and_then(|b| json::parse(&b).map_err(|e| e.to_string())).and_then(|authoring| {
                 let mut request = std::collections::BTreeMap::new();
                 request.insert("format".to_string(), json::Value::String(consume::RUN_FORMAT.into()));
                 request.insert("schemaVersion".to_string(), json::Value::String("1.0".into()));
@@ -294,8 +340,9 @@ fn run_fill(o: Options) -> ExitCode {
                 }
                 let observations = response.get("observations").ok_or("adapter: no observations")?;
                 consume::fill(&authoring, observations, &filler, &store).map_err(|e| e.to_string())
-            });
-        match result {
+            })
+        },
+        |file, result| match result {
             Ok(case) => {
                 let target = out.join(format!("{}.json", case.fixture.case_id));
                 if let Some(parent) = target.parent() {
@@ -318,8 +365,12 @@ fn run_fill(o: Options) -> ExitCode {
                 failed += 1;
                 println!("reject {file} {e}");
             }
-        }
-    }
+        },
+    );
     println!("FILL adapter={} written={written} rejected={failed}", caps.name);
-    if failed == 0 { ExitCode::SUCCESS } else { ExitCode::from(1) }
+    if failed == 0 {
+        ExitCode::SUCCESS
+    } else {
+        ExitCode::from(1)
+    }
 }
