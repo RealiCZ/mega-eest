@@ -121,9 +121,12 @@ adapter implements them on its own (decisions D-40, D-41):
   does not exist afterwards.
 - A deposit receipt's `depositNonce` is the sender's nonce before the deposit and its
   `depositReceiptVersion` is 1.
-- `limit`: neither implementation's result carries a stop's scope, call path, operation, phase and
-  commit flags, so an adapter reports `error` for a transaction that ends in a limit stop rather
-  than fill those fields from instrumentation.
+- `limit`: the stop the implementation reports for the transaction's own frame, by its dimension
+  and limit, with the frame's revert output as `returnData`; `null` when the frame's result is not a
+  stop's revert, a stop a caller caught and a contract's own revert with the same bytes included
+  (`SATIN-STOP-021`). Neither implementation's result carries a stop's scope, call path,
+  operation, phase or commit flags, so neither adapter reports these diagnostics, nor fills them
+  from instrumentation (decision D-62).
 - Refusal reasons are mapped from the implementation's error variants by a table in each adapter;
   an error the table does not name is `error`, never a guessed reason.
 
@@ -170,8 +173,8 @@ a case that does not require them (decision D-61).
 | `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `4e39cfd6`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
 | `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `f3d84454` with `RealiCZ/evm2` at `390a3876`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
-Both declare `state-transition` with its mandatory groups, `group:reads` and the features `deposit`,
-`salt` and `synthetic-transaction`; the revm-based adapter also runs a recorded `oracle-transcript`, which
+Both declare `state-transition` with its mandatory groups, `group:limit-stop`, `group:reads` and the
+features `deposit`, `salt` and `synthetic-transaction`; the revm-based adapter also runs a recorded `oracle-transcript`, which
 the other implementation's map-based oracle service cannot check (D-45). Neither runs sparse
 pre-states, injected faults, or engine isolation of a deposit-only or activation block. Both use
 the production SALT mapping and the implementation's own toolchain, and each reports its build

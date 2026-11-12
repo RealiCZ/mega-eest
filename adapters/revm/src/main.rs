@@ -49,13 +49,14 @@ const SPEC: &str = "megaeth/Satin";
 
 /// The requirements this adapter supports: the mandatory groups of state-transition and the
 /// input features it converts.
-const SUPPORTED: [&str; 11] = [
+const SUPPORTED: [&str; 12] = [
     "feature:deposit",
     "feature:oracle-transcript",
     "feature:salt",
     "feature:synthetic-transaction",
     "group:gas-ledgers",
     "group:limit",
+    "group:limit-stop",
     "group:outcome",
     "group:reads",
     "group:receipts",
@@ -765,13 +766,26 @@ fn refused(phase: &str, reason: &str) -> Value {
     ])
 }
 
+/// The `limit` group: the stop the implementation reports for the transaction's own frame, by its
+/// dimension and limit, with the frame's return data. The implementation's result carries no scope,
+/// call path, operation, phase or commit flag, so the stop carries no diagnostics (decision D-62).
+fn limit_observation(o: &MegaTransactionOutcome) -> Res<Value> {
+    let Some(stop) = o.limit_stop() else { return Ok(Value::Null) };
+    let dimension = match stop.kind.as_u8() {
+        0 => "data-size",
+        1 => "kv-updates",
+        2 => "compute",
+        3 => "state-growth",
+        k => return Err(bad(format!("a limit stop of kind {k}"))),
+    };
+    let ExecutionResult::Revert { output, .. } = &o.result else {
+        return Err(bad("a limit stop whose result is not a revert"));
+    };
+    Ok(obj(vec![("dimension", s(dimension)), ("limit", qty_u64(stop.limit)), ("returnData", s(hex_bytes(output)))]))
+}
+
 fn executed_observations(o: &MegaTransactionOutcome, facts: &TxFacts, pre: &BTreeMap<Address, PreAccount>) -> Res<Value> {
-    if o.limit_stop().is_some() {
-        return Err(bad(
-            "a limit stop: the implementation reports its dimension and limit, not the scope, call path, operation, \
-             phase and commit flags the limit group needs",
-        ));
-    }
+    let limit = limit_observation(o)?;
     let failed_deposit = facts.deposit && format!("{:?}", o.result).contains("FailedDeposit");
     let (admission, execution) = match &o.result {
         _ if failed_deposit => ("failed-deposit", Value::Null),
@@ -846,7 +860,7 @@ fn executed_observations(o: &MegaTransactionOutcome, facts: &TxFacts, pre: &BTre
         ("receipt", receipt),
         ("gasLedgers", ledgers),
         ("resources", resources),
-        ("limit", Value::Null),
+        ("limit", limit),
     ]))
 }
 
