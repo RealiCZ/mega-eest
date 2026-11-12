@@ -110,18 +110,23 @@ the same script, beside the earlier ones (decision D-35):
 | --- | --- | --- | --- |
 | `specs/satin-22a5f4b` | `22a5f4bc95dd2abbcc9e75146e24be781e08aadd` | 407 (398 active) | no oracle service for deposits, Mega System Transactions or system calls: eight rules reworded |
 | `specs/satin-d34e626` | `d34e6266e6d7b69963701baa5ae25ccb8a548260` | 408 (399 active) | `SATIN-BASE-011` added (a value transfer that would overflow its recipient's balance is outside the specification); `SATIN-ORCL-004` to `-006` reworded |
+| `specs/satin-d334ef8` | `d334ef8748a6fb09dfcf1162704539fe22373aef` | 409 (400 active) | `SATIN-ICPT-007` added (interception before the frame start, the funds check included); `SATIN-ICPT-003`, `-006`, `SATIN-KEY-005`, `-018`, `SATIN-LIM-015`, `SATIN-ORCL-006`, `-010`, `SATIN-OUT-010` and `SATIN-STOP-020` reworded (the keyless decoder's conditions among them) |
 
-The vertical slice pins `d34e626`, the newest. Digests (SHA-256 of canonical bytes):
+The vertical slice's first 63 cases and its quarantine pin `d34e626`; the cases added for
+interception, the keyless decoder and EIP-7702 existence pin `d334ef8`, the newest (decision
+D-54). Digests (SHA-256 of canonical bytes):
 
 | Bundle | descriptor.json | rules.json | sources.json |
 | --- | --- | --- | --- |
 | `satin-22a5f4b` | `sha256:04146ac1a233e90a99504054aeedaac316ecc4100240e7e6408e2b55027c1a05` | `sha256:c78032df0748bc94e36058d492d29482765b1c57d3d59d313b6b9c495d9e3997` | `sha256:db1fe168a9b474034697898b8c7d19b941acb0b44c7a5a3d5e20d159d40337b2` |
 | `satin-d34e626` | `sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2` | `sha256:e0103bf0e84d208865e712d99d510ac561f2bd7f2e726c36c0e3d157f59c1139` | `sha256:991a2ef5ea66ebfb19ee4e681ddc17746c1c02ed7d502d6e46c132d8c5128503` |
+| `satin-d334ef8` | `sha256:6fa989a0bb4e83353b71c6c30f75a5e77c27a07f73b97f786514b975429aeea2` | `sha256:c930551351f5986fbdfef9d905c61ec5f3b8b35a9c9dd5b516ce6bd417254ce5` | `sha256:4a413161486c0b7006dba4253cfd8f2083539d57a3087f93fd3d161d9cf35571` |
 | `rex6-d4c913c5` | `sha256:93186256dad9ae5c4b7bdde48243732cdeb6b1cdc5127823cbcf1dd4c4782a57` | `sha256:38a3669c27ae74755aae16efbbbba822ec00e147ae52ae814c9a4d85e030d00a` | `sha256:36445afc3cc90eaffefe3484c81088c47db4adc116731576436dd25b2dcc9d5d` |
 
 ```bash
 python3 -I tools/gen_registry.py <spec-checkout> 22a5f4b specs/satin-22a5f4b --members tools/descriptor-members/satin.json --check
 python3 -I tools/gen_registry.py <spec-checkout> d34e626 specs/satin-d34e626 --members tools/descriptor-members/satin.json --check
+python3 -I tools/gen_registry.py <spec-checkout> d334ef8 specs/satin-d334ef8 --members tools/descriptor-members/satin.json --check
 ```
 
 ## Descriptor members: codecs and the SALT mapping
