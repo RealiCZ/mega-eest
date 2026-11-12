@@ -6,7 +6,9 @@ keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`
 its own spec (decision D-54). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
-Every file here is written by `tools/make_slice.py` (`--check` verifies it). Each case is
+Every file here is written by `tools/make_slice.py` (`--check` verifies it), and every figure in a
+case's text that depends on a constant of the specification is written from that constant
+(`tools/check_derived_text.py` checks it, D-57). Each case is
 authored there — its setup, its transaction as real signed bytes or a deposit envelope, the SALT
 capacities its state lands in — and its expectation is derived by `tools/satin_model.py`, an
 executable restatement of the cited rules that shares no code with either implementation. No

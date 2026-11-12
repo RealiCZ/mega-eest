@@ -70,6 +70,20 @@ def h(b: bytes) -> str:
     return "0x" + b.hex()
 
 
+fmt = model.fmt
+NUMBERS = {12: "twelve"}
+
+
+def pool_019_example() -> dict:
+    """The worked example of SATIN-POOL-019, by its own arithmetic: one cold slot cleared by two PUSH1s and
+    an SSTORE, in a call without value or calldata. The model's ledgers for the case must reproduce it."""
+    regular = (model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + 2 * model.G_VERYLOW + model.COLD_SSTORE_ACCESS
+               + model.SSTORE_RESET)
+    history = (model.TX_BODY_SIZE + model.WRITE_RECORD_SIZE) * model.COST_PER_HISTORY_BYTE
+    refund = min(model.REFUND_CLEARED, (regular + history) // model.REFUND_QUOTIENT)
+    return {"regular": regular, "history": history, "refund": refund, "gasUsed": regular + history - refund}
+
+
 def q(n: int) -> str:
     return hex(n)
 
@@ -178,7 +192,7 @@ class Case:
                  gas_price=0, base_fee=0, ty=0, max_priority=0, max_fee=0, nonce=0, sender_nonce=0, sender_balance=ETH,
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
-                 contract_balance=0, authorizations=None, system=False):
+                 contract_balance=0, authorizations=None, system=False, check=None):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -197,6 +211,7 @@ class Case:
         self.contract_balance = contract_balance
         self.authorizations = authorizations or []  # (key, chain id, delegation target, nonce)
         self.system = system  # the system contracts' code in the pre-state
+        self.check = check or {}  # gasLedgers figures the derivation must reproduce
 
 
 def cases() -> list[Case]:
@@ -209,14 +224,16 @@ def cases() -> list[Case]:
     add(Case("satin/intrinsic/call/self-no-value", "a transaction to its own sender pays TX_BASE_COST alone", to=SENDER, code=b""))
     add(Case("satin/intrinsic/call/self-with-value", "value to the sender itself: TX_BASE_COST alone, no record and no "
              "transfer log", to=SENDER, code=b"", value=1_000))
-    add(Case("satin/intrinsic/calldata/zero-bytes", "32 zero calldata bytes: 4 gas each, 88 of history each, the floor "
-             "64 each", data=bytes(32)))
+    zeros = 32
+    add(Case("satin/intrinsic/calldata/zero-bytes", f"{zeros} zero calldata bytes: {model.CALLDATA_ZERO} gas each, "
+             f"{model.COST_PER_HISTORY_BYTE} of history each, the floor {model.FLOOR_PER_BYTE} each", data=bytes(zeros)))
     add(Case("satin/intrinsic/calldata/non-zero-bytes", "64 non-zero calldata bytes: the block counts the floor over the "
              "regular ledger", data=b"\x01" * 64, boundary="floor above the regular ledger"))
     add(Case("satin/intrinsic/calldata/mixed-bytes", "calldata of 10 zero and 10 non-zero bytes",
              data=bytes(10) + b"\xff" * 10))
-    add(Case("satin/intrinsic/access-list/one-address-two-keys", "an EIP-2930 access list: 4,180 per address, 4,048 per key, "
-             "20 and 32 history bytes", ty=1, access_list=[(CONTRACT, [1, 2])]))
+    add(Case("satin/intrinsic/access-list/one-address-two-keys", f"an EIP-2930 access list: {fmt(model.ACCESS_LIST_ADDRESS)} "
+             f"per address, {fmt(model.ACCESS_LIST_KEY)} per key, {model.ACCESS_LIST_ADDRESS_SIZE} and "
+             f"{model.ACCESS_LIST_SLOT_SIZE} history bytes", ty=1, access_list=[(CONTRACT, [1, 2])]))
     add(Case("satin/intrinsic/access-list/warm-slot-write", "a fresh slot the access list made warm: the SSTORE pays the warm "
              "access", ty=1, access_list=[(CONTRACT, [1])], code=sstore(1, 1) + STOP))
     # Value transfers.
@@ -232,8 +249,9 @@ def cases() -> list[Case]:
     add(Case("satin/value-transfer/with-fees", "value with a gas price above the base fee: the base fee vault and the "
              "beneficiary are credited", to=EOA, code=b"", value=7, gas_price=3_000_000, base_fee=1_000_000))
     # SSTORE.
-    add(Case("satin/sstore/fresh-slot/minimum-bucket", "a cold fresh slot at m = 1: 2,100 access, 10,000 write, "
-             "97,920 state gas with its 10,000 legacy share", code=sstore(1, 1) + STOP))
+    add(Case("satin/sstore/fresh-slot/minimum-bucket", f"a cold fresh slot at m = 1: {fmt(model.COLD_SSTORE_ACCESS)} access, "
+             f"{fmt(model.SSTORE_SET)} write, {fmt(model.SLOT_STATE)} state gas with its {fmt(model.LEGACY_SSTORE_SHARE)} "
+             "legacy share", code=sstore(1, 1) + STOP))
     add(Case("satin/sstore/fresh-slot/bucket-x2", "a fresh slot whose bucket has twice the minimum capacity",
              code=sstore(1, 1) + STOP, salt={(CONTRACT, 1): 2}))
     add(Case("satin/sstore/fresh-slot/bucket-x16", "a fresh slot whose bucket has sixteen times the minimum capacity; "
@@ -242,13 +260,16 @@ def cases() -> list[Case]:
              gas=3_000_000))
     add(Case("satin/sstore/fresh-slot/capacity-between-multiples", "a bucket of 3.5 minimum buckets: m is the floor, 3",
              code=sstore(1, 1) + STOP, salt={(CONTRACT, 1): 3.5}, boundary="capacity between two multiples"))
-    add(Case("satin/sstore/fresh-slot/with-reservoir", "a gas limit 10,000,000 above the execution cap: the body's history "
-             "and the slot's state gas draw the reservoir first", code=sstore(1, 1) + STOP, gas=210_000_000))
+    above_cap = 10_000_000
+    add(Case("satin/sstore/fresh-slot/with-reservoir", f"a gas limit {fmt(above_cap)} above the execution cap: the body's "
+             "history and the slot's state gas draw the reservoir first", code=sstore(1, 1) + STOP,
+             gas=model.EXECUTION_CAP + above_cap))
     add(Case("satin/sstore/reset/non-zero-to-non-zero", "a slot whose original value is not zero, reset to another value",
              code=sstore(1, 7) + STOP, storage={1: 5}))
+    example = pool_019_example()
     add(Case("satin/sstore/clear/specification-example", "the worked example of SATIN-POOL-019: clearing one cold slot spends "
-             "27,106 regular and 30,800 history gas, refunds 11,581 and uses 46,325", code=sstore_p1(0, 0) + STOP,
-             storage={0: 1}))
+             f"{fmt(example['regular'])} regular and {fmt(example['history'])} history gas, refunds {fmt(example['refund'])} "
+             f"and uses {fmt(example['gasUsed'])}", code=sstore_p1(0, 0) + STOP, storage={0: 1}, check=example))
     add(Case("satin/sstore/no-op/same-non-zero", "writing the present non-zero value: the access alone, no record",
              code=sstore(1, 5) + STOP, storage={1: 5}))
     add(Case("satin/sstore/no-op/zero-to-zero", "writing zero to a zero slot: the access alone", code=sstore(1, 0) + STOP))
@@ -262,14 +283,17 @@ def cases() -> list[Case]:
              "applies", code=sstore(1, 0) + sstore(1, 5) + STOP, storage={1: 5}))
     add(Case("satin/sstore/two-fresh-slots/two-buckets", "two fresh slots in buckets of m = 1 and m = 4",
              code=sstore(1, 1) + sstore(2, 1) + STOP, salt={(CONTRACT, 2): 4}))
-    add(Case("satin/sstore/sload-then-fresh-write", "an SLOAD makes the slot warm: the SSTORE after it pays 100 for its access",
+    add(Case("satin/sstore/sload-then-fresh-write", f"an SLOAD makes the slot warm: the SSTORE after it pays {model.WARM_READ} "
+             "for its access",
              code=push(1) + b"\x54\x50" + sstore(1, 1) + STOP))
     add(Case("satin/sstore/fresh-slot/eip1559-fees", "a fresh slot paid by an EIP-1559 transaction: the effective price is "
              "the base fee plus the priority fee", code=sstore(1, 1) + STOP, ty=2, max_priority=2_000_000,
              max_fee=5_000_000, base_fee=1_000_000))
     # Logs.
-    add(Case("satin/logs/log0-empty", "an empty LOG0: 375 regular gas, 32 history bytes", code=log(0, 0, 0, []) + STOP))
-    add(Case("satin/logs/log0-one-word", "a LOG0 of one word: memory, 8 per byte, 64 history bytes",
+    add(Case("satin/logs/log0-empty", f"an empty LOG0: {model.LOG_COST} regular gas, {model.LOG_BASE_SIZE} history bytes",
+             code=log(0, 0, 0, []) + STOP))
+    add(Case("satin/logs/log0-one-word", f"a LOG0 of one word: memory, {model.LOG_DATA_COST} per byte, "
+             f"{model.LOG_BASE_SIZE + 32} history bytes",
              code=mstore(0, 0xC0FFEE) + log(0, 0, 32, []) + STOP))
     add(Case("satin/logs/log2-two-topics", "a LOG2 with two topics and no data", code=log(2, 0, 0, [0xAA, 0xBB]) + STOP))
     add(Case("satin/logs/log4-four-topics-two-words", "a LOG4 with four topics and 64 data bytes",
@@ -292,7 +316,7 @@ def cases() -> list[Case]:
              "paid of the charge is on the regular ledger (D-51)",
              code=sstore(1, 1) + STOP, gas=60_000, boundary="below the slot's state gas"))
     add(Case("satin/outcomes/halt/with-reservoir", "a halt with a reservoir: the regular budget is used, the reservoir is "
-             "returned", code=INVALID, gas=210_000_000))
+             "returned", code=INVALID, gas=model.EXECUTION_CAP + above_cap))
     # Creation transactions.
     add(Case("satin/creation/empty-code", "a creation that deploys no code: the created account's state gas and record "
              "before the frame", to=None, data=ret(0, 0)))
@@ -310,12 +334,14 @@ def cases() -> list[Case]:
     add(Case("satin/validation/nonce-too-low", "a nonce below the account's", nonce=2, sender_nonce=3))
     add(Case("satin/validation/insufficient-funds", "a balance below the gas limit times the price", gas_price=10**9,
              sender_balance=10**14))
-    add(Case("satin/validation/below-intrinsic-regular", "a gas limit below the intrinsic regular gas", gas=14_999,
+    add(Case("satin/validation/below-intrinsic-regular", "a gas limit below the intrinsic regular gas",
+             gas=model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS - 1,
              boundary="one below the intrinsic regular gas"))
     add(Case("satin/validation/floor-above-gas-limit", "a gas limit that covers the intrinsic regular gas but not the floor",
              data=b"\x01" * 100, gas=20_000))
     add(Case("satin/validation/body-history-uncovered", "a gas limit that covers the intrinsic regular gas and the floor, "
-             "not the body's history", gas=42_279, boundary="one below intrinsic plus body history"))
+             "not the body's history", boundary="one below intrinsic plus body history",
+             gas=model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE - 1))
     add(Case("satin/validation/gas-limit-above-block", "a gas limit above what the block's gas limit has left: skipped for the block, "
              "reported in engine isolation as a refusal at inclusion (D-50)", gas=BLOCK_GAS_LIMIT + 1))
     add(Case("satin/validation/chain-id-mismatch", "a transaction signed for chain 2", chain_id=2))
@@ -383,11 +409,13 @@ def interception_cases() -> list[Case]:
     # Twelve hints of 1 MiB each, forwarded 1 gas, are admitted and counted; the thirteenth, which carries a
     # value its caller cannot fund, would cross the data-size limit and is answered with the stop.
     big = 1 << 20
+    count = (model.TX_DATA_LIMIT - model.TX_BODY_SIZE) // big  # as many 1 MiB hints as fit under the limit
     helpers = b"".join(push(0) + push(0) + push(big) + push(0) + push(0) + push(int.from_bytes(model.ORACLE, "big"))
-                       + push(1) + b"\xf1\x50" for _ in range(12))
+                       + push(1) + b"\xf1\x50" for _ in range(count))
     add(Case("satin/interception/send-hint/over-data-size-limit", "a sendHint whose input would take the transaction over "
              "its data-size limit, carrying a value its caller cannot fund: answered MegaLimitExceeded(0, limit) at "
-             "admission, nothing counted; twelve admitted 1 MiB hints bring the data size near the limit", system=True,
+             f"admission, nothing counted; {NUMBERS.get(count, str(count))} admitted 1 MiB hints bring the data size near "
+             "the limit", system=True,
              spec=spec, gas=4_000_000,
              code=mstore(0, int.from_bytes(model.SEND_HINT, "big") << 224) + helpers + call(100_000, model.ORACLE, 1, big)
              + record_result() + STOP))
@@ -520,8 +548,9 @@ def build(c: Case):
 DEPOSIT_HISTORY = (
     "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among "
     "the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based "
-    "implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 (the body's 310 bytes "
-    "at 88 gas) below the rule's"
+    f"implementation at 5e3f30ad charges a deposit no history gas, so its gas used is "
+    f"{fmt(model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE)} (the body's {model.TX_BODY_SIZE} bytes "
+    f"at {model.COST_PER_HISTORY_BYTE} gas) below the rule's"
 )
 QUARANTINE = {
     "satin/deposits/new-caller/minimum-bucket": {
@@ -541,6 +570,10 @@ GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "rece
 
 def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str = SPEC_COMMITS[DEFAULT_SPEC]) -> dict:
     inp, result, decoded = build(c)
+    for key, want in c.check.items():
+        got = int(result.observations["gasLedgers"][key], 16)
+        if got != want:
+            raise SystemExit(f"{c.case_id}: the derivation gives {key} {got}, the worked example {want}")
     d = result.derivation
     assertions, derivation = [], []
     for group, path in sorted(GROUP_PATHS.items(), key=lambda x: x[1]):

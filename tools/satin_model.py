@@ -61,10 +61,13 @@ REFUND_CLEARED = 11_616  # SATIN-SCHED-003
 CALL_STIPEND = 2_300  # inherited EIP-2200 sentry
 KECCAK_WORD = 6  # SATIN-SCHED-011
 COST_PER_STATE_BYTE = 1_530  # SATIN-STATE-003
-SLOT_STATE = 97_920  # SATIN-STATE-003: 64 bytes
-ACCOUNT_STATE = 183_600  # SATIN-STATE-003: 120 bytes
-CODE_STATE_PER_BYTE = 1_530  # SATIN-STATE-003
-LEGACY_SSTORE_SHARE = 20_000 - SSTORE_SET  # SATIN-STATE-012: PRE_FORK_SSTORE_SET_COST - SSTORE_WRITE_COST
+SLOT_STATE_BYTES = 64  # SATIN-STATE-003: the EIP-8037 byte count of a storage slot
+ACCOUNT_STATE_BYTES = 120  # SATIN-STATE-003: the EIP-8037 byte count of an account leaf
+SLOT_STATE = SLOT_STATE_BYTES * COST_PER_STATE_BYTE  # SATIN-STATE-003
+ACCOUNT_STATE = ACCOUNT_STATE_BYTES * COST_PER_STATE_BYTE  # SATIN-STATE-003
+CODE_STATE_PER_BYTE = COST_PER_STATE_BYTE  # SATIN-STATE-003: deployed code, per byte
+PRE_FORK_SSTORE_SET_COST = 20_000  # SATIN-STATE-012
+LEGACY_SSTORE_SHARE = PRE_FORK_SSTORE_SET_COST - SSTORE_SET  # SATIN-STATE-012: PRE_FORK_SSTORE_SET_COST - SSTORE_WRITE_COST
 COST_PER_HISTORY_BYTE = 88  # SATIN-HIST-001
 TX_BODY_SIZE = 310  # SATIN-HIST-003
 WRITE_RECORD_SIZE = 40  # SATIN-HIST-002
@@ -77,6 +80,8 @@ LOG_COST = 375  # inherited
 LOG_TOPIC_COST = 375
 LOG_DATA_COST = 8
 MEMORY_WORD = 3
+# The inherited static gas tiers of the opcodes the model runs (Osaka's, kept by SATIN-SCHED-002).
+G_ZERO, G_JUMPDEST, G_BASE, G_VERYLOW, G_LOW, G_MID, G_HIGH = 0, 1, 2, 3, 5, 8, 10
 REFUND_QUOTIENT = 5  # EIP-3529, kept by SATIN-POOL-018
 MIN_BUCKET_SIZE = 256  # SATIN-STATE-002
 TX_DATA_LIMIT = 13_107_200  # SATIN-LIM-001
@@ -769,40 +774,40 @@ class Run:
             op = code[pc]
             pc += 1
             if op == 0x00:  # STOP
-                steps.append("STOP 0")
+                steps.append(f"STOP {G_ZERO}")
                 break
             if op == 0x5F:  # PUSH0
-                self.charge_regular(frame, 2, "PUSH0")
+                self.charge_regular(frame, G_BASE, "PUSH0")
                 stack.append(0)
-                steps.append("PUSH0 2")
+                steps.append(f"PUSH0 {G_BASE}")
             elif 0x60 <= op <= 0x7F:
                 n = op - 0x5F
-                self.charge_regular(frame, 3, f"PUSH{n}")
+                self.charge_regular(frame, G_VERYLOW, f"PUSH{n}")
                 stack.append(int.from_bytes(code[pc:pc + n].ljust(n, b"\x00"), "big"))
                 pc += n
-                steps.append(f"PUSH{n} 3")
+                steps.append(f"PUSH{n} {G_VERYLOW}")
             elif op == 0x01:  # ADD
-                self.charge_regular(frame, 3, "ADD")
+                self.charge_regular(frame, G_VERYLOW, "ADD")
                 stack.append((pop() + pop()) % 2**256)
-                steps.append("ADD 3")
+                steps.append(f"ADD {G_VERYLOW}")
             elif op == 0x50:  # POP
-                self.charge_regular(frame, 2, "POP")
+                self.charge_regular(frame, G_BASE, "POP")
                 pop()
-                steps.append("POP 2")
+                steps.append(f"POP {G_BASE}")
             elif op == 0x33:  # CALLER
-                self.charge_regular(frame, 2, "CALLER")
+                self.charge_regular(frame, G_BASE, "CALLER")
                 stack.append(int.from_bytes(caller, "big"))
-                steps.append("CALLER 2")
+                steps.append(f"CALLER {G_BASE}")
             elif op == 0x34:  # CALLVALUE
-                self.charge_regular(frame, 2, "CALLVALUE")
+                self.charge_regular(frame, G_BASE, "CALLVALUE")
                 stack.append(value_in)
-                steps.append("CALLVALUE 2")
+                steps.append(f"CALLVALUE {G_BASE}")
             elif op == 0x52:  # MSTORE
                 offset, value = pop(), pop()
-                self.charge_regular(frame, 3, "MSTORE")
+                self.charge_regular(frame, G_VERYLOW, "MSTORE")
                 expand(offset, 32, "MSTORE")
                 memory[offset:offset + 32] = value.to_bytes(32, "big")
-                steps.append(f"MSTORE 3 + memory to {mem_words} words")
+                steps.append(f"MSTORE {G_VERYLOW} + memory to {mem_words} words")
             elif op == 0x54:  # SLOAD
                 if ctx:
                     raise Unmodelled("an SLOAD in a child frame")
@@ -855,54 +860,54 @@ class Run:
             # The inherited opcodes a system contract's dispatcher and decoder use, at their Osaka
             # static gas, which Amsterdam keeps (SATIN-SCHED-002).
             elif op == 0x02:
-                simple("MUL", 5, pop() * pop())
+                simple("MUL", G_LOW, pop() * pop())
             elif op == 0x03:
                 a, b = pop(), pop()
-                simple("SUB", 3, a - b)
+                simple("SUB", G_VERYLOW, a - b)
             elif op == 0x04:
                 a, b = pop(), pop()
-                simple("DIV", 5, a // b if b else 0)
+                simple("DIV", G_LOW, a // b if b else 0)
             elif op == 0x10:
                 a, b = pop(), pop()
-                simple("LT", 3, int(a < b))
+                simple("LT", G_VERYLOW, int(a < b))
             elif op == 0x11:
                 a, b = pop(), pop()
-                simple("GT", 3, int(a > b))
+                simple("GT", G_VERYLOW, int(a > b))
             elif op == 0x12:
                 a, b = pop(), pop()
-                simple("SLT", 3, int(to_signed(a) < to_signed(b)))
+                simple("SLT", G_VERYLOW, int(to_signed(a) < to_signed(b)))
             elif op == 0x13:
                 a, b = pop(), pop()
-                simple("SGT", 3, int(to_signed(a) > to_signed(b)))
+                simple("SGT", G_VERYLOW, int(to_signed(a) > to_signed(b)))
             elif op == 0x14:
-                simple("EQ", 3, int(pop() == pop()))
+                simple("EQ", G_VERYLOW, int(pop() == pop()))
             elif op == 0x15:
-                simple("ISZERO", 3, int(pop() == 0))
+                simple("ISZERO", G_VERYLOW, int(pop() == 0))
             elif op == 0x16:
-                simple("AND", 3, pop() & pop())
+                simple("AND", G_VERYLOW, pop() & pop())
             elif op == 0x17:
-                simple("OR", 3, pop() | pop())
+                simple("OR", G_VERYLOW, pop() | pop())
             elif op == 0x18:
-                simple("XOR", 3, pop() ^ pop())
+                simple("XOR", G_VERYLOW, pop() ^ pop())
             elif op == 0x19:
-                simple("NOT", 3, ~pop())
+                simple("NOT", G_VERYLOW, ~pop())
             elif op == 0x1B:
                 shift, v = pop(), pop()
-                simple("SHL", 3, v << shift if shift < 256 else 0)
+                simple("SHL", G_VERYLOW, v << shift if shift < 256 else 0)
             elif op == 0x1C:
                 shift, v = pop(), pop()
-                simple("SHR", 3, v >> shift if shift < 256 else 0)
+                simple("SHR", G_VERYLOW, v >> shift if shift < 256 else 0)
             elif op == 0x35:
                 i = pop()
-                simple("CALLDATALOAD", 3, int.from_bytes(calldata[i:i + 32].ljust(32, b"\x00"), "big") if i < len(calldata) else 0)
+                simple("CALLDATALOAD", G_VERYLOW, int.from_bytes(calldata[i:i + 32].ljust(32, b"\x00"), "big") if i < len(calldata) else 0)
             elif op == 0x36:
-                simple("CALLDATASIZE", 2, len(calldata))
+                simple("CALLDATASIZE", G_BASE, len(calldata))
             elif op == 0x3D:
-                simple("RETURNDATASIZE", 2, len(returndata))
+                simple("RETURNDATASIZE", G_BASE, len(returndata))
             elif op == 0x3E:  # RETURNDATACOPY
                 dest, off, size = pop(), pop(), pop()
                 words = (size + 31) // 32
-                cost = 3 + COPY_WORD * words
+                cost = G_VERYLOW + COPY_WORD * words
                 self.charge_regular(frame, cost, "RETURNDATACOPY")
                 expand(dest, size, "RETURNDATACOPY")
                 if off + size > len(returndata):
@@ -919,36 +924,37 @@ class Run:
                 steps.append(f"KECCAK256 {cost} + memory to {mem_words} words")
             elif op == 0x51:  # MLOAD
                 off = pop()
-                self.charge_regular(frame, 3, "MLOAD")
+                self.charge_regular(frame, G_VERYLOW, "MLOAD")
                 expand(off, 32, "MLOAD")
                 stack.append(int.from_bytes(memory[off:off + 32], "big"))
-                steps.append(f"MLOAD 3 + memory to {mem_words} words")
+                steps.append(f"MLOAD {G_VERYLOW} + memory to {mem_words} words")
             elif op in (0x56, 0x57):  # JUMP, JUMPI
                 if jumpdests is None:
                     jumpdests = jump_destinations(code)
                 dest = pop()
                 cond = pop() if op == 0x57 else 1
-                self.charge_regular(frame, 8 if op == 0x56 else 10, "JUMP" if op == 0x56 else "JUMPI")
-                steps.append("JUMP 8" if op == 0x56 else "JUMPI 10")
+                cost = G_MID if op == 0x56 else G_HIGH
+                self.charge_regular(frame, cost, "JUMP" if op == 0x56 else "JUMPI")
+                steps.append(f"{'JUMP' if op == 0x56 else 'JUMPI'} {cost}")
                 if cond:
                     if dest not in jumpdests:
                         raise Halt("a jump to an invalid destination")
                     pc = dest
             elif op == 0x5B:
-                self.charge_regular(frame, 1, "JUMPDEST")
-                steps.append("JUMPDEST 1")
+                self.charge_regular(frame, G_JUMPDEST, "JUMPDEST")
+                steps.append(f"JUMPDEST {G_JUMPDEST}")
             elif 0x80 <= op <= 0x8F:
                 n = op - 0x7F
                 if len(stack) < n:
                     raise Halt("stack underflow")
-                simple(f"DUP{n}", 3, stack[-n])
+                simple(f"DUP{n}", G_VERYLOW, stack[-n])
             elif 0x90 <= op <= 0x9F:
                 n = op - 0x8F
                 if len(stack) < n + 1:
                     raise Halt("stack underflow")
-                self.charge_regular(frame, 3, f"SWAP{n}")
+                self.charge_regular(frame, G_VERYLOW, f"SWAP{n}")
                 stack[-1], stack[-1 - n] = stack[-1 - n], stack[-1]
-                steps.append(f"SWAP{n} 3")
+                steps.append(f"SWAP{n} {G_VERYLOW}")
             elif op == 0xF1:  # CALL
                 if ctx:
                     raise Unmodelled("a call below the transaction's own frame")
@@ -980,7 +986,8 @@ class Run:
                       (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}" if cold else "") +
                       (" + input memory" if opcode_charges > WARM_READ + (CALL_VALUE_COST if value else 0) +
                        (COLD_ACCOUNT_SURCHARGE if cold else 0) else "") +
-                      f"; forward min({fmt(gas_req)}, {fmt(remaining)} - {fmt(remaining)} x 2 / 100 = {fmt(cap)}) = {fmt(forward)}"
+                      f"; forward min({fmt(gas_req)}, {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
+                      f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}"
                       + (f", the child's gas {fmt(forward)} + CALL_STIPEND {CALL_STIPEND} = {fmt(child_gas)}" if value else ""),
                       "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-003",
                       "SATIN-HIST-010")
@@ -1193,7 +1200,7 @@ class Run:
         present = acct.storage.get(key, 0)
         original = self.original.setdefault((address, key), self.pre.get(address, Account()).storage.get(key, 0))
         if frame["regular"] <= CALL_STIPEND:
-            raise Halt("SSTORE with no more than the 2,300 stipend left")
+            raise Halt(f"SSTORE with no more than the {fmt(CALL_STIPEND)} stipend left")
         cold = (address, key) not in self.warm_slots
         self.warm_slots.add((address, key))
         access = COLD_SSTORE_ACCESS if cold else WARM_READ

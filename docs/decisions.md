@@ -398,3 +398,16 @@ contract and the SequencerRegistry hold a placeholder (`0xfe`) there that no cal
 - The data-size stop of a hint is reached without a 13 MB fixture: twelve admitted hints of 1 MiB,
   each forwarded 1 gas and halting at the Oracle's first opcode, count 12,582,912 bytes, so the
   thirteenth would cross `TX_DATA_LIMIT`.
+
+**D-57. Every figure in the slice's text follows the model's constants.** A figure in a case's
+intent or boundary, its derivation, a quarantine verdict or `slice/README.md` that depends on a
+constant of the specification is written from that constant in `tools/satin_model.py` or
+`tools/make_slice.py`, never typed: prices, the products and sums of them, the inherited opcode
+costs the interpreter charges, and the inputs a case derives from them (a gas limit one below a
+threshold, the number of hints that fit under the data-size limit). The worked example of
+`SATIN-POOL-019` is computed from the constants by its own arithmetic, and the slice refuses a
+derivation that does not reproduce it. `tools/check_derived_text.py` regenerates the slice with
+`COST_PER_HISTORY_BYTE`, `COST_PER_STATE_BYTE` and `KEYLESS_DEPLOY_OVERHEAD_GAS` each changed in
+turn and fails if any text still shows a figure computed from the old value; `tools/run-slice.sh`
+runs it. The quarantine's recorded failures (`knownFail`'s expected and actual values) are records
+of an implementation's run, not text, and stay as recorded.

@@ -6,7 +6,8 @@
 #   NEGATIVE wrong-expected verdict=<pass|fail|...> rewritten=<no|yes>
 #
 # Everything else goes to standard error. It builds what it needs (the format CLI, the scenario
-# checkouts under vendor/, both adapters), checks that slice/ is what tools/make_slice.py writes,
+# checkouts under vendor/, both adapters), checks that slice/ is what tools/make_slice.py writes
+# and that every figure in its text follows the model's constants (tools/check_derived_text.py),
 # consumes slice/cases with each adapter plain and instrumented (read-only), checks that the
 # quarantined cases still fail exactly as recorded on the implementation they are recorded
 # against and pass on the other, runs the deliberately wrong expectation, and fills candidates
@@ -29,6 +30,7 @@ done
 cli="$target/debug/mega-fixture"
 adapter() { echo "$target/adapter-$1/debug/adapter-$1"; }
 python3 -I "$root/tools/make_slice.py" --check >&2
+python3 -I "$root/tools/check_derived_text.py" >&2
 
 # The slice's bytes before anything runs: consuming must rewrite nothing.
 digest_tree() { (cd "$root/slice" && find . -type f -print0 | sort -z | xargs -0 shasum -a 256 | shasum -a 256 | cut -d' ' -f1); }
