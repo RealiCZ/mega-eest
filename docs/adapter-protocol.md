@@ -90,13 +90,18 @@ An adapter is a program the consumer runs; the format crate never links an imple
 - A run that exceeds the consumer's time limit (300 s), exits without a parsable response, or
   answers anything else is `error`.
 
-`mega-fixture consume --adapter <program> [--instrumented] [--report <file>] <paths>` is the
+`mega-fixture consume --adapter <program> [--instrumented] [--jobs <N>] [--report <file>] <paths>` is the
 consumer loop above: read-only, one line per case, a `CONSUME` summary line, and a JSON report
 with each case's file, semantic, input and observation digests and its status (with the first
 differing path, both values and the covering rules for a `fail`). `mega-fixture fill` is the
 candidate filler: it runs an adapter on authoring documents (fixtures without `requires` and
 `expected`) and writes each filled fixture, `provenance.status` `candidate` with the filler's
 identity, into a directory that is neither `examples/` nor a `release` directory.
+
+Both commands accept `--jobs <N>` (a positive integer, default `1`) to run up to N cases at
+once. Case lines, summaries, reports and candidate writes retain the input order and the same
+bytes as a serial run. The process transport writes standard input and drains standard output
+and standard error concurrently; the 300 s deadline covers the process and all three pipes.
 
 ## Mapping definitions
 
