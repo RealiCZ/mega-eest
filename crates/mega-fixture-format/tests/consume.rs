@@ -174,6 +174,16 @@ mod process {
             Self(PathBuf::from(String::from_utf8(out.stdout).unwrap().trim()))
         }
 
+        fn hanging_adapter(&self, close_pipes: bool) -> ProcessAdapter {
+            let program = self.0.join("hang.sh");
+            let close = if close_pipes { "cat >/dev/null\nexec 0<&- 1>&- 2>&-\n" } else { "" };
+            fs::write(&program, format!("#!/bin/sh\nprintf '%s' \"$$\" > \"${{0%/*}}/pid\"\n{close}exec sleep 60\n")).unwrap();
+            fs::set_permissions(&program, fs::Permissions::from_mode(0o700)).unwrap();
+            let mut adapter = ProcessAdapter::new(program);
+            adapter.timeout = Duration::from_secs(3);
+            adapter
+        }
+
         fn adapter(&self, body: &str) -> ProcessAdapter {
             let program = self.0.join("adapter.py");
             fs::write(&program, format!("#!/usr/bin/env python3\nimport json, os, pathlib, signal, sys, time\nroot = pathlib.Path(__file__).parent\n{body}\n"))
@@ -235,8 +245,7 @@ mod process {
     #[test]
     fn timeout_kills_and_reaps_a_hanging_adapter_and_reports_error() {
         let scratch = Scratch::new();
-        let mut adapter = scratch.adapter("(root / 'pid').write_text(str(os.getpid()))\njson.load(sys.stdin)\nsignal.pause()");
-        adapter.timeout = Duration::from_secs(3);
+        let adapter = scratch.hanging_adapter(false);
         let caps = Capabilities::from_value(capabilities(&[
             "group:gas-ledgers",
             "group:limit",
@@ -260,8 +269,7 @@ mod process {
     #[test]
     fn timeout_also_covers_a_blocked_stdin_writer() {
         let scratch = Scratch::new();
-        let mut adapter = scratch.adapter("(root / 'pid').write_text(str(os.getpid()))\nsignal.pause()");
-        adapter.timeout = Duration::from_secs(3);
+        let adapter = scratch.hanging_adapter(false);
         let start = Instant::now();
 
         let error = adapter.run(&Value::String("x".repeat(4 * 1024 * 1024)), false).unwrap_err();
@@ -274,9 +282,7 @@ mod process {
     #[test]
     fn timeout_still_applies_after_all_pipes_close() {
         let scratch = Scratch::new();
-        let mut adapter =
-            scratch.adapter("(root / 'pid').write_text(str(os.getpid()))\njson.load(sys.stdin)\nos.close(0)\nos.close(1)\nos.close(2)\nsignal.pause()");
-        adapter.timeout = Duration::from_secs(3);
+        let adapter = scratch.hanging_adapter(true);
         let start = Instant::now();
 
         let error = adapter.run(&Value::Null, false).unwrap_err();
