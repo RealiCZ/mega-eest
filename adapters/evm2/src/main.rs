@@ -8,9 +8,15 @@
 //! address resolved from the pre-state), then `Evm::transact`. SALT capacities come from the
 //! case's `salt` input as a snapshot of the parent state. Nothing here is shared with the adapter
 //! of the revm-based implementation.
+//!
+//! A case that requires `group:reads` is answered with what the transaction loaded: the pre-state
+//! database and the SALT snapshot record every load that reaches them while the transaction runs,
+//! in plain and instrumented runs alike, and a run builds them afresh, so the first load of each
+//! item is what the run read (docs/adapter-protocol.md, "Reads").
 
-use std::cell::Cell;
-use std::collections::{BTreeMap, HashMap};
+use std::cell::{Cell, RefCell};
+use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::rc::Rc;
 use std::io::{Read, Write};
 use std::process::ExitCode;
 use std::sync::Arc;
@@ -53,6 +59,7 @@ const CAPABILITIES: &[&str] = &[
     "group:gas-ledgers",
     "group:limit",
     "group:outcome",
+    "group:reads",
     "group:receipts",
     "group:resources",
     "group:state",
@@ -192,7 +199,30 @@ struct PreState {
     code: HashMap<B256, Bytecode>,
     storage: HashMap<(Address, U256), U256>,
     block_hashes: HashMap<u64, B256>,
+    loaded: Loads,
 }
+
+/// What the transaction loaded from the case's inputs, each item as its first load served it:
+/// accounts (`None`: absent) with their nonce, balance and code hash, slots, code hashes, block
+/// hashes and SALT capacities. Loads are recorded once `recording` is set, when the transaction
+/// starts: the factory's own reads when it makes the EVM, the live system address resolved off the
+/// registry, are the block's (SATIN-REG-002), not the transaction's. An account or slot the factory
+/// loaded first and the transaction loads again is served by the EVM's cache; the transaction's
+/// returned state names it, and `reads` adds it from there.
+#[derive(Debug, Default)]
+struct Loaded {
+    recording: bool,
+    accounts: BTreeMap<Address, Option<(u64, U256, B256)>>,
+    storage: BTreeMap<(Address, U256), U256>,
+    codes: BTreeSet<B256>,
+    block_hashes: BTreeMap<u64, B256>,
+    buckets: BTreeMap<u64, u64>,
+    before_accounts: BTreeMap<Address, Option<(u64, U256, B256)>>,
+    before_slots: BTreeMap<(Address, U256), U256>,
+}
+
+/// The recorder the database and the SALT snapshot of one run share.
+type Loads = Rc<RefCell<Loaded>>;
 
 #[derive(Debug)]
 struct Missing(String);
@@ -208,17 +238,42 @@ impl std::error::Error for Missing {}
 impl Database for PreState {
     type Error = Missing;
     fn get_account(&mut self, address: &Address) -> Result<Option<AccountInfo>, Self::Error> {
-        Ok(self.accounts.get(address).cloned())
+        let info = self.accounts.get(address).cloned();
+        let mut l = self.loaded.borrow_mut();
+        let seen = info.as_ref().map(|i| (i.nonce, i.balance, i.code_hash));
+        if l.recording {
+            l.accounts.entry(*address).or_insert(seen);
+        } else {
+            l.before_accounts.entry(*address).or_insert(seen);
+        }
+        Ok(info)
     }
     fn get_code_by_hash(&mut self, code_hash: &B256) -> Result<Bytecode, Self::Error> {
-        self.code.get(code_hash).cloned().ok_or_else(|| Missing(format!("code {code_hash}")))
+        let code = self.code.get(code_hash).cloned().ok_or_else(|| Missing(format!("code {code_hash}")))?;
+        let mut l = self.loaded.borrow_mut();
+        if l.recording {
+            l.codes.insert(*code_hash);
+        }
+        Ok(code)
     }
     fn get_storage(&mut self, address: &Address, key: &Word) -> Result<Word, Self::Error> {
-        Ok(self.storage.get(&(*address, *key)).copied().unwrap_or(U256::ZERO))
+        let value = self.storage.get(&(*address, *key)).copied().unwrap_or(U256::ZERO);
+        let mut l = self.loaded.borrow_mut();
+        if l.recording {
+            l.storage.entry((*address, *key)).or_insert(value);
+        } else {
+            l.before_slots.entry((*address, *key)).or_insert(value);
+        }
+        Ok(value)
     }
     fn get_block_hash(&mut self, number: &Word) -> Result<B256, Self::Error> {
         let n: u64 = (*number).try_into().map_err(|_| Missing(format!("block hash {number}")))?;
-        self.block_hashes.get(&n).copied().ok_or_else(|| Missing(format!("block hash {n}")))
+        let hash = self.block_hashes.get(&n).copied().ok_or_else(|| Missing(format!("block hash {n}")))?;
+        let mut l = self.loaded.borrow_mut();
+        if l.recording {
+            l.block_hashes.entry(n).or_insert(hash);
+        }
+        Ok(hash)
     }
 }
 
@@ -231,6 +286,7 @@ struct FixtureSalt {
     buckets: HashMap<u64, u64>,
     complete: bool,
     refused: Cell<Option<u64>>,
+    loaded: Loads,
 }
 
 impl FixtureSalt {
@@ -240,6 +296,7 @@ impl FixtureSalt {
             buckets: HashMap::new(),
             complete: false,
             refused: Cell::new(None),
+            loaded: Loads::default(),
         };
         if let Some(salt) = salt {
             if salt.at("mapping")?.str()? != "salt-v1" {
@@ -262,9 +319,19 @@ impl SaltSnapshot for FixtureSalt {
 
     fn capacity(&self, bucket: BucketId) -> Result<u64, SaltReadError> {
         let id = u64::from(bucket);
-        match self.buckets.get(&id) {
-            Some(capacity) => Ok(*capacity),
-            None if self.complete => Ok(MIN_BUCKET_SIZE),
+        let served = match self.buckets.get(&id) {
+            Some(capacity) => Some(*capacity),
+            None if self.complete => Some(MIN_BUCKET_SIZE),
+            None => None,
+        };
+        if let Some(capacity) = served {
+            let mut l = self.loaded.borrow_mut();
+            if l.recording {
+                l.buckets.entry(id).or_insert(capacity);
+            }
+        }
+        match served {
+            Some(capacity) => Ok(capacity),
             None => {
                 if self.refused.get().is_none() {
                     self.refused.set(Some(id));
@@ -595,7 +662,12 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     // The engine's snapshot trait asks for no thread bound and this run is single-threaded; the
     // factory takes the snapshot in an `Arc`.
     #[allow(clippy::arc_with_non_send_sync)]
-    let salt = Arc::new(FixtureSalt::read(input.opt("salt"), block.at("parentHash")?.hash()?)?);
+    let mut salt = FixtureSalt::read(input.opt("salt"), block.at("parentHash")?.hash()?)?;
+    let loaded = db.loaded.clone();
+    salt.loaded = loaded.clone();
+    let wants_reads = matches!(req.at("requires")?.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some("group:reads")));
+    #[allow(clippy::arc_with_non_send_sync)]
+    let salt = Arc::new(salt);
     // The factory installs Satin's version, limits, registry and precompiles, has storage of an
     // account the database lacks read, and resolves the live system address from the pre-state's
     // SequencerRegistry, as a block resolves it once (SATIN-REG-002).
@@ -606,6 +678,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     if instrumented {
         evm.set_inspector(Messages::default());
     }
+    loaded.borrow_mut().recording = true;
 
     let missing_bucket = |salt: &FixtureSalt| salt.refused.get().map(|b| format!("missing input: SALT bucket {b:#x}"));
     let executed = match evm.transact(&sent.tx) {
@@ -624,6 +697,24 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
             None => return error(format!("unmapped refusal or failure: {e:?}")),
         },
     };
+    // What the factory loaded first and the transaction loaded again, which the EVM's cache served.
+    {
+        let mut l = loaded.borrow_mut();
+        for c in executed.account_changes() {
+            if !l.accounts.contains_key(&c.address) {
+                if let Some(seen) = l.before_accounts.get(&c.address).copied() {
+                    l.accounts.insert(c.address, seen);
+                }
+            }
+            for key in c.storage.slots.keys() {
+                if !l.storage.contains_key(&(c.address, *key)) {
+                    if let Some(value) = l.before_slots.get(&(c.address, *key)).copied() {
+                        l.storage.insert((c.address, *key), value);
+                    }
+                }
+            }
+        }
+    }
     let touched: Vec<Touched> = executed
         .account_changes()
         .filter(|c| c.touched)
@@ -660,7 +751,62 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
             );
         }
     }
-    Ok((observe(&r, ext, &sent, &listed, &touched), diagnostics))
+    let mut observations = observe(&r, ext, &sent, &listed, &touched);
+    if wants_reads {
+        if let Value::Object(m) = &mut observations {
+            m.insert("reads".into(), reads(&loaded.borrow(), &listed, &ext.mechanisms.hints));
+        }
+    }
+    Ok((observations, diagnostics))
+}
+
+/// The `reads` group: what the transaction loaded, each item as the case's inputs served it. The
+/// code hashes are those of every account read whose code is not empty, with any code loaded by
+/// hash: the code the witness holds for every account it names, whether or not the load that named
+/// the account brought the code (SATIN-WIT-001). The implementation answers no oracle read from a
+/// service in the cases this adapter runs (no transcript), so `oracle` is empty; `hints` are the
+/// hints the implementation forwarded, in order.
+fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, hints: &[(Address, B256, Bytes)]) -> Value {
+    let mut codes = l.codes.clone();
+    let accounts = l
+        .accounts
+        .iter()
+        .map(|(a, seen)| {
+            let v = match seen {
+                None => Value::Null,
+                Some((nonce, balance, code_hash)) => {
+                    if listed.get(a).is_some_and(|p| !p.code.is_empty()) {
+                        codes.insert(*code_hash);
+                    }
+                    object([("nonce", q(*nonce)), ("balance", q(*balance)), ("codeHash", hexs(code_hash.as_slice()))])
+                }
+            };
+            (format!("{a:#x}"), v)
+        })
+        .collect();
+    let mut storage: BTreeMap<String, Value> = BTreeMap::new();
+    for ((a, k), v) in &l.storage {
+        if let Value::Object(slots) = storage.entry(format!("{a:#x}")).or_insert_with(|| Value::Object(BTreeMap::new())) {
+            slots.insert(format!("{:#066x}", k), q(*v));
+        }
+    }
+    object([
+        ("accounts", Value::Object(accounts)),
+        ("storage", Value::Object(storage)),
+        ("codes", Value::Array(codes.iter().map(|c| hexs(c.as_slice())).collect())),
+        ("blockHashes", Value::Object(l.block_hashes.iter().map(|(n, h)| (format!("{n:#x}"), hexs(h.as_slice()))).collect())),
+        ("buckets", Value::Object(l.buckets.iter().map(|(b, c)| (format!("{b:#x}"), q(*c))).collect())),
+        ("oracle", Value::Array(Vec::new())),
+        (
+            "hints",
+            Value::Array(
+                hints
+                    .iter()
+                    .map(|(f, t, d)| object([("from", hexs(f.as_slice())), ("topic", hexs(t.as_slice())), ("data", hexs(d))]))
+                    .collect(),
+            ),
+        ),
+    ])
 }
 
 fn observe(r: &TxResult<MegaTypes>, ext: &mega_evm2::Lite, sent: &Sent, listed: &BTreeMap<Address, Listed>, touched: &[Touched]) -> Value {

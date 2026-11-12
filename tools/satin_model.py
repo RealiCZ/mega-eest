@@ -24,7 +24,9 @@ narrow class of transactions the slice uses:
   transaction to an account holding a delegation, its sender's own among them, which pays its
   delegate's access before the first frame;
 - a transaction that runs out of gas before its first frame with nothing applied but validation's
-  changes to its sender;
+  changes to its sender, an authorization list's first write among the charges it cannot pay;
+- for the cases that ask, the `reads` group: what the transaction loads, as the stateless witness
+  needs it;
 - gas detention: `TIMESTAMP`, a deposit's `SLOAD` in the Oracle's frame and `BALANCE` as reads, the
   limit they set, every frame's spendable and withheld parts, each part an opcode deducts as one
   charge, the crossing that stops a child frame and the out-of-gas beyond its whole gas; and
@@ -105,6 +107,12 @@ TRANSFER_LOG_ADDRESS = bytes.fromhex("ff" * 19 + "fe")  # SATIN-LOG-001
 TRANSFER_TOPIC = bytes.fromhex("ddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef")
 
 BASE_FEE_VAULT = bytes.fromhex("4200000000000000000000000000000000000019")
+# The reads of a transaction (the stateless witness, at `5fb2688`): the fee recipients besides the
+# beneficiary, and the L1 block contract's slots every non-deposit transaction reads (SATIN-WIT-011).
+L1_FEE_VAULT = bytes.fromhex("420000000000000000000000000000000000001a")
+OPERATOR_FEE_VAULT = bytes.fromhex("420000000000000000000000000000000000001b")
+L1_BLOCK_ADDRESS = bytes.fromhex("4200000000000000000000000000000000000015")
+L1_BASE_FEE_SLOT, L1_ECOTONE_SCALARS_SLOT, L1_FEE_OVERHEAD_SLOT, L1_BLOB_BASE_FEE_SLOT, L1_OPERATOR_SCALARS_SLOT = 1, 3, 5, 7, 8
 KECCAK_EMPTY = ex.keccak256(b"")
 
 # Calls, interception and EIP-7702 (the specification at `d334ef8`).
@@ -212,6 +220,10 @@ class Unmodelled(Exception):
 
 class Halt(Exception):
     """An exceptional halt of the transaction's own frame."""
+
+
+class OutOfGasBeforeFrame(Exception):
+    """A charge before the first frame the transaction cannot pay (SATIN-SCHED-009)."""
 
 
 class Stopped(Exception):
@@ -338,8 +350,15 @@ def memory_cost(words: int) -> int:
 class Run:
     """One transaction against a complete pre-state."""
 
-    def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False):
+    def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
+                 reads: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
+        # The `reads` group (SATIN-WIT-001, -002, -008): every account (None: absent) and slot the
+        # transaction loads, as the pre-state holds it, and the SALT capacities it is served.
+        self.reads = reads
+        self.loaded_accounts: dict[bytes, Account | None] = {}
+        self.loaded_slots: dict[tuple[bytes, int], int] = {}
+        self.served_buckets: dict[int, int] = {}
         self.salt_bucket = salt_bucket  # (address, slot or None) -> bucket id
         self.d = Derivation()
         # The specification states the charge-order principles (`SATIN-HIST-023`, from `5fb2688` on): the
@@ -351,7 +370,8 @@ class Run:
         # "gas" and "gas-reservoir" the frame's regular gas and reservoir at its first GAS, "refused" the
         # regular gas a frame holds at a refused read, "oracle-sload" the regular gas at the first Oracle read;
         # "child-room" and "oracle-sload-room" what the limit leaves the transaction's compute at the first
-        # detained child's start and at a detained Oracle read.
+        # detained child's start and at a detained Oracle read; "list" the regular gas when an authorization
+        # list starts to be applied, "balance" the regular gas at the first BALANCE.
         self.probe: dict[str, int] = {}
         # Gas detention (SATIN-DET-009, -012): the transaction's compute, every regular charge its frames
         # make, and the limit the most restrictive volatile read set, None before any read.
@@ -475,6 +495,7 @@ class Run:
               "SATIN-ACCT-002", "SATIN-HIST-003")
 
         self.state: dict[bytes, Account] = {a: Account(x.nonce, x.balance, x.code, dict(x.storage)) for a, x in self.pre.items()}
+        self.load(tx.sender, "the sender, which validation reads", "SATIN-WIT-002", "SATIN-WIT-008")
         self.data_size = body_bytes
         self.kv: set = set()  # write records: ("a", address) or ("s", address, slot)
         self.growth = 0
@@ -516,7 +537,10 @@ class Run:
             sender_acct.nonce += 1
 
         if tx.authorizations:
-            regular, reservoir = self.apply_authorizations(regular, reservoir)
+            try:
+                regular, reservoir = self.apply_authorizations(regular, reservoir)
+            except OutOfGasBeforeFrame as e:
+                return self.out_of_gas_before_frame(intrinsic, floor, price, reservoir, str(e))
 
         # Charges before the first frame, SATIN-SCHED-008 steps 3 and 4.
         pre_frame_state = 0
@@ -543,7 +567,7 @@ class Run:
             rec = self.state.get(recipient)
             new_account = rec is None or rec.empty()
         if new_account:
-            m = bucket_multiplier(env, self.salt_bucket(recipient, None))
+            m = self.multiplier(self.salt_bucket(recipient, None))
             pre_frame_state = ACCOUNT_STATE * m
             d.add("gasLedgers", f"{'created' if create else 'new'}-account state gas {fmt(ACCOUNT_STATE)} x m={m} = "
                   f"{fmt(pre_frame_state)} at step 4, no legacy share", "SATIN-SCHED-008", "SATIN-STATE-001",
@@ -551,8 +575,11 @@ class Run:
         # Of step 3's history, the authorities' records drew the reservoir first, when the list was
         # applied; the first frame's start record draws what they left (D-58).
         drawn = []  # what the reservoir paid of the start record and of the start's state gas
-        for amount, what in ((pre_frame_history, "the first frame's start record"),
-                             (pre_frame_state, "the recipient's or created account's state gas")):
+        for step, (amount, what) in enumerate(((pre_frame_history, "the first frame's start record"),
+                                               (pre_frame_state, "the recipient's or created account's state gas"))):
+            if step == 1 and recipient != tx.sender:
+                self.load(recipient, f"the {'created address' if create else 'recipient'}, at step 4 of the charges "
+                          "before the first frame and no earlier", "SATIN-SCHED-008", "SATIN-WIT-008")
             r = min(reservoir, amount)
             if amount - r > regular:
                 if tx.authorizations or r or reservoir != self.reservoir_after_body or create:
@@ -588,12 +615,17 @@ class Run:
                       f"delegate's access before the first frame, the warm read {WARM_READ} first, leaving "
                       f"{fmt(regular - WARM_READ)} of regular gas, which cannot pay the cold surcharge "
                       f"{fmt(COLD_ACCOUNT_SURCHARGE)}: the delegate is not loaded", "SATIN-SCHED-003", "SATIN-SCHED-008")
+                if self.reads:
+                    d.add("reads", f"the delegate {h(delegate)} is not loaded: its cold surcharge cannot be paid",
+                          "SATIN-SCHED-008", "SATIN-WIT-012")
                 return self.out_of_gas_before_frame(intrinsic, floor, price, reservoir,
                                                     f"its delegate's cold surcharge, {fmt(COLD_ACCOUNT_SURCHARGE)}, with "
                                                     f"{fmt(regular - WARM_READ)} regular gas left after the warm read")
             regular -= access
             self.pre_frame_regular += access
             self.warm_accounts.add(delegate)
+            self.load(delegate, "the recipient's delegate, at step 5, once its access is paid", "SATIN-SCHED-008",
+                      "SATIN-WIT-008")
             d.add("gasLedgers", f"the recipient holds an EIP-7702 delegation to {h(delegate)}: the delegate's access before "
                   f"the first frame, after step 4, warm read {WARM_READ}" +
                   (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)} = {fmt(access)}, the cold delegate loaded once the "
@@ -739,6 +771,9 @@ class Run:
               f"total = gas limit {fmt(tx.gas_limit)} - {fmt(reservoir)} = {fmt(total)}", "SATIN-SCHED-010", "SATIN-POOL-017")
         d.add("resources", "nothing applied before the first frame is kept but validation's changes to the sender: no write "
               "record, no state growth, the data size the body's alone", "SATIN-SCHED-010")
+        if self.reads and tx.to is not None and tx.to not in self.loaded_accounts:
+            d.add("reads", f"the recipient {h(tx.to)} is not loaded: its load is made at step 4 of the charges before the "
+                  "first frame, which the transaction does not reach", "SATIN-SCHED-008")
         self.refund = 0
         return self.settle(total, floor, price, "halt", {"status": "halt", "output": "0x", "createdAddress": None}, False,
                            None)
@@ -749,6 +784,7 @@ class Run:
         fees, ledgers, resources and receipt."""
         tx, env, d = self.tx, self.env, self.d
         sender_acct = self.state[tx.sender]
+        self.fee_reads()
         # Refund, floor, gas used (SATIN-POOL-018, SATIN-POOL-020).
         cap = total // REFUND_QUOTIENT
         refund = min(self.refund, cap)
@@ -801,8 +837,11 @@ class Run:
                   "SATIN-OUT-001" if not create else "SATIN-SCHED-011")
         elif status == "revert":
             d.add("outcome", "admitted; the frame reverts with its REVERT data", "SATIN-OUT-001")
-        return Result({"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
-                       "resources": resources, "limit": None}, d)
+        observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
+                        "resources": resources, "limit": None}
+        if self.reads:
+            observations["reads"] = self.reads_observation()
+        return Result(observations, d)
 
     def effective_price(self) -> int:
         tx = self.tx
@@ -845,6 +884,61 @@ class Run:
             self.state_gas -= start_state
             if recipient in self.state and self.state[recipient].empty() and recipient not in self.pre:
                 del self.state[recipient]
+
+    def load(self, address: bytes, why: str, *rules: str) -> None:
+        """An account the transaction loads, as the pre-state holds it (absent: None)."""
+        if address not in self.loaded_accounts:
+            self.loaded_accounts[address] = self.pre.get(address)
+            if self.reads:
+                self.d.add("reads", f"{h(address)} is loaded: {why}", *rules)
+
+    def load_slot(self, address: bytes, key: int, why: str, *rules: str) -> None:
+        """A slot the transaction loads, as the pre-state holds it; an absent account has no slot to load
+        (SATIN-WIT-006)."""
+        if (address, key) not in self.loaded_slots and self.pre.get(address) is not None:
+            self.loaded_slots[(address, key)] = self.pre[address].storage.get(key, 0)
+            if self.reads:
+                self.d.add("reads", f"slot {key} of {h(address)} is loaded: {why}", *rules)
+
+    def multiplier(self, bucket: int) -> int:
+        """The bucket multiplier of a state charge, its capacity served by the SALT environment and exported
+        (SATIN-WIT-013)."""
+        self.served_buckets.setdefault(bucket, self.env.buckets.get(bucket, MIN_BUCKET_SIZE))
+        return bucket_multiplier(self.env, bucket)
+
+    def fee_reads(self) -> None:
+        """What every transaction that is not a deposit reads for its fees: the L1 block contract's
+        slots, before it runs, and the fee recipients at its settlement (SATIN-WIT-008, -011)."""
+        l1 = self.pre.get(L1_BLOCK_ADDRESS)
+        self.load(L1_BLOCK_ADDRESS, "the L1 block information the transaction's L1 fee and data-availability "
+                  "footprint read, outside its journal, reported with it", "SATIN-WIT-003", "SATIN-WIT-011")
+        slots = [L1_BASE_FEE_SLOT, L1_ECOTONE_SCALARS_SLOT, L1_BLOB_BASE_FEE_SLOT, L1_OPERATOR_SCALARS_SLOT]
+        if l1 is not None and not l1.storage.get(L1_ECOTONE_SCALARS_SLOT, 0):
+            slots.append(L1_FEE_OVERHEAD_SLOT)
+        elif l1 is not None:
+            raise Unmodelled("an L1 block contract with Ecotone scalars")
+        for slot in sorted(slots):
+            self.load_slot(L1_BLOCK_ADDRESS, slot, "the L1 fee computation's slots, the overhead slot as the Ecotone "
+                           "scalars are empty, and the footprint gas scalar's", "SATIN-WIT-011")
+        for who, what in ((self.env.coinbase, "the block beneficiary"), (BASE_FEE_VAULT, "the base fee vault"),
+                          (L1_FEE_VAULT, "the L1 fee vault"), (OPERATOR_FEE_VAULT, "the operator fee vault")):
+            self.load(who, f"{what}, a fee recipient the settlement credits", "SATIN-WIT-008", "SATIN-BASE-001")
+
+    def reads_observation(self) -> dict:
+        """The `reads` group: the accounts and slots loaded, the code of every loaded account that has code
+        (the witness holds it whether or not the load brought it, SATIN-WIT-001), and the SALT capacities
+        served; no block hash, oracle service answer or hint is in this model's cases."""
+        accounts = {h(a): None if x is None else {"nonce": q(x.nonce), "balance": q(x.balance), "codeHash": h(ex.keccak256(x.code))}
+                    for a, x in sorted(self.loaded_accounts.items())}
+        storage: dict = {}
+        for (a, k), v in sorted(self.loaded_slots.items()):
+            storage.setdefault(h(a), {})[word(k)] = q(v)
+        codes = sorted({h(ex.keccak256(x.code)) for x in self.loaded_accounts.values() if x is not None and x.code})
+        self.d.add("reads", f"reads: accounts {len(accounts)}, slots {len(self.loaded_slots)}, codes {len(codes)}, SALT "
+                   f"capacities {len(self.served_buckets)}; no block hash, oracle answer or hint",
+                   "SATIN-WIT-001", "SATIN-WIT-005", "SATIN-WIT-013")
+        return {"accounts": accounts, "storage": storage, "codes": codes, "blockHashes": {},
+                "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": [], "hints": []}
 
     def order(self) -> tuple[str, tuple[str, ...]]:
         """Where the order of a call's charges and decisions is stated: the principle of `SATIN-HIST-023`
@@ -1012,6 +1106,8 @@ class Run:
                         raise Unmodelled("an Oracle read refused")
                     value = self.state.get(ORACLE, Account()).storage.get(key, 0)
                     self.warm_slots.add((ORACLE, key))
+                    self.load_slot(ORACLE, key, "the Oracle's SLOAD, which loads the slot before its charge, whatever the "
+                                   "charge then does", "SATIN-ORCL-004", "SATIN-WIT-012")
                     if tx.kind != "deposit":
                         raise Unmodelled("an Oracle read that asks the oracle service")
                     d.add("gasLedgers", f"the Oracle's SLOAD of slot {key}, with {fmt(frame['regular'])} of regular gas in "
@@ -1039,6 +1135,7 @@ class Run:
                 cost = COLD_SLOAD if cold else WARM_READ
                 self.charge_regular(frame, cost, "SLOAD")
                 self.warm_slots.add((address, key))
+                self.load_slot(address, key, "SLOAD, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
                 stack.append(self.state.get(address, Account()).storage.get(key, 0))
                 steps.append(f"SLOAD {'cold' if cold else 'warm'} {fmt(cost)}")
                 d.add("gasLedgers", f"SLOAD of slot {key}: {'cold' if cold else 'warm'} {fmt(cost)}", "SATIN-SCHED-003")
@@ -1179,15 +1276,21 @@ class Run:
                       "spendable, what the limit leaves the transaction, and the rest withheld", "SATIN-DET-014")
             elif op == 0x31:  # BALANCE
                 who = (pop() % 2**160).to_bytes(20, "big")
+                self.probe.setdefault("balance", frame["regular"])
                 if frame.get("access_off") and who == self.env.coinbase:
                     return refuse(ACCESS_TYPE_BENEFICIARY, "BALANCE of the block beneficiary")
                 self.charge_regular(frame, WARM_READ, "BALANCE's static cost")
                 cold = who not in self.warm_accounts
                 if cold:
+                    if self.reads and COLD_ACCOUNT_SURCHARGE > frame["regular"]:
+                        d.add("reads", f"BALANCE's account {h(who)} is not loaded: the regular gas left, "
+                              f"{fmt(frame['regular'])}, cannot pay its cold access, and a load gas skipped is not made",
+                              "SATIN-WIT-012")
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "BALANCE's cold access")
                     self.warm_accounts.add(who)
                 if who == self.env.coinbase:
                     raise Unmodelled("a BALANCE of the beneficiary that reads")
+                self.load(who, "BALANCE's account, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
                 stack.append(self.state.get(who, Account()).balance)
                 steps.append(f"BALANCE {fmt(WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0))}")
             elif op == 0x5A:  # GAS
@@ -1229,6 +1332,7 @@ class Run:
                     self.warm_accounts.add(target)
                 if ctx:
                     raise Unmodelled("a call below the transaction's own frame, past its regular charges")
+                self.load(target, "the CALL's target, once the opcode's access is paid", "SATIN-WIT-002", "SATIN-WIT-008")
                 callee = self.state.get(target)
                 if frame["reservoir"]:
                     raise Unmodelled("a call from a frame that holds a reservoir")
@@ -1238,7 +1342,7 @@ class Run:
                     if not self.principles:
                         raise Unmodelled("a value call to an account empty under EIP-161")
                     # SATIN-HIST-010 step 2: the new account's state gas, its legacy share first, before the forward.
-                    m = bucket_multiplier(self.env, self.salt_bucket(target, None))
+                    m = self.multiplier(self.salt_bucket(target, None))
                     new_account = ACCOUNT_STATE * m
                     legacy = min(new_account, LEGACY_NEW_ACCOUNT_SHARE)
                     self.charge_state(frame, new_account, legacy, "the new account")
@@ -1499,6 +1603,10 @@ class Run:
         tx, env, d = self.tx, self.env, self.d
         done: set = set()
         for chain_id, target, nonce, authority in tx.authorizations:
+            self.load(authority, "an authority the list's simulation loads, the whole list walked, whether or not the "
+                      "list is then applied", "SATIN-AUTH-005", "SATIN-WIT-004", "SATIN-WIT-008")
+        self.probe.setdefault("list", regular)
+        for index, (chain_id, target, nonce, authority) in enumerate(tx.authorizations):
             if chain_id not in (0, env.chain_id) or nonce == MAX_U64:
                 raise Unmodelled("an authorization skipped for its chain id or nonce")
             if authority in done or authority == tx.sender:
@@ -1509,9 +1617,9 @@ class Run:
             if (acct.nonce if acct else 0) != nonce:
                 raise Unmodelled("an authorization whose nonce does not match")
             done.add(authority)
-            m = bucket_multiplier(env, self.salt_bucket(authority, None))
             charges = []
             if acct is None:
+                m = self.multiplier(self.salt_bucket(authority, None))
                 new_state = ACCOUNT_STATE * m
                 charges.append(("state", new_state))
                 self.growth += 1
@@ -1526,12 +1634,21 @@ class Run:
                 d.add("resources", "the authority exists, so it is no rise of state growth, empty under EIP-161 though it is",
                       "SATIN-ACCT-015", "SATIN-AUTH-008")
             if not (tx.to == authority and tx.value):
+                if ACCOUNT_WRITE > regular:
+                    if index or acct is None:
+                        raise Unmodelled("an authorization list that runs out of gas after charging")
+                    d.add("gasLedgers", f"the first entry's ACCOUNT_WRITE {fmt(ACCOUNT_WRITE)} for the authority "
+                          f"{h(authority)} is beyond the {fmt(regular)} of regular gas left: nothing of the list is applied",
+                          "SATIN-SCHED-008", "SATIN-SCHED-009", "SATIN-AUTH-015")
+                    raise OutOfGasBeforeFrame(f"the first authorization's ACCOUNT_WRITE, {fmt(ACCOUNT_WRITE)}, with "
+                                              f"{fmt(regular)} regular gas left")
                 self.pre_frame_regular += ACCOUNT_WRITE
                 regular -= ACCOUNT_WRITE
                 d.add("gasLedgers", f"ACCOUNT_WRITE {fmt(ACCOUNT_WRITE)} regular gas for the authority's first write, which "
                       "the transaction has not paid already", "SATIN-SCHED-003", "SATIN-SCHED-008", "SATIN-TAKE-008",
                       "SATIN-AUTH-015")
             if any(target):
+                m = self.multiplier(self.salt_bucket(authority, None))
                 indicator = DELEGATION_STATE_BYTES * COST_PER_STATE_BYTE * m
                 charges.append(("state", indicator))
                 d.add("gasLedgers", f"the delegation indicator: DELEGATION_STATE_BYTES {DELEGATION_STATE_BYTES} x "
@@ -1576,6 +1693,7 @@ class Run:
             raise Unmodelled("an SSTORE in a detained frame")
         if frame["regular"] <= CALL_STIPEND:
             raise Halt(f"SSTORE with no more than the {fmt(CALL_STIPEND)} stipend left")
+        self.load_slot(address, key, "SSTORE, which reads the slot's value", "SATIN-WIT-002")
         cold = (address, key) not in self.warm_slots
         self.warm_slots.add((address, key))
         access = COLD_SSTORE_ACCESS if cold else WARM_READ
@@ -1590,7 +1708,7 @@ class Run:
         # The fresh-slot state charge and its give-back, SATIN-STATE-008, with the legacy share.
         m = None
         if original == 0 and present == 0 and new != 0:
-            m = bucket_multiplier(self.env, self.salt_bucket(address, key))
+            m = self.multiplier(self.salt_bucket(address, key))
             charge = SLOT_STATE * m
             legacy = min(charge, max(0, LEGACY_SSTORE_SHARE))
             self.charge_state(frame, charge, legacy, "a fresh slot")
@@ -1600,7 +1718,7 @@ class Run:
             rules += ["SATIN-STATE-001", "SATIN-STATE-002", "SATIN-STATE-008", "SATIN-STATE-012", "SATIN-POOL-008"]
             d.add("resources", f"slot {key} filled from zero: state growth +1", "SATIN-ACCT-016")
         elif original == 0 and present != 0 and new == 0:
-            m = bucket_multiplier(self.env, self.salt_bucket(address, key))
+            m = self.multiplier(self.salt_bucket(address, key))
             charge = SLOT_STATE * m
             self.give_back(frame, charge)
             self.state_gas -= charge
@@ -1664,7 +1782,7 @@ class Run:
         words = (len(code) + 31) // 32
         keccak = KECCAK_WORD * words
         self.charge_regular(frame, keccak, "code deposit hashing")
-        m = bucket_multiplier(self.env, self.salt_bucket(address, None))
+        m = self.multiplier(self.salt_bucket(address, None))
         state = CODE_STATE_PER_BYTE * m * len(code)
         self.charge_state(frame, state, 0, "deposited code")
         history = COST_PER_HISTORY_BYTE * len(code)
@@ -1693,7 +1811,7 @@ class Run:
         sender.nonce += 1
         caller_state = 0
         if was_empty:
-            m = bucket_multiplier(env, self.salt_bucket(tx.sender, None))
+            m = self.multiplier(self.salt_bucket(tx.sender, None))
             caller_state = ACCOUNT_STATE * m
             r = min(reservoir, caller_state)
             reservoir -= r
@@ -1710,6 +1828,8 @@ class Run:
             raise Unmodelled("a deposit with value")
         code = self.state.get(tx.to, Account()).code
         self.address = tx.to
+        self.load(tx.to, "the recipient, at step 4 of the charges before the first frame; a deposit pays no fee and "
+                  "reads no L1 block information", "SATIN-SCHED-008", "SATIN-WIT-008")
         frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
         try:
             status, output = self.execute(code, frame, False)
@@ -1742,8 +1862,11 @@ class Run:
         outcome = {"admission": {"status": "admitted"},
                    "execution": {"status": "success", "output": h(output), "createdAddress": None},
                    "commit": {"status": "committed"}}
-        return Result({"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
-                       "resources": resources, "limit": None}, d)
+        observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
+                        "resources": resources, "limit": None}
+        if self.reads:
+            observations["reads"] = self.reads_observation()
+        return Result(observations, d)
 
     def diff(self) -> dict:
         out = {}

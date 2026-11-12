@@ -10,9 +10,15 @@
 //! implementation is used through its public transaction entry point,
 //! `MegaEvm::execute_transaction`. This adapter shares no execution, fee or observation code with
 //! the adapter of the evm2-based implementation.
+//!
+//! A case that requires `group:reads` is answered with what the run loaded: the fixture database,
+//! the SALT environment and the oracle service record every load that reaches them, in plain and
+//! instrumented runs alike, and a run builds them afresh, so the first load of each item is what
+//! the run read (docs/adapter-protocol.md, "Reads").
 
 use std::cell::RefCell;
-use std::collections::{BTreeMap, HashMap, VecDeque};
+use std::collections::{BTreeMap, BTreeSet, HashMap, VecDeque};
+use std::rc::Rc;
 use std::io::Read as _;
 use std::process::ExitCode;
 
@@ -43,7 +49,7 @@ const SPEC: &str = "megaeth/Satin";
 
 /// The requirements this adapter supports: the mandatory groups of state-transition and the
 /// input features it converts.
-const SUPPORTED: [&str; 10] = [
+const SUPPORTED: [&str; 11] = [
     "feature:deposit",
     "feature:oracle-transcript",
     "feature:salt",
@@ -51,6 +57,7 @@ const SUPPORTED: [&str; 10] = [
     "group:gas-ledgers",
     "group:limit",
     "group:outcome",
+    "group:reads",
     "group:receipts",
     "group:resources",
     "group:state",
@@ -167,7 +174,25 @@ struct FixtureDb {
     storage: HashMap<(Address, U256), U256>,
     codes: HashMap<B256, Bytecode>,
     block_hashes: HashMap<u64, B256>,
+    loaded: Loads,
 }
+
+/// What a run loaded from the case's inputs, each item as its first load served it: accounts
+/// (`None`: absent) with their nonce, balance and code hash, slots, code hashes, block hashes, SALT
+/// capacities, the oracle service's answers in order, and the hints it was handed in order.
+#[derive(Debug, Default)]
+struct Loaded {
+    accounts: BTreeMap<Address, Option<(u64, U256, B256)>>,
+    storage: BTreeMap<(Address, U256), U256>,
+    codes: BTreeSet<B256>,
+    block_hashes: BTreeMap<u64, B256>,
+    buckets: BTreeMap<u64, u64>,
+    oracle: Vec<(U256, U256)>,
+    hints: Vec<(Address, B256, Bytes)>,
+}
+
+/// The recorder the database, the SALT environment and the oracle service of one run share.
+type Loads = Rc<RefCell<Loaded>>;
 
 #[derive(Debug, Clone)]
 struct MissingInput(String);
@@ -185,22 +210,31 @@ impl Database for FixtureDb {
     type Error = MissingInput;
 
     fn basic(&mut self, address: Address) -> Result<Option<AccountInfo>, Self::Error> {
-        Ok(self.accounts.get(&address).cloned())
+        let info = self.accounts.get(&address).cloned();
+        let seen = info.as_ref().map(|i| (i.nonce, i.balance, i.code_hash));
+        self.loaded.borrow_mut().accounts.entry(address).or_insert(seen);
+        Ok(info)
     }
 
     fn code_by_hash(&mut self, code_hash: B256) -> Result<Bytecode, Self::Error> {
         if code_hash == revm::primitives::KECCAK_EMPTY {
             return Ok(Bytecode::default());
         }
-        self.codes.get(&code_hash).cloned().ok_or_else(|| MissingInput(format!("code {code_hash}")))
+        let code = self.codes.get(&code_hash).cloned().ok_or_else(|| MissingInput(format!("code {code_hash}")))?;
+        self.loaded.borrow_mut().codes.insert(code_hash);
+        Ok(code)
     }
 
     fn storage(&mut self, address: Address, index: U256) -> Result<U256, Self::Error> {
-        Ok(self.storage.get(&(address, index)).copied().unwrap_or_default())
+        let value = self.storage.get(&(address, index)).copied().unwrap_or_default();
+        self.loaded.borrow_mut().storage.entry((address, index)).or_insert(value);
+        Ok(value)
     }
 
     fn block_hash(&mut self, number: u64) -> Result<B256, Self::Error> {
-        self.block_hashes.get(&number).copied().ok_or_else(|| MissingInput(format!("block hash {number}")))
+        let hash = self.block_hashes.get(&number).copied().ok_or_else(|| MissingInput(format!("block hash {number}")))?;
+        self.loaded.borrow_mut().block_hashes.entry(number).or_insert(hash);
+        Ok(hash)
     }
 }
 
@@ -253,17 +287,20 @@ struct FixtureSalt {
     known: bool,
     complete: bool,
     buckets: BTreeMap<BucketId, u64>,
+    loaded: Loads,
 }
 
 impl SaltEnv for FixtureSalt {
     type Error = String;
 
     fn get_bucket_capacity(&self, bucket_id: BucketId) -> Result<u64, Self::Error> {
-        match self.buckets.get(&bucket_id) {
-            Some(c) => Ok(*c),
-            None if self.known && self.complete => Ok(MIN_BUCKET_SIZE as u64),
-            None => Err(format!("missing input: SALT bucket {bucket_id:#x}")),
-        }
+        let capacity = match self.buckets.get(&bucket_id) {
+            Some(c) => *c,
+            None if self.known && self.complete => MIN_BUCKET_SIZE as u64,
+            None => return Err(format!("missing input: SALT bucket {bucket_id:#x}")),
+        };
+        self.loaded.borrow_mut().buckets.entry(u64::from(bucket_id)).or_insert(capacity);
+        Ok(capacity)
     }
 
     fn bucket_id_for_account(account: Address) -> BucketId {
@@ -278,8 +315,8 @@ impl SaltEnv for FixtureSalt {
     }
 }
 
-fn salt(input: &Value) -> Res<FixtureSalt> {
-    let Some(salt) = input.get("salt") else { return Ok(FixtureSalt::default()) };
+fn salt(input: &Value, loaded: &Loads) -> Res<FixtureSalt> {
+    let Some(salt) = input.get("salt") else { return Ok(FixtureSalt { loaded: loaded.clone(), ..Default::default() }) };
     if text(salt, "mapping")? != "salt-v1" {
         return Err(Fail::Unsupported("a SALT mapping other than salt-v1".into()));
     }
@@ -288,7 +325,7 @@ fn salt(input: &Value) -> Res<FixtureSalt> {
         let id = u32::try_from(parse_u64(id)?).map_err(|_| bad(format!("bucket id {id} above 32 bits")))?;
         buckets.insert(id, parse_u64(cap.as_str().ok_or_else(|| bad("capacity"))?)?);
     }
-    Ok(FixtureSalt { known: true, complete: flag(salt, "complete")?, buckets })
+    Ok(FixtureSalt { known: true, complete: flag(salt, "complete")?, buckets, loaded: loaded.clone() })
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -305,6 +342,7 @@ struct FixtureOracle {
     mode: OracleMode,
     entries: RefCell<VecDeque<(U256, Option<U256>)>>,
     errors: RefCell<Vec<String>>,
+    loaded: Loads,
 }
 
 impl OracleEnv for FixtureOracle {
@@ -316,7 +354,12 @@ impl OracleEnv for FixtureOracle {
                 None
             }
             OracleMode::Recorded => match self.entries.borrow_mut().pop_front() {
-                Some((expected, answer)) if expected == slot => answer,
+                Some((expected, answer)) if expected == slot => {
+                    if let Some(value) = answer {
+                        self.loaded.borrow_mut().oracle.push((slot, value));
+                    }
+                    answer
+                }
                 Some((expected, _)) => {
                     self.errors.borrow_mut().push(format!("oracle request for slot {slot:#x}, transcript has {expected:#x}"));
                     None
@@ -329,10 +372,12 @@ impl OracleEnv for FixtureOracle {
         }
     }
 
-    fn on_hint(&self, _from: Address, _topic: B256, _data: Bytes) {}
+    fn on_hint(&self, from: Address, topic: B256, data: Bytes) {
+        self.loaded.borrow_mut().hints.push((from, topic, data));
+    }
 }
 
-fn oracle(input: &Value) -> Res<FixtureOracle> {
+fn oracle(input: &Value, loaded: &Loads) -> Res<FixtureOracle> {
     let mut entries = VecDeque::new();
     let mode = match input.get("oracle") {
         None => OracleMode::Absent,
@@ -351,7 +396,7 @@ fn oracle(input: &Value) -> Res<FixtureOracle> {
             OracleMode::Recorded
         }
     };
-    Ok(FixtureOracle { mode, entries: RefCell::new(entries), errors: RefCell::new(Vec::new()) })
+    Ok(FixtureOracle { mode, entries: RefCell::new(entries), errors: RefCell::new(Vec::new()), loaded: loaded.clone() })
 }
 
 type Envs = (FixtureSalt, FixtureOracle);
@@ -539,7 +584,7 @@ struct Run {
 }
 
 fn context(input: &Value, db: FixtureDb) -> Res<MegaContext<FixtureDb, Envs>> {
-    let envs = ExternalEnvs { salt_env: salt(input)?, oracle_env: oracle(input)? };
+    let envs = ExternalEnvs { salt_env: salt(input, &db.loaded)?, oracle_env: oracle(input, &db.loaded)? };
     let ctx = MegaContext::new_with_external_envs(db, MegaSpecId::SATIN, envs);
     let mut cfg = ctx.mega_cfg().clone();
     cfg.chain_id = parse_u64(text(member(input, "chain")?, "chainId")?)?;
@@ -565,6 +610,11 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
     for (n, h) in entries(member(input, "blockHashes")?)? {
         db.block_hashes.insert(parse_u64(n)?, parse_b256(h.as_str().ok_or_else(|| bad("block hash"))?)?);
     }
+    let loaded = db.loaded.clone();
+    let wants_reads = match member(request, "requires")? {
+        Value::Array(r) => r.iter().any(|x| x.as_str() == Some("group:reads")),
+        _ => return Err(bad("request: requires is not a list")),
+    };
     let ctx = context(input, db)?;
     let (tx, facts) = match transaction(member(input, "transaction")?)? {
         Ok(t) => t,
@@ -590,7 +640,7 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
     if let Some(e) = oracle_errors.first() {
         return Err(bad(e.clone()));
     }
-    let observations = match executed {
+    let mut observations = match executed {
         Ok(outcome) => executed_observations(&outcome, &facts, &pre)?,
         Err(EVMError::Transaction(e)) => {
             let reason = refusal_reason(&format!("{e:?}")).ok_or_else(|| bad(format!("unmapped refusal {e:?}")))?;
@@ -599,11 +649,68 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         }
         Err(e) => return Err(bad(format!("the implementation failed: {e}"))),
     };
+    if wants_reads {
+        if let Value::Object(m) = &mut observations {
+            m.insert("reads".into(), reads(&loaded.borrow(), &pre));
+        }
+    }
     let diagnostics = match frames {
         Some(n) => obj(vec![("frames", qty_u64(n))]),
         None => obj(vec![]),
     };
     Ok(Run { observations, diagnostics })
+}
+
+/// The `reads` group: what the run loaded, each item as the case's inputs served it. The code
+/// hashes are those of every account read whose code is not empty, with any code loaded by hash:
+/// the code the witness holds for every account it names, whether or not the load that named the
+/// account brought the code (SATIN-WIT-001).
+fn reads(l: &Loaded, pre: &BTreeMap<Address, PreAccount>) -> Value {
+    let mut codes = l.codes.clone();
+    let accounts = l
+        .accounts
+        .iter()
+        .map(|(a, seen)| {
+            let v = match seen {
+                None => Value::Null,
+                Some((nonce, balance, code_hash)) => {
+                    if pre.get(a).is_some_and(|p| !p.code.is_empty()) {
+                        codes.insert(*code_hash);
+                    }
+                    obj(vec![("nonce", qty_u64(*nonce)), ("balance", qty_u256(*balance)), ("codeHash", b256(code_hash))])
+                }
+            };
+            (hex_bytes(a.as_slice()), v)
+        })
+        .collect();
+    let mut storage: BTreeMap<String, Value> = BTreeMap::new();
+    for ((a, k), v) in &l.storage {
+        if let Value::Object(slots) =
+            storage.entry(hex_bytes(a.as_slice())).or_insert_with(|| Value::Object(BTreeMap::new()))
+        {
+            slots.insert(hex_bytes(&k.to_be_bytes::<32>()), qty_u256(*v));
+        }
+    }
+    obj(vec![
+        ("accounts", Value::Object(accounts)),
+        ("storage", Value::Object(storage)),
+        ("codes", Value::Array(codes.iter().map(b256).collect())),
+        ("blockHashes", Value::Object(l.block_hashes.iter().map(|(n, h)| (format!("{n:#x}"), b256(h))).collect())),
+        ("buckets", Value::Object(l.buckets.iter().map(|(b, c)| (format!("{b:#x}"), qty_u64(*c))).collect())),
+        (
+            "oracle",
+            Value::Array(l.oracle.iter().map(|(k, v)| obj(vec![("slot", b256(&B256::from(k.to_be_bytes::<32>()))), ("value", qty_u256(*v))])).collect()),
+        ),
+        (
+            "hints",
+            Value::Array(
+                l.hints
+                    .iter()
+                    .map(|(f, t, d)| obj(vec![("from", address(f)), ("topic", b256(t)), ("data", s(hex_bytes(d)))]))
+                    .collect(),
+            ),
+        ),
+    ])
 }
 
 /// What went wrong with the oracle transcript: a request it does not answer, or an entry no request

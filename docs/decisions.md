@@ -536,3 +536,33 @@ volatile read charges nothing (`SATIN-MAC-003`, `-004`).
   their verdicts state them. The three Oracle reads' figures are that implementation's run,
   recorded: they follow from what it does once it skips the read or crosses early, which the
   model does not restate.
+
+**D-61. Both adapters report `reads`, compared exactly.** A case that requires `group:reads`
+holds what its transaction loaded, as the stateless witness needs it (`SATIN-WIT-001`, `-002`,
+`-008`), and the comparison holds an implementation to that set exactly, as every group is held:
+a load the specification does not require is a difference as much as a missing one, so a load the
+gas skipped (`SATIN-WIT-012`) and a delegate not loaded (`SATIN-SCHED-008` step 5) can be pinned.
+
+- Each adapter records the loads that reach its fixture database, its SALT environment and its
+  oracle service, building them afresh for each run; it reports `reads` for a case that requires
+  the group, in plain and instrumented runs alike, so the two runs' observations stay the same
+  bytes (`tools/run-slice.sh`), and none for a case that does not. No engine changes.
+- `codes` is the code hash of every account read whose code is not empty, with any code loaded
+  by hash: the witness holds the code of every account it names, however the engine loaded it.
+- The transaction's reads are its own. The evm2-based implementation resolves the live system
+  address off the SequencerRegistry when its factory makes the EVM, as a block does once before
+  its transactions (`SATIN-REG-002`); its adapter records from the transaction's start and adds
+  what the transaction's returned state names that the factory loaded first. The revm-based
+  implementation reads the registry's account and slot 0 in every transaction's validation; its
+  adapter reports the read, which `SATIN-REG-002` excludes, so every case with `reads` fails on it
+  at the registry's account, or earlier, and is quarantined with that verdict.
+- The model derives the reads of the new cases only: the sender at validation; each authority the
+  list's simulation loads, the whole list walked (`SATIN-AUTH-005`); the recipient at step 4 and
+  the delegate at step 5, each only once reached and paid (`SATIN-SCHED-008`); every account and
+  slot a frame loads, an Oracle slot before its charge (`SATIN-ORCL-004`) and a cold load only
+  once its access is paid (`SATIN-WIT-012`); the SALT capacities its state charges are served; and,
+  for a transaction that is not a deposit, the L1 block contract's slots 1, 3, 7, 8 and, with empty
+  Ecotone scalars, 5 (`SATIN-WIT-011`), and the four fee recipients its settlement credits.
+- `oracle` lists the service's answers to a recorded transcript; the cases are deposits, whose
+  reads ask no service (`SATIN-ORCL-005`), and the evm2-based adapter runs no transcript, so no
+  case pins it. `hints` lists the hints each implementation hands its service.

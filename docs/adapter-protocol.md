@@ -122,6 +122,42 @@ adapter implements them on its own (decisions D-40, D-41):
 - Refusal reasons are mapped from the implementation's error variants by a table in each adapter;
   an error the table does not name is `error`, never a guessed reason.
 
+### Reads
+
+`reads` is what the transaction loaded from its inputs, as the stateless witness needs it
+(`SATIN-WIT-001`, `-002`, `-008`): the transaction's contribution to the block's witness and
+exports. An adapter of this repository reports it for a case that requires `group:reads`, in plain
+and instrumented runs alike, from a recording layer over its own inputs; it reports no `reads` for
+a case that does not require them (decision D-61).
+
+- **The recording layer.** The fixture database, the SALT environment and the oracle service of a
+  run record every load that reaches them. A run builds them afresh, so the first load of each item
+  is what the transaction read, with the value the input served.
+- `accounts`: every account loaded, with its nonce, balance and code hash as the pre-state holds
+  it, or `null` for an account read and absent.
+- `storage`: every slot loaded, with its pre-state value; an absent account has no slot to load
+  (`SATIN-WIT-006`).
+- `codes`: the code hash of every account in `accounts` whose code is not empty, with any code
+  loaded by hash: the witness holds the code of every account it names, whether or not the load
+  that named the account brought it (`SATIN-WIT-001`). Whether an engine loads code with the
+  account or by hash does not change the set.
+- `blockHashes`: every hash `BLOCKHASH` was served (`SATIN-WIT-014`).
+- `buckets`: every SALT capacity the environment served with a valid capacity
+  (`SATIN-WIT-013`).
+- `oracle`: the oracle service's answers in order, for a recorded transcript; a read the service
+  does not answer pushes the slot's value, which `storage` holds. The evm2-based adapter runs no
+  transcript, and a deposit's read asks no service (`SATIN-ORCL-005`), so its list is empty.
+- `hints`: the hints the implementation handed the service, in order, with the address of the
+  frame that sent each, its topic and its data.
+- **The transaction, not the block.** The evm2-based implementation's factory resolves the live
+  system address off the SequencerRegistry when it makes the EVM, as a block resolves it once
+  before its transactions (`SATIN-REG-002`); its adapter records from the transaction's start, and
+  adds an account or slot the factory loaded first only when the transaction's returned state
+  names it, which the EVM's cache served. The revm-based implementation reads the registry in each
+  transaction's validation; its adapter reports that read as made, never hiding a load.
+- `reads` is compared as every other group: exactly, so a load the specification does not require,
+  and a load it requires that is missing, are each a difference.
+
 ## The adapters of this repository
 
 | Adapter | Implementation | Pinned by | Build |
@@ -129,8 +165,8 @@ adapter implements them on its own (decisions D-40, D-41):
 | `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `4e39cfd6`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
 | `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `f3d84454` with `RealiCZ/evm2` at `390a3876`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
-Both declare `state-transition` with its mandatory groups and the features `deposit`, `salt` and
-`synthetic-transaction`; the revm-based adapter also runs a recorded `oracle-transcript`, which
+Both declare `state-transition` with its mandatory groups, `group:reads` and the features `deposit`,
+`salt` and `synthetic-transaction`; the revm-based adapter also runs a recorded `oracle-transcript`, which
 the other implementation's map-based oracle service cannot check (D-45). Neither runs sparse
 pre-states, injected faults, or engine isolation of a deposit-only or activation block. Both use
 the production SALT mapping and the implementation's own toolchain, and each reports its build
