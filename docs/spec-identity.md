@@ -112,10 +112,12 @@ the same script, beside the earlier ones (decision D-35):
 | `specs/satin-d34e626` | `d34e6266e6d7b69963701baa5ae25ccb8a548260` | 408 (399 active) | `SATIN-BASE-011` added (a value transfer that would overflow its recipient's balance is outside the specification); `SATIN-ORCL-004` to `-006` reworded |
 | `specs/satin-d334ef8` | `d334ef8748a6fb09dfcf1162704539fe22373aef` | 409 (400 active) | `SATIN-ICPT-007` added (interception before the frame start, the funds check included); `SATIN-ICPT-003`, `-006`, `SATIN-KEY-005`, `-018`, `SATIN-LIM-015`, `SATIN-ORCL-006`, `-010`, `SATIN-OUT-010` and `SATIN-STOP-020` reworded (the keyless decoder's conditions among them) |
 | `specs/satin-5fb2688` | `5fb26884b5ed1d02bb622073dfdf1d7ea814f1be` | 410 (401 active) | `SATIN-HIST-023` added (the order of charges and decisions around a frame start, as a principle); `SATIN-DET-018`, `SATIN-HIST-005`, `-009`, `-015`, `SATIN-ICPT-002`, `-004`, `-007`, `SATIN-POOL-012`, `SATIN-SCHED-008`, `-009`, `SATIN-STOP-014`, `SATIN-TAKE-006` and `-010` reworded (the delegate's access before the first frame, the reservoir paying the authorities' records first, one charge under gas detention among them) |
+| `specs/satin-cdded1e` | `cdded1e1d131a1d16a2c4b1cd873557f16a6a558` | 410 (401 active) | 52 rules reworded and no id added or retired: each rule has one home that the others cite (the give-back rule in `SATIN-HIST-012`, the frame it credits in `SATIN-HIST-007`, the `SSTORE` transitions in `SATIN-STATE-008`, a start that does not happen in `SATIN-HIST-023`), worked examples move into conformance cases once their cases exist, and a statement no execution reaches is marked once in its home |
 
 The vertical slice's first 63 cases and its quarantine pin `d34e626`; the cases added for
 interception, the keyless decoder and EIP-7702 existence pin `d334ef8` (decision D-54); the cases
-added for the edges of the charge-order principles pin `5fb2688`, the newest (decision D-59).
+added for the edges of the charge-order principles pin `5fb2688` (decision D-59); the cases for the
+take-back page's worked examples pin `cdded1e`, the newest (decision D-65).
 Digests (SHA-256 of canonical bytes):
 
 | Bundle | descriptor.json | rules.json | sources.json |
@@ -124,6 +126,7 @@ Digests (SHA-256 of canonical bytes):
 | `satin-d34e626` | `sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2` | `sha256:e0103bf0e84d208865e712d99d510ac561f2bd7f2e726c36c0e3d157f59c1139` | `sha256:991a2ef5ea66ebfb19ee4e681ddc17746c1c02ed7d502d6e46c132d8c5128503` |
 | `satin-d334ef8` | `sha256:6fa989a0bb4e83353b71c6c30f75a5e77c27a07f73b97f786514b975429aeea2` | `sha256:c930551351f5986fbdfef9d905c61ec5f3b8b35a9c9dd5b516ce6bd417254ce5` | `sha256:4a413161486c0b7006dba4253cfd8f2083539d57a3087f93fd3d161d9cf35571` |
 | `satin-5fb2688` | `sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6` | `sha256:74e3c428ff05249dc89572db23a7ba8aa4b89208e31b57a5244c3bf17daaeac9` | `sha256:49891ca547f3cca748ec3900e378ae4b7d5eeddeac44b3817d96072d61148234` |
+| `satin-cdded1e` | `sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658` | `sha256:e175134bd65d0cef4f81de55b68ea1d9f62e5c3f92c0f11ae69f9d260af69bf9` | `sha256:cb21a9c3129bbda223c253346dbd326a5c78cc13d5bf3d0c686ae8f9fd03c3e1` |
 | `rex6-d4c913c5` | `sha256:93186256dad9ae5c4b7bdde48243732cdeb6b1cdc5127823cbcf1dd4c4782a57` | `sha256:38a3669c27ae74755aae16efbbbba822ec00e147ae52ae814c9a4d85e030d00a` | `sha256:36445afc3cc90eaffefe3484c81088c47db4adc116731576436dd25b2dcc9d5d` |
 
 ```bash
@@ -131,6 +134,7 @@ python3 -I tools/gen_registry.py <spec-checkout> 22a5f4b specs/satin-22a5f4b --m
 python3 -I tools/gen_registry.py <spec-checkout> d34e626 specs/satin-d34e626 --members tools/descriptor-members/satin.json --check
 python3 -I tools/gen_registry.py <spec-checkout> d334ef8 specs/satin-d334ef8 --members tools/descriptor-members/satin.json --check
 python3 -I tools/gen_registry.py <spec-checkout> 5fb2688 specs/satin-5fb2688 --members tools/descriptor-members/satin.json --check
+python3 -I tools/gen_registry.py <spec-checkout> cdded1e specs/satin-cdded1e --members tools/descriptor-members/satin.json --check
 ```
 
 ## Descriptor members: codecs and the SALT mapping
