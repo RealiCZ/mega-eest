@@ -4,7 +4,8 @@
 Each case is authored here — its setup, the transaction (real signed bytes, or a deposit
 envelope), the SALT capacities its state lands in — and its expected observations come from
 `tools/satin_model.py`, an executable restatement of the cited rules of the pinned specification
-(`specs/satin-d34e626`). No implementation is run: the filler's output is a candidate to compare
+(`specs/satin-d34e626`; the cases added for interception, the keyless decoder and EIP-7702
+existence cite `specs/satin-d334ef8`, decision D-54). No implementation is run: the filler's output is a candidate to compare
 with, never the source of these values (`tools/run-slice.sh` runs both implementations against
 them).
 
@@ -40,6 +41,10 @@ import satin_model as model  # noqa: E402
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 SPEC_DIR = os.path.join(ROOT, "specs", "satin-d34e626")
+SPEC_COMMITS = {"satin-d34e626": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+                "satin-d334ef8": "d334ef8748a6fb09dfcf1162704539fe22373aef"}
+DEFAULT_SPEC = "satin-d34e626"
+INTERCEPTION_SPEC = "satin-d334ef8"  # interception before the frame start, SATIN-ICPT-007
 OUT = os.path.join(ROOT, "slice")
 
 KEY = ex.TEST_KEY
@@ -52,6 +57,9 @@ ABSENT = bytes.fromhex("000000000000000000000000000000000000dead")
 L1_BLOCK = bytes.fromhex("4200000000000000000000000000000000000015")
 REGISTRY = bytes.fromhex("6342000000000000000000000000000000000006")
 COINBASE = bytes.fromhex("4200000000000000000000000000000000000011")
+AUTH_KEY = 0x3C2AD3B4B9F1E7A6D5C4B3A29180F7E6D5C4B3A29180F7E6D5C4B3A29180F7E6
+AUTHORITY = ex.address_of(AUTH_KEY)
+EMPTY_LEAF = bytes.fromhex("000000000000000000000000000000000000e3e7")
 CHAIN_ID = 1
 BLOCK_GAS_LIMIT = 10_000_000_000
 ETH = 10**18
@@ -136,6 +144,29 @@ def eip1559(nonce, max_priority, max_fee, gas, to, value, data) -> bytes:
     return _signed(2, [CHAIN_ID, nonce, max_priority, max_fee, gas, to, value, data, []], KEY)
 
 
+def authorization(key: int, chain_id: int, target: bytes, nonce: int) -> list:
+    """A signed EIP-7702 authorization tuple: the signature is over 0x05 || rlp([chain_id, address, nonce])."""
+    recid, r, s = ex.sign(key, ex.keccak256(b"\x05" + ex.rlp([chain_id, target, nonce])))
+    return [chain_id, target, nonce, recid, r, s]
+
+
+def eip7702(nonce, max_priority, max_fee, gas, to, value, data, auths) -> bytes:
+    return _signed(4, [CHAIN_ID, nonce, max_priority, max_fee, gas, to, value, data, [], auths], KEY)
+
+
+def system_contracts() -> dict:
+    """The system contracts a call can reach, with the code the specification names by hash."""
+    with open(os.path.join(ROOT, "tools", "system-contracts.json"), encoding="utf-8") as f:
+        listing = json.load(f)
+    out = {}
+    for c in listing["contracts"]:
+        code = bytes.fromhex(c["code"][2:])
+        if h(ex.keccak256(code)) != c["codeHash"]:
+            raise SystemExit(f"tools/system-contracts.json: {c['name']}'s code is not {c['codeHashConstant']}")
+        out[bytes.fromhex(c["address"][2:])] = code
+    return out
+
+
 SOURCE_HASH = bytes.fromhex("00" * 31 + "5d")
 
 
@@ -146,7 +177,8 @@ class Case:
     def __init__(self, case_id: str, intent: str, *, code: bytes = STOP, to=CONTRACT, value=0, data=b"", gas=1_000_000,
                  gas_price=0, base_fee=0, ty=0, max_priority=0, max_fee=0, nonce=0, sender_nonce=0, sender_balance=ETH,
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
-                 deposit=None, absent_sender=False, boundary="", salt_complete=True):
+                 deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
+                 contract_balance=0, authorizations=None, system=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -160,6 +192,11 @@ class Case:
         self.deposit = deposit  # (mint, gas)
         self.absent_sender = absent_sender
         self.salt_complete = salt_complete  # False: every bucket the case reads must be listed
+        self.spec = spec  # the registry snapshot the case cites
+        self.accounts = accounts or {}  # more pre-state accounts: address -> model.Account
+        self.contract_balance = contract_balance
+        self.authorizations = authorizations or []  # (key, chain id, delegation target, nonce)
+        self.system = system  # the system contracts' code in the pre-state
 
 
 def cases() -> list[Case]:
@@ -293,6 +330,102 @@ def cases() -> list[Case]:
              "capacity", deposit=(ETH, 1_000_000), absent_sender=True, salt={("sender", None): 2}))
     add(Case("satin/deposits/existing-caller/fresh-slot", "a deposit from an existing account that writes a fresh slot",
              deposit=(0, 1_000_000), sender_nonce=3, code=sstore(1, 1) + STOP))
+    out += interception_cases()
+    return out
+
+
+# --- Interception before the frame start, the keyless decoder, EIP-7702 existence ------------------
+
+
+def bytes_to_memory(b: bytes) -> bytes:
+    """MSTOREs that lay `b` out in memory from offset 0, one word at a time."""
+    return b"".join(mstore(i, int.from_bytes(b[i:i + 32].ljust(32, b"\x00"), "big")) for i in range(0, len(b), 32))
+
+
+def call(gas: int, target: bytes, value: int, in_size: int) -> bytes:
+    """CALL(gas, target, value, 0, in_size, 0, 0)."""
+    return push(0) + push(0) + push(in_size) + push(0) + push(value) + push(int.from_bytes(target, "big")) + push(gas) + b"\xf1"
+
+
+def record_result() -> bytes:
+    """Stores what the call left: its success flag in slot 0, its return data's length in slot 1 and the
+    keccak256 of the return data in slot 2."""
+    return (push(0) + b"\x55"  # SSTORE(0, success)
+            + b"\x3d" + push(1) + b"\x55"  # SSTORE(1, RETURNDATASIZE)
+            + b"\x3d" + push(0) + push(0) + b"\x3e"  # RETURNDATACOPY(0, 0, RETURNDATASIZE)
+            + b"\x3d" + push(0) + b"\x20" + push(2) + b"\x55")  # SSTORE(2, keccak256(0, RETURNDATASIZE))
+
+
+def word(n: int) -> bytes:
+    return n.to_bytes(32, "big")
+
+
+def send_hint(topic: int, data: bytes) -> bytes:
+    return model.SEND_HINT + word(topic) + word(0x40) + word(len(data)) + data.ljust((len(data) + 31) // 32 * 32, b"\x00")
+
+
+def interception_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = INTERCEPTION_SPEC
+    hint = send_hint(7, b"\xaa")
+
+    def interceptor_call(target: bytes, value: int, data: bytes) -> bytes:
+        return bytes_to_memory(data) + call(100_000, target, value, len(data)) + record_result() + STOP
+
+    # A contract calls each interceptor with a value it can or cannot fund (SATIN-ICPT-007).
+    add(Case("satin/interception/send-hint/value-funded", "a sendHint carrying a value its caller can fund: admitted and "
+             "counted before the frame start, then the Oracle's non-payable bytecode reverts", system=True, spec=spec,
+             code=interceptor_call(model.ORACLE, 1, hint), contract_balance=10))
+    add(Case("satin/interception/send-hint/value-unfunded", "a sendHint carrying a value its caller cannot fund: admitted and "
+             "counted, then its frame start refuses the call, which fails with empty return data and returns its gas",
+             system=True, spec=spec, code=interceptor_call(model.ORACLE, 1, hint)))
+    # Twelve hints of 1 MiB each, forwarded 1 gas, are admitted and counted; the thirteenth, which carries a
+    # value its caller cannot fund, would cross the data-size limit and is answered with the stop.
+    big = 1 << 20
+    helpers = b"".join(push(0) + push(0) + push(big) + push(0) + push(0) + push(int.from_bytes(model.ORACLE, "big"))
+                       + push(1) + b"\xf1\x50" for _ in range(12))
+    add(Case("satin/interception/send-hint/over-data-size-limit", "a sendHint whose input would take the transaction over "
+             "its data-size limit, carrying a value its caller cannot fund: answered MegaLimitExceeded(0, limit) at "
+             "admission, nothing counted; twelve admitted 1 MiB hints bring the data size near the limit", system=True,
+             spec=spec, gas=4_000_000,
+             code=mstore(0, int.from_bytes(model.SEND_HINT, "big") << 224) + helpers + call(100_000, model.ORACLE, 1, big)
+             + record_result() + STOP))
+    for name, target, method in (("access-control", model.MEGA_ACCESS_CONTROL, "disableVolatileDataAccess()"),
+                                 ("limit-control", model.MEGA_LIMIT_CONTROL, "remainingComputeGas()")):
+        for funded in (True, False):
+            add(Case(f"satin/interception/{name}/value-{'funded' if funded else 'unfunded'}",
+                     f"{method} called with a value its caller {'can' if funded else 'cannot'} fund: answered "
+                     "NonZeroTransfer() before the frame start", system=True, spec=spec,
+                     code=interceptor_call(target, 1, model.selector(method)), contract_balance=10 if funded else 0))
+    unpadded = model.KEYLESS_DEPLOY_CALL + word(0x40) + word(1_000_000) + word(5) + bytes.fromhex("0102030405")
+    add(Case("satin/interception/keyless/transaction-value", "the transaction's own keylessDeploy call carrying value, "
+             "which validity funds: the overhead is charged, then NoEtherTransfer() before any value moves", system=True,
+             spec=spec, to=model.KEYLESS_DEPLOY, code=None, value=1, data=unpadded, gas=300_000))
+    # The keylessDeploy decoder set: the informative table under SATIN-ICPT-006.
+    for name, data, intent in (
+            ("unpadded-bytes", unpadded, "word(0x40), word(gas), word(5), 5 bytes, the tail padding cut: recognized, the "
+             "overhead charged, step 3 refuses the 5 bytes"),
+            ("offset-into-head", model.KEYLESS_DEPLOY_CALL + word(0x20) + word(3) + bytes.fromhex("010203"),
+             "word(0x20), word(3), 3 bytes, the offset pointing at the second head word: recognized, step 3 refuses the 3 "
+             "bytes"),
+            ("offset-zero", model.KEYLESS_DEPLOY_CALL + word(0) + word(1_000_000), "word(0), word(gas): the first head word "
+             "read as the length, the bytes empty: recognized, step 3 refuses them"),
+            ("one-byte-short", unpadded[:-1], "the first input one byte short of its declared length: not recognized, the "
+             "bytecode reverts with empty data and no overhead is charged")):
+        add(Case(f"satin/keyless/recognition/{name}", intent, system=True, spec=spec, to=model.KEYLESS_DEPLOY, code=None,
+                 data=data, gas=300_000))
+    # EIP-7702 existence: an authority whose leaf the state holds, empty under EIP-161, exists.
+    add(Case("satin/authorizations/empty-leaf-authority", "an authority present as an empty leaf exists: the indicator's "
+             "state gas alone, no new-account charge, no state growth, one write record", system=True, spec=spec, ty=4,
+             to=EOA, code=b"", gas=300_000, authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 0)],
+             accounts={AUTHORITY: model.Account()}))
+    add(Case("satin/authorizations/absent-authority", "an authority the state holds no account for is new: the new-account "
+             "state gas and one unit of state growth, besides the indicator", system=True, spec=spec, ty=4, to=EOA, code=b"",
+             gas=500_000, authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 0)]))
+    add(Case("satin/value-transfer/empty-leaf-recipient", "value to an account present as an empty leaf: as a recipient it "
+             "is new under EIP-161, with the new-account charge and one unit of state growth", system=True, spec=spec,
+             to=EMPTY_LEAF, code=None, value=10**9, accounts={EMPTY_LEAF: model.Account()}))
     return out
 
 
@@ -317,9 +450,14 @@ def build(c: Case):
     if not (c.deposit and c.absent_sender):
         pre[sender] = model.Account(nonce=c.sender_nonce, balance=c.sender_balance, code=c.sender_code)
     if c.to == CONTRACT:
-        pre[CONTRACT] = model.Account(nonce=1, code=c.code, storage=dict(c.storage))
+        pre[CONTRACT] = model.Account(nonce=1, balance=c.contract_balance, code=c.code, storage=dict(c.storage))
     elif c.to == EOA:
         pre[EOA] = model.Account(balance=1)
+    if c.system:
+        for address, code in system_contracts().items():
+            pre[address] = model.Account(code=code)
+    for address, acct in c.accounts.items():
+        pre[address] = model.Account(acct.nonce, acct.balance, acct.code, dict(acct.storage))
     created = model.created_address(sender, c.sender_nonce) if c.to is None else None
     # SALT: every bucket the case names, by the salt-v1 mapping; unnamed buckets are minimal.
     buckets = {}
@@ -339,10 +477,14 @@ def build(c: Case):
             raw = legacy(c.nonce, c.gas_price, c.gas, c.to, c.value, c.data, chain_id=c.chain_id)
         elif c.ty == 1:
             raw = eip2930(c.nonce, c.gas_price, c.gas, c.to, c.value, c.data, c.access_list)
+        elif c.ty == 4:
+            auths = [authorization(k, cid, target, n) for k, cid, target, n in c.authorizations]
+            raw = eip7702(c.nonce, c.max_priority, c.max_fee, c.gas, c.to, c.value, c.data, auths)
         else:
             raw = eip1559(c.nonce, c.max_priority, c.max_fee, c.gas, c.to, c.value, c.data)
         tx = model.Tx("signed", c.ty, sender, c.to, c.nonce, c.gas, c.value, c.data, c.chain_id, gas_price=c.gas_price,
-                      max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list)
+                      max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list,
+                      authorizations=[(cid, target, n, ex.address_of(k)) for k, cid, target, n in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
     result = model.Run(env, pre, tx, salt_bucket).run()
 
@@ -365,6 +507,9 @@ def build(c: Case):
     if c.deposit:
         decoded["mint"] = q(c.deposit[0])
         decoded["sourceHash"] = h(SOURCE_HASH)
+    if c.authorizations:
+        decoded["authorizationList"] = [{"chainId": q(cid), "address": h(target), "nonce": q(n),
+                                         "authority": h(ex.address_of(k))} for k, cid, target, n in c.authorizations]
     return inp, result, decoded
 
 
@@ -394,7 +539,7 @@ GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "rece
                "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources"}
 
 
-def fixture(c: Case, descriptor_digest: str, rule_texts: dict) -> dict:
+def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str = SPEC_COMMITS[DEFAULT_SPEC]) -> dict:
     inp, result, decoded = build(c)
     d = result.derivation
     assertions, derivation = [], []
@@ -428,7 +573,7 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict) -> dict:
             "evidence": "derived from the specification by tools/satin_model.py, an executable restatement of the cited "
                         "rules that shares no code with either implementation; implementation runs are cross-checks only",
             "review": {
-                "spec": {"commit": "d34e6266e6d7b69963701baa5ae25ccb8a548260", "descriptor": descriptor_digest},
+                "spec": {"commit": spec_commit, "descriptor": descriptor_digest},
                 "ruleTexts": {r: rule_texts[r] for r in rules},
                 "decision": "pending: approval is the owner's",
             },
@@ -462,17 +607,24 @@ def canonical(value) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
 
 
+def spec_of(name: str) -> tuple[str, dict]:
+    d = os.path.join(ROOT, "specs", name)
+    with open(os.path.join(d, "descriptor.json"), encoding="utf-8") as f:
+        digest = "sha256:" + hashlib.sha256(canonical(json.load(f))).hexdigest()
+    with open(os.path.join(d, "rules.json"), encoding="utf-8") as f:
+        texts = {k: v["textDigest"] for k, v in json.load(f)["rules"].items()}
+    return digest, texts
+
+
 def outputs() -> dict[str, str]:
-    with open(os.path.join(SPEC_DIR, "descriptor.json"), encoding="utf-8") as f:
-        descriptor_digest = "sha256:" + hashlib.sha256(canonical(json.load(f))).hexdigest()
-    with open(os.path.join(SPEC_DIR, "rules.json"), encoding="utf-8") as f:
-        rule_texts = {k: v["textDigest"] for k, v in json.load(f)["rules"].items()}
+    specs = {name: spec_of(name) for name in SPEC_COMMITS}
+    descriptor_digest, rule_texts = specs[DEFAULT_SPEC]
     files: dict[str, str] = {}
     index = []
     by_id = {}
     quarantine = []
     for c in cases():
-        fx = fixture(c, descriptor_digest, rule_texts)
+        fx = fixture(c, *specs[c.spec], SPEC_COMMITS[c.spec])
         q_entry = QUARANTINE.get(c.case_id)
         rel = f"{'quarantine' if q_entry else 'cases'}/{c.case_id.replace('/', '--')}.json"
         if q_entry:
@@ -481,6 +633,8 @@ def outputs() -> dict[str, str]:
         by_id[c.case_id] = fx
         entry = {"caseId": c.case_id, "file": rel, "area": c.case_id.split("/")[1], "rules": fx["rules"],
                  "fileDigest": "sha256:" + hashlib.sha256(canonical(fx)).hexdigest()}
+        if c.spec != DEFAULT_SPEC:  # the index's spec is the default; a case citing another names its own
+            entry["spec"] = {"name": "megaeth/Satin", "descriptor": fx["specRef"]["descriptor"]}
         if q_entry:
             quarantine.append({**entry, "knownFail": q_entry})
         else:

@@ -363,3 +363,38 @@ revision its mapping was read from, `5e3f30ad`. The mapping's source
 (`crates/mega-evm/src/external/hasher`) is byte-identical at `4e39cfd6`, so the member's data is
 the same at both revisions, and the member keeps the revision it was read at: the descriptor
 digest, which every case's `specRef` carries, does not move with an implementation's pin.
+
+From the cases for interception, the keyless decoder and EIP-7702 existence:
+
+**D-54. Cases added after the first slice cite the newest snapshot.** The cases added for
+interception before the frame start, the keylessDeploy decoder and EIP-7702 existence cite
+`specs/satin-d334ef8`, which states `SATIN-ICPT-007`; the first 63 cases, the quarantine and the
+negative case keep `specs/satin-d34e626` and stay byte-identical. Each case carries its own
+`specRef`, and an entry of `slice/index.json` names its spec when it is not the index's.
+
+**D-55. A case's pre-state carries the code of every system contract a call can reach.** The new
+cases hold the Oracle 2.0.0, KeylessDeploy 1.0.0, MegaAccessControl 1.0.0 and MegaLimitControl
+1.0.0 at their addresses, with the code the specification names by hash (its system-contracts
+overview at `d334ef8`), nonce zero and no balance, as the pre-block deployment leaves an address
+that held no account. `tools/system-contracts.json` holds that code, read from the revm-based
+implementation's versioned artifacts at `4e39cfd6`, and `tools/make_slice.py` refuses an entry
+whose keccak256 is not the specification's hash. The first 63 cases make no call: the L1 block
+contract and the SequencerRegistry hold a placeholder (`0xfe`) there that no call reaches.
+
+**D-56. Readings the call derivations fix.**
+
+- A start its frame start refuses (a value the caller cannot fund) and a call an interceptor
+  answers return the child's whole regular gas to the caller, the stipend included: the child's
+  gas is the forward plus the stipend (`SATIN-FWD-003`), the forwarded gas returns untouched
+  (`SATIN-ICPT-004`), and the caller's regular gas rises by what the child returns
+  (`SATIN-POOL-012`). Such a value call therefore costs its caller 9,000 of the value transfer's
+  11,300.
+- A value start's records, the caller's account and the callee's, are charged to the caller after
+  the forward (`SATIN-HIST-009`); when the child fails, their history goes back into the caller's
+  reservoir (`SATIN-HIST-007`, `-012`), from which the caller's next state charge draws first.
+- An authority's `ACCOUNT_WRITE` is regular gas, EIP-8038's account write charged before the first
+  frame (`SATIN-AUTH-015`); the delegation indicator's state gas is `DELEGATION_STATE_BYTES` × 1,530
+  at the authority's bucket, 35,190 at the minimum.
+- The data-size stop of a hint is reached without a 13 MB fixture: twelve admitted hints of 1 MiB,
+  each forwarded 1 gas and halting at the Oracle's first opcode, count 12,582,912 bytes, so the
+  thirteenth would cross `TX_DATA_LIMIT`.

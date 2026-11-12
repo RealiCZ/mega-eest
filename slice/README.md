@@ -1,8 +1,10 @@
 # The vertical slice
 
-63 `state-transition` cases of Satin at specification commit `d34e626` (`specs/satin-d34e626`),
-run on both Satin implementations by `tools/run-slice.sh`. They are reviewed candidates:
-`provenance.status` is `candidate` until the owner approves them.
+78 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+63 at specification commit `d34e626` (`specs/satin-d34e626`), and 15 for interception, the
+keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), each case naming
+its own spec (decision D-54). They are reviewed candidates: `provenance.status` is `candidate` until
+the owner approves them.
 
 Every file here is written by `tools/make_slice.py` (`--check` verifies it). Each case is
 authored there — its setup, its transaction as real signed bytes or a deposit envelope, the SALT
@@ -25,14 +27,21 @@ derivation, and the two implementations run against it.
 | Area | Cases | What they distinguish |
 | --- | --- | --- |
 | `intrinsic` | 9 | intrinsic regular gas (`SATIN-SCHED-006`), the body's history (`SATIN-HIST-003`, `-004`), the floor and the block's figure (`SATIN-SCHED-005`, `SATIN-POOL-020`), calldata, access lists, a transaction to its own sender |
-| `value-transfer` | 6 | the start record before the frame (`SATIN-HIST-005`), transfer logs (`SATIN-LOG-001`, `-006`), a new recipient's state gas without legacy share (`SATIN-SCHED-008`, `SATIN-POOL-024`) at two multipliers, a reverted transfer, fees |
+| `value-transfer` | 7 | the start record before the frame (`SATIN-HIST-005`), transfer logs (`SATIN-LOG-001`, `-006`), a new recipient's state gas without legacy share (`SATIN-SCHED-008`, `SATIN-POOL-024`) at two multipliers, a reverted transfer, fees |
 | `sstore` | 16 | every SSTORE transition priced at Satin's schedule (`SATIN-SCHED-003`, `-004`), fresh-slot state gas and its legacy share (`SATIN-STATE-001`, `-008`, `-012`) at four multipliers and with a reservoir, refunds and the spec's own worked example (`SATIN-POOL-019`), write records and state growth (`SATIN-ACCT-004`, `-016`) |
 | `logs` | 6 | log history bytes (`SATIN-HIST-002`, `-006`) and data size, log order with transfer logs |
 | `outcomes` | 9 | revert and halt settlement (`SATIN-POOL-014`, `-017`, `SATIN-OUT-007`), give-backs into the reservoir (`SATIN-HIST-012`), out of gas at a state charge, a halt with a reservoir |
 | `creation` | 6 | the created account's charges before the frame, code deposit (`SATIN-SCHED-011`, `SATIN-STATE-003`), a reverted creation, a slot written by initcode |
 | `validation` | 11 | refusals in the order of `SATIN-VAL-003` (intrinsic gas, floor, the body's history), chain id (`SATIN-VAL-006`), the base layer's checks (`SATIN-VAL-007`) and a gas limit above the block's (`SATIN-BLK-009`, `-013`: a refusal at inclusion, D-50) |
+| `interception` | 8 | interception before the frame start, the funds check included (`SATIN-ICPT-007`): a contract's value `sendHint` its caller can and cannot fund (`SATIN-ORCL-006`, `-009`, `SATIN-OUT-010`, `SATIN-LIM-015`), a hint over the data-size limit (`SATIN-ORCL-010`), MegaAccessControl's and MegaLimitControl's `NonZeroTransfer()` funded or not (`SATIN-ICPT-003`), and the transaction's own value `keylessDeploy` (`SATIN-KEY-018`) |
+| `keyless` | 4 | the decoder set of `SATIN-ICPT-006`: unpadded bytes, an offset into the head and offset zero are recognized and refused at step 3; one byte short is not recognized, and KeylessDeploy's bytecode reverts without the overhead |
+| `authorizations` | 2 | an EIP-7702 authority present as an empty leaf exists (`SATIN-STATE-011`, `SATIN-AUTH-008`, `SATIN-ACCT-015`): the indicator's state gas alone; an absent one is new |
 
-55 rules in 11 areas are cited. `index.json` lists each case with its area, rules and file digest.
+The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
+empty leaf is new under EIP-161. Each case of the last three areas holds the code of the system
+contracts a call can reach (D-55).
+
+90 rules in 14 areas are cited. `index.json` lists each case with its area, rules and file digest.
 
 ## Quarantine and the wrong expectation
 
@@ -46,9 +55,10 @@ derivation, and the two implementations run against it.
 
 ## Not in this slice
 
-Limit stops (neither implementation's result carries what the `limit` group needs, D-41), gas
-detention, nested frames, EIP-7702 authorizations, oracle reads, and every block, building and
-witness profile: they need observations or consumers the next phases add.
+Limit stops of the transaction's own frame (neither implementation's result carries what the
+`limit` group needs, D-41), gas detention, nested frames beyond a call to a system contract,
+EIP-7702 lists beyond one accepted entry, oracle reads, and every block, building and witness
+profile: they need observations or consumers the next phases add.
 
 ## Running it
 
@@ -60,7 +70,7 @@ builds the format CLI and both adapters (fetching the evm2-based implementation 
 consumes `cases/` with each adapter plain and instrumented, and prints
 
 ```text
-SLICE cases=63 adapters=2 pass=126 fail=0 unsupported=0 error=0 digests=identical
-PARITY adapters=2 cases=63 mismatches=0
+SLICE cases=78 adapters=2 pass=156 fail=0 unsupported=0 error=0 digests=identical
+PARITY adapters=2 cases=78 mismatches=0
 NEGATIVE wrong-expected verdict=fail rewritten=no
 ```
