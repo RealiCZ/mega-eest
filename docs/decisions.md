@@ -501,3 +501,38 @@ edges, and those of two decided rules the revm-based implementation has not made
 - `tools/check_derived_text.py` moves `KEYLESS_DEPLOY_OVERHEAD_GAS` by seven instead of one: a
   case one gas below the overhead would otherwise show the old value as its own, correctly
   derived, figure.
+
+**D-60. Gas detention, the Oracle's reads and the refused volatile read.** Ten cases at `5fb2688`
+pin the remaining edges of the charge-order principles, one charge under gas detention
+(`SATIN-DET-018`, `-020`), and two decided rules the revm-based implementation has not made yet:
+the Oracle's `SLOAD` reads and marks before its one charge (`SATIN-ORCL-004`), and a refused
+volatile read charges nothing (`SATIN-MAC-003`, `-004`).
+
+- The model restates detention for the reads these cases make: `TIMESTAMP`, a deposit's `SLOAD` in
+  the Oracle's frame, and `BALANCE` of an account that is not the beneficiary. A read sets the
+  limit `compute + cap` (`SATIN-DET-012`); compute is every regular charge a frame makes, never a
+  forward nor the regular part of a state or history charge, which draw a detained frame's
+  withheld part first (`SATIN-DET-009`, `-017`). A frame is split into spendable and withheld parts
+  when a read completes and when it starts or resumes (`SATIN-DET-014`). Each part an opcode
+  deducts is a charge of its own: `RETURNDATACOPY` and `KECCAK256` now charge their static cost
+  and their per-word cost apart, which moves no figure. A charge the spendable part cannot pay
+  and the whole regular gas can is the crossing, which stops a child frame with
+  `MegaLimitExceeded(2, limit)` and returns its whole regular gas; one the whole cannot pay is an
+  out-of-gas. An `SSTORE`, or an `SLOAD` outside the Oracle's frame, in a detained frame stays
+  outside the model, as does a stop of the transaction's own frame (D-41).
+- A detained frame's spendable part is reached by burning compute after `TIMESTAMP`: one memory
+  expansion and a run of `JUMPDEST`s, sized from the model's own figure for what the limit leaves
+  the transaction where the case needs it (D-57, D-59). Since the limit then leaves the caller
+  almost nothing, the caller returns its child's return data as the transaction's output, which
+  costs no more than it has; where the static cost leaves it nothing, it stops.
+- The Oracle cases are deposits: a deposit's read asks no oracle service (`SATIN-ORCL-005`), and
+  the evm2-based adapter runs no oracle transcript, so a transaction's read could not run on both
+  implementations. A read short of its charge shows its mark through a later call whose one memory
+  expansion passes the Oracle's cap, which the mark stops.
+- `disableVolatileDataAccess()` is answered by the node for the calling frame; a `BALANCE` of the
+  beneficiary after it reverts the frame with `VolatileDataAccessDisabled(10)` before any charge.
+- Five cases fail on the revm-based implementation at `4e39cfd6` and are quarantined; their first
+  difference is the regular ledger the block counts. The two refusals' figures are derived, as
+  their verdicts state them. The three Oracle reads' figures are that implementation's run,
+  recorded: they follow from what it does once it skips the read or crosses early, which the
+  model does not restate.

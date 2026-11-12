@@ -8,9 +8,10 @@ specification at `d34e626` (`specs/satin-d34e626`), for calls, interception and 
 narrow class of transactions the slice uses:
 
 - the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`,
-  `CALLVALUE`, `GAS`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`, `REVERT` and
-  `INVALID`, and the stack, arithmetic, calldata, jump, return-data and `KECCAK256` opcodes a
-  system contract's dispatcher and decoder use; no creation opcode, self-destruct or volatile read;
+  `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`,
+  `REVERT` and `INVALID`, and the stack, arithmetic, calldata, jump, return-data and `KECCAK256`
+  opcodes a system contract's dispatcher and decoder use; no creation opcode or self-destruct, and
+  of the volatile reads only those below;
 - a `CALL` from that frame to a system contract, decided in the order of `SATIN-ICPT-007`: an
   interceptor's `NonZeroTransfer()`, the `sendHint` admission and its data-size stop, the frame
   start that refuses a value the caller cannot fund, and a child frame that reverts or halts; the
@@ -24,6 +25,10 @@ narrow class of transactions the slice uses:
   delegate's access before the first frame;
 - a transaction that runs out of gas before its first frame with nothing applied but validation's
   changes to its sender;
+- gas detention: `TIMESTAMP`, a deposit's `SLOAD` in the Oracle's frame and `BALANCE` as reads, the
+  limit they set, every frame's spendable and withheld parts, each part an opcode deducts as one
+  charge, the crossing that stops a child frame and the out-of-gas beyond its whole gas; and
+  `disableVolatileDataAccess()` with the refusal of a volatile read in a frame whose access is off;
 - calls, value transfers, creation transactions and deposits, with or without a reservoir;
 - the refusals of transaction validation.
 
@@ -118,6 +123,10 @@ MAX_U64 = 2**64 - 1
 PRE_FORK_NEW_ACCOUNT_COST = 25_000  # SATIN-STATE-012: the pre-Satin price of a new account
 LEGACY_NEW_ACCOUNT_SHARE = PRE_FORK_NEW_ACCOUNT_COST - 0  # SATIN-STATE-012: a value CALL's new account has no execution charge
 DELEGATION_PREFIX = b"\xef\x01\x00"  # EIP-7702's delegation indicator, followed by the delegate's address
+# Gas detention, the Oracle's reads and the access-control refusal (the specification at `5fb2688`).
+BLOCK_ENV_ACCESS_COMPUTE_GAS = 20_000_000  # SATIN-DET-012: the cap after a read of the block environment
+ORACLE_ACCESS_COMPUTE_GAS = 20_000_000  # SATIN-DET-012: the cap after a read of the Oracle's storage
+DETENTION_STOP = 2  # SATIN-DET-018: the kind of MegaLimitExceeded a crossing stops a frame with
 
 ORACLE = bytes.fromhex("6342000000000000000000000000000000000001")
 KEYLESS_DEPLOY = bytes.fromhex("6342000000000000000000000000000000000003")
@@ -140,6 +149,9 @@ INTERCEPTED = {
 NON_ZERO_TRANSFER = selector("NonZeroTransfer()")  # SATIN-ICPT-003
 NO_ETHER_TRANSFER = selector("NoEtherTransfer()")  # SATIN-KEY-005 step 2
 MALFORMED_ENCODING = selector("MalformedEncoding()")  # SATIN-KEY-005 step 3
+DISABLE_VOLATILE_DATA_ACCESS = selector("disableVolatileDataAccess()")  # SATIN-MAC-001
+VOLATILE_DATA_ACCESS_DISABLED = selector("VolatileDataAccessDisabled(uint8)")  # SATIN-MAC-004
+ACCESS_TYPE_TIMESTAMP, ACCESS_TYPE_BENEFICIARY, ACCESS_TYPE_ORACLE = 1, 10, 11  # SATIN-MAC-005
 
 
 def delegate_of(code: bytes) -> bytes | None:
@@ -200,6 +212,15 @@ class Unmodelled(Exception):
 
 class Halt(Exception):
     """An exceptional halt of the transaction's own frame."""
+
+
+class Stopped(Exception):
+    """A frame stopped by gas detention's crossing (SATIN-DET-018): a regular charge its spendable part
+    cannot pay and its whole regular gas can, not made."""
+
+    def __init__(self, limit: int, why: str):
+        super().__init__(why)
+        self.limit = limit
 
 
 # --- The derivation record -----------------------------------------------------------------------
@@ -269,6 +290,7 @@ class Env:
     base_fee: int
     block_gas_limit: int
     buckets: dict[int, int]  # bucket id -> capacity (complete: unlisted buckets are minimal)
+    timestamp: int = 0
 
 
 def bucket_multiplier(env: Env, bucket: int) -> int:
@@ -326,8 +348,15 @@ class Run:
         # Gas figures at fixed points of the run, for the cases that set an input from a threshold:
         # "forward" is the caller's regular gas when the first CALL computes its forward, "frame" the
         # regular gas the first frame starts with, "delegate" the regular gas before the delegate's access,
-        # "gas" and "gas-reservoir" the frame's regular gas and reservoir at its first GAS.
+        # "gas" and "gas-reservoir" the frame's regular gas and reservoir at its first GAS, "refused" the
+        # regular gas a frame holds at a refused read, "oracle-sload" the regular gas at the first Oracle read;
+        # "child-room" and "oracle-sload-room" what the limit leaves the transaction's compute at the first
+        # detained child's start and at a detained Oracle read.
         self.probe: dict[str, int] = {}
+        # Gas detention (SATIN-DET-009, -012): the transaction's compute, every regular charge its frames
+        # make, and the limit the most restrictive volatile read set, None before any read.
+        self.compute = 0
+        self.limit: int | None = None
 
     # The refusals of transaction validation, in the order SATIN-VAL-003 fixes for Satin's own
     # checks; the base layer's checks come after, each case failing only one check.
@@ -634,6 +663,8 @@ class Run:
         except Halt as e:
             status = "halt"
             d.add("outcome", f"the frame halts: {e}", "SATIN-OUT-007")
+        except Stopped:
+            raise Unmodelled("a limit stop of the transaction's own frame")
 
         if status == "success" and create:
             self.deposit_code(output, frame, recipient)
@@ -821,22 +852,59 @@ class Run:
         return ("SATIN-HIST-023", ("SATIN-HIST-023",)) if self.principles else ("D-58", ())
 
     def charge_regular(self, frame, amount: int, what: str) -> None:
+        """A regular charge: compute (SATIN-DET-009), held to a detained frame's spendable part. A charge the
+        spendable part cannot pay and the whole regular gas can is the crossing (SATIN-DET-018); one the whole
+        cannot pay is an out-of-gas, as without the read (SATIN-DET-020)."""
+        spendable = frame.get("spendable")
+        if spendable is not None and spendable < amount <= frame["regular"]:
+            raise Stopped(self.limit, f"{what}: {fmt(amount)} of regular gas, which the spendable part {fmt(spendable)} "
+                                      f"cannot pay and the frame's whole {fmt(frame['regular'])} can")
         if amount > frame["regular"]:
             raise Halt(f"out of gas at {what}: {fmt(amount)} regular gas needed, {fmt(frame['regular'])} left")
         frame["regular"] -= amount
+        if spendable is not None:
+            frame["spendable"] -= amount
         self.regular_charges += amount
+        self.compute += amount
+
+    def draw_regular(self, frame, amount: int) -> None:
+        """Regular gas drawn by a forward, or for the part of a state or history charge regular gas pays: not
+        compute, and from a detained frame's withheld part first (SATIN-DET-009, SATIN-DET-017)."""
+        spendable = frame.get("spendable")
+        if spendable is not None:
+            frame["spendable"] -= max(0, amount - (frame["regular"] - spendable))
+        frame["regular"] -= amount
+
+    def split(self, frame) -> None:
+        """SATIN-DET-014: once a limit is set, the frame's spendable part is what the limit leaves the
+        transaction, at most its regular gas; applied when a read completes and when a frame starts or resumes."""
+        if self.limit is not None:
+            frame["spendable"] = min(frame["regular"], max(0, self.limit - self.compute))
+
+    def mark(self, cap: int, what: str) -> None:
+        """A volatile read marked at the transaction's present compute: the limit compute + cap, which only goes
+        down (SATIN-DET-012)."""
+        at, new = self.compute, self.compute + cap
+        if self.limit is None or new < self.limit:
+            self.limit = new
+            self.d.add("gasLedgers", f"{what} is a volatile read, marked at compute {fmt(at)}: the transaction's limit "
+                       f"becomes {fmt(at)} + {fmt(cap)} = {fmt(new)}", "SATIN-DET-001", "SATIN-DET-003", "SATIN-DET-012")
+        else:
+            self.d.add("gasLedgers", f"{what} is a volatile read, marked at compute {fmt(at)}: {fmt(at)} + {fmt(cap)} = "
+                       f"{fmt(new)} does not lower the limit {fmt(self.limit)}", "SATIN-DET-001", "SATIN-DET-003",
+                       "SATIN-DET-012")
 
     def charge_state(self, frame, amount: int, legacy: int, what: str) -> None:
         """SATIN-POOL-008: the legacy share from regular gas, then the reservoir, then the spill."""
         if legacy > frame["regular"]:
             raise Halt(f"out of gas paying the legacy share of {what}")
-        frame["regular"] -= legacy
+        self.draw_regular(frame, legacy)
         rest = amount - legacy
         r = min(frame["reservoir"], rest)
         frame["reservoir"] -= r
         if rest - r > frame["regular"]:
             raise Halt(f"out of gas paying the state gas of {what}")
-        frame["regular"] -= rest - r
+        self.draw_regular(frame, rest - r)
 
     def give_back(self, frame, amount: int) -> None:
         frame["reservoir"] += amount  # SATIN-HIST-012: into the frame's reservoir
@@ -871,6 +939,16 @@ class Run:
                 self.charge_regular(frame, cost, f"{what} memory")
                 mem_words = words
                 memory.extend(b"\x00" * (words * 32 - len(memory)))
+
+        def refuse(access_type: int, what: str):
+            """SATIN-MAC-003, -004: a volatile read in a frame whose access is off, refused before any charge."""
+            d.add("outcome", f"{what} in a frame whose volatile-data access is off: refused before the opcode charges "
+                  f"anything, the frame reverting with VolatileDataAccessDisabled({access_type}) on the "
+                  f"{fmt(frame['regular'])} of regular gas it held at the opcode; no read is marked",
+                  "SATIN-MAC-003", "SATIN-MAC-004", "SATIN-MAC-005")
+            self.probe.setdefault("refused", frame["regular"])
+            steps.append(f"{what.split()[0]} refused 0")
+            return done("revert", VOLATILE_DATA_ACCESS_DISABLED + access_type.to_bytes(32, "big"))
 
         def simple(name: str, cost: int, result) -> None:
             self.charge_regular(frame, cost, name)
@@ -928,8 +1006,34 @@ class Run:
                 memory[offset:offset + 32] = value.to_bytes(32, "big")
                 steps.append(f"MSTORE {G_VERYLOW} + memory to {mem_words} words")
             elif op == 0x54:  # SLOAD
+                if ctx and address == ORACLE:
+                    key = pop()
+                    if frame.get("access_off"):
+                        raise Unmodelled("an Oracle read refused")
+                    value = self.state.get(ORACLE, Account()).storage.get(key, 0)
+                    self.warm_slots.add((ORACLE, key))
+                    if tx.kind != "deposit":
+                        raise Unmodelled("an Oracle read that asks the oracle service")
+                    d.add("gasLedgers", f"the Oracle's SLOAD of slot {key}, with {fmt(frame['regular'])} of regular gas in "
+                          "the frame: the read is made before its charge, the slot loaded and warm, and the read marked; a "
+                          "deposit's read asks no oracle service, so the slot's value is pushed", "SATIN-ORCL-002",
+                          "SATIN-ORCL-003", "SATIN-ORCL-004", "SATIN-ORCL-005")
+                    self.mark(ORACLE_ACCESS_COMPUTE_GAS, f"the Oracle's SLOAD of slot {key}")
+                    self.probe.setdefault("oracle-sload", frame["regular"])
+                    if frame.get("spendable") is not None:
+                        self.probe.setdefault("oracle-sload-room", self.limit - self.compute)
+                    d.add("gasLedgers", f"then COLD_SLOAD_COST {fmt(COLD_SLOAD)}, its warm base {WARM_READ} included, as one "
+                          "charge: the mark stands whatever the charge does", "SATIN-ORCL-004", "SATIN-DET-003",
+                          "SATIN-DET-018")
+                    self.charge_regular(frame, COLD_SLOAD, "the Oracle's SLOAD")
+                    stack.append(value)
+                    self.split(frame)
+                    steps.append(f"SLOAD of the Oracle's storage {fmt(COLD_SLOAD)}")
+                    continue
                 if ctx:
                     raise Unmodelled("an SLOAD in a child frame")
+                if frame.get("spendable") is not None:
+                    raise Unmodelled("an SLOAD in a detained frame")
                 key = pop()
                 cold = (address, key) not in self.warm_slots
                 cost = COLD_SLOAD if cold else WARM_READ
@@ -1027,7 +1131,9 @@ class Run:
                 dest, off, size = pop(), pop(), pop()
                 words = (size + 31) // 32
                 cost = G_VERYLOW + COPY_WORD * words
-                self.charge_regular(frame, cost, "RETURNDATACOPY")
+                self.charge_regular(frame, G_VERYLOW, "RETURNDATACOPY")
+                if words:
+                    self.charge_regular(frame, COPY_WORD * words, "RETURNDATACOPY's copy")
                 expand(dest, size, "RETURNDATACOPY")
                 if off + size > len(returndata):
                     raise Halt("RETURNDATACOPY past the return data")
@@ -1037,7 +1143,9 @@ class Run:
                 off, size = pop(), pop()
                 words = (size + 31) // 32
                 cost = KECCAK_BASE + KECCAK_WORD * words
-                self.charge_regular(frame, cost, "KECCAK256")
+                self.charge_regular(frame, KECCAK_BASE, "KECCAK256")
+                if words:
+                    self.charge_regular(frame, KECCAK_WORD * words, "KECCAK256's words")
                 expand(off, size, "KECCAK256")
                 stack.append(int.from_bytes(ex.keccak256(bytes(memory[off:off + size])), "big"))
                 steps.append(f"KECCAK256 {cost} + memory to {mem_words} words")
@@ -1059,6 +1167,29 @@ class Run:
                     if dest not in jumpdests:
                         raise Halt("a jump to an invalid destination")
                     pc = dest
+            elif op == 0x42:  # TIMESTAMP
+                if frame.get("access_off"):
+                    return refuse(ACCESS_TYPE_TIMESTAMP, "TIMESTAMP")
+                self.charge_regular(frame, G_BASE, "TIMESTAMP")
+                stack.append(self.env.timestamp)
+                steps.append(f"TIMESTAMP {G_BASE}")
+                self.mark(BLOCK_ENV_ACCESS_COMPUTE_GAS, "TIMESTAMP, a read of the block environment, once it completes,")
+                self.split(frame)
+                d.add("gasLedgers", f"the frame's regular gas {fmt(frame['regular'])} is split: {fmt(frame['spendable'])} "
+                      "spendable, what the limit leaves the transaction, and the rest withheld", "SATIN-DET-014")
+            elif op == 0x31:  # BALANCE
+                who = (pop() % 2**160).to_bytes(20, "big")
+                if frame.get("access_off") and who == self.env.coinbase:
+                    return refuse(ACCESS_TYPE_BENEFICIARY, "BALANCE of the block beneficiary")
+                self.charge_regular(frame, WARM_READ, "BALANCE's static cost")
+                cold = who not in self.warm_accounts
+                if cold:
+                    self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "BALANCE's cold access")
+                    self.warm_accounts.add(who)
+                if who == self.env.coinbase:
+                    raise Unmodelled("a BALANCE of the beneficiary that reads")
+                stack.append(self.state.get(who, Account()).balance)
+                steps.append(f"BALANCE {fmt(WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0))}")
             elif op == 0x5A:  # GAS
                 self.charge_regular(frame, G_BASE, "GAS")
                 stack.append(frame["regular"])
@@ -1084,8 +1215,6 @@ class Run:
                 stack[-1], stack[-1 - n] = stack[-1 - n], stack[-1]
                 steps.append(f"SWAP{n} {G_VERYLOW}")
             elif op == 0xF1:  # CALL
-                if ctx:
-                    raise Unmodelled("a call below the transaction's own frame")
                 gas_req, target_w, value, a_off, a_size, r_off, r_size = [pop() for _ in range(7)]
                 target = (target_w % 2**160).to_bytes(20, "big")
                 before = self.regular_charges
@@ -1098,6 +1227,8 @@ class Run:
                 if cold:
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
                     self.warm_accounts.add(target)
+                if ctx:
+                    raise Unmodelled("a call below the transaction's own frame, past its regular charges")
                 callee = self.state.get(target)
                 if frame["reservoir"]:
                     raise Unmodelled("a call from a frame that holds a reservoir")
@@ -1123,7 +1254,8 @@ class Run:
                 self.probe.setdefault("forward", remaining)
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
-                self.charge_regular(frame, forward, "the forward")
+                self.draw_regular(frame, forward)
+                self.regular_charges += forward
                 child_gas = forward + (CALL_STIPEND if value else 0)
                 operand = fmt(gas_req) if gas_req < 2**256 - 1 else "the gas operand 2^256 - 1"
                 d.add("gasLedgers", f"CALL to {h(target)} with value {value}: the opcode's own charges {fmt(opcode_charges)} = "
@@ -1176,6 +1308,7 @@ class Run:
                                           records, history, new_account)
                 frame["regular"] += left
                 self.regular_charges -= left
+                self.split(frame)  # the caller resumes (SATIN-DET-014, SATIN-DET-019)
                 returndata = out
                 if r_size:
                     raise Unmodelled("a call that copies its output")
@@ -1196,6 +1329,15 @@ class Run:
         d = self.d
         # Interception: an interceptor's answer, the sendHint admission and its data-size check.
         if target in INTERCEPTED and data[:4] in INTERCEPTED[target]:
+            if not value and target == MEGA_ACCESS_CONTROL and data[:4] == DISABLE_VOLATILE_DATA_ACCESS:
+                frame["access_off"] = True
+                d.add("outcome", "interception: disableVolatileDataAccess() called without value is answered by the node, "
+                      "before the frame start: volatile-data access is off for the calling frame and every frame below "
+                      "it, and the answer returns no data", "SATIN-ICPT-001", "SATIN-ICPT-007", "SATIN-MAC-001",
+                      "SATIN-MAC-002")
+                d.add("gasLedgers", f"the answer charges nothing: the child's {fmt(child_gas)} regular gas returns untouched",
+                      "SATIN-ICPT-004", "SATIN-POOL-012")
+                return True, b"", child_gas
             if not value:
                 raise Unmodelled("an interceptor's own answer")
             d.add("outcome", f"interception: an intercepted method of {h(target)} called with value {value} is answered "
@@ -1266,7 +1408,14 @@ class Run:
                   "SATIN-ACCT-004", "SATIN-ACCT-005")
             d.add("resources", f"the start's {len(records)} records ({WRITE_RECORD_SIZE} bytes each) and its transfer log "
                   f"({TRANSFER_LOG_SIZE} bytes)", "SATIN-LIM-013", "SATIN-ACCT-002", "SATIN-LOG-006")
-        child = {"regular": child_gas, "reservoir": 0, "regular_at_start": child_gas, "reservoir_at_start": 0}
+        child = {"regular": child_gas, "reservoir": 0, "regular_at_start": child_gas, "reservoir_at_start": 0,
+                 "access_off": frame.get("access_off", False)}
+        self.split(child)
+        if child.get("spendable") is not None:
+            self.probe.setdefault("child-room", self.limit - self.compute)
+            d.add("gasLedgers", f"the child frame of {h(target)} starts detained: of its {fmt(child_gas)} regular gas, "
+                  f"{fmt(child['spendable'])} is spendable, what the limit {fmt(self.limit)} leaves the transaction's compute "
+                  f"{fmt(self.compute)}, and the rest withheld", "SATIN-DET-009", "SATIN-DET-014")
         charges = self.regular_charges
         try:
             status, out = self.execute(callee.code, child, False,
@@ -1275,10 +1424,25 @@ class Run:
             status, out = "halt", b""
             d.add("gasLedgers", f"the child frame of {h(target)} halts ({e}): its {fmt(child_gas)} regular gas is consumed",
                   "SATIN-POOL-014", "SATIN-OUT-007")
+            if self.limit is not None:
+                d.add("gasLedgers", f"what the halting frame burns is not compute: the transaction's compute stays "
+                      f"{fmt(self.compute)}", "SATIN-DET-011", "SATIN-DET-020")
+        except Stopped as e:
+            status, out = "stop", limit_exceeded(DETENTION_STOP, e.limit)
+            d.add("outcome", f"the child frame of {h(target)} reaches gas detention's crossing at {e}: the charge is not "
+                  f"made and the frame is stopped with MegaLimitExceeded({DETENTION_STOP}, {fmt(e.limit)}), which its "
+                  "caller catches", "SATIN-DET-018", "SATIN-STOP-020")
+            d.add("gasLedgers", f"what the frame spent before the crossing charge stays spent, and its whole regular gas, "
+                  f"{fmt(child['regular'])}, the withheld part included, returns to its caller; the transaction's compute "
+                  f"is {fmt(self.compute)}", "SATIN-DET-018", "SATIN-DET-019", "SATIN-POOL-012")
         self.regular_charges = charges
         if status == "success":
-            raise Unmodelled("a child frame that succeeds")
-        left = child["regular"] if status == "revert" else 0
+            if value or records or history:
+                raise Unmodelled("a value call whose child frame succeeds")
+            d.add("gasLedgers", f"the child frame of {h(target)} returns {len(out)} bytes and {fmt(child['regular'])} of "
+                  "regular gas to its caller", "SATIN-POOL-012", "SATIN-OUT-001")
+            return True, out, child["regular"]
+        left = child["regular"] if status in ("revert", "stop") else 0
         if value:
             caller_acct.balance += value
             callee.balance -= value
@@ -1408,6 +1572,8 @@ class Run:
         acct = self.state.setdefault(address, Account())
         present = acct.storage.get(key, 0)
         original = self.original.setdefault((address, key), self.pre.get(address, Account()).storage.get(key, 0))
+        if frame.get("spendable") is not None:
+            raise Unmodelled("an SSTORE in a detained frame")
         if frame["regular"] <= CALL_STIPEND:
             raise Halt(f"SSTORE with no more than the {fmt(CALL_STIPEND)} stipend left")
         cold = (address, key) not in self.warm_slots

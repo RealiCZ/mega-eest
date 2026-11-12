@@ -1,10 +1,10 @@
 # The vertical slice
 
-98 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+103 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 63 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
-keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), and 20 for the
-edges of the charge-order principles at `5fb2688` (`specs/satin-5fb2688`), each case naming its own
-spec (decisions D-54, D-59). They are reviewed candidates: `provenance.status` is `candidate` until
+keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 20 for the
+edges of the charge-order principles and 5 for gas detention at `5fb2688` (`specs/satin-5fb2688`),
+each case naming its own spec (decisions D-54, D-59, D-60). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
 Every file here is written by `tools/make_slice.py` (`--check` verifies it), and every figure in a
@@ -41,6 +41,7 @@ derivation, and the two implementations run against it.
 | `authorizations` | 2 | an EIP-7702 authority present as an empty leaf exists (`SATIN-STATE-011`, `SATIN-AUTH-008`, `SATIN-ACCT-015`): the indicator's state gas alone; an absent one is new |
 | `call-order` | 9 | the order around a frame start (`SATIN-HIST-023`): a caller that cannot pay a funded value call's records halts in the opcode, before any interceptor answers or hint is admitted, one gas below the threshold and at it, forwarding all it may or nothing (`SATIN-HIST-009`, `SATIN-ICPT-007`); a value its caller cannot fund makes no record (`SATIN-HIST-015`), and the refused or answered start returns the child's whole regular gas, the stipend included (`SATIN-POOL-012`), which `GAS` shows (`SATIN-POOL-009`) |
 | `delegated-recipient` | 6 | the delegate's access before the first frame (`SATIN-SCHED-008` step 5): warm, cold, against the same account without its delegation, one gas short of the cold access (out of gas before the first frame, `SATIN-SCHED-009`, `-010`) and exactly at it, and a transaction to its own delegated sender |
+| `detention` | 5 | one charge under gas detention (`SATIN-DET-018`): a detained child frame whose spendable part cannot pay `BALANCE`'s static cost is stopped with `MegaLimitExceeded(2, limit)` when its whole regular gas can pay it and runs out of gas when it cannot (`SATIN-DET-020`); the spendable part one below the static cost and at it, the static cost staying spent once paid; a value `CALL` stopped at its value transfer after its static cost |
 | `pre-frame` | 3 | the reservoir pays the authorities' records first (`SATIN-HIST-005`), shown by a first frame that halts; the transaction's own start record charged before interception answers its `keylessDeploy` call, one gas below step 1's overhead and at it |
 
 The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
@@ -48,12 +49,12 @@ empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and 
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-95 rules in 18 areas are cited. `index.json` lists each case with its area, rules and file digest.
+104 rules in 19 areas are cited. `index.json` lists each case with its area, rules and file digest.
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: ten cases the revm-based implementation fails against a decided rule it has not
-  made yet, each passing on the evm2-based implementation:
+- `quarantine/`: fifteen cases the revm-based implementation fails against a decided rule it has
+  not made yet, each passing on the evm2-based implementation:
   - four deposit cases. `SATIN-HIST-016` and `SATIN-DEP-001` make a deposit pay history gas for its
     body, its logs and its write records; the revm-based implementation charges none. The
     verdicts of the first three name the build they were first recorded against, `5e3f30ad`; all
@@ -63,6 +64,15 @@ system contracts a call can reach (D-55).
     start's new-account state gas, and of a fresh slot written back to zero. `SATIN-HIST-012`
     credits every give-back to the frame's reservoir, which `GAS` does not read
     (`SATIN-POOL-009`); the revm-based implementation at `4e39cfd6` credits it to regular gas.
+  - three deposits whose call to the Oracle's `getSlot` reaches its `SLOAD` short of the warm base,
+    short of the cold access, or detained at the crossing. `SATIN-ORCL-004` reads the slot and marks
+    the read before one charge of the cold access; the revm-based implementation charges the warm
+    base first and skips the read, so it marks nothing, or crosses on the warm base. A deposit's
+    read asks no oracle service (`SATIN-ORCL-005`), which is why these cases are deposits.
+  - two refused reads of the block beneficiary's balance in a frame whose volatile-data access is
+    off. `SATIN-MAC-003` and `SATIN-MAC-004` refuse it before any charge; the revm-based
+    implementation charges the static cost first, and runs out of gas when the frame cannot pay
+    it.
 
   The expectation is the rule's; the cases stay out of the gating slice until that implementation
   is fixed, and `tools/run-slice.sh` checks that each still fails exactly as `index.json` records
@@ -73,10 +83,12 @@ system contracts a call can reach (D-55).
 ## Not in this slice
 
 Limit stops of the transaction's own frame (neither implementation's result carries what the
-`limit` group needs, D-41), gas detention, nested frames beyond a call to a system contract or a
-refused call, EIP-7702 lists beyond one accepted entry, oracle reads, the reservoir and the read
-set as observations (no adapter reports them), and every block, building and witness profile: they
-need observations or consumers the next phases add.
+`limit` group needs, D-41), gas detention beyond `TIMESTAMP`, a deposit's Oracle read and `BALANCE`,
+nested frames beyond a call to a system contract, a refused call or a detained child, EIP-7702
+lists beyond one accepted entry, an Oracle read that asks the oracle service (the evm2-based
+adapter runs no oracle transcript), the reservoir and the read set as observations (no adapter
+reports them), and every block, building and witness profile: they need observations or consumers
+the next phases add.
 
 ## Running it
 
@@ -88,7 +100,7 @@ builds the format CLI and both adapters (fetching the evm2-based implementation 
 consumes `cases/` with each adapter plain and instrumented, and prints
 
 ```text
-SLICE cases=98 adapters=2 pass=196 fail=0 unsupported=0 error=0 digests=identical
-PARITY adapters=2 cases=98 mismatches=0
+SLICE cases=103 adapters=2 pass=206 fail=0 unsupported=0 error=0 digests=identical
+PARITY adapters=2 cases=103 mismatches=0
 NEGATIVE wrong-expected verdict=fail rewritten=no
 ```
