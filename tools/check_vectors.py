@@ -381,13 +381,44 @@ def _synthetic(tx, path):
             raise Reject("inconsistent-transaction", path + "/" + field, f"does not fit type {t}")
 
 
-def derive_requirements(profile, inp, exp) -> set:
+LIMIT_DIAGNOSTICS = ("scope", "callPath", "operation", "phase", "operationCommitted", "enclosingCommitted")
+LIMIT_KINDS = {"data-size": 0, "kv-updates": 1, "compute": 2, "state-growth": 3}
+
+
+def _limit_requirements(stop, path, minor, out):
+    """From schema 1.1 on a stop requires group:limit-stop, and one that carries a diagnostic
+    group:limit-diagnostics; a 1.0 stop carries every member and implies neither."""
+    if not isinstance(stop, dict):
+        return
+    if minor == 0:
+        for k in LIMIT_DIAGNOSTICS:
+            if k not in stop:
+                raise Reject("missing-field", path + "/" + k, "a schema 1.0 limit stop carries every member")
+        return
+    out.add("group:limit-stop")
+    if any(k in stop for k in LIMIT_DIAGNOSTICS):
+        out.add("group:limit-diagnostics")
+
+
+def _limit_stop(execution, stop, path):
+    """A stop of the transaction's own frame: a revert whose output is MegaLimitExceeded(kind, limit)."""
+    if stop is None:
+        return
+    if execution is None or execution["status"] != "revert" or execution["output"] != stop["returnData"]:
+        raise Reject("inconsistent-outcome", path, "a limit stop is a revert whose output is its return data")
+    want = "0x84b90267" + format(LIMIT_KINDS[stop["dimension"]], "064x") + format(int(stop["limit"], 16), "064x")
+    if stop["returnData"] != want:
+        raise Reject("inconsistent-outcome", path, "the return data is MegaLimitExceeded(kind, limit)")
+
+
+def derive_requirements(profile, inp, exp, minor=1) -> set:
     out = set()
     if profile == "state-transition":
         out |= {"group:outcome", "group:state", "group:receipts", "group:gas-ledgers", "group:resources", "group:limit"}
         for key, group in (("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("checkpoints", "group:checkpoints")):
             if key in exp:
                 out.add(group)
+        _limit_requirements(exp.get("limit"), "/expected/limit", minor, out)
         tx = inp["transaction"]
         if tx["kind"] == "synthetic":
             out.add("feature:synthetic-transaction")
@@ -423,6 +454,8 @@ def derive_requirements(profile, inp, exp) -> set:
                 raise Reject("requirement-mismatch", "/requires", f"{group} carried by some transactions only")
             if carried:
                 out.add(group)
+        for t in txs:
+            _limit_requirements(t.get("limit"), "/expected", minor, out)
     for key, feature in (("salt", "feature:salt"), ("oracle", "feature:oracle-transcript"), ("faults", "feature:injected-faults")):
         if key in inp:
             out.add(feature)
@@ -532,7 +565,8 @@ def semantic_checks(case, specs: Specs):
         elif (tx["kind"] == "deposit") != _deposit(tx["raw"]):
             raise Reject("inconsistent-transaction", path + "/raw", "kind and bytes disagree")
     # 6. Requirements.
-    if derive_requirements(profile, inp, exp) != set(case["requires"]):
+    minor = int(case["schemaVersion"].split(".")[1])
+    if derive_requirements(profile, inp, exp, minor) != set(case["requires"]):
         raise Reject("requirement-mismatch", "/requires", "requires differs from the content")
     # 7. Consistency.
     if profile == "state-transition":
@@ -549,6 +583,7 @@ def semantic_checks(case, specs: Specs):
                 if exp[g] is None:
                     raise Reject("inconsistent-outcome", "/expected/" + g, "executed, group required")
             _receipt_status(exp["outcome"], exp["receipt"], "/expected/receipt/status")
+            _limit_stop(exp["outcome"]["execution"], exp["limit"], "/expected/limit")
     elif profile in ("block-import", "stateless-block"):
         for i, block in _valid_blocks(exp["blocks"]):
             for j, tx in enumerate(block["transactions"]):

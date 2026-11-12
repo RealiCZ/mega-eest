@@ -590,9 +590,10 @@
       "items": {"$ref": "#/$defs/U64"}
     },
     "LimitStop": {
+      "description": "A limit stop: its dimension, its limit and its return data, MegaLimitExceeded(kind, limit). The other members are diagnostics: a schema 1.0 stop carries all of them, and from 1.1 on each is optional, carried behind group:limit-diagnostics.",
       "type": "object",
       "additionalProperties": false,
-      "required": ["dimension", "scope", "limit", "callPath", "operation", "phase", "returnData", "operationCommitted", "enclosingCommitted"],
+      "required": ["dimension", "limit", "returnData"],
       "properties": {
         "dimension": {"enum": ["data-size", "kv-updates", "state-growth", "compute"]},
         "scope": {"enum": ["transaction", "frame"]},
