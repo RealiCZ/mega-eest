@@ -6,8 +6,8 @@ envelope), the SALT capacities its state lands in — and its expected observati
 `tools/satin_model/`, an executable restatement of the cited rules of the pinned specification
 (`specs/satin-d34e626`; the cases added for interception, the keyless decoder and EIP-7702
 existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
-principles, gas detention, the Oracle's reads, the refused volatile read, the reads group and the
-stops of the transaction's own frame `specs/satin-5fb2688`, D-59 to D-62). No implementation is run: the filler's output is a candidate to compare
+principles, gas detention, the Oracle's reads, the refused volatile read, the reads group, the
+stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64). No implementation is run: the filler's output is a candidate to compare
 with, never the source of these values (`tools/run-slice.sh` runs both implementations against
 them).
 
@@ -207,7 +207,7 @@ class Case:
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
                  contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
-                 params=None, retune=None, reads=False):
+                 params=None, retune=None, reads=False, pools=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -237,6 +237,7 @@ class Case:
         # into the burn (`settle_burn`).
         self.make, self.params, self.retune = make, dict(params or {}), list(retune or [])
         self.reads = reads  # the case carries the reads group (D-61)
+        self.pools = pools  # the case carries the gasPools group (D-64)
         if make:
             self.code = make(**self.params)
 
@@ -388,6 +389,7 @@ def cases() -> list[Case]:
     out += detention_cases()
     out += reads_cases()
     out += limit_cases()
+    out += gas_pools_cases()
     return out
 
 
@@ -869,6 +871,43 @@ def limit_cases() -> list[Case]:
     return out
 
 
+# --- The gas pools, observed at the first frame's start and end -------------------------------------
+
+
+def gas_pools_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = ORDERING_SPEC
+    record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
+    body = model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE
+    slot = model.SLOT_STATE
+    add(Case("satin/gas-pools/value-transfer-control", "a plain value transfer to an account without code: the first "
+             "frame runs nothing, so its pools end as they start, regular gas pays no state or history charge, and the "
+             "gas returned is what it was given", spec=spec, to=EOA, code=b"", value=1, pools=True))
+    # A reservoir smaller than the slot's state gas past its legacy share: regular gas pays the share and the spill.
+    part = slot // 4
+    add(Case("satin/gas-pools/fresh-slot-partly-from-regular", f"a fresh slot with {fmt(part)} of reservoir at the first "
+             f"frame's start: of its {fmt(slot)} of state gas the reservoir pays {fmt(part)} and regular gas the legacy "
+             f"share and the rest, and regular gas pays its record's {fmt(record)}", spec=spec,
+             gas=model.EXECUTION_CAP + body + part, code=sstore(1, 1) + STOP, pools=True))
+    # A reservoir larger than the slot's state gas: the legacy share is still regular gas's (SATIN-STATE-012).
+    add(Case("satin/gas-pools/legacy-share-from-regular", f"a fresh slot with {fmt(slot * 4)} of reservoir at the first "
+             f"frame's start: regular gas still pays the legacy share, {fmt(model.LEGACY_SSTORE_SHARE)}, and the reservoir "
+             "the rest and the record", spec=spec, gas=model.EXECUTION_CAP + body + slot * 4, code=sstore(1, 1) + STOP,
+             pools=True))
+    # Give-backs land in the reservoir, never regular gas (SATIN-HIST-012).
+    add(Case("satin/gas-pools/fresh-slot-restored", "0 -> 1 -> 0 with no reservoir: regular gas pays the slot's state gas "
+             f"and record, {fmt(slot + record)}, and the give-back lands in the reservoir, which the first frame ends "
+             "with and which returns to the sender", spec=spec, code=sstore(1, 1) + sstore(1, 0) + STOP, pools=True))
+    access_control = model.selector("disableVolatileDataAccess()")
+    add(Case("satin/gas-pools/answered-call-history-returns", "a value call its caller can fund, answered NonZeroTransfer() "
+             f"by MegaAccessControl: the two records' {fmt(2 * record)} of history, charged in the opcode from regular "
+             "gas, is given back into the reservoir, which the first frame ends with and which returns to the sender at "
+             "the settlement", system=True, spec=spec, contract_balance=10, pools=True,
+             code=bytes_to_memory(access_control) + call(100_000, model.MEGA_ACCESS_CONTROL, 1, 4) + STOP))
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -926,7 +965,7 @@ def build(c: Case):
                       max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list,
                       authorizations=[(cid, target, n, ex.address_of(k)) for k, cid, target, n in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
-    run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads)
+    run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools)
     result = run.run()
     result.probe = run.probe
 
@@ -1049,6 +1088,19 @@ READS_QUARANTINE = {
 }
 
 
+# The gas-pools cases the revm-based implementation fails: it credits a give-back to the frame's regular gas,
+# and draws a fresh slot's state gas from the reservoir first with no legacy share. The first difference is the
+# first frame's final regular gas, the rule's plus what that implementation credits or did not charge to it: the
+# give-back the reservoir ends with, or the legacy share (D-64).
+POOLS_QUARANTINE = {
+    "satin/gas-pools/answered-call-history-returns": "the history of the two records the opcode charged for the start "
+        "that MegaAccessControl's answer replaced",
+    "satin/gas-pools/fresh-slot-restored": "the fresh slot's state gas and its record's history, given back when the "
+        "slot returns to zero",
+    "satin/gas-pools/legacy-share-from-regular": None,
+}
+
+
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -1079,6 +1131,25 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
                    f"{price} = {fmt(history)}")
         return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used), "actual": q(used - history),
                 "verdict": verdict}
+    if c.case_id in POOLS_QUARANTINE:
+        pools = fx["expected"]["gasPools"]
+        regular_end = int(pools["regular"]["final"], 16)
+        what = POOLS_QUARANTINE[c.case_id]
+        if what is None:
+            more = model.LEGACY_SSTORE_SHARE
+            verdict = ("SATIN-STATE-012 and SATIN-POOL-008 make a fresh slot's legacy share a charge on regular gas before "
+                       f"the reservoir pays any of the slot's state gas; the revm-based implementation at {REVM_PIN} draws "
+                       f"the whole state charge from the reservoir first, with no legacy share, so the first frame ends with "
+                       f"{fmt(more)} more regular gas and as much less reservoir than the rule's, and regular gas paid "
+                       f"{fmt(more)} less of the frame's state charges")
+        else:
+            more = int(pools["reservoir"]["final"], 16) - int(pools["reservoir"]["initial"], 16)
+            verdict = ("SATIN-HIST-012 makes every give-back of state or history gas credit the reservoir of the frame that "
+                       "receives it, never its regular gas, whichever pool paid the charge; the revm-based implementation "
+                       f"at {REVM_PIN} credits {what}, {fmt(more)}, to the first frame's regular gas, so the frame ends "
+                       f"with {fmt(more)} more regular gas and as much less reservoir than the rule's")
+        return {"adapter": adapter, "path": "/expected/gasPools/regular/final", "expected": q(regular_end),
+                "actual": q(regular_end + more), "verdict": verdict}
     if c.case_id in READS_QUARANTINE:
         registry = fx["input"]["pre"]["accounts"][h(REGISTRY)]
         read = {"balance": registry["balance"], "codeHash": h(ex.keccak256(bytes.fromhex(registry["code"][2:]))),
@@ -1139,7 +1210,7 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
                "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources", "reads": "/expected/reads",
-               "limit": "/expected/limit"}
+               "limit": "/expected/limit", "gasPools": "/expected/gasPools"}
 
 
 def settle_burn(params: dict) -> None:
@@ -1207,7 +1278,7 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str 
         raise SystemExit(f"{c.case_id}: cites rules the registry does not have: {unknown}")
     requires = ["group:gas-ledgers", "group:limit", "group:outcome", "group:receipts", "group:resources", "group:state",
                 "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else []) \
-        + (["group:limit-stop"] if result.observations["limit"] else [])
+        + (["group:limit-stop"] if result.observations["limit"] else []) + (["group:gas-pools"] if c.pools else [])
     return {
         "format": "mega-execution-fixture",
         # A stop of the transaction's own frame is a schema 1.1 construct (D-62); every other case stays 1.0.

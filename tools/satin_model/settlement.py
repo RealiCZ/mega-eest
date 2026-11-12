@@ -83,6 +83,8 @@ class SettlementMixin:
                         "resources": resources, "limit": limit}
         if self.reads:
             observations["reads"] = self.reads_observation()
+        if self.pools:
+            observations["gasPools"] = self.pools_observation(status, gas_used)
         return Result(observations, d)
 
     def snapshot(self):
