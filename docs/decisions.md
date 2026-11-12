@@ -674,19 +674,17 @@ that what it returns shows in the first frame's reservoir.
   two halt cases are quarantined with that verdict.
 - **What the cases cannot hold of the text.** The answer-stopped example's KV budget of 3 cannot be
   reached under the protocol's KV limit of 500,000 (half a million records cost more gas than a
-  transaction holds), so the same start is pinned on the state-growth budget, 1,000: P's share is
-  980, its 979 fresh slots leave it 1, and the stop is `MegaLimitExceeded(3, 0)` in place of the
-  text's `(1, 0)`; every other figure of the example is the text's. The reverted and halted child
+  transaction holds), so the same start is pinned on the state-growth budget: P is the first frame,
+  whose budget is the transaction's whole 1,000 (`SATIN-LIM-002`), its 999 fresh slots leave it 1,
+  and the stop is `MegaLimitExceeded(3, 0)` in place of the text's `(1, 0)`; every other figure of
+  the example is the text's, and the first frame's final reservoir is exactly the two charges the
+  stop gives back. The reverted and halted child
   receives 50,009 of regular gas, so that it holds the text's 50,000 at its write, the 9 being the
   operands it pushes first.
 - **The failed-deposit example's floor.** Both implementations report a failed deposit's `floor` as
   0, where the model first derived the transaction's EIP-7623 floor (`SATIN-POOL-020`). The
   specification states no floor for a failed deposit, which settles in place of the settlement
   (`SATIN-TAKE-012`); D-66 decides it, and the case follows D-66.
-- **An adapter's reply must stay small.** The consumer reads an adapter's output only once the
-  adapter has exited, so a reply larger than the pipe buffer blocks the adapter until the consumer's
-  timeout. A state diff of a thousand written slots is such a reply; the answer-stopped case's P
-  therefore reverts after the stop, and its slots are not kept.
 
 **D-66. A failed deposit's gas ledgers are exactly `SATIN-DEP-005`'s; D-40 is amended.**
 `SATIN-DEP-005` fixes a failed deposit's ledgers: its whole gas limit as regular gas, and no state

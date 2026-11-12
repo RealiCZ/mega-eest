@@ -1078,24 +1078,23 @@ def take_back_cases() -> list[Case]:
                  accounts={LOGGER: model.Account(nonce=1, code=child)}))
 
     # SATIN-TAKE-010, answer-stopped. The text's KV budget of 3 cannot be reached under the protocol's KV limit; the
-    # same start crosses the state-growth budget instead. The first frame calls P, whose state-growth budget is its
-    # share of the first frame's 1,000; P's fresh slots bring its net to one below that budget, its value call to an
-    # empty account would add the account's leaf, and P then reverts with the stop as its data, so that its slots
-    # are not kept: the adapters' observations stay small (a state diff of every slot would not be).
-    budget = model.TX_STATE_GROWTH_LIMIT * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
-    growth = budget - 1
-    p_code = (b"".join(sstore(k, 1) for k in range(1, growth + 1)) + call(0, ABSENT, 1, 0) + b"\x50"
-              + b"\x3d\x5f\x5f\x3e\x3d\x5f\xfd")  # RETURNDATACOPY(0, 0, RETURNDATASIZE), REVERT(0, RETURNDATASIZE)
-    add(Case("satin/take-backs/answer-stopped", f"the first frame calls P, whose state-growth budget is {fmt(budget)}; P "
-             f"writes {fmt(growth)} fresh slots, one short of it, then calls an account empty under EIP-161, without code, "
-             "with 1 wei and no gas: the start would keep two records, a transfer log and the new account's leaf, and the "
-             "started frame's state-growth budget is the share of P's remaining 1, 0, which the leaf crosses; P was charged "
-             f"the new account's {fmt(model.ACCOUNT_STATE)}, its {fmt(model.LEGACY_NEW_ACCOUNT_SHARE)} legacy share first, "
-             f"before the forward and {fmt(2 * record)} after it, the answer is replaced by MegaLimitExceeded(3, 0) on the "
-             "stipend, and both charges are given back into P's reservoir; P then reverts with the stop as its data, which "
-             "the first frame returns", spec=spec, pools=True, gas=150_000_000,
-             code=call(MAX_GAS, WRITER, 0, 0) + b"\x50" + RETURN_RETURNDATA,
-             accounts={WRITER: model.Account(nonce=1, balance=1, code=p_code)}))
+    # same start crosses the state-growth budget instead. P is the first frame, whose state-growth budget is the
+    # transaction's whole limit (SATIN-LIM-002); its fresh slots bring its net to one below it, and its value call to
+    # an empty account would add the account's leaf. In a transaction without a reservoir, the first frame's final
+    # reservoir is exactly what the stop gives back.
+    limit = model.TX_STATE_GROWTH_LIMIT
+    growth = limit - 1
+    add(Case("satin/take-backs/answer-stopped", f"in a transaction without a reservoir, P, the first frame, whose "
+             f"state-growth budget is {fmt(limit)}, writes {fmt(growth)} fresh slots, one short of it, then calls an "
+             "account empty under EIP-161, without code, with 1 wei and no gas: the start would keep two records, a "
+             "transfer log and the new account's leaf, and the started frame's state-growth budget is the share of P's "
+             f"remaining 1, 0, which the leaf crosses; P was charged the new account's {fmt(model.ACCOUNT_STATE)}, its "
+             f"{fmt(model.LEGACY_NEW_ACCOUNT_SHARE)} legacy share first, before the forward and {fmt(2 * record)} after "
+             "it, the answer is replaced by MegaLimitExceeded(3, 0) on the stipend, and both charges are given back into "
+             "P's reservoir, which ends with them; P returns the stop as its output", spec=spec, pools=True,
+             gas=150_000_000, contract_balance=1,
+             code=b"".join(sstore(k, 1) for k in range(1, growth + 1)) + call(0, ABSENT, 1, 0) + b"\x50"
+             + RETURN_RETURNDATA))
 
     # SATIN-TAKE-011, reverted and halted: a child with a reservoir share of 100,000 writes a cold fresh slot. The
     # forward covers the operands pushed before the write, so that the child holds 50,000 at its SSTORE.
@@ -1340,7 +1339,7 @@ TAKE_BACKS_QUARANTINE = {
         "beneficiary's record is paid",
     "satin/take-backs/log-reverted/reverted": "the LOG2's history, which the child's rollback returns",
     "satin/take-backs/log-reverted/allowance": "the history of the two records the failed start made",
-    "satin/take-backs/answer-stopped": "what P's rollback returns, the stopped start's two charges given back to P among it",
+    "satin/take-backs/answer-stopped": "the stopped start's two charges given back to P",
     "satin/take-backs/failed-child/reverted": "the fresh slot's legacy share, which the child's regular gas paid and its "
         "rollback returns",
     "satin/take-backs/failed-child/halted": None,
