@@ -325,6 +325,7 @@ class TransactionMixin:
         self.address = recipient
         frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
         self.probe.setdefault("frame", regular)
+        self.first_frame = frame
         # What the transaction's own frame is given in each dimension: what the transaction has left once the
         # body and the counts made before the first frame are counted (SATIN-LIM-002).
         self.frame_start_counts = (self.data_size, len(self.kv), self.growth)

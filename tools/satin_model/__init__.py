@@ -26,7 +26,7 @@ narrow class of transactions the slice uses:
 - a transaction that runs out of gas before its first frame with nothing applied but validation's
   changes to its sender, an authorization list's first write among the charges it cannot pay;
 - for the cases that ask, the `reads` group: what the transaction loads, as the stateless witness
-  needs it;
+  needs it, and the `gasPools` group: the first frame's pools at its start and end;
 - a stop of the transaction's own frame, its result: gas detention's crossing, and an `SSTORE`'s
   record or a log's bytes held to the frame's budget and the transaction's limit;
 - gas detention: `TIMESTAMP`, a deposit's `SLOAD` in the Oracle's frame and `BALANCE` as reads, the

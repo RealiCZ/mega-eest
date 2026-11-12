@@ -618,3 +618,29 @@ modules.
 - `tools/check_derived_text.py` copies the package and changes the constants in its `constants.py`.
 - The cases' provenance and `slice/README.md` still name `tools/satin_model.py`: the text is part of
   the cases' bytes, which the split keeps, and changes when the cases are next regenerated.
+
+**D-64. `gasPools` describes the transaction's first frame, read by a passive recorder.** The
+take-back rules are about which pool receives a give-back, so the pools are now observed directly
+instead of through a stored `GAS` (D-59). Both adapters report `gasPools` for a case that requires
+`group:gas-pools`, from a recorder of frame starts and ends that changes nothing the run does,
+attached in plain and instrumented runs alike so the two stay the same bytes (`PARITY`); the
+mandatory groups still come from the implementations' results alone. No engine changes.
+
+- **Start.** Neither implementation exposes the pools before the charges made before the first
+  frame, so `initial` is the first frame's start: the regular gas and the reservoir its depth-0 call
+  or create, or first message, receives, after the authorities', the pre-frame history, a new or
+  created account's state gas and a delegate's access. The model derives the pools from the
+  transaction's own start where a case needs them.
+- **End.** `final` is what the first frame's gas holds when its outcome returns.
+- **No frame.** A transaction that runs out of gas before its first frame has no frame to observe:
+  its regular gas is zero at both ends and its reservoir, at both ends, is what returns to the
+  sender (`SATIN-SCHED-010`).
+- **`spilled`** is exactly the format's: the regular gas the first frame and the children that
+  returned to it paid for state and history charges, legacy shares included, which no give-back
+  credits back (`SATIN-POOL-008`, `SATIN-HIST-012`). Both implementations count it in
+  `state_gas_spilled`; the revm-based implementation's counter falls when it credits a give-back to
+  regular gas and has no legacy share in it, so its figure differs on exactly the cases where its
+  rule does, and those cases are quarantined with that rule's verdict.
+- **`returned`** is the gas limit less the receipt's gas used.
+- The model derives `gasPools` for the cases that ask, from the first frame's pools and a running
+  count of the regular gas its state and history charges drew, for a first frame that succeeds.

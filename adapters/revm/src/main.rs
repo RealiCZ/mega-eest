@@ -15,6 +15,10 @@
 //! the SALT environment and the oracle service record every load that reaches them, in plain and
 //! instrumented runs alike, and a run builds them afresh, so the first load of each item is what
 //! the run read (docs/adapter-protocol.md, "Reads").
+//!
+//! A case that requires `group:gas-pools` is answered with the pools of the transaction's first
+//! frame, read by a passive recorder at the frame's start and end, in plain and instrumented runs
+//! alike (docs/adapter-protocol.md, "Gas pools").
 
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet, HashMap, VecDeque};
@@ -23,6 +27,7 @@ use std::io::Read as _;
 use std::process::ExitCode;
 
 use alloy_consensus::transaction::SignerRecoverable as _;
+use alloy_consensus::Transaction as _;
 use alloy_eips::eip2718::Decodable2718 as _;
 use alloy_evm::FromTxWithEncoded as _;
 use alloy_op_evm::OpTx;
@@ -49,12 +54,13 @@ const SPEC: &str = "megaeth/Satin";
 
 /// The requirements this adapter supports: the mandatory groups of state-transition and the
 /// input features it converts.
-const SUPPORTED: [&str; 12] = [
+const SUPPORTED: [&str; 13] = [
     "feature:deposit",
     "feature:oracle-transcript",
     "feature:salt",
     "feature:synthetic-transaction",
     "group:gas-ledgers",
+    "group:gas-pools",
     "group:limit",
     "group:limit-stop",
     "group:outcome",
@@ -410,6 +416,7 @@ struct TxFacts {
     tx_type: u8,
     sender: Address,
     deposit: bool,
+    gas_limit: u64,
 }
 
 /// A refusal decided before the engine runs: the bytes do not decode or do not recover.
@@ -441,8 +448,9 @@ fn transaction(tx: &Value) -> Res<Result<(MegaTransaction, TxFacts), EarlyRefusa
                 },
             };
             let tx_type = raw.first().copied().filter(|b| *b < 0x80).unwrap_or(0);
+            let gas_limit = envelope.gas_limit();
             let built = OpTx::from_encoded_tx(&envelope, sender, Bytes::from(raw.clone()));
-            Ok(Ok((built, TxFacts { tx_type, sender, deposit })))
+            Ok(Ok((built, TxFacts { tx_type, sender, deposit, gas_limit })))
         }
         "synthetic" => synthetic(tx).map(Ok),
         other => Err(bad(format!("transaction kind {other}"))),
@@ -520,7 +528,7 @@ fn synthetic(tx: &Value) -> Res<(MegaTransaction, TxFacts)> {
     let base = builder.build_fill();
     // A synthetic message has no envelope: it is priced for L1 data as an empty one.
     let built = OpTx(op_revm::OpTransaction { base, enveloped_tx: Some(Bytes::new()), deposit: Default::default() });
-    Ok((built, TxFacts { tx_type, sender, deposit: false }))
+    Ok((built, TxFacts { tx_type, sender, deposit: false, gas_limit: parse_u64(text(tx, "gasLimit")?)? }))
 }
 
 fn block_env(block: &Value) -> Res<BlockEnv> {
@@ -549,31 +557,71 @@ fn block_env(block: &Value) -> Res<BlockEnv> {
 // ---------------------------------------------------------------------------------------------
 // Instrumentation
 
-/// The instrumented run's recorder: it follows every frame start and end. It changes nothing;
-/// the run's observations must equal the plain run's.
+/// A passive recorder of every frame start and end. It changes nothing; the run's observations
+/// must equal those of a run without it. An instrumented run reports the frames it counted; a run
+/// that requires `group:gas-pools` reads the pools of the transaction's first frame off it: the
+/// regular gas and reservoir its depth-0 call or create starts with, and what its outcome's gas
+/// leaves, with the regular gas that frame and the children that returned to it paid for state and
+/// history charges (`state_gas_spilled`).
 #[derive(Default)]
 struct FrameRecorder {
     open: usize,
     frames: u64,
+    start: Option<(u64, u64)>,
+    end: Option<(u64, u64, u64)>,
+}
+
+impl FrameRecorder {
+    fn ended(&mut self, gas: &revm::interpreter::Gas) {
+        self.open -= 1;
+        if self.open == 0 {
+            self.end = Some((gas.remaining(), gas.reservoir(), gas.state_gas_spilled()));
+        }
+    }
 }
 
 impl<CTX> Inspector<CTX, EthInterpreter> for FrameRecorder {
-    fn call(&mut self, _: &mut CTX, _: &mut CallInputs) -> Option<CallOutcome> {
+    fn call(&mut self, _: &mut CTX, inputs: &mut CallInputs) -> Option<CallOutcome> {
+        if self.open == 0 {
+            self.start = Some((inputs.gas_limit, inputs.reservoir));
+        }
         self.open += 1;
         self.frames += 1;
         None
     }
-    fn call_end(&mut self, _: &mut CTX, _: &CallInputs, _: &mut CallOutcome) {
-        self.open -= 1;
+    fn call_end(&mut self, _: &mut CTX, _: &CallInputs, outcome: &mut CallOutcome) {
+        self.ended(&outcome.result.gas);
     }
-    fn create(&mut self, _: &mut CTX, _: &mut CreateInputs) -> Option<CreateOutcome> {
+    fn create(&mut self, _: &mut CTX, inputs: &mut CreateInputs) -> Option<CreateOutcome> {
+        if self.open == 0 {
+            self.start = Some((inputs.gas_limit(), inputs.reservoir()));
+        }
         self.open += 1;
         self.frames += 1;
         None
     }
-    fn create_end(&mut self, _: &mut CTX, _: &CreateInputs, _: &mut CreateOutcome) {
-        self.open -= 1;
+    fn create_end(&mut self, _: &mut CTX, _: &CreateInputs, outcome: &mut CreateOutcome) {
+        self.ended(&outcome.result.gas);
     }
+}
+
+/// The `gasPools` group of the transaction's first frame (decision D-64). A transaction that ran no
+/// frame has no frame pools: what the charges before its first frame left is its reservoir, which
+/// returns to the sender, and its regular gas is consumed.
+fn pools_observation(rec: &FrameRecorder, gas_limit: u64, gas_used: u64) -> Res<Value> {
+    let returned = gas_limit.checked_sub(gas_used).ok_or_else(|| bad("gas used above the gas limit"))?;
+    let ((regular, reservoir), (regular_end, reservoir_end, spilled)) = match (rec.start, rec.end) {
+        (Some(s), Some(e)) => (s, e),
+        (None, None) => ((0, returned), (0, returned, 0)),
+        _ => return Err(bad("instrumentation: a first frame without its end")),
+    };
+    let pool = |initial: u64, last: u64| obj(vec![("initial", qty_u64(initial)), ("final", qty_u64(last))]);
+    Ok(obj(vec![
+        ("regular", pool(regular, regular_end)),
+        ("reservoir", pool(reservoir, reservoir_end)),
+        ("spilled", qty_u64(spilled)),
+        ("returned", qty_u64(returned)),
+    ]))
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -623,7 +671,13 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
             return Ok(Run { observations: refused(refusal.phase, refusal.reason), diagnostics: obj(vec![]) })
         }
     };
-    let (executed, oracle_errors, frames): (Executed, Vec<String>, Option<u64>) = if instrumented {
+    let wants_pools = match member(request, "requires")? {
+        Value::Array(r) => r.iter().any(|x| x.as_str() == Some("group:gas-pools")),
+        _ => false,
+    };
+    let gas_limit = facts.gas_limit;
+    let mut pools = None;
+    let (executed, oracle_errors, frames): (Executed, Vec<String>, Option<u64>) = if instrumented || wants_pools {
         let mut evm = MegaEvm::new(ctx).with_inspector(FrameRecorder::default());
         let r = evm.execute_transaction(tx);
         let errors = oracle_errors_of(&evm.ctx().external_envs().oracle_env);
@@ -631,7 +685,12 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         if rec.open != 0 {
             return Err(bad("instrumentation: unbalanced frames"));
         }
-        (r, errors, Some(rec.frames))
+        if wants_pools {
+            if let Ok(o) = &r {
+                pools = Some(pools_observation(rec, gas_limit, o.gas.gas_used)?);
+            }
+        }
+        (r, errors, instrumented.then_some(rec.frames))
     } else {
         let mut evm = MegaEvm::new(ctx);
         let r = evm.execute_transaction(tx);
@@ -654,6 +713,9 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         if let Value::Object(m) = &mut observations {
             m.insert("reads".into(), reads(&loaded.borrow(), &pre));
         }
+    }
+    if let (Some(p), Value::Object(m)) = (pools, &mut observations) {
+        m.insert("gasPools".into(), p);
     }
     let diagnostics = match frames {
         Some(n) => obj(vec![("frames", qty_u64(n))]),

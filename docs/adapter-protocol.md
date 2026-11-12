@@ -166,6 +166,29 @@ a case that does not require them (decision D-61).
 - `reads` is compared as every other group: exactly, so a load the specification does not require,
   and a load it requires that is missing, are each a difference.
 
+### Gas pools
+
+`gasPools` describes the transaction's first frame (decision D-64). An adapter of this repository
+reports it for a case that requires `group:gas-pools`, in plain and instrumented runs alike, from a
+passive recorder of frame starts and ends that changes nothing the run does; it reports none for a
+case that does not require it.
+
+- `regular.initial` and `reservoir.initial`: the regular gas and the reservoir the first frame starts
+  with, after every charge made before it (the authorities', the pre-frame history, a new or created
+  account's state gas, a delegate's access); the revm-based implementation's depth-0 call or create
+  inputs (`gas_limit`, `reservoir`), the evm2-based implementation's first message (`gas_limit`,
+  `reservoir`).
+- `regular.final` and `reservoir.final`: what the first frame's gas holds when it ends, its
+  outcome's `remaining()` and `reservoir()` in either implementation.
+- `spilled`: the regular gas the first frame, and the children that returned to it, paid for state
+  and history charges, legacy shares included, never credited back by a give-back; the outcome's
+  `state_gas_spilled()`. The evm2-based implementation's counter is this; the revm-based
+  implementation's lowers the counter when it credits a give-back to regular gas and counts no legacy
+  share, which is a difference of rule, not of mapping.
+- `returned`: the gas limit less the receipt's gas used.
+- A transaction that ran no frame (out of gas before it) has regular gas zero at both ends and, at
+  both ends, the reservoir it returns.
+
 ## The adapters of this repository
 
 | Adapter | Implementation | Pinned by | Build |
@@ -173,8 +196,8 @@ a case that does not require them (decision D-61).
 | `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `4e39cfd6`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
 | `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `f3d84454` with `RealiCZ/evm2` at `390a3876`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
-Both declare `state-transition` with its mandatory groups, `group:limit-stop`, `group:reads` and the
-features `deposit`, `salt` and `synthetic-transaction`; the revm-based adapter also runs a recorded `oracle-transcript`, which
+Both declare `state-transition` with its mandatory groups, `group:gas-pools`, `group:limit-stop`,
+`group:reads` and the features `deposit`, `salt` and `synthetic-transaction`; the revm-based adapter also runs a recorded `oracle-transcript`, which
 the other implementation's map-based oracle service cannot check (D-45). Neither runs sparse
 pre-states, injected faults, or engine isolation of a deposit-only or activation block. Both use
 the production SALT mapping and the implementation's own toolchain, and each reports its build

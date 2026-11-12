@@ -4,7 +4,7 @@ into the reservoir (`SATIN-HIST-012`)."""
 
 from __future__ import annotations
 
-from .records import fmt, Halt, Stopped
+from .records import fmt, Halt, q, Stopped, Unmodelled
 
 
 class PoolsMixin:
@@ -50,6 +50,27 @@ class PoolsMixin:
         if rest - r > frame["regular"]:
             raise Halt(f"out of gas paying the state gas of {what}")
         self.draw_regular(frame, rest - r)
+        self.spilled += legacy + rest - r  # regular gas paid for a state or history charge, never credited back
+
+    def pools_observation(self, status: str, gas_used: int) -> dict:
+        """The `gasPools` group (decision D-64): the first frame's regular gas and reservoir at its start, after
+        the charges before it, and at its end; the regular gas it paid for state and history charges, which no
+        give-back credits back (SATIN-POOL-008, SATIN-HIST-012); and the gas returned to the sender."""
+        frame, tx = self.first_frame, self.tx
+        if frame is None or status != "success":
+            raise Unmodelled("the pools of a transaction whose first frame does not succeed")
+        returned = tx.gas_limit - gas_used
+        self.d.add("gasPools", f"the first frame starts with {fmt(frame['regular_at_start'])} of regular gas and "
+                   f"{fmt(frame['reservoir_at_start'])} of reservoir, what the charges before it left, and ends with "
+                   f"{fmt(frame['regular'])} and {fmt(frame['reservoir'])}", "SATIN-POOL-005", "SATIN-POOL-010",
+                   "SATIN-POOL-024")
+        self.d.add("gasPools", f"regular gas paid {fmt(self.spilled)} of the frame's state and history charges, legacy "
+                   "shares and spills, which no give-back credits back to it", "SATIN-POOL-008", "SATIN-HIST-012")
+        self.d.add("gasPools", f"returned to the sender: gas limit {fmt(tx.gas_limit)} - gas used {fmt(gas_used)} = "
+                   f"{fmt(returned)}, the unspent regular gas and the reservoir left", "SATIN-POOL-017")
+        return {"regular": {"initial": q(frame["regular_at_start"]), "final": q(frame["regular"])},
+                "reservoir": {"initial": q(frame["reservoir_at_start"]), "final": q(frame["reservoir"])},
+                "spilled": q(self.spilled), "returned": q(returned)}
 
     def give_back(self, frame, amount: int) -> None:
         frame["reservoir"] += amount  # SATIN-HIST-012: into the frame's reservoir

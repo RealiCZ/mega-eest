@@ -21,8 +21,13 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
     """One transaction against a complete pre-state."""
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
-                 reads: bool = False):
+                 reads: bool = False, pools: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
+        # The `gasPools` group (decision D-64): the first frame's pools at its start and end, and the
+        # regular gas it and its children paid for state and history charges.
+        self.pools = pools
+        self.first_frame: dict | None = None
+        self.spilled = 0
         # The `reads` group (SATIN-WIT-001, -002, -008): every account (None: absent) and slot the
         # transaction loads, as the pre-state holds it, and the SALT capacities it is served.
         self.reads = reads
