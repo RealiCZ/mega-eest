@@ -679,14 +679,21 @@ that what it returns shows in the first frame's reservoir.
   text's `(1, 0)`; every other figure of the example is the text's. The reverted and halted child
   receives 50,009 of regular gas, so that it holds the text's 50,000 at its write, the 9 being the
   operands it pushes first.
-- **The failed-deposit example is held.** The model derives every figure of the text, and the
-  evm2-based implementation reports each, but both implementations report the failed deposit's
-  `floor` as 0 where the model derives the transaction's EIP-7623 floor, 15,000 (`SATIN-POOL-020`;
-  the format's `floor` is the EIP-7623 floor, D-40). The specification states no floor for a failed
-  deposit, which settles in place of the settlement (`SATIN-TAKE-012`); whether the format's
-  `floor` of a failed deposit is 0 or the transaction's floor is to be decided before the case
-  enters the slice. `tools/make_slice.py` keeps it in `HELD`.
+- **The failed-deposit example's floor.** Both implementations report a failed deposit's `floor` as
+  0, where the model first derived the transaction's EIP-7623 floor (`SATIN-POOL-020`). The
+  specification states no floor for a failed deposit, which settles in place of the settlement
+  (`SATIN-TAKE-012`); D-66 decides it, and the case follows D-66.
 - **An adapter's reply must stay small.** The consumer reads an adapter's output only once the
   adapter has exited, so a reply larger than the pipe buffer blocks the adapter until the consumer's
   timeout. A state diff of a thousand written slots is such a reply; the answer-stopped case's P
   therefore reverts after the stop, and its slots are not kept.
+
+**D-66. A failed deposit's gas ledgers are exactly `SATIN-DEP-005`'s; D-40 is amended.**
+`SATIN-DEP-005` fixes a failed deposit's ledgers: its whole gas limit as regular gas, and no state
+and no history gas. No settlement applies a floor or a refund to it, so the format reports both as
+0: `gasLedgers` of a failed deposit is `total = regular = gasUsed = blockGas =` the gas limit,
+`state = history = refund = floor = 0`, and `historyBytes` the bytes it keeps (`SATIN-HIST-022`,
+`SATIN-DEP-006`). `blockGas = max(regular, floor)` is then the gas limit whatever the floor is, so no
+consensus figure depends on the choice: it is a reporting convention of the format, of D-40's kind,
+not a rule of the specification. Both implementations already report it so. D-40's `floor`, "the
+EIP-7623 floor", now reads: the EIP-7623 floor the settlement applies, and 0 for a failed deposit.

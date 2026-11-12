@@ -113,7 +113,9 @@ adapter implements them on its own (decisions D-40, D-41):
 - `gasLedgers`: `total` is what the transaction spent from both pools before the refund and the
   floor; `regular = total − state − history` (`SATIN-POOL-019`); `refund` is the refund the
   receipt's gas used applies, zero when the floor sets the gas used (`SATIN-POOL-018`); `floor` is
-  the EIP-7623 floor; `blockGas` is `max(regular, floor)` (`SATIN-POOL-020`).
+  the EIP-7623 floor; `blockGas` is `max(regular, floor)` (`SATIN-POOL-020`). A failed deposit's
+  ledgers are exactly `SATIN-DEP-005`'s: its gas limit as `total`, `regular`, `gasUsed` and
+  `blockGas`, and `state`, `history`, `refund` and `floor` 0 (decision D-66).
 - `resources`: `limit` is the transaction limit (`SATIN-LIM-001`), `net` the transaction's signed
   net at its end, `reported` its `max(net, 0)` (`SATIN-LIM-007`).
 - `state` lists every account whose existence, nonce, balance, code or storage differs from the

@@ -156,7 +156,7 @@ class SettlementMixin:
         try:
             status, output = self.execute(code, frame, False)
         except Halt as e:
-            return self.failed_deposit(kept, floor, nonce_before, was_empty, caller_state, str(e))
+            return self.failed_deposit(kept, nonce_before, was_empty, caller_state, str(e))
         if status != "success":
             raise Unmodelled("a reverting deposit")
         total = intrinsic + self.regular_charges + self.history_gas + self.state_gas
@@ -190,11 +190,12 @@ class SettlementMixin:
             observations["reads"] = self.reads_observation()
         return Result(observations, d)
 
-    def failed_deposit(self, kept, floor: int, nonce_before: int, was_empty: bool, caller_state: int, why: str) -> Result:
+    def failed_deposit(self, kept, nonce_before: int, was_empty: bool, caller_state: int, why: str) -> Result:
         """A deposit whose own frame halts is a failed deposit (SATIN-DEP-004): it keeps its sender's nonce bump
         and mint and applies nothing else, uses its whole gas limit, reported as regular gas, with no state and
         no history gas (SATIN-DEP-005), keeps its body's data size (SATIN-DEP-006), and counts a caller it created
-        as one unit of state growth, uncharged (SATIN-ACCT-020)."""
+        as one unit of state growth, uncharged (SATIN-ACCT-020). Its gas ledgers are exactly SATIN-DEP-005's, with
+        no floor and no refund (decision D-66)."""
         tx, d = self.tx, self.d
         if self.hint_bytes:
             raise Unmodelled("a failed deposit that admitted a hint")
@@ -211,13 +212,16 @@ class SettlementMixin:
               f"gas, with no state gas and no history gas: the caller's {fmt(caller_state)} of state gas, paid before the "
               "frame, is not reported as state gas, and nothing returns to the sender", "SATIN-DEP-005", "SATIN-DEP-006",
               "SATIN-POOL-017", "SATIN-TAKE-012")
+        d.add("gasLedgers", f"its ledgers are exactly those: no settlement applies a floor or a refund, so both are 0 (D-66), "
+              f"and the block counts max(regular {fmt(tx.gas_limit)}, floor 0) = {fmt(tx.gas_limit)}, its whole gas limit",
+              "SATIN-DEP-005", "SATIN-POOL-020")
         d.add("resources", f"it keeps the data size of its body and calldata, {body} bytes, the history bytes it reports; "
               f"no write record; state growth {self.growth}" + (", the caller it created, counted and not charged"
                                                                   if was_empty else ""),
               "SATIN-DEP-006", "SATIN-ACCT-020", "SATIN-HIST-022", "SATIN-TAKE-012")
         gas = tx.gas_limit
         ledgers = {"total": q(gas), "regular": q(gas), "state": q(0), "history": q(0), "historyBytes": q(body),
-                   "refund": q(0), "floor": q(floor), "gasUsed": q(gas), "blockGas": q(max(gas, floor))}
+                   "refund": q(0), "floor": q(0), "gasUsed": q(gas), "blockGas": q(gas)}
         resources = {"dataSize": dim(TX_DATA_LIMIT, body), "kvUpdates": dim(TX_KV_UPDATE_LIMIT, 0),
                      "stateGrowth": dim(TX_STATE_GROWTH_LIMIT, self.growth)}
         receipt = {"type": "0x7e", "status": "0x0", "gasUsed": q(gas), "logs": [],
