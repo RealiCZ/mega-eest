@@ -597,3 +597,24 @@ record, and schema 1.1 does so:
   log's bytes, held to the frame's budget and then the transaction's limit in the order of
   `SATIN-LIM-010` and `-011`, the frame's budget being what the transaction had left when it started
   (`SATIN-LIM-002`) and an admitted hint on no frame (`SATIN-LIM-012`, `SATIN-STOP-012`).
+
+**D-63. The model derives the edges of rules, and is cut into modules by domain.** The model behind
+the slice's expectations (D-43) derives the expected values of small, hand-built cases at the edges
+of rules: atomic rules (a price, a predicate, an encoding, a record, a give-back) and the order of
+charges and decisions, from the specification's text and constants. It is not a general EVM, does
+not run arbitrary bytecode, and does not cover wide combinations of frames, calls and limits: the
+implementations and the differential gates of the evm2-based implementation's repository
+(`next/diff`), which compare two independent engines over thousands of shared scenarios, cover that
+breadth. An expectation taken from two engines' agreement rather than derived from the specification
+would be a different kind, labelled apart if it is ever added. The model is not the executable
+specification; that is a direction, not a decision. `docs/model.md` states the scope and maps the
+modules.
+
+- To keep it bounded before the take-back cases, `tools/satin_model.py` became the package
+  `tools/satin_model/`: the constants, the records, and a `Run` composed of one mixin per domain (the
+  transaction, settlement, the pools, gas detention, the interpreter, calls, interception,
+  authorizations, storage, reads and the resource limits). The code moved verbatim: every generated
+  byte is the same, and `import satin_model as model` reads as before.
+- `tools/check_derived_text.py` copies the package and changes the constants in its `constants.py`.
+- The cases' provenance and `slice/README.md` still name `tools/satin_model.py`: the text is part of
+  the cases' bytes, which the split keeps, and changes when the cases are next regenerated.

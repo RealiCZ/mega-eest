@@ -3,7 +3,7 @@
 
 Each case is authored here — its setup, the transaction (real signed bytes, or a deposit
 envelope), the SALT capacities its state lands in — and its expected observations come from
-`tools/satin_model.py`, an executable restatement of the cited rules of the pinned specification
+`tools/satin_model/`, an executable restatement of the cited rules of the pinned specification
 (`specs/satin-d34e626`; the cases added for interception, the keyless decoder and EIP-7702
 existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
 principles, gas detention, the Oracle's reads, the refused volatile read, the reads group and the
@@ -227,7 +227,7 @@ class Case:
         self.authorizations = authorizations or []  # (key, chain id, delegation target, nonce)
         self.system = system  # the system contracts' code in the pre-state
         self.check = check or {}  # gasLedgers figures the derivation must reproduce
-        # (probe, regular gas): the gas limit is set so the model's probe point (satin_model.Run.probe)
+        # (probe, regular gas): the gas limit is set so the model's probe point (satin_model's Run.probe)
         # holds exactly that regular gas; `gas` is the limit the model is first run with to find it.
         self.tune = tune
         # A case whose code is written from parameters: `make(**params)` is its code, and each of `retune`,
