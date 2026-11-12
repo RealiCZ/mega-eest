@@ -173,7 +173,7 @@ states it.
 | `resources` | data size, KV updates and state growth: the transaction limit, the signed net and the reported count |
 | `limit` | the stop that ended the transaction's own frame: dimension, transaction or frame scope, limit, call path, operation, phase, return data, and whether the operation and the enclosing writes committed; `null` when none |
 | `detention` | each volatile read (category, admitted or failed, call path, compute at the read, cap), the final compute limit (`null` if none), gas withheld, released and burned |
-| `reads` | logical reads the spec requires a node to load and export: accounts (`null`: read and absent), slots with the value read (explicit zero), code hashes, block hashes, SALT capacities served, oracle reads in order with their values, admitted hints in order |
+| `reads` | logical reads the spec requires a node to load and export: accounts (`null`: read and absent), slots with the value read (explicit zero), code hashes, block hashes, SALT capacities served, oracle reads in order with their values, admitted hints in order. For a transaction these are its loads in the stateless witness's sense (`SATIN-WIT-001`, `-008`): values as the state held them before it, the code hash of every account read that has code, compared as an exact set ([adapter-protocol.md](adapter-protocol.md#reads), D-61) |
 | `checkpoints` | ledger checkpoints at rule-defined boundaries, keyed by call path (child ordinal under each parent), phase and ordinal |
 
 What each value means where an implementation's result could be read two ways — a creation's
