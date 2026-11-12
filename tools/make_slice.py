@@ -6,8 +6,8 @@ envelope), the SALT capacities its state lands in — and its expected observati
 `tools/satin_model.py`, an executable restatement of the cited rules of the pinned specification
 (`specs/satin-d34e626`; the cases added for interception, the keyless decoder and EIP-7702
 existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
-principles, gas detention, the Oracle's reads, the refused volatile read and the reads group
-`specs/satin-5fb2688`, D-59 to D-61). No implementation is run: the filler's output is a candidate to compare
+principles, gas detention, the Oracle's reads, the refused volatile read, the reads group and the
+stops of the transaction's own frame `specs/satin-5fb2688`, D-59 to D-62). No implementation is run: the filler's output is a candidate to compare
 with, never the source of these values (`tools/run-slice.sh` runs both implementations against
 them).
 
@@ -387,6 +387,7 @@ def cases() -> list[Case]:
     out += ordering_cases()
     out += detention_cases()
     out += reads_cases()
+    out += limit_cases()
     return out
 
 
@@ -820,6 +821,54 @@ def reads_cases() -> list[Case]:
     return out
 
 
+# --- Limit stops of the transaction's own frame ------------------------------------------------------
+
+
+def limit_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = ORDERING_SPEC
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    # Compute: gas detention's crossing in the transaction's own frame (SATIN-DET-018), the transaction's result.
+    over = words_within(cap) + 1
+    add(Case("satin/limit-stops/compute-at-one-charge", "TIMESTAMP detains the transaction, then one memory expansion of "
+             f"{fmt(model.memory_cost(over))} passes what the limit leaves it: the transaction's own frame is stopped with "
+             "MegaLimitExceeded(2, limit) and the expansion is not charged", spec=spec, gas=21_000_000,
+             code=b"\x42\x50" + burn(over) + STOP))
+    add(Case("satin/limit-stops/compute-at-static-cost", "TIMESTAMP and a burn leave the transaction's own frame 50 of "
+             f"spendable gas: a BALANCE of an account that is not warm is stopped at its static cost, {model.WARM_READ}",
+             spec=spec, gas=21_000_000, make=lambda words, pad: detained(words, pad) + push(int.from_bytes(UNTOUCHED, "big"))
+             + b"\x31" + STOP, params={"words": words_within(cap - 6_000), "pad": 0},
+             retune=[("balance-room", 50 + model.G_VERYLOW, "pad", -1)]))
+    # State growth: fresh slots past the frame's budget, which is the transaction's whole limit (SATIN-LIM-002).
+    # Its first slots reach the budget without a stop; the case's own figures show them kept until the last.
+    limit = model.TX_STATE_GROWTH_LIMIT
+    add(Case("satin/limit-stops/state-growth-one-over", f"{fmt(limit + 1)} fresh slots: the first {fmt(limit)} reach the "
+             f"frame's state-growth budget, {fmt(limit)}, and the last takes it past, so the frame is stopped with "
+             "MegaLimitExceeded(3, limit) after that SSTORE's regular and state charges and before its record is charged, "
+             "and the transaction settles as a revert", spec=spec, gas=150_000_000,
+             code=b"".join(sstore(k, 1) for k in range(1, limit + 2)) + STOP))
+    # Data size: hints use what the transaction has left, and a log of the frame's crosses the transaction's limit
+    # while the frame's budget holds it (SATIN-LIM-012).
+    big = 1 << 20
+    count = (model.TX_DATA_LIMIT - model.TX_BODY_SIZE) // big
+    tail = 100  # what one more hint leaves the transaction, for a small log to land on or cross
+    last = model.TX_DATA_LIMIT - model.TX_BODY_SIZE - count * big - tail
+    hints = big_hints(count, big) + push(0) + push(0) + push(last) + push(0) + push(0) \
+        + push(int.from_bytes(model.ORACLE, "big")) + push(1) + b"\xf1\x50"
+    for over_limit in (False, True):
+        size = tail - model.LOG_BASE_SIZE + (1 if over_limit else 0)
+        add(Case(f"satin/limit-stops/data-size-{'one-byte-over' if over_limit else 'at-limit'}",
+                 f"admitted hints, {NUMBERS.get(count, str(count))} of 1 MiB and one of {fmt(last)} bytes, leave the "
+                 f"transaction {tail} bytes of data size, and a LOG0 of {size} data bytes " +
+                 ("takes it one byte past its limit while the frame's budget holds the log: the frame is stopped with "
+                  "MegaLimitExceeded(0, limit) naming the transaction limit, the log is not kept, and the hints stay "
+                  "counted" if over_limit else "takes it exactly to its limit: the log is kept"),
+                 boundary=f"the data size {'one byte over' if over_limit else 'at'} TX_DATA_LIMIT", system=True, spec=spec,
+                 gas=8_000_000, code=hints + log(0, 0, size, []) + STOP))
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -1089,7 +1138,8 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
     return None
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
-               "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources", "reads": "/expected/reads"}
+               "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources", "reads": "/expected/reads",
+               "limit": "/expected/limit"}
 
 
 def settle_burn(params: dict) -> None:
@@ -1156,10 +1206,12 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str 
     if unknown:
         raise SystemExit(f"{c.case_id}: cites rules the registry does not have: {unknown}")
     requires = ["group:gas-ledgers", "group:limit", "group:outcome", "group:receipts", "group:resources", "group:state",
-                "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else [])
+                "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else []) \
+        + (["group:limit-stop"] if result.observations["limit"] else [])
     return {
         "format": "mega-execution-fixture",
-        "schemaVersion": "1.0",
+        # A stop of the transaction's own frame is a schema 1.1 construct (D-62); every other case stays 1.0.
+        "schemaVersion": "1.1" if result.observations["limit"] else "1.0",
         "caseId": c.case_id,
         "specRef": {"name": "megaeth/Satin", "descriptor": descriptor_digest},
         "profile": "state-transition",

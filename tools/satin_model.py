@@ -27,6 +27,8 @@ narrow class of transactions the slice uses:
   changes to its sender, an authorization list's first write among the charges it cannot pay;
 - for the cases that ask, the `reads` group: what the transaction loads, as the stateless witness
   needs it;
+- a stop of the transaction's own frame, its result: gas detention's crossing, and an `SSTORE`'s
+  record or a log's bytes held to the frame's budget and the transaction's limit;
 - gas detention: `TIMESTAMP`, a deposit's `SLOAD` in the Oracle's frame and `BALANCE` as reads, the
   limit they set, every frame's spendable and withheld parts, each part an opcode deducts as one
   charge, the crossing that stops a child frame and the out-of-gas beyond its whole gas; and
@@ -135,6 +137,10 @@ DELEGATION_PREFIX = b"\xef\x01\x00"  # EIP-7702's delegation indicator, followed
 BLOCK_ENV_ACCESS_COMPUTE_GAS = 20_000_000  # SATIN-DET-012: the cap after a read of the block environment
 ORACLE_ACCESS_COMPUTE_GAS = 20_000_000  # SATIN-DET-012: the cap after a read of the Oracle's storage
 DETENTION_STOP = 2  # SATIN-DET-018: the kind of MegaLimitExceeded a crossing stops a frame with
+# SATIN-STOP-002, SATIN-STOP-018: the kind of each dimension's stop, and the dimension the format names it by.
+DATA_SIZE_STOP, KV_UPDATE_STOP, STATE_GROWTH_STOP = 0, 1, 3
+STOP_DIMENSIONS = {DATA_SIZE_STOP: "data-size", KV_UPDATE_STOP: "kv-updates", DETENTION_STOP: "compute",
+                   STATE_GROWTH_STOP: "state-growth"}
 
 ORACLE = bytes.fromhex("6342000000000000000000000000000000000001")
 KEYLESS_DEPLOY = bytes.fromhex("6342000000000000000000000000000000000003")
@@ -224,6 +230,15 @@ class Halt(Exception):
 
 class OutOfGasBeforeFrame(Exception):
     """A charge before the first frame the transaction cannot pay (SATIN-SCHED-009)."""
+
+
+class LimitStop(Exception):
+    """A write that crosses a resource limit (SATIN-STOP-001, SATIN-LIM-010): the frame that made it is
+    stopped with MegaLimitExceeded(kind, limit)."""
+
+    def __init__(self, kind: int, limit: int, why: str):
+        super().__init__(why)
+        self.kind, self.limit = kind, limit
 
 
 class Stopped(Exception):
@@ -377,6 +392,9 @@ class Run:
         # make, and the limit the most restrictive volatile read set, None before any read.
         self.compute = 0
         self.limit: int | None = None
+        # The stop of the transaction's own frame, (kind, limit), when one is its result.
+        self.stop: tuple[int, int] | None = None
+        self.frame_start_counts = (0, 0, 0)
 
     # The refusals of transaction validation, in the order SATIN-VAL-003 fixes for Satin's own
     # checks; the base layer's checks come after, each case failing only one check.
@@ -681,6 +699,9 @@ class Run:
         self.address = recipient
         frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
         self.probe.setdefault("frame", regular)
+        # What the transaction's own frame is given in each dimension: what the transaction has left once the
+        # body and the counts made before the first frame are counted (SATIN-LIM-002).
+        self.frame_start_counts = (self.data_size, len(self.kv), self.growth)
         snapshot = self.snapshot()
         status, output = "success", b""
         try:
@@ -695,8 +716,18 @@ class Run:
         except Halt as e:
             status = "halt"
             d.add("outcome", f"the frame halts: {e}", "SATIN-OUT-007")
-        except Stopped:
-            raise Unmodelled("a limit stop of the transaction's own frame")
+        except Stopped as e:
+            status, output = "revert", limit_exceeded(DETENTION_STOP, e.limit)
+            self.stop = (DETENTION_STOP, e.limit)
+            d.add("outcome", f"the transaction's own frame reaches gas detention's crossing at {e}: the charge is not made, "
+                  f"and the frame is stopped with MegaLimitExceeded({DETENTION_STOP}, {fmt(e.limit)}), the transaction's "
+                  "result", "SATIN-DET-018", "SATIN-STOP-001", "SATIN-STOP-004", "SATIN-STOP-021")
+        except LimitStop as e:
+            status, output = "revert", limit_exceeded(e.kind, e.limit)
+            self.stop = (e.kind, e.limit)
+            d.add("outcome", f"the transaction's own frame crosses a limit at {e}: the write is not kept, and the frame is "
+                  f"stopped with MegaLimitExceeded({e.kind}, {fmt(e.limit)}), the transaction's result",
+                  "SATIN-STOP-001", "SATIN-STOP-004", "SATIN-STOP-018", "SATIN-STOP-021")
 
         if status == "success" and create:
             self.deposit_code(output, frame, recipient)
@@ -738,6 +769,13 @@ class Run:
             execution = {"status": "halt", "output": "0x", "createdAddress": None}
         elif status == "revert":
             self.restore(snapshot)
+            if self.hint_bytes:
+                # An admitted hint is the transaction's, on no frame: it stays counted (SATIN-STOP-012, ORCL-009).
+                if self.stop is None:
+                    raise Unmodelled("a revert after an admitted hint")
+                self.data_size += self.hint_bytes
+                d.add("resources", f"the admitted hints' {fmt(self.hint_bytes)} bytes stay counted as data size through the "
+                      "stop", "SATIN-STOP-012", "SATIN-ORCL-009")
             self.undo_start(moved, create, recipient, new_account, pre_frame_history, pre_frame_state)
             if keyless and start_record:
                 self.history_gas -= pre_frame_history
@@ -749,6 +787,11 @@ class Run:
                   "recipient or created-account state gas, are given back into the reservoir and return to the sender; its "
                   f"regular charges {fmt(self.regular_charges)} stay spent", "SATIN-POOL-014", "SATIN-POOL-015",
                   "SATIN-HIST-005", "SATIN-POOL-017")
+            if self.stop is not None:
+                d.add("limit", f"the stop of the transaction's own frame is its result: {STOP_DIMENSIONS[self.stop[0]]}, limit "
+                      f"{fmt(self.stop[1])}, return data MegaLimitExceeded({self.stop[0]}, {fmt(self.stop[1])}); the "
+                      "transaction settles as a revert, keeping what was applied before its first frame",
+                      "SATIN-STOP-009", "SATIN-STOP-011", "SATIN-STOP-018", "SATIN-STOP-021")
             self.refund = 0
             execution = {"status": "revert", "output": h(output), "createdAddress": None}
         else:
@@ -835,10 +878,17 @@ class Run:
         if status == "success":
             d.add("outcome", "admitted; the frame succeeds" + (f" and creates {h(recipient)}" if create else ""),
                   "SATIN-OUT-001" if not create else "SATIN-SCHED-011")
+        elif status == "revert" and self.stop is not None:
+            d.add("outcome", "admitted; the frame is stopped, and the transaction is included with a failed receipt",
+                  "SATIN-STOP-009")
         elif status == "revert":
             d.add("outcome", "admitted; the frame reverts with its REVERT data", "SATIN-OUT-001")
+        limit = None
+        if self.stop is not None:
+            kind, value = self.stop
+            limit = {"dimension": STOP_DIMENSIONS[kind], "limit": q(value), "returnData": h(limit_exceeded(kind, value))}
         observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
-                        "resources": resources, "limit": None}
+                        "resources": resources, "limit": limit}
         if self.reads:
             observations["reads"] = self.reads_observation()
         return Result(observations, d)
@@ -939,6 +989,34 @@ class Run:
                    "SATIN-WIT-001", "SATIN-WIT-005", "SATIN-WIT-013")
         return {"accounts": accounts, "storage": storage, "codes": codes, "blockHashes": {},
                 "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": [], "hints": []}
+
+    def hold_to_limits(self, data_size: int, kv: int, growth: int, what: str) -> None:
+        """A write of the transaction's own frame held to its limits, in the order data size, KV updates, state
+        growth (SATIN-LIM-010), each to the frame's budget first and then to the transaction's limit
+        (SATIN-LIM-011). The counts are the write's rises; the transaction's present counts do not hold them yet.
+        The frame's budget is what the transaction had left when the frame started (SATIN-LIM-002); an admitted
+        hint is on no frame (SATIN-LIM-012)."""
+        start = dict(zip((DATA_SIZE_STOP, KV_UPDATE_STOP, STATE_GROWTH_STOP), self.frame_start_counts))
+        for kind, rise, used, limit in ((DATA_SIZE_STOP, data_size, self.data_size, TX_DATA_LIMIT),
+                                        (KV_UPDATE_STOP, kv, len(self.kv), TX_KV_UPDATE_LIMIT),
+                                        (STATE_GROWTH_STOP, growth, self.growth, TX_STATE_GROWTH_LIMIT)):
+            if not rise:
+                continue
+            budget = limit - start[kind]
+            net = used - start[kind] - (self.hint_bytes if kind == DATA_SIZE_STOP else 0)
+            name = STOP_DIMENSIONS[kind]
+            if net + rise > budget:
+                self.d.add("limit", f"{what} rises the frame's {name} by {fmt(rise)}, from {fmt(net)} past its budget "
+                           f"{fmt(budget)}, what the transaction had left when the frame started: the frame budget is "
+                           "crossed, and the stop names it", "SATIN-LIM-002", "SATIN-LIM-004", "SATIN-LIM-010",
+                           "SATIN-LIM-011")
+                raise LimitStop(kind, budget, f"{what}: its {name} past the frame budget {fmt(budget)}")
+            if used + rise > limit:
+                self.d.add("limit", f"{what} rises the frame's {name} by {fmt(rise)} to {fmt(net + rise)}, within its "
+                           f"budget {fmt(budget)}, and the transaction's from {fmt(used)} to {fmt(used + rise)}, past its "
+                           f"limit {fmt(limit)}: the stop names the transaction limit", "SATIN-LIM-005", "SATIN-LIM-010",
+                           "SATIN-LIM-011", "SATIN-LIM-012")
+                raise LimitStop(kind, limit, f"{what}: the transaction's {name} past its limit {fmt(limit)}")
 
     def order(self) -> tuple[str, tuple[str, ...]]:
         """Where the order of a call's charges and decisions is stated: the principle of `SATIN-HIST-023`
@@ -1155,6 +1233,8 @@ class Run:
                 expand(offset, size, f"LOG{n}")
                 payload = bytes(memory[offset:offset + size])
                 log_bytes = LOG_BASE_SIZE + LOG_TOPIC_SIZE * n + size
+                # The log's bytes pass the limits before its history is charged (SATIN-TAKE-009).
+                self.hold_to_limits(log_bytes, 0, 0, f"LOG{n} of {fmt(size)} data bytes")
                 history = log_bytes * COST_PER_HISTORY_BYTE
                 self.charge_state(frame, history, 0, f"LOG{n}'s history")
                 self.history_gas += history
@@ -1277,6 +1357,8 @@ class Run:
             elif op == 0x31:  # BALANCE
                 who = (pop() % 2**160).to_bytes(20, "big")
                 self.probe.setdefault("balance", frame["regular"])
+                if self.limit is not None:
+                    self.probe.setdefault("balance-room", self.limit - self.compute)
                 if frame.get("access_off") and who == self.env.coinbase:
                     return refuse(ACCESS_TYPE_BENEFICIARY, "BALANCE of the block beneficiary")
                 self.charge_regular(frame, WARM_READ, "BALANCE's static cost")
@@ -1743,10 +1825,17 @@ class Run:
                 label += f"; refund +{fmt(bonus)} (restored)"
             if self.refund:
                 rules.append("SATIN-SCHED-003")
-        # The write record and its history, SATIN-ACCT-004 and SATIN-HIST-006.
+        # The limits on the record, in the order data size, KV updates, state growth (SATIN-TAKE-005).
         record = ("s", address, key)
         was = record in self.kv
         now = new != original
+        grew = int(original == 0 and present == 0 and new != 0)
+        if (now and not was) or grew:
+            self.growth -= grew  # the rise is held to the limits before it is counted
+            self.hold_to_limits(WRITE_RECORD_SIZE if now and not was else 0, int(now and not was), grew,
+                                f"the SSTORE of slot {key}")
+            self.growth += grew
+        # The write record and its history, SATIN-ACCT-004 and SATIN-HIST-006.
         if now and not was:
             history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
             self.charge_state(frame, history, 0, "the slot's write record")

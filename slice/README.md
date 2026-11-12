@@ -1,10 +1,12 @@
 # The vertical slice
 
-103 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+108 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 63 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 20 for the
-edges of the charge-order principles and 5 for gas detention at `5fb2688` (`specs/satin-5fb2688`),
-each case naming its own spec (decisions D-54, D-59, D-60). They are reviewed candidates: `provenance.status` is `candidate` until
+edges of the charge-order principles, 5 for gas detention and 5 for the stops of a transaction's
+own frame at `5fb2688` (`specs/satin-5fb2688`), each case naming its own spec (decisions D-54,
+D-59, D-60, D-62). The cases whose expected `limit` is a stop are schema 1.1; every other case is
+1.0. They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
 Every file here is written by `tools/make_slice.py` (`--check` verifies it), and every figure in a
@@ -42,6 +44,7 @@ derivation, and the two implementations run against it.
 | `call-order` | 9 | the order around a frame start (`SATIN-HIST-023`): a caller that cannot pay a funded value call's records halts in the opcode, before any interceptor answers or hint is admitted, one gas below the threshold and at it, forwarding all it may or nothing (`SATIN-HIST-009`, `SATIN-ICPT-007`); a value its caller cannot fund makes no record (`SATIN-HIST-015`), and the refused or answered start returns the child's whole regular gas, the stipend included (`SATIN-POOL-012`), which `GAS` shows (`SATIN-POOL-009`) |
 | `delegated-recipient` | 6 | the delegate's access before the first frame (`SATIN-SCHED-008` step 5): warm, cold, against the same account without its delegation, one gas short of the cold access (out of gas before the first frame, `SATIN-SCHED-009`, `-010`) and exactly at it, and a transaction to its own delegated sender |
 | `detention` | 5 | one charge under gas detention (`SATIN-DET-018`): a detained child frame whose spendable part cannot pay `BALANCE`'s static cost is stopped with `MegaLimitExceeded(2, limit)` when its whole regular gas can pay it and runs out of gas when it cannot (`SATIN-DET-020`); the spendable part one below the static cost and at it, the static cost staying spent once paid; a value `CALL` stopped at its value transfer after its static cost |
+| `limit-stops` | 5 | a stop of the transaction's own frame, its result (`SATIN-STOP-009`, `-021`), settled as a revert: gas detention's crossing at one memory expansion and at `BALANCE`'s static cost (kind 2); the fresh slot that takes the frame's state growth past its budget (kind 3, `SATIN-LIM-002`, `-010`); and, after hints used what the transaction had left, a log one byte past the transaction's data-size limit while the frame's budget holds it (kind 0, `SATIN-LIM-011`, `-012`), with the log that lands exactly on the limit |
 | `pre-frame` | 3 | the reservoir pays the authorities' records first (`SATIN-HIST-005`), shown by a first frame that halts; the transaction's own start record charged before interception answers its `keylessDeploy` call, one gas below step 1's overhead and at it |
 
 The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
@@ -49,7 +52,7 @@ empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and 
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-104 rules in 19 areas are cited. `index.json` lists each case with its area, rules and file digest.
+117 rules in 19 areas are cited. `index.json` lists each case with its area, rules and file digest.
 
 ## Quarantine and the wrong expectation
 
@@ -91,8 +94,9 @@ system contracts a call can reach (D-55).
 
 ## Not in this slice
 
-Limit stops of the transaction's own frame (neither implementation's result carries what the
-`limit` group needs, D-41), gas detention beyond `TIMESTAMP`, a deposit's Oracle read and `BALANCE`,
+A stop's diagnostics (scope, call path, operation, phase and commit flags, which neither
+implementation's result carries, D-62), a stop of the KV-update limit (half a million write
+records cost more gas than a transaction holds), gas detention beyond `TIMESTAMP`, a deposit's Oracle read and `BALANCE`,
 nested frames beyond a call to a system contract, a refused call or a detained child, EIP-7702
 lists beyond one accepted entry or two applied ones, an Oracle read that asks the oracle service
 (the evm2-based adapter runs no oracle transcript), the reservoir as an observation (no adapter
@@ -110,7 +114,7 @@ builds the format CLI and both adapters (fetching the evm2-based implementation 
 consumes `cases/` with each adapter plain and instrumented, and prints
 
 ```text
-SLICE cases=103 adapters=2 pass=206 fail=0 unsupported=0 error=0 digests=identical
-PARITY adapters=2 cases=103 mismatches=0
+SLICE cases=108 adapters=2 pass=216 fail=0 unsupported=0 error=0 digests=identical
+PARITY adapters=2 cases=108 mismatches=0
 NEGATIVE wrong-expected verdict=fail rewritten=no
 ```
