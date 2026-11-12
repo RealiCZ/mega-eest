@@ -45,6 +45,7 @@ use evm2::{
 use mega_evm2::{
     chain::{BootstrapInput, ChainConfig},
     factory::SatinFactory,
+    oracle::{OracleAnswers, OracleServices, RecordingOracle},
     BucketId, MegaTypes, SaltReadError, SaltSnapshot, SnapshotId, MIN_BUCKET_SIZE,
 };
 use mega_fixture_format::json::{self, Value};
@@ -55,8 +56,8 @@ const IMPLEMENTATION_REPOSITORY: &str = "https://github.com/RealiCZ/mega-evm";
 const FORK_REPOSITORY: &str = "https://github.com/RealiCZ/evm2";
 
 /// What this adapter can run: state-transition's mandatory groups and the features below. The
-/// oracle transcript is not among them: the implementation's oracle service is a map from slot to
-/// value, which can check neither a transcript's order nor an answer of none.
+/// oracle transcript is not among them: this adapter's service records hints but supplies no
+/// answers, so Oracle reads use the slot's value.
 const CAPABILITIES: &[&str] = &[
     "feature:deposit",
     "feature:salt",
@@ -712,10 +713,12 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     let wants_reads = matches!(req.at("requires")?.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some("group:reads")));
     #[allow(clippy::arc_with_non_send_sync)]
     let salt = Arc::new(salt);
+    // Record forwarded hints without supplying answers: Oracle reads still use the slot's value.
+    let oracle_service = Arc::new(RecordingOracle::new(OracleAnswers::default()));
     // The factory installs Satin's version, limits, registry and precompiles, has storage of an
     // account the database lacks read, and resolves the live system address from the pre-state's
     // SequencerRegistry, as a block resolves it once (SATIN-REG-002).
-    let mut evm = match factory.evm(env, evm2::evm::Db::new(db), salt.clone()) {
+    let mut evm = match factory.evm(env, evm2::evm::Db::new(db), salt.clone(), OracleServices::service(oracle_service.clone())) {
         Ok(evm) => evm,
         Err(e) => return error(format!("the implementation could not start the transaction's EVM: {e:?}")),
     };
@@ -823,7 +826,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     }
     if wants_reads {
         if let Value::Object(m) = &mut observations {
-            m.insert("reads".into(), reads(&loaded.borrow(), &listed, &ext.mechanisms.hints));
+            m.insert("reads".into(), reads(&loaded.borrow(), &listed, &oracle_service.hints()));
         }
     }
     Ok((observations, diagnostics))
