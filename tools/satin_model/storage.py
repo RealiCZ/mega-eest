@@ -36,12 +36,14 @@ class StorageMixin:
         if write:
             label += f" + {'fresh-slot write' if original == 0 else 'reset'} {fmt(write)}"
         # The fresh-slot state charge and its give-back, SATIN-STATE-008, with the legacy share.
+        pools = [frame["reservoir"]]  # a child's reservoir before each state or history charge (SATIN-POOL-008)
         m = None
         if original == 0 and present == 0 and new != 0:
             m = self.multiplier(self.salt_bucket(address, key))
             charge = SLOT_STATE * m
             legacy = min(charge, max(0, LEGACY_SSTORE_SHARE))
             self.charge_state(frame, charge, legacy, "a fresh slot")
+            pools.append(frame["reservoir"])
             self.state_gas += charge
             self.growth += 1
             label += f"; state gas {fmt(SLOT_STATE)} x m={m} = {fmt(charge)} ({fmt(legacy)} legacy share first)"
@@ -87,7 +89,9 @@ class StorageMixin:
         if now and not was:
             history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
             self.charge_state(frame, history, 0, "the slot's write record")
+            pools.append(frame["reservoir"])
             self.kv.add(record)
+            self.record_frames[record] = frame
             self.data_size += WRITE_RECORD_SIZE
             self.history_gas += history
             self.history_bytes += WRITE_RECORD_SIZE
@@ -104,6 +108,15 @@ class StorageMixin:
             self.history_bytes -= WRITE_RECORD_SIZE
             label += f"; write record taken back, {fmt(history)} history given back"
             rules += ["SATIN-HIST-006", "SATIN-ACCT-004"]
+            if self.record_frames.get(record, frame) is not frame:
+                d.add("gasLedgers", f"slot {key}'s record was made by another frame, which wrote the slot and paid its "
+                      f"{fmt(history)}; this frame runs on the same storage and takes the record back: the descendant row, "
+                      "so it pays the warm access, its refund change is on its own counter, and the give-back goes into "
+                      "its own reservoir, not the writer's and not its regular gas", "SATIN-TAKE-005", "SATIN-TAKE-002",
+                      "SATIN-TAKE-003", "SATIN-HIST-007")
+                d.add("resources", f"the take-back counts -1 KV update and -{WRITE_RECORD_SIZE} bytes of data size on this "
+                      "frame's own net, which merges into its caller's when it succeeds and is discarded when it fails",
+                      "SATIN-TAKE-005", "SATIN-TAKE-004")
             d.add("resources", f"slot {key} written back to its original value: its record is taken back",
                   "SATIN-ACCT-004", "SATIN-ACCT-006")
         if new == 0:
@@ -111,6 +124,14 @@ class StorageMixin:
         else:
             acct.storage[key] = new
         d.add("gasLedgers", label, *rules)
+        if "received" in frame and pools[0] and len(pools) == 3:
+            spill = charge - legacy - (pools[0] - pools[1])
+            d.add("gasLedgers", f"of the slot's {fmt(charge)} of state gas the frame pays its legacy share {fmt(legacy)} from "
+                  f"regular gas, {fmt(pools[0] - pools[1])} from its reservoir" + (f" and {fmt(spill)} from regular gas"
+                                                                                    if spill else "")
+                  + f", then {fmt(pools[1] - pools[2])} of the record's {fmt(history)} from its reservoir: it is left with "
+                  f"{fmt(frame['reservoir'])} of reservoir and {fmt(frame['regular'])} of regular gas", "SATIN-POOL-008",
+                  "SATIN-STATE-012")
         return f"SSTORE {fmt(access + write)}"
 
     def deposit_code(self, code: bytes, frame, address: bytes) -> None:
