@@ -278,7 +278,8 @@ published digest; its member inventory and the rule that maps an old member to a
 [corpus-archive.md](corpus-archive.md). Where it is mirrored is the owner's decision.
 
 **D-48. Each implementation is pinned by commit and built with its own toolchain.** The revm-based
-implementation is a cargo git dependency at `5e3f30ad` with the patches of its own root manifest;
+implementation is a cargo git dependency at `5e3f30ad`, later `4e39cfd6` (D-53), with the patches
+of its own root manifest;
 the evm2-based implementation and its evm2 fork are checked out by `tools/fetch-implementations.sh`
 under the git-ignored `vendor/`, laid out so their relative `../../evm2` path resolves, and the
 script refuses a fork pin that differs from the implementation's own `next/evm2-fork.env`. The
@@ -337,3 +338,28 @@ own workspace does, so the engine's precompile backends are the ones its members
 adapter's lockfile is the implementation's, less what the adapter does not build, plus the adapter
 and the format crate. Every observation of every slice case, the quarantined and the negative
 included, is byte-identical to the one at `9e55185f`.
+
+**D-53. The revm-based pin moves to `4e39cfd6`; the SALT member keeps the revision it was read
+at.** The revm-based pin moved from `5e3f30ad` to `4e39cfd6`, on the same revm and op-revm forks
+(`4c8f0d43`, `8c0db939`) and with the same root manifest, lockfile and toolchain, so the adapter's
+versions and patches are unchanged and only the revision moves. The revision adopts four rules of
+the specification:
+
+- `SLOTNUM` pushes zero (`SATIN-BASE-005`);
+- a value-bearing `sendHint` is admitted (`SATIN-ORCL-006`);
+- a deposit and a Mega System Transaction ask the Oracle service nothing (`SATIN-ORCL-005`);
+- `keylessDeploy` is recognized only once its arguments decode (`SATIN-ICPT-006`).
+
+It also derives the activation-block rules in its block executor and has its test database apply
+EIP-161 on commit; the adapter uses neither, as it runs `MegaEvm::execute_transaction` over its
+own database, so no adapter change was needed. The revision still prices no history gas for a
+deposit: the three quarantined cases fail on it exactly as recorded and pass on the evm2-based
+implementation. Their records name `5e3f30ad`, the revision they were recorded against, and the
+verdict holds at `4e39cfd6`. Every observation of every slice case, the quarantined and the
+negative included, is byte-identical to the one at `5e3f30ad`.
+
+The SALT member of the descriptors (`tools/descriptor-members/`, `salt.reference`) names the
+revision its mapping was read from, `5e3f30ad`. The mapping's source
+(`crates/mega-evm/src/external/hasher`) is byte-identical at `4e39cfd6`, so the member's data is
+the same at both revisions, and the member keeps the revision it was read at: the descriptor
+digest, which every case's `specRef` carries, does not move with an implementation's pin.
