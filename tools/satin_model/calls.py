@@ -1,25 +1,29 @@
-"""A call from the transaction's own frame, decided in the order of `SATIN-ICPT-007`: interception, then the
-frame start, the child frame and what it returns (`SATIN-POOL-012`)."""
+"""A `CALL`, decided in the order of `SATIN-ICPT-007`: interception, then the frame start, the child frame and
+what it returns (`SATIN-POOL-012`), the records a value start makes and takes back (`SATIN-ACCT-006`)."""
 
 from __future__ import annotations
 
 from .constants import (
-    DETENTION_STOP, DISABLE_VOLATILE_DATA_ACCESS, INTERCEPTED, limit_exceeded, MEGA_ACCESS_CONTROL,
+    COST_PER_HISTORY_BYTE, DISABLE_VOLATILE_DATA_ACCESS, INTERCEPTED, limit_exceeded, MEGA_ACCESS_CONTROL,
     NON_ZERO_TRANSFER, ORACLE, SEND_HINT, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     TX_DATA_LIMIT, WRITE_RECORD_SIZE,
 )
-from .records import Account, fmt, h, Halt, pad_address, Stopped, Unmodelled
+from .records import Account, fmt, h, pad_address, Unmodelled
+
+
+def records_of(n: int) -> str:
+    return f"{n} record" + ("" if n == 1 else "s")
 
 
 class CallsMixin:
-    """A call from the transaction's own frame, decided in the order of `SATIN-ICPT-007`: interception, then the"""
+    """A `CALL`, decided in the order of `SATIN-ICPT-007`: interception, then the frame start, the child frame and"""
 
     def call(self, frame, caller: bytes, target: bytes, value: int, data: bytes, child_gas: int,
-             records: list, history: int, new_account: int = 0):
-        """A `CALL` from the transaction's own frame, once the opcode's own charges, the forward and
-        the history of the start's `records` are made, decided in the order of SATIN-ICPT-007:
-        interception, then the frame start. Returns (success, return data, the regular gas the child
-        returns)."""
+             records: list, history: int, new_account: int = 0, share: int = 0):
+        """A `CALL`, once the opcode's own charges, the forward, the history of the start's `records` and
+        the child's reservoir `share` are made, decided in the order of SATIN-ICPT-007: interception, then
+        the frame start. A start answered without a frame returns the share untouched (SATIN-POOL-012).
+        Returns (success, return data, the regular gas the child returns)."""
         d = self.d
         # Interception: an interceptor's answer, the sendHint admission and its data-size check.
         if target in INTERCEPTED and data[:4] in INTERCEPTED[target]:
@@ -31,6 +35,7 @@ class CallsMixin:
                       "SATIN-MAC-002")
                 d.add("gasLedgers", f"the answer charges nothing: the child's {fmt(child_gas)} regular gas returns untouched",
                       "SATIN-ICPT-004", "SATIN-POOL-012")
+                frame["reservoir"] += share
                 return True, b"", child_gas
             if not value:
                 raise Unmodelled("an interceptor's own answer")
@@ -39,6 +44,7 @@ class CallsMixin:
                   "fund the value; the method's answer is not made", "SATIN-ICPT-001", "SATIN-ICPT-003", "SATIN-ICPT-007")
             d.add("gasLedgers", f"the answer charges nothing: the child's {fmt(child_gas)} regular gas returns untouched",
                   "SATIN-ICPT-004", "SATIN-POOL-012", *self.order()[1])
+            frame["reservoir"] += share
             self.give_back_start(frame, records, history, "the answer starts no frame")
             return False, NON_ZERO_TRANSFER, child_gas
         if target == ORACLE and data[:4] == SEND_HINT:
@@ -53,6 +59,7 @@ class CallsMixin:
                 d.add("gasLedgers", f"the stop is answered before any frame: the child's {fmt(child_gas)} regular gas returns",
                       "SATIN-POOL-012", "SATIN-LIM-015", *self.order()[1])
                 d.add("resources", "the stopped hint counts none of its bytes", "SATIN-ORCL-010", "SATIN-ACCT-002")
+                frame["reservoir"] += share
                 self.give_back_start(frame, records, history, "the stop starts no frame")
                 return False, limit_exceeded(0, TX_DATA_LIMIT), child_gas
             self.data_size += len(data)
@@ -74,6 +81,7 @@ class CallsMixin:
                   "SATIN-LIM-015", "SATIN-OUT-010", "SATIN-STOP-020", "SATIN-ICPT-007")
             if history:
                 raise Unmodelled("a refused start charged for records")
+            frame["reservoir"] += share
             d.add("gasLedgers", f"the start is refused: it makes no record and was charged no history; the opcode's regular "
                   f"charges stand, and the child's {fmt(child_gas)} regular gas, the stipend included, returns "
                   f"({'SATIN-HIST-023' if self.principles else 'D-56'})", "SATIN-HIST-015", "SATIN-POOL-012",
@@ -85,66 +93,72 @@ class CallsMixin:
                       "legacy share included, is given back into the caller's reservoir, not its regular gas, when the call "
                       "returns", "SATIN-POOL-015", "SATIN-HIST-012", "SATIN-HIST-015")
             return False, b"", child_gas
-        if new_account:
-            raise Unmodelled("a value call that adds an account")
         if callee is None or not callee.code:
-            raise Unmodelled("a call to an account without code")
+            return self.codeless_start(frame, caller, target, value, child_gas, records, history, new_account, share)
+        if new_account:
+            raise Unmodelled("a value call that adds an account with code")
+        name = f"the child frame of {h(target)}"
+        child = self.new_child(frame, child_gas, share, allowance=bool(value))
+        snap = self.frame_snapshot()
+        takes = []
         if value:
             caller_acct.balance -= value
             callee.balance += value
             for a in records:
                 self.kv.add(("a", a))
-            self.data_size += WRITE_RECORD_SIZE * len(records) + TRANSFER_LOG_SIZE
+            # SATIN-ACCT-004, -006: a transfer that returns an account to what the transaction loaded takes its record
+            # back in the frame it starts; its history comes back to the caller once that frame returned (HIST-009).
+            takes = [a for a in (caller, target)
+                     if a not in records and a != self.tx.sender and ("a", a) in self.kv and self.as_loaded(a)]
+            for a in takes:
+                self.kv.discard(("a", a))
+            self.data_size += WRITE_RECORD_SIZE * (len(records) - len(takes)) + TRANSFER_LOG_SIZE
             self.logs.append((TRANSFER_LOG_ADDRESS, [TRANSFER_TOPIC, pad_address(caller), pad_address(target)],
                               value.to_bytes(32, "big")))
-            d.add("gasLedgers", f"frame start: the value moves and makes the {len(records)} records the opcode charged; "
-                  "the start grants the child a history allowance, which enters no gas", "SATIN-HIST-018",
-                  "SATIN-ACCT-004", "SATIN-ACCT-005")
-            d.add("resources", f"the start's {len(records)} records ({WRITE_RECORD_SIZE} bytes each) and its transfer log "
-                  f"({TRANSFER_LOG_SIZE} bytes)", "SATIN-LIM-013", "SATIN-ACCT-002", "SATIN-LOG-006")
-        child = {"regular": child_gas, "reservoir": 0, "regular_at_start": child_gas, "reservoir_at_start": 0,
-                 "access_off": frame.get("access_off", False)}
-        self.split(child)
-        if child.get("spendable") is not None:
-            self.probe.setdefault("child-room", self.limit - self.compute)
-            d.add("gasLedgers", f"the child frame of {h(target)} starts detained: of its {fmt(child_gas)} regular gas, "
-                  f"{fmt(child['spendable'])} is spendable, what the limit {fmt(self.limit)} leaves the transaction's compute "
-                  f"{fmt(self.compute)}, and the rest withheld", "SATIN-DET-009", "SATIN-DET-014")
-        charges = self.regular_charges
-        try:
-            status, out = self.execute(callee.code, child, False,
-                                       ctx={"address": target, "caller": caller, "value": value, "calldata": data})
-        except Halt as e:
-            status, out = "halt", b""
-            d.add("gasLedgers", f"the child frame of {h(target)} halts ({e}): its {fmt(child_gas)} regular gas is consumed",
-                  "SATIN-POOL-014", "SATIN-OUT-007")
-            if self.limit is not None:
-                d.add("gasLedgers", f"what the halting frame burns is not compute: the transaction's compute stays "
-                      f"{fmt(self.compute)}", "SATIN-DET-011", "SATIN-DET-020")
-        except Stopped as e:
-            status, out = "stop", limit_exceeded(DETENTION_STOP, e.limit)
-            d.add("outcome", f"the child frame of {h(target)} reaches gas detention's crossing at {e}: the charge is not "
-                  f"made and the frame is stopped with MegaLimitExceeded({DETENTION_STOP}, {fmt(e.limit)}), which its "
-                  "caller catches", "SATIN-DET-018", "SATIN-STOP-020")
-            d.add("gasLedgers", f"what the frame spent before the crossing charge stays spent, and its whole regular gas, "
-                  f"{fmt(child['regular'])}, the withheld part included, returns to its caller; the transaction's compute "
-                  f"is {fmt(self.compute)}", "SATIN-DET-018", "SATIN-DET-019", "SATIN-POOL-012")
-        self.regular_charges = charges
+            if takes:
+                whose = " and ".join("the caller's account" if a == caller else "the callee's account" for a in takes)
+                d.add("resources", f"frame start: the value moves and returns {whose} to what the transaction loaded, so "
+                      f"the start takes {records_of(len(takes))} back and makes {len(records)}: on the started frame "
+                      f"{-len(takes) + len(records):+} KV updates and {-WRITE_RECORD_SIZE * len(takes) + WRITE_RECORD_SIZE * len(records):+} "
+                      f"bytes of data size for the records, and +{TRANSFER_LOG_SIZE} for its transfer log",
+                      "SATIN-ACCT-004", "SATIN-ACCT-006", "SATIN-LIM-013", "SATIN-LOG-006", "SATIN-TAKE-006")
+                d.add("gasLedgers", "the start grants the child a history allowance, which enters no gas; the price of "
+                      "the records it takes back is given to the caller once the started frame returned with its start "
+                      "kept", "SATIN-HIST-018", "SATIN-HIST-009", "SATIN-HIST-007")
+            else:
+                d.add("gasLedgers", f"frame start: the value moves and makes the {len(records)} records the opcode charged; "
+                      "the start grants the child a history allowance, which enters no gas", "SATIN-HIST-018",
+                      "SATIN-ACCT-004", "SATIN-ACCT-005")
+                d.add("resources", f"the start's {len(records)} records ({WRITE_RECORD_SIZE} bytes each) and its transfer log "
+                      f"({TRANSFER_LOG_SIZE} bytes)", "SATIN-LIM-013", "SATIN-ACCT-002", "SATIN-LOG-006")
+        if any(r > b for r, b in zip((n - c for n, c in zip(self.counts(), child["counts"])), child["budget"])):
+            raise Unmodelled("a start with code that crosses its frame's budget")
+        status, out = self.run_child(child, callee.code, {"address": target, "caller": caller, "value": value,
+                                                          "calldata": data}, name)
         if status == "success":
-            if value or records or history:
-                raise Unmodelled("a value call whose child frame succeeds")
             d.add("gasLedgers", f"the child frame of {h(target)} returns {len(out)} bytes and {fmt(child['regular'])} of "
                   "regular gas to its caller", "SATIN-POOL-012", "SATIN-OUT-001")
-            return True, out, child["regular"]
-        left = child["regular"] if status in ("revert", "stop") else 0
-        if value:
-            caller_acct.balance += value
-            callee.balance -= value
-            for a in records:
-                self.kv.discard(("a", a))
-            self.data_size -= WRITE_RECORD_SIZE * len(records) + TRANSFER_LOG_SIZE
-            self.logs.pop()
-            frame["reservoir"] += history
+            left = self.end_child(frame, child, status, snap, name)
+            if takes:
+                amount = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE * len(takes)
+                self.give_back(frame, amount)
+                self.history_gas -= amount
+                self.history_bytes -= WRITE_RECORD_SIZE * len(takes)
+                d.add("gasLedgers", f"the started frame returned with its start kept: the price of the "
+                      f"{records_of(len(takes))} the start took back, {len(takes)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(amount)}, is "
+                      "given to the caller into its reservoir, after the child's reservoir joined it, now "
+                      f"{fmt(frame['reservoir'])}; the regular gas paid for those records stays spent", "SATIN-HIST-009",
+                      "SATIN-HIST-007", "SATIN-HIST-012", "SATIN-TAKE-006")
+            return True, out, left
+        left = self.end_child(frame, child, status, snap, name)
+        if takes:
+            if history:
+                raise Unmodelled("a failed start that both made and took back records")
+            d.add("gasLedgers", f"the failed child discards its start: the value and its transfer log are taken back, and "
+                  f"the {records_of(len(takes))} the start took back stand again, so nothing is given back", "SATIN-ACCT-006",
+                  "SATIN-HIST-009", "SATIN-POOL-014", "SATIN-TAKE-006")
+        elif value:
+            self.give_back(frame, history)
             self.history_gas -= history
             self.history_bytes -= WRITE_RECORD_SIZE * len(records)
             d.add("gasLedgers", f"the failed child discards its start: the value, its records and its transfer log are taken "

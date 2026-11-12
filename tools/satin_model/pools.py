@@ -51,6 +51,10 @@ class PoolsMixin:
             raise Halt(f"out of gas paying the state gas of {what}")
         self.draw_regular(frame, rest - r)
         self.spilled += legacy + rest - r  # regular gas paid for a state or history charge, never credited back
+        # SATIN-POOL-014: what a failed frame's rollback gives back; and the regular gas the frame drew for state and
+        # history, which is no regular charge of the transaction unless the frame halts (SATIN-POOL-019).
+        frame["net_charged"] = frame.get("net_charged", 0) + amount
+        frame["drawn"] = frame.get("drawn", 0) + legacy + rest - r
 
     def pools_observation(self, status: str, gas_used: int) -> dict:
         """The `gasPools` group (decision D-64): the first frame's regular gas and reservoir at its start, after
@@ -74,3 +78,4 @@ class PoolsMixin:
 
     def give_back(self, frame, amount: int) -> None:
         frame["reservoir"] += amount  # SATIN-HIST-012: into the frame's reservoir
+        frame["net_charged"] = frame.get("net_charged", 0) - amount  # SATIN-POOL-014: net of the give-backs received

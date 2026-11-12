@@ -152,10 +152,11 @@ class SettlementMixin:
         self.load(tx.to, "the recipient, at step 4 of the charges before the first frame; a deposit pays no fee and "
                   "reads no L1 block information", "SATIN-SCHED-008", "SATIN-WIT-008")
         frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
+        kept = self.snapshot()  # the mint, the nonce bump and the created caller, which a failed deposit keeps
         try:
             status, output = self.execute(code, frame, False)
-        except Halt:
-            raise Unmodelled("a failed deposit")
+        except Halt as e:
+            return self.failed_deposit(kept, nonce_before, was_empty, caller_state, str(e))
         if status != "success":
             raise Unmodelled("a reverting deposit")
         total = intrinsic + self.regular_charges + self.history_gas + self.state_gas
@@ -187,6 +188,51 @@ class SettlementMixin:
                         "resources": resources, "limit": None}
         if self.reads:
             observations["reads"] = self.reads_observation()
+        return Result(observations, d)
+
+    def failed_deposit(self, kept, nonce_before: int, was_empty: bool, caller_state: int, why: str) -> Result:
+        """A deposit whose own frame halts is a failed deposit (SATIN-DEP-004): it keeps its sender's nonce bump
+        and mint and applies nothing else, uses its whole gas limit, reported as regular gas, with no state and
+        no history gas (SATIN-DEP-005), keeps its body's data size (SATIN-DEP-006), and counts a caller it created
+        as one unit of state growth, uncharged (SATIN-ACCT-020). Its gas ledgers are exactly SATIN-DEP-005's, with
+        no floor and no refund (decision D-66)."""
+        tx, d = self.tx, self.d
+        if self.hint_bytes:
+            raise Unmodelled("a failed deposit that admitted a hint")
+        self.restore(kept)
+        body = self.data_size
+        d.add("outcome", f"the deposit's own frame halts ({why}): a failed deposit, which keeps its sender's nonce bump and "
+              "its mint and applies nothing else; it is committed and reported with no execution (D-40)", "SATIN-DEP-004",
+              "SATIN-TAKE-012")
+        self.kv = set()
+        self.logs = []
+        self.state_gas = self.history_gas = 0
+        self.history_bytes = body
+        d.add("gasLedgers", f"it uses its whole gas limit, {fmt(tx.gas_limit)}, the reservoir included, reported as regular "
+              f"gas, with no state gas and no history gas: the caller's {fmt(caller_state)} of state gas, paid before the "
+              "frame, is not reported as state gas, and nothing returns to the sender", "SATIN-DEP-005", "SATIN-DEP-006",
+              "SATIN-POOL-017", "SATIN-TAKE-012")
+        d.add("gasLedgers", f"its ledgers are exactly those: no settlement applies a floor or a refund, so both are 0 (D-66), "
+              f"and the block counts max(regular {fmt(tx.gas_limit)}, floor 0) = {fmt(tx.gas_limit)}, its whole gas limit",
+              "SATIN-DEP-005", "SATIN-POOL-020")
+        d.add("resources", f"it keeps the data size of its body and calldata, {body} bytes, the history bytes it reports; "
+              f"no write record; state growth {self.growth}" + (", the caller it created, counted and not charged"
+                                                                  if was_empty else ""),
+              "SATIN-DEP-006", "SATIN-ACCT-020", "SATIN-HIST-022", "SATIN-TAKE-012")
+        gas = tx.gas_limit
+        ledgers = {"total": q(gas), "regular": q(gas), "state": q(0), "history": q(0), "historyBytes": q(body),
+                   "refund": q(0), "floor": q(0), "gasUsed": q(gas), "blockGas": q(gas)}
+        resources = {"dataSize": dim(TX_DATA_LIMIT, body), "kvUpdates": dim(TX_KV_UPDATE_LIMIT, 0),
+                     "stateGrowth": dim(TX_STATE_GROWTH_LIMIT, self.growth)}
+        receipt = {"type": "0x7e", "status": "0x0", "gasUsed": q(gas), "logs": [],
+                   "depositNonce": q(nonce_before), "depositReceiptVersion": "0x1"}
+        d.add("receipt", f"a failed deposit's receipt: status 0x0, gas used {fmt(gas)}, no logs, its nonce before the deposit "
+              f"({nonce_before}) and receipt version 1", "SATIN-DEP-004", "SATIN-DEP-009", "SATIN-POOL-018")
+        outcome = {"admission": {"status": "failed-deposit"}, "execution": None, "commit": {"status": "committed"}}
+        observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
+                        "resources": resources, "limit": None}
+        if self.reads or self.pools:
+            raise Unmodelled("the reads or the pools of a failed deposit")
         return Result(observations, d)
 
     def diff(self) -> dict:

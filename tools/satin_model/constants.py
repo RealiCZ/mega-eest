@@ -88,6 +88,14 @@ MAX_U64 = 2**64 - 1
 PRE_FORK_NEW_ACCOUNT_COST = 25_000  # SATIN-STATE-012: the pre-Satin price of a new account
 LEGACY_NEW_ACCOUNT_SHARE = PRE_FORK_NEW_ACCOUNT_COST - 0  # SATIN-STATE-012: a value CALL's new account has no execution charge
 DELEGATION_PREFIX = b"\xef\x01\x00"  # EIP-7702's delegation indicator, followed by the delegate's address
+# The take-back page's worked examples (the specification at `cdded1e`).
+HISTORY_ALLOWANCE_BYTES = 160  # SATIN-HIST-018: the history bytes a value call's frame may log without paying
+FRAME_SHARE_NUMERATOR, FRAME_SHARE_DENOMINATOR = 98, 100  # SATIN-LIM-003: a child's share of its parent's remaining
+PRE_FORK_CREATE_COST = 32_000  # SATIN-STATE-012: the pre-Satin price of a CREATE
+LEGACY_CREATE_SHARE = PRE_FORK_CREATE_COST - CREATE_ACCESS  # SATIN-STATE-012: a created account's legacy share
+SELFDESTRUCT_COST = 5_000  # SATIN-SCHED-002: SELFDESTRUCT's static gas
+SELFDESTRUCT_NEW_ACCOUNT_COST = 9_000  # SATIN-SCHED-003: the "new account of SELFDESTRUCT" entry
+LEGACY_SELFDESTRUCT_SHARE = PRE_FORK_NEW_ACCOUNT_COST - SELFDESTRUCT_NEW_ACCOUNT_COST  # SATIN-STATE-012: a beneficiary's
 # Gas detention, the Oracle's reads and the access-control refusal (the specification at `5fb2688`).
 BLOCK_ENV_ACCESS_COMPUTE_GAS = 20_000_000  # SATIN-DET-012: the cap after a read of the block environment
 ORACLE_ACCESS_COMPUTE_GAS = 20_000_000  # SATIN-DET-012: the cap after a read of the Oracle's storage

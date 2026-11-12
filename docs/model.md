@@ -21,10 +21,18 @@ specification's text and constants:
   (`SATIN-SCHED-008`), under gas detention (each part an opcode deducts as its own charge,
   `SATIN-DET-018`), at a resource limit (`SATIN-LIM-010`, `-011`), and in what a transaction loads
   (`SATIN-WIT-001`).
-- **Small hand-built scenarios.** One transaction in engine isolation, with a frame and at most one
-  level of calls below it, and code written for the case: an input is chosen to sit on an edge,
-  often set from the model's own figure at a point of the run (a gas limit one below a threshold,
-  D-59).
+- **Small hand-built scenarios.** One transaction in engine isolation, with a frame and the few
+  levels of calls below it the case builds, and code written for the case: an input is chosen to sit
+  on an edge, often set from the model's own figure at a point of the run (a gas limit one below a
+  threshold, D-59).
+- **The shapes of the take-back page's worked examples** (D-65): a child frame that writes, logs,
+  calls, succeeds, reverts or halts, with its reservoir share and its rollback (`SATIN-POOL-011`,
+  `-012`, `-014`); `DELEGATECALL`, a writer's record taken back by another frame on the same
+  storage; a value start that makes and takes back account records; a successful `CREATE`, its
+  constructor's writes and its deposited code, and the first `SELFDESTRUCT` of an account created
+  in the transaction, with the destruction table; a value start without a frame held to the started
+  frame's budget; an EIP-7702 list whose second entry for one authority clears the delegation; a
+  deposit whose own frame halts.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -34,7 +42,7 @@ raises `Unmodelled` rather than guessing.
 
 | Not in the model | Where it is covered instead |
 | --- | --- |
-| A general EVM: arbitrary bytecode, the whole opcode set, precompiles, the creation opcodes, `SELFDESTRUCT`, frames nested past one call | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
+| A general EVM: arbitrary bytecode, the whole opcode set, precompiles; `CREATE2`, `CALLCODE` and `STATICCALL`; a creation that fails or collides, a `SELFDESTRUCT` of an account the transaction did not create or a repeated one; a limit crossed below the transaction's own frame other than at a start without a frame; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | An expectation two engines agree on but the model does not derive | Nothing, today. Such a case would be a different kind of expectation, an agreement rather than a derivation from the specification, and would have to be labelled apart from the spec-derived cases (its own provenance status and evidence) if it were ever added |
@@ -54,20 +62,23 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `records.py` | The model's exceptions, the derivation record, the inputs (accounts, the transaction, the block environment), the result, and the observations' value formats |
 | `run.py` | `Run`: the run state, composed of the mixins below |
 | `transaction.py` | Validation's refusals, intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, the out-of-gas path before it |
-| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; a deposit's run |
+| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; a deposit's run, and a failed deposit |
 | `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, the give-back into the reservoir |
 | `detention.py` | The limit a volatile read sets, and a frame's spendable and withheld parts |
-| `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use, the volatile reads and their refusal, a call's opcode charges |
-| `calls.py` | A call decided in the order of `SATIN-ICPT-007`: interception, the frame start, the child and what it returns |
+| `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use, the volatile reads and their refusal, the opcode charges of a call, a `DELEGATECALL`, a creation and a `SELFDESTRUCT` |
+| `calls.py` | A call decided in the order of `SATIN-ICPT-007`: interception, the frame start, the records a value start makes and takes back, the child and what it returns |
+| `frames.py` | A child frame's budgets and reservoir share, the snapshot its failure returns to, how it ends (`SATIN-POOL-012`, `-014`), a value start without a frame held to the started frame's budget, and `DELEGATECALL` |
+| `creation.py` | A `CREATE` from a frame, and the first `SELFDESTRUCT` of an account created in the transaction with the destruction table, in the order of `SATIN-SD-019` |
 | `interception.py` | The transaction's own `keylessDeploy` call: the decoder's conditions and the deployment's first steps |
-| `authorizations.py` | An EIP-7702 list before the first frame: its simulation's loads, each entry's charges and records |
+| `authorizations.py` | An EIP-7702 list before the first frame: its simulation's loads, each entry's charges and records, a further entry for one authority |
 | `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, and a creation's deposited code |
 | `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it |
 | `limits.py` | A write of the transaction's own frame held to its budget and then the transaction's limit |
 
 The cases' provenance names the model by the module it was before this split,
 `tools/satin_model.py`; that text is part of every case's bytes, which this split keeps, and is
-updated when the cases are next regenerated with a reason to change.
+updated when the cases are next regenerated with a reason to change. The take-back cases carry the
+same text, so that one string names the model in every case until then.
 
 ## Relation to the specification
 

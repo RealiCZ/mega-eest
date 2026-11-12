@@ -6,7 +6,9 @@ from __future__ import annotations
 from .records import Account, Derivation, Env, Tx
 from .authorizations import AuthorizationsMixin
 from .calls import CallsMixin
+from .creation import CreationMixin
 from .detention import DetentionMixin
+from .frames import FramesMixin
 from .interception import InterceptionMixin
 from .interpreter import InterpreterMixin
 from .limits import LimitsMixin
@@ -17,7 +19,7 @@ from .storage import StorageMixin
 from .transaction import TransactionMixin
 
 
-class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, InterpreterMixin, CallsMixin, InterceptionMixin, AuthorizationsMixin, StorageMixin, ReadsMixin, LimitsMixin):
+class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, InterpreterMixin, CallsMixin, FramesMixin, CreationMixin, InterceptionMixin, AuthorizationsMixin, StorageMixin, ReadsMixin, LimitsMixin):
     """One transaction against a complete pre-state."""
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
@@ -55,3 +57,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # The stop of the transaction's own frame, (kind, limit), when one is its result.
         self.stop: tuple[int, int] | None = None
         self.frame_start_counts = (0, 0, 0)
+        # The accounts created in the transaction, which a SELFDESTRUCT deletes (EIP-6780), and those destroyed.
+        self.created: set[bytes] = set()
+        self.record_frames: dict = {}  # each storage write record and the frame that made it
+        self.destroyed: set[bytes] = set()

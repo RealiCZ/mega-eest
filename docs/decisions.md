@@ -644,3 +644,54 @@ mandatory groups still come from the implementations' results alone. No engine c
 - **`returned`** is the gas limit less the receipt's gas used.
 - The model derives `gasPools` for the cases that ask, from the first frame's pools and a running
   count of the regular gas its state and history charges drew, for a first frame that succeeds.
+
+**D-65. The take-back page's worked examples are cases, and the model learns their shapes.** The
+specification's rule is that a worked example lives in a conformance case, the case coming first and
+the example leaving the text after it (the owner's QI-30 at `cdded1e`). The nine examples of the
+take-back page (`SATIN-TAKE-005` to `-012`) are now derived at `cdded1e` (`specs/satin-cdded1e`), in
+the area `take-backs`: seventeen cases, an example's endings and variants each a case of its own. Each
+reproduces its example's figures; where the observation is which pool receives a give-back, the case
+carries `gasPools`, and a frame whose own end the example is about is a child of the first frame, so
+that what it returns shows in the first frame's reservoir.
+
+- **The model's scope grows to these shapes** (D-63 amended, `docs/model.md`): child frames at the
+  depth a case builds that write, log, call, succeed, revert or halt, with their reservoir share
+  (`SATIN-POOL-011`), budgets (`SATIN-LIM-003`) and rollback (`SATIN-POOL-014`); value starts that
+  make and take back account records (`SATIN-ACCT-006`, `SATIN-HIST-009`); a value start to an
+  account without code held to the started frame's budget (`SATIN-LIM-013`, `SATIN-STOP-014`); a
+  value child's history allowance (`SATIN-HIST-019`); an EIP-7702 list whose second entry for one
+  authority clears the delegation (`SATIN-AUTH-009`); and a deposit whose own frame halts
+  (`SATIN-DEP-004`, `-005`). The interpreter gains three opcodes, `DELEGATECALL`, `CREATE` and
+  `SELFDESTRUCT`, each in the narrow form the examples use: a `CREATE` that succeeds, and the first
+  `SELFDESTRUCT` of an account created in the transaction. Anything else stays `Unmodelled`.
+- **A child's state and history charges are no regular charge.** The regular gas a child draws for
+  them is on the state and history ledgers when kept, or in a reservoir when given back; it is on the
+  regular ledger only when the frame halts and its regular gas is consumed with them
+  (`SATIN-POOL-019`, D-51).
+- **`spilled` keeps D-64's definition through a halt.** The regular gas a halted frame paid for state
+  and history stays spent (`SATIN-POOL-014`, `SATIN-HIST-012`), so it stays in `spilled`. The
+  evm2-based implementation reports it so; the revm-based implementation's counter drops it, and the
+  two halt cases are quarantined with that verdict.
+- **What the cases cannot hold of the text.** The answer-stopped example's KV budget of 3 cannot be
+  reached under the protocol's KV limit of 500,000 (half a million records cost more gas than a
+  transaction holds), so the same start is pinned on the state-growth budget: P is the first frame,
+  whose budget is the transaction's whole 1,000 (`SATIN-LIM-002`), its 999 fresh slots leave it 1,
+  and the stop is `MegaLimitExceeded(3, 0)` in place of the text's `(1, 0)`; every other figure of
+  the example is the text's, and the first frame's final reservoir is exactly the two charges the
+  stop gives back. The reverted and halted child
+  receives 50,009 of regular gas, so that it holds the text's 50,000 at its write, the 9 being the
+  operands it pushes first.
+- **The failed-deposit example's floor.** Both implementations report a failed deposit's `floor` as
+  0, where the model first derived the transaction's EIP-7623 floor (`SATIN-POOL-020`). The
+  specification states no floor for a failed deposit, which settles in place of the settlement
+  (`SATIN-TAKE-012`); D-66 decides it, and the case follows D-66.
+
+**D-66. A failed deposit's gas ledgers are exactly `SATIN-DEP-005`'s; D-40 is amended.**
+`SATIN-DEP-005` fixes a failed deposit's ledgers: its whole gas limit as regular gas, and no state
+and no history gas. No settlement applies a floor or a refund to it, so the format reports both as
+0: `gasLedgers` of a failed deposit is `total = regular = gasUsed = blockGas =` the gas limit,
+`state = history = refund = floor = 0`, and `historyBytes` the bytes it keeps (`SATIN-HIST-022`,
+`SATIN-DEP-006`). `blockGas = max(regular, floor)` is then the gas limit whatever the floor is, so no
+consensus figure depends on the choice: it is a reporting convention of the format, of D-40's kind,
+not a rule of the specification. Both implementations already report it so. D-40's `floor`, "the
+EIP-7623 floor", now reads: the EIP-7623 floor the settlement applies, and 0 for a failed deposit.
