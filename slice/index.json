@@ -6253,6 +6253,46 @@
         "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
         "name": "megaeth/Satin"
       }
+    },
+    {
+      "area": "take-backs",
+      "caseId": "satin/take-backs/failed-deposit",
+      "file": "quarantine/satin--take-backs--failed-deposit.json",
+      "fileDigest": "sha256:e1fe83e5a347792ab94057d4195a5ff2f35f9d295ee0ff1b278e0551a4cfd4e9",
+      "knownFail": {
+        "actual": "0x0",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x136",
+        "path": "/expected/gasLedgers/historyBytes",
+        "verdict": "SATIN-HIST-022 makes a deposit report the history bytes it keeps, and SATIN-DEP-006 and SATIN-TAKE-012 have a failed deposit keep its body and calldata, 310 bytes, which it reports as its history bytes though it pays no history gas; the revm-based implementation at 4e39cfd6 charges a deposit no history gas and reports a failed deposit's history bytes as 0"
+      },
+      "rules": [
+        "SATIN-ACCT-002",
+        "SATIN-ACCT-014",
+        "SATIN-ACCT-020",
+        "SATIN-DEP-003",
+        "SATIN-DEP-004",
+        "SATIN-DEP-005",
+        "SATIN-DEP-006",
+        "SATIN-DEP-009",
+        "SATIN-HIST-002",
+        "SATIN-HIST-003",
+        "SATIN-HIST-004",
+        "SATIN-HIST-022",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-017",
+        "SATIN-POOL-018",
+        "SATIN-POOL-020",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-SCHED-008",
+        "SATIN-TAKE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+        "name": "megaeth/Satin"
+      }
     }
   ],
   "spec": {

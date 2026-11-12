@@ -400,7 +400,7 @@ def cases() -> list[Case]:
     out += reads_cases()
     out += limit_cases()
     out += gas_pools_cases()
-    out += [c for c in take_back_cases() if c.case_id not in HELD]
+    out += take_back_cases()
     return out
 
 
@@ -1345,14 +1345,8 @@ TAKE_BACKS_QUARANTINE = {
         "rollback returns",
     "satin/take-backs/failed-child/halted": None,
 }
-# Cases the model derives and that stay out of the slice until a disagreement with the evm2-based implementation
-# is decided (decision D-65).
-HELD = {
-    "satin/take-backs/failed-deposit": "both implementations report a failed deposit's floor as 0, where the model derives "
-        "the transaction's EIP-7623 floor (SATIN-POOL-020)",
-}
-
-
+# The failed-deposit example: the history bytes it keeps, which the revm-based implementation does not report.
+TAKE_BACKS_DEPOSITS = {"satin/take-backs/failed-deposit"}
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -1382,6 +1376,14 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
                    f"{DEPOSIT_HISTORY[c.case_id]} {history_bytes - body} at {price} gas, ({body} + {history_bytes - body}) x "
                    f"{price} = {fmt(history)}")
         return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used), "actual": q(used - history),
+                "verdict": verdict}
+    if c.case_id in TAKE_BACKS_DEPOSITS:
+        kept = int(fx["expected"]["gasLedgers"]["historyBytes"], 16)
+        verdict = ("SATIN-HIST-022 makes a deposit report the history bytes it keeps, and SATIN-DEP-006 and SATIN-TAKE-012 "
+                   f"have a failed deposit keep its body and calldata, {kept} bytes, which it reports as its history "
+                   "bytes though it pays no history gas; the revm-based implementation at "
+                   f"{REVM_PIN} charges a deposit no history gas and reports a failed deposit's history bytes as 0")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/historyBytes", "expected": q(kept), "actual": q(0),
                 "verdict": verdict}
     if c.case_id in TAKE_BACKS_QUARANTINE:
         pools = fx["expected"]["gasPools"]
