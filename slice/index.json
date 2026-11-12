@@ -2396,13 +2396,13 @@
       "area": "deposits",
       "caseId": "satin/deposits/new-caller/minimum-bucket",
       "file": "quarantine/satin--deposits--new-caller--minimum-bucket.json",
-      "fileDigest": "sha256:18a0bf7bbc830933dfd213ab3f3ac84189db443812fd2646d31fe24f0b8c4871",
+      "fileDigest": "sha256:d446264527324146515c839778ce1e83dcbbee0231b35c5d1fc565214c85d1f6",
       "knownFail": {
         "actual": "0x307c8",
         "adapter": "mega-eest-adapter-revm",
         "expected": "0x37258",
         "path": "/expected/gasLedgers/gasUsed",
-        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 (the body's 310 bytes at 88 gas) below the rule's"
+        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 below the rule's: the body's 310 bytes at 88 gas, 310 x 88 = 27,280, the deposit keeping no write record"
       },
       "rules": [
         "SATIN-ACCT-002",
@@ -2436,13 +2436,13 @@
       "area": "deposits",
       "caseId": "satin/deposits/new-caller/bucket-x2",
       "file": "quarantine/satin--deposits--new-caller--bucket-x2.json",
-      "fileDigest": "sha256:c859d6c0942065384d8d5978c0b101e83b0b01ea499e1b6c46011d5acd4368c6",
+      "fileDigest": "sha256:75d41a745d45bf6d83b204926a3074e65c77049ed9b60e69e433e2eee7ae1d26",
       "knownFail": {
         "actual": "0x5d4f8",
         "adapter": "mega-eest-adapter-revm",
         "expected": "0x63f88",
         "path": "/expected/gasLedgers/gasUsed",
-        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 (the body's 310 bytes at 88 gas) below the rule's"
+        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 below the rule's: the body's 310 bytes at 88 gas, 310 x 88 = 27,280, the deposit keeping no write record"
       },
       "rules": [
         "SATIN-ACCT-002",
@@ -2476,13 +2476,13 @@
       "area": "deposits",
       "caseId": "satin/deposits/existing-caller/fresh-slot",
       "file": "quarantine/satin--deposits--existing-caller--fresh-slot.json",
-      "fileDigest": "sha256:1551148aa71aad7adeb81182125b74da2b42e916981a2ca6188727cbaca61010",
+      "fileDigest": "sha256:15c2528e54376524faecaa2bd9d9bd429980fe63b3c0368ebd858181d4de543d",
       "knownFail": {
         "actual": "0x1e862",
         "adapter": "mega-eest-adapter-revm",
         "expected": "0x260b2",
         "path": "/expected/gasLedgers/gasUsed",
-        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 (the body's 310 bytes at 88 gas) below the rule's"
+        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 30,800 below the rule's: the body's 310 bytes and the fresh slot's write record of 40 bytes at 88 gas, (310 + 40) x 88 = 30,800"
       },
       "rules": [
         "SATIN-ACCT-002",

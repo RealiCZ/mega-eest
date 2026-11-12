@@ -295,7 +295,7 @@
       "adapter": "mega-eest-adapter-revm",
       "expected": "0x260b2",
       "path": "/expected/gasLedgers/gasUsed",
-      "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 27,280 (the body's 310 bytes at 88 gas) below the rule's"
+      "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based implementation at 5e3f30ad charges a deposit no history gas, so its gas used is 30,800 below the rule's: the body's 310 bytes and the fresh slot's write record of 40 bytes at 88 gas, (310 + 40) x 88 = 30,800"
     },
     "review": {
       "decision": "pending: approval is the owner's",

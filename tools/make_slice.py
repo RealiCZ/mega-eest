@@ -545,24 +545,39 @@ def build(c: Case):
 # implementation that differs fails the case. These cases stay out of the gating slice until the
 # implementation is fixed; tools/run-slice.sh checks that each still fails exactly as recorded and
 # that the other implementation passes it.
-DEPOSIT_HISTORY = (
-    "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among "
-    "the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based "
-    f"implementation at 5e3f30ad charges a deposit no history gas, so its gas used is "
-    f"{fmt(model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE)} (the body's {model.TX_BODY_SIZE} bytes "
-    f"at {model.COST_PER_HISTORY_BYTE} gas) below the rule's"
-)
+def deposit_history_verdict(ledgers: dict, records: str) -> str:
+    """The specification's verdict on a deposit the revm-based implementation charges no history gas:
+    its gas used falls short by the history the deposit keeps, its body and its write records."""
+    price, body, size = model.COST_PER_HISTORY_BYTE, model.TX_BODY_SIZE, model.WRITE_RECORD_SIZE
+    history, history_bytes = int(ledgers["history"], 16), int(ledgers["historyBytes"], 16)
+    kept = history_bytes - body
+    if kept % size or history != history_bytes * price:
+        raise SystemExit(f"a deposit verdict: {history_bytes} history bytes and {history} history gas are not the body's "
+                         "and whole write records at the history price")
+    if kept:
+        what = (f"the body's {body} bytes and {records} of {kept} bytes at {price} gas, ({body} + {kept}) x {price} = "
+                f"{fmt(history)}")
+    else:
+        what = f"the body's {body} bytes at {price} gas, {body} x {price} = {fmt(history)}, the deposit keeping no write record"
+    return ("SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body among "
+            "the rest, and SATIN-HIST-022 counts the body among the history bytes every transaction reports; the revm-based "
+            f"implementation at 5e3f30ad charges a deposit no history gas, so its gas used is {fmt(history)} below the "
+            f"rule's: {what}")
+
+
 QUARANTINE = {
     "satin/deposits/new-caller/minimum-bucket": {
         "adapter": "mega-eest-adapter-revm", "path": "/expected/gasLedgers/gasUsed", "expected": "0x37258",
-        "actual": "0x307c8", "verdict": DEPOSIT_HISTORY},
+        "actual": "0x307c8"},
     "satin/deposits/new-caller/bucket-x2": {
         "adapter": "mega-eest-adapter-revm", "path": "/expected/gasLedgers/gasUsed", "expected": "0x63f88",
-        "actual": "0x5d4f8", "verdict": DEPOSIT_HISTORY},
+        "actual": "0x5d4f8"},
     "satin/deposits/existing-caller/fresh-slot": {
         "adapter": "mega-eest-adapter-revm", "path": "/expected/gasLedgers/gasUsed", "expected": "0x260b2",
-        "actual": "0x1e862", "verdict": DEPOSIT_HISTORY},
+        "actual": "0x1e862"},
 }
+# What each quarantined deposit keeps besides its body, for its verdict.
+QUARANTINE_RECORDS = {"satin/deposits/existing-caller/fresh-slot": "the fresh slot's write record"}
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
                "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources"}
@@ -659,6 +674,9 @@ def outputs() -> dict[str, str]:
     for c in cases():
         fx = fixture(c, *specs[c.spec], SPEC_COMMITS[c.spec])
         q_entry = QUARANTINE.get(c.case_id)
+        if q_entry:
+            q_entry = {**q_entry, "verdict": deposit_history_verdict(fx["expected"]["gasLedgers"],
+                                                                     QUARANTINE_RECORDS.get(c.case_id, ""))}
         rel = f"{'quarantine' if q_entry else 'cases'}/{c.case_id.replace('/', '--')}.json"
         if q_entry:
             fx["provenance"]["quarantine"] = q_entry
