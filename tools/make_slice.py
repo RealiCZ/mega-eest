@@ -6,7 +6,8 @@ envelope), the SALT capacities its state lands in — and its expected observati
 `tools/satin_model.py`, an executable restatement of the cited rules of the pinned specification
 (`specs/satin-d34e626`; the cases added for interception, the keyless decoder and EIP-7702
 existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
-principles `specs/satin-5fb2688`, D-59). No implementation is run: the filler's output is a candidate to compare
+principles, gas detention, the Oracle's reads and the refused volatile read `specs/satin-5fb2688`,
+D-59 and D-60). No implementation is run: the filler's output is a candidate to compare
 with, never the source of these values (`tools/run-slice.sh` runs both implementations against
 them).
 
@@ -67,8 +68,12 @@ EMPTY_LEAF = bytes.fromhex("000000000000000000000000000000000000e3e7")
 PLAIN = bytes.fromhex("00000000000000000000000000000000000c0de2")  # a contract with code, no system contract
 DELEGATED = bytes.fromhex("0000000000000000000000000000000000de1e9a")  # an account holding a delegation
 DELEGATE = bytes.fromhex("00000000000000000000000000000000000de1e9")  # the account it delegates to
+DETAINED = bytes.fromhex("00000000000000000000000000000000000c0de3")  # a contract that runs detained
+BURNER = bytes.fromhex("00000000000000000000000000000000000c0de4")  # a contract whose one charge passes the cap
+UNTOUCHED = bytes.fromhex("000000000000000000000000000000000000ba1a")  # an account no case's state holds
 CHAIN_ID = 1
 BLOCK_GAS_LIMIT = 10_000_000_000
+BLOCK_TIMESTAMP = 0x6553F102
 ETH = 10**18
 ZERO32 = "0x" + "00" * 32
 
@@ -199,7 +204,8 @@ class Case:
                  gas_price=0, base_fee=0, ty=0, max_priority=0, max_fee=0, nonce=0, sender_nonce=0, sender_balance=ETH,
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
-                 contract_balance=0, authorizations=None, system=False, check=None, tune=None):
+                 contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
+                 params=None, retune=None):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -222,6 +228,14 @@ class Case:
         # (probe, regular gas): the gas limit is set so the model's probe point (satin_model.Run.probe)
         # holds exactly that regular gas; `gas` is the limit the model is first run with to find it.
         self.tune = tune
+        # A case whose code is written from parameters: `make(**params)` is its code, and each of `retune`,
+        # (probe, regular gas, parameter, slope), sets a parameter so the probe holds that gas, the probe
+        # moving by `slope` per unit of the parameter. A parameter "words" is the memory a burn expands to,
+        # and "pad" a run of JUMPDESTs, one compute each: what the pad would hold beyond a word's cost moves
+        # into the burn (`settle_burn`).
+        self.make, self.params, self.retune = make, dict(params or {}), list(retune or [])
+        if make:
+            self.code = make(**self.params)
 
 
 def cases() -> list[Case]:
@@ -368,6 +382,7 @@ def cases() -> list[Case]:
              deposit=(0, 1_000_000), sender_nonce=3, code=sstore(1, 1) + STOP))
     out += interception_cases()
     out += ordering_cases()
+    out += detention_cases()
     return out
 
 
@@ -649,6 +664,105 @@ def ordering_cases() -> list[Case]:
     return out
 
 
+# --- Gas detention, the Oracle's reads, the refused volatile read ---------------------------------
+
+RETURN_RETURNDATA = b"\x3d\x5f\x5f\x3e\x3d\x5f\xf3"  # RETURNDATACOPY(0, 0, RETURNDATASIZE), RETURN(0, RETURNDATASIZE)
+
+
+def burn(words: int) -> bytes:
+    """MLOAD of the last of `words` words of memory, and POP: its memory expansion is one regular charge."""
+    return push(words * 32 - 32) + b"\x51\x50"
+
+
+def words_within(budget: int) -> int:
+    """The most memory words whose expansion from none costs at most `budget`."""
+    words = int((budget * 512) ** 0.5)
+    while model.memory_cost(words + 1) <= budget:
+        words += 1
+    while model.memory_cost(words) > budget:
+        words -= 1
+    return words
+
+
+def detained(words: int, pad: int) -> bytes:
+    """TIMESTAMP, a read of the block environment that detains the transaction, then a burn of compute and a
+    pad of JUMPDESTs that leave the limit a set distance away."""
+    return b"\x42\x50" + burn(words) + b"\x5b" * pad
+
+
+def detention_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = ORDERING_SPEC
+    cap, oracle_cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS, model.ORACLE_ACCESS_COMPUTE_GAS
+    start = {"words": words_within(cap - 6_000), "pad": 0}
+    push_cost = model.G_VERYLOW  # the PUSH20 before each child's BALANCE
+    balance = push(int.from_bytes(UNTOUCHED, "big")) + b"\x31\x50" + STOP
+    cold = model.WARM_READ + model.COLD_ACCOUNT_SURCHARGE
+
+    def via_child(child_gas: int, tail: bytes = RETURN_RETURNDATA):
+        return lambda words, pad: detained(words, pad) + call(child_gas, DETAINED, 0, 0) + tail
+
+    # One charge under detention: each part an opcode deducts is a charge of its own (SATIN-DET-018, -020).
+    for name, spendable, whole, what in (
+            ("balance-static-crossing", 50, 1_000, f"is stopped at BALANCE's static cost, {model.WARM_READ}, which the "
+             f"whole {fmt(1_000)} can pay, not run out of gas on the {fmt(cold)} the access costs in all; the transaction "
+             "returns the frame's return data"),
+            ("balance-static-out-of-gas", 50, 80, f"runs out of gas at BALANCE's static cost, {model.WARM_READ}, which its "
+             "whole regular gas cannot pay either; the transaction returns the frame's empty return data"),
+            ("balance-static-one-short", model.WARM_READ - 1, 5_000, "is stopped at BALANCE's static cost, nothing of the "
+             "opcode spent, and its caller stops"),
+            ("balance-static-paid", model.WARM_READ, 5_000, f"pays BALANCE's static cost and is stopped at its cold access, "
+             f"{fmt(model.COLD_ACCOUNT_SURCHARGE)}, the static cost staying spent, and its caller stops")):
+        pair = whole == 5_000  # the caller of the pair stops at once: at the static cost the limit leaves it nothing
+        add(Case(f"satin/detention/{name}", f"a detained frame with {fmt(spendable)} of spendable gas and {fmt(whole)} of "
+                 f"regular gas in all does BALANCE of an account that is not warm: it {what}", spec=spec, gas=21_000_000,
+                 accounts={DETAINED: model.Account(nonce=1, code=balance)},
+                 boundary=(f"the spendable part {'one below' if spendable < model.WARM_READ else 'at'} BALANCE's static cost"
+                           if pair else ""),
+                 make=via_child(whole + push_cost, STOP if pair else RETURN_RETURNDATA), params=start,
+                 retune=[("child-room", spendable + push_cost, "pad", -1)]))
+    value_call = call(0, UNTOUCHED, 1, 0) + STOP
+    add(Case("satin/detention/call-value-crossing", "a detained frame with 200 of spendable gas does a value CALL: the "
+             f"static cost {model.WARM_READ} is paid, and the frame is stopped at the value transfer, "
+             f"{fmt(model.CALL_VALUE_COST)}, the static cost staying spent; the transaction returns the frame's return data",
+             spec=spec, gas=21_000_000, accounts={DETAINED: model.Account(nonce=1, code=value_call)},
+             make=via_child(20_000), params=start, retune=[("child-room", 200, "pad", -1)]))
+    # The Oracle's SLOAD: the read, its mark, then one charge (SATIN-ORCL-004). A deposit's read asks no service
+    # (SATIN-ORCL-005), so the cases are deposits; the mark shows in a later call whose one charge passes the cap.
+    get_slot = mstore(0, int.from_bytes(model.selector("getSlot(uint256)"), "big") << 224)
+    burner = burn(words_within(oracle_cap) + 1) + STOP
+    for name, left, what in (
+            ("read-short-of-warm-base", 50, f"under the warm base {model.WARM_READ}"),
+            ("read-short-of-cold-access", 1_000, f"from the warm base to under COLD_SLOAD_COST {fmt(model.COLD_SLOAD)}")):
+        add(Case(f"satin/oracle/{name}", f"a deposit's call to the Oracle's getSlot holds {fmt(left)} of regular gas at the "
+                 f"SLOAD, {what}: the slot is read and the read marked, then the frame runs out of gas; a later call whose "
+                 "one charge passes the Oracle's cap is stopped by the mark, and the deposit returns its return data",
+                 spec=spec, system=True, deposit=(0, 22_000_000), sender_nonce=3,
+                 accounts={BURNER: model.Account(nonce=1, code=burner)},
+                 make=lambda gas: get_slot + call(gas, model.ORACLE, 0, 36) + b"\x50" + call(MAX_GAS, BURNER, 0, 0)
+                 + RETURN_RETURNDATA,
+                 params={"gas": 1_000}, retune=[("oracle-sload", left, "gas", 1)]))
+    add(Case("satin/oracle/read-at-crossing", "a deposit's detained call to the Oracle's getSlot holds 50 of spendable gas "
+             f"and {fmt(1_000)} in all at the SLOAD: the read is marked, and its one charge of {fmt(model.COLD_SLOAD)} is "
+             "beyond the whole regular gas, so the frame runs out of gas rather than being stopped", spec=spec, system=True,
+             deposit=(0, 21_000_000), sender_nonce=3,
+             make=lambda words, pad, gas: get_slot + detained(words, pad) + call(gas, model.ORACLE, 0, 36) + RETURN_RETURNDATA,
+             params={**start, "gas": 2_000},
+             retune=[("oracle-sload", 1_000, "gas", 1), ("oracle-sload-room", 50, "pad", -1)]))
+    # A refused volatile read costs nothing and comes before any charge (SATIN-MAC-003, -004).
+    disable = mstore(0, int.from_bytes(model.DISABLE_VOLATILE_DATA_ACCESS, "big") << 224)
+    refused = disable + call(10_000, model.MEGA_ACCESS_CONTROL, 0, 4) + b"\x50" + push(int.from_bytes(COINBASE, "big")) \
+        + b"\x31" + STOP
+    add(Case("satin/access-control/refused-read", "a frame switches its volatile-data access off, then does BALANCE of the "
+             "block beneficiary: refused before any charge, the frame reverts with VolatileDataAccessDisabled(10) on the "
+             "gas it held at the opcode", spec=spec, system=True, code=refused))
+    add(Case("satin/access-control/refused-read-under-static-gas", "as the refused read, the frame holding 50 of regular "
+             f"gas at the BALANCE, under its static cost {model.WARM_READ}: refused all the same, not out of gas", spec=spec,
+             system=True, code=refused, gas=100_000, tune=("refused", 50)))
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -685,7 +799,7 @@ def build(c: Case):
         address = {"created": created, "sender": sender}.get(who, who)
         capacity = int(m * salt_mapping.MIN_BUCKET_SIZE)
         buckets[salt_bucket(address, slot)] = capacity
-    env = model.Env(CHAIN_ID, COINBASE, c.base_fee, BLOCK_GAS_LIMIT, buckets)
+    env = model.Env(CHAIN_ID, COINBASE, c.base_fee, BLOCK_GAS_LIMIT, buckets, timestamp=BLOCK_TIMESTAMP)
 
     if c.deposit:
         mint, gas = c.deposit
@@ -713,7 +827,7 @@ def build(c: Case):
     inp = {
         "chain": {"chainId": q(CHAIN_ID)},
         "block": {
-            "number": q(2), "timestamp": q(0x6553F102), "coinbase": h(COINBASE), "gasLimit": q(BLOCK_GAS_LIMIT),
+            "number": q(2), "timestamp": q(BLOCK_TIMESTAMP), "coinbase": h(COINBASE), "gasLimit": q(BLOCK_GAS_LIMIT),
             "baseFee": q(c.base_fee), "prevRandao": ZERO32, "parentHash": "0x" + (0xA11CE).to_bytes(32, "big").hex(),
             "parentTimestamp": q(0x6553F101), "parentBeaconBlockRoot": ZERO32, "extraData": "0x", "slotNumber": "0x0",
             "blobBaseFee": "0x1", "depositOnly": False, "activation": False,
@@ -797,6 +911,20 @@ GIVE_BACKS = {  # case -> (the slot its GAS is stored in, what the reservoir hol
 DEPOSIT_HISTORY = {"satin/deposits/existing-caller/one-log": "the log's"}
 
 
+# The detention cases the revm-based implementation fails, for two more decided rules it has not made yet: a
+# refused volatile read charges nothing (SATIN-MAC-004), and the Oracle's SLOAD reads and marks before its one
+# charge (SATIN-ORCL-004). The first difference of each is the regular ledger the block counts. A refusal's figure
+# is derived, the rule's plus the static cost that implementation charges first, or plus the gas the frame held and
+# burns when it cannot pay it. An Oracle read's figure is that implementation's run, recorded: it follows from what
+# it does once the read is skipped or the crossing comes early, which the model does not restate (D-60).
+REFUSALS = {"satin/access-control/refused-read": "static", "satin/access-control/refused-read-under-static-gas": "held"}
+ORACLE_RUNS = {  # case -> the regular ledger the revm-based implementation reports
+    "satin/oracle/read-short-of-warm-base": 0x13180AC,
+    "satin/oracle/read-short-of-cold-access": 0x1318462,
+    "satin/oracle/read-at-crossing": 0x1316789,
+}
+
+
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -827,10 +955,71 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
                    f"{price} = {fmt(history)}")
         return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used), "actual": q(used - history),
                 "verdict": verdict}
+    if c.case_id in REFUSALS or c.case_id in ORACLE_RUNS:
+        block = int(fx["expected"]["gasLedgers"]["blockGas"], 16)
+        if int(fx["expected"]["gasLedgers"]["regular"], 16) != block:
+            raise SystemExit(f"{c.case_id}: the block's figure is not the regular ledger")
+        path = "/expected/gasLedgers/blockGas"
+    if c.case_id in REFUSALS:
+        static = model.WARM_READ
+        if REFUSALS[c.case_id] == "static":
+            more = static
+            how = (f"charges BALANCE's static cost, {static}, before it refuses the read at the load, so the frame reverts "
+                   f"on {static} less")
+        else:
+            more = c.probe["refused"]
+            how = (f"charges BALANCE's static cost, {static}, first, which the {more} of regular gas the frame holds cannot "
+                   "pay: the frame runs out of gas instead of being refused, and burns them")
+        verdict = ("SATIN-MAC-003 and SATIN-MAC-004 refuse a volatile read in a frame whose access is off before the opcode "
+                   "charges anything, the frame reverting on the gas it held at the opcode; the revm-based implementation "
+                   f"at {REVM_PIN} {how}: the regular ledger, which the block counts, is {fmt(more)} above the rule's")
+        return {"adapter": adapter, "path": path, "expected": q(block), "actual": q(block + more), "verdict": verdict}
+    if c.case_id in ORACLE_RUNS:
+        actual = ORACLE_RUNS[c.case_id]
+        if c.case_id.endswith("at-crossing"):
+            how = (f"charges the read's warm base, {model.WARM_READ}, first, which the spendable part cannot pay and the "
+                   "whole regular gas can: the crossing, which stops the Oracle's frame and returns its regular gas to its "
+                   f"caller, where the rule's one charge of {fmt(model.COLD_SLOAD)}, beyond the whole, is an out-of-gas "
+                   "(SATIN-DET-018, SATIN-DET-020) that burns it")
+        else:
+            how = (f"charges the read's warm base, {model.WARM_READ}, first and skips the read when the cold access "
+                   "cannot be paid, marking nothing, so the later call's charge past the Oracle's cap is paid instead of "
+                   "stopped (SATIN-DET-003, SATIN-DET-012)")
+        verdict = ("SATIN-ORCL-004 makes the Oracle's SLOAD load the slot and mark the read before its cold access, which "
+                   f"is then one charge; the revm-based implementation at {REVM_PIN} {how}. Its regular ledger, which the "
+                   f"block counts, is {fmt(abs(actual - block))} {'above' if actual > block else 'below'} the rule's; the "
+                   "deposit's history, which it does not charge either (SATIN-HIST-016), is not in that figure")
+        return {"adapter": adapter, "path": path, "expected": q(block), "actual": q(actual), "verdict": verdict}
     return None
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
                "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources"}
+
+
+def settle_burn(params: dict) -> None:
+    """Moves what a JUMPDEST pad holds into the burn's memory words while a whole word's cost fits in it."""
+    while "words" in params and params["pad"] >= model.memory_cost(params["words"] + 1) - model.memory_cost(params["words"]):
+        params["pad"] -= model.memory_cost(params["words"] + 1) - model.memory_cost(params["words"])
+        params["words"] += 1
+
+
+def remade(c: Case) -> None:
+    """Sets a case's code parameters from its probes (Case.retune)."""
+    _, result, _ = build(c)
+    for point, want, param, slope in c.retune:
+        moved, rest = divmod(want - result.probe[point], slope)
+        if rest:
+            raise SystemExit(f"{c.case_id}: {point} moves by {slope} per {param}")
+        c.params[param] += moved
+    if any(v < 0 for v in c.params.values()):
+        raise SystemExit(f"{c.case_id}: the parameters {c.params} are not reachable")
+    settle_burn(c.params)
+    c.code = c.make(**c.params)
+    _, result, _ = build(c)
+    for point, want, _, _ in c.retune:
+        if result.probe.get(point) != want:
+            raise SystemExit(f"{c.case_id}: the code parameters {c.params} give {point} {result.probe.get(point)}, not {want}")
+    c.retune = []
 
 
 def tuned(c: Case) -> None:
@@ -848,6 +1037,8 @@ def tuned(c: Case) -> None:
 
 
 def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str = SPEC_COMMITS[DEFAULT_SPEC]) -> dict:
+    if c.retune:
+        remade(c)
     if c.tune:
         tuned(c)
     inp, result, decoded = build(c)
