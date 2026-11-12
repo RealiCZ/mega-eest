@@ -5,7 +5,8 @@ Each case is authored here — its setup, the transaction (real signed bytes, or
 envelope), the SALT capacities its state lands in — and its expected observations come from
 `tools/satin_model.py`, an executable restatement of the cited rules of the pinned specification
 (`specs/satin-d34e626`; the cases added for interception, the keyless decoder and EIP-7702
-existence cite `specs/satin-d334ef8`, decision D-54). No implementation is run: the filler's output is a candidate to compare
+existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
+principles `specs/satin-5fb2688`, D-59). No implementation is run: the filler's output is a candidate to compare
 with, never the source of these values (`tools/run-slice.sh` runs both implementations against
 them).
 
@@ -42,9 +43,12 @@ import satin_model as model  # noqa: E402
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 SPEC_DIR = os.path.join(ROOT, "specs", "satin-d34e626")
 SPEC_COMMITS = {"satin-d34e626": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
-                "satin-d334ef8": "d334ef8748a6fb09dfcf1162704539fe22373aef"}
+                "satin-d334ef8": "d334ef8748a6fb09dfcf1162704539fe22373aef",
+                "satin-5fb2688": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be"}
 DEFAULT_SPEC = "satin-d34e626"
 INTERCEPTION_SPEC = "satin-d334ef8"  # interception before the frame start, SATIN-ICPT-007
+ORDERING_SPEC = "satin-5fb2688"  # the charge-order principles, SATIN-HIST-023
+PRINCIPLES_SPECS = {ORDERING_SPEC}  # the snapshots that state the principles the model cites
 OUT = os.path.join(ROOT, "slice")
 
 KEY = ex.TEST_KEY
@@ -60,6 +64,9 @@ COINBASE = bytes.fromhex("4200000000000000000000000000000000000011")
 AUTH_KEY = 0x3C2AD3B4B9F1E7A6D5C4B3A29180F7E6D5C4B3A29180F7E6D5C4B3A29180F7E6
 AUTHORITY = ex.address_of(AUTH_KEY)
 EMPTY_LEAF = bytes.fromhex("000000000000000000000000000000000000e3e7")
+PLAIN = bytes.fromhex("00000000000000000000000000000000000c0de2")  # a contract with code, no system contract
+DELEGATED = bytes.fromhex("0000000000000000000000000000000000de1e9a")  # an account holding a delegation
+DELEGATE = bytes.fromhex("00000000000000000000000000000000000de1e9")  # the account it delegates to
 CHAIN_ID = 1
 BLOCK_GAS_LIMIT = 10_000_000_000
 ETH = 10**18
@@ -192,7 +199,7 @@ class Case:
                  gas_price=0, base_fee=0, ty=0, max_priority=0, max_fee=0, nonce=0, sender_nonce=0, sender_balance=ETH,
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
-                 contract_balance=0, authorizations=None, system=False, check=None):
+                 contract_balance=0, authorizations=None, system=False, check=None, tune=None):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -212,6 +219,9 @@ class Case:
         self.authorizations = authorizations or []  # (key, chain id, delegation target, nonce)
         self.system = system  # the system contracts' code in the pre-state
         self.check = check or {}  # gasLedgers figures the derivation must reproduce
+        # (probe, regular gas): the gas limit is set so the model's probe point (satin_model.Run.probe)
+        # holds exactly that regular gas; `gas` is the limit the model is first run with to find it.
+        self.tune = tune
 
 
 def cases() -> list[Case]:
@@ -357,6 +367,7 @@ def cases() -> list[Case]:
     add(Case("satin/deposits/existing-caller/fresh-slot", "a deposit from an existing account that writes a fresh slot",
              deposit=(0, 1_000_000), sender_nonce=3, code=sstore(1, 1) + STOP))
     out += interception_cases()
+    out += ordering_cases()
     return out
 
 
@@ -457,6 +468,187 @@ def interception_cases() -> list[Case]:
     return out
 
 
+# --- The edges of the charge-order principles (SATIN-HIST-023) ------------------------------------
+
+MAX_GAS = 2**256 - 1  # a CALL's gas operand at its maximum: the forward is the cap
+
+
+def store_gas(slot: int) -> bytes:
+    """SSTORE(slot, GAS): the regular gas the frame has left, its reservoir not included (SATIN-POOL-009)."""
+    return b"\x5a" + push(slot) + b"\x55"
+
+
+def kept_threshold(history: int) -> int:
+    """The least regular gas a caller can hold once a CALL's regular charges are made and still pay `history` from
+    what it keeps after forwarding all it may: remaining x GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR >=
+    history (SATIN-FWD-001)."""
+    return -(-history * model.GAS_RETAINED_DENOMINATOR // model.GAS_RETAINED_NUMERATOR)
+
+
+def big_hints(count: int, size: int) -> bytes:
+    """`count` sendHint calls of `size` input bytes each, forwarded 1 gas, with no value, from memory whose first
+    word holds sendHint's selector; each is admitted and counted, and the Oracle halts at its first opcode."""
+    return (mstore(0, int.from_bytes(model.SEND_HINT, "big") << 224)
+            + b"".join(push(0) + push(0) + push(size) + push(0) + push(0) + push(int.from_bytes(model.ORACLE, "big"))
+                       + push(1) + b"\xf1\x50" for _ in range(count)))
+
+
+def ordering_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = ORDERING_SPEC
+    record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
+    two = 2 * record
+    at = kept_threshold(two)  # a caller that forwards all it may pays two records from what it keeps
+    access_control = model.selector("disableVolatileDataAccess()")
+    limit_control = model.selector("remainingComputeGas()")
+    hint = send_hint(7, b"\xaa")
+
+    def value_call(target: bytes, data: bytes, gas: int, *after: bytes) -> bytes:
+        return bytes_to_memory(data) + call(gas, target, 1, len(data)) + b"".join(after) + STOP
+
+    # The pool split after an answered value call: the records' history is charged in the opcode and given back
+    # into the caller's reservoir, which GAS does not read (SATIN-HIST-023, SATIN-HIST-012, SATIN-POOL-009).
+    add(Case("satin/call-order/answered/access-control-two-records", "a value call its caller can fund, answered "
+             f"NonZeroTransfer() by MegaAccessControl, then GAS stored: the two records' {fmt(two)} history, charged in "
+             "the opcode and given back into the caller's reservoir, is not in GAS", system=True, spec=spec,
+             code=value_call(model.MEGA_ACCESS_CONTROL, access_control, 100_000, store_gas(3), record_result()),
+             contract_balance=10))
+    add(Case("satin/call-order/answered/access-control-one-record", "as the two-record case, the caller's account "
+             f"already changed by the transaction's value: one record, {fmt(record)}, is charged and given back",
+             system=True, spec=spec, value=1,
+             code=value_call(model.MEGA_ACCESS_CONTROL, access_control, 100_000, store_gas(3), record_result()),
+             contract_balance=10))
+    add(Case("satin/call-order/answered/limit-control-two-records", "a value call its caller can fund, answered "
+             f"NonZeroTransfer() by MegaLimitControl, then GAS stored: {fmt(two)} given back into the reservoir",
+             system=True, spec=spec,
+             code=value_call(model.MEGA_LIMIT_CONTROL, limit_control, 100_000, store_gas(3), record_result()),
+             contract_balance=10))
+    big = 1 << 20
+    count = (model.TX_DATA_LIMIT - model.TX_BODY_SIZE) // big
+    add(Case("satin/call-order/answered/hint-over-data-size-limit", "a sendHint its caller can fund whose input would "
+             "take the transaction over its data-size limit, then GAS stored: answered MegaLimitExceeded(0, limit), and "
+             f"the two records' {fmt(two)} history given back into the reservoir; "
+             f"{NUMBERS.get(count, str(count))} admitted 1 MiB hints bring the data size near the limit", system=True,
+             spec=spec, gas=4_000_000, contract_balance=10,
+             code=big_hints(count, big) + call(100_000, model.ORACLE, 1, big) + store_gas(3) + record_result() + STOP))
+    # The caller cannot pay the records: it halts in the opcode, before any decision (SATIN-HIST-023, -009).
+    for name, target, data, gas, want, what in (
+            ("access-control", model.MEGA_ACCESS_CONTROL, access_control, MAX_GAS, at,
+             "MegaAccessControl, the gas operand at its maximum"),
+            ("send-hint", model.ORACLE, hint, MAX_GAS, at, "the Oracle's sendHint, the gas operand at its maximum"),
+            ("zero-gas", model.MEGA_ACCESS_CONTROL, access_control, 0, two,
+             "MegaAccessControl with the gas operand zero, so that it forwards nothing")):
+        after = (record_result(),) if gas else ()
+        for short in (True, False):
+            held = want - 1 if short else want
+            kept = held * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR if gas else held
+            if short:
+                result = (f"it keeps {fmt(kept)} after the forward, one short of the two records' {fmt(two)}, and halts out "
+                          "of gas in the opcode: " + ("no hint is admitted or counted" if target == model.ORACLE
+                                                      else "no interceptor answers"))
+            else:
+                result = (f"it keeps the two records' {fmt(kept)} after the forward and pays them: " +
+                          ("the hint is admitted and counted, and the Oracle's bytecode refuses the value"
+                           if target == model.ORACLE else "answered NonZeroTransfer()"))
+            add(Case(f"satin/call-order/records-unpaid/{name}-{'one-short' if short else 'exact'}",
+                     f"a value call its caller can fund to {what}, the caller holding {fmt(held)} of regular gas once the "
+                     f"opcode's regular charges are made: {result}",
+                     boundary=f"the caller's regular gas {'one below' if short else 'at'} {fmt(want)}", system=True,
+                     spec=spec, contract_balance=10, code=value_call(target, data, gas, *after),
+                     tune=("forward", held)))
+    # A value the caller cannot fund makes no record: nothing is charged or given back (SATIN-HIST-015).
+    short = at - 1
+    add(Case("satin/call-order/unfunded/contract", f"a value call its caller cannot fund to a contract, the gas operand at "
+             f"its maximum, the caller holding {fmt(short)} of regular gas at the forward: no record is charged, so it does "
+             "not halt; the start is refused and the child's whole regular gas, the stipend included, returns to GAS",
+             spec=spec, accounts={PLAIN: model.Account(nonce=1, code=INVALID)},
+             code=value_call(PLAIN, b"", MAX_GAS, store_gas(3), record_result()), tune=("forward", short)))
+    add(Case("satin/call-order/unfunded/limit-control", f"a value call its caller cannot fund to MegaLimitControl, the gas "
+             f"operand at its maximum, the caller holding {fmt(short)} at the forward: no record is charged, the call is "
+             "answered NonZeroTransfer() and the child's whole regular gas returns to GAS", system=True, spec=spec,
+             code=value_call(model.MEGA_LIMIT_CONTROL, limit_control, MAX_GAS, store_gas(3), record_result()),
+             tune=("forward", short)))
+    new_account = model.ACCOUNT_STATE
+    add(Case("satin/call-order/unfunded/empty-account", "a value call its caller cannot fund to an account empty under "
+             f"EIP-161: the new account's {fmt(new_account)} state gas, its legacy share first, is charged before the "
+             f"forward and given back into the caller's reservoir when the start is refused; no record is charged, the "
+             f"caller holding {fmt(short)} at the forward", spec=spec,
+             code=value_call(ABSENT, b"", MAX_GAS, store_gas(3), record_result()), tune=("forward", short)))
+    add(Case("satin/call-order/unfunded/contract-refused", "a value call its caller cannot fund to a contract, with the "
+             "sendHint input of the interception case: no interception, the start refused, the child's whole regular gas "
+             "returned, the stipend included", spec=spec, accounts={PLAIN: model.Account(nonce=1, code=INVALID)},
+             code=value_call(PLAIN, hint, 100_000, record_result())))
+    # A delegated recipient's delegate access before the first frame (SATIN-SCHED-008 step 5).
+    delegation = model.DELEGATION_PREFIX + DELEGATE
+    held = {DELEGATED: model.Account(nonce=1, code=delegation), DELEGATE: model.Account(nonce=1, code=STOP)}
+    plain = {DELEGATED: model.Account(nonce=1), DELEGATE: model.Account(nonce=1, code=STOP)}
+    warm, cold = model.WARM_READ, model.WARM_READ + model.COLD_ACCOUNT_SURCHARGE
+    add(Case("satin/delegated-recipient/warm-delegate", f"a transaction to an account delegating to an account in its "
+             f"access list: the delegate's warm access, {fmt(warm)}, before the first frame", spec=spec, ty=1, to=DELEGATED,
+             code=None, access_list=[(DELEGATE, [])], accounts=held))
+    add(Case("satin/delegated-recipient/no-delegation", "the warm-delegate transaction to the same account without its "
+             "delegation: no delegate access", spec=spec, ty=1, to=DELEGATED, code=None, access_list=[(DELEGATE, [])],
+             accounts=plain))
+    add(Case("satin/delegated-recipient/cold-delegate", f"a transaction to an account delegating to an account that is not "
+             f"warm: the warm read, then the cold surcharge, {fmt(cold)} in all, before the first frame", spec=spec,
+             to=DELEGATED, code=None, accounts=held))
+    for short in (True, False):
+        left = cold - 1 if short else cold
+        add(Case(f"satin/delegated-recipient/cold-delegate-{'one-short' if short else 'exact'}",
+                 f"the cold-delegate transaction with {fmt(left)} of regular gas left for the delegate's access: " +
+                 ("the warm read is paid and the cold surcharge is not, so the delegate is not loaded and the transaction "
+                  "runs out of gas before its first frame" if short else "the access is paid and the first frame starts "
+                  "with no regular gas, running the delegate's STOP"),
+                 boundary=f"the regular gas left for the delegate's access {'one below' if short else 'at'} {fmt(cold)}",
+                 spec=spec, to=DELEGATED, code=None, accounts=held, gas=100_000, tune=("delegate", left)))
+    add(Case("satin/delegated-recipient/own-sender", f"a transaction to its own sender, which delegates to an account that "
+             f"is not warm: TX_BASE_COST alone, then the delegate's access, {fmt(cold)}, before the first frame",
+             spec=spec, to=SENDER, code=None, sender_code=delegation, accounts={DELEGATE: model.Account(nonce=1, code=STOP)}))
+    # The reservoir pays the authorities' records first (SATIN-HIST-005).
+    body = (model.TX_BODY_SIZE + model.AUTHORIZATION_SIZE) * model.COST_PER_HISTORY_BYTE
+    indicator = model.DELEGATION_STATE_BYTES * model.COST_PER_STATE_BYTE
+    reservoir = body + indicator + record
+    add(Case("satin/pre-frame/authorities-first-halt", f"a reservoir of {fmt(reservoir)}: the body's history and the "
+             f"authority's delegation indicator leave {fmt(record)} when step 3 begins, which pays the authority's record; "
+             "the first frame's start record is paid by regular gas, and the halt of the first frame returns none of it",
+             spec=spec, ty=4, value=1, code=INVALID, gas=model.EXECUTION_CAP + reservoir,
+             authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0)], accounts={AUTHORITY: model.Account(balance=1)}))
+    # The transaction's own start record before interception answers its keylessDeploy call (SATIN-HIST-005).
+    unpadded = model.KEYLESS_DEPLOY_CALL + word(0x40) + word(1_000_000) + word(5) + bytes.fromhex("0102030405")
+    overhead = model.KEYLESS_DEPLOY_OVERHEAD_GAS
+    for short in (True, False):
+        left = overhead - 1 if short else overhead
+        add(Case(f"satin/pre-frame/keyless-start-record-{'one-short' if short else 'exact'}",
+                 f"the transaction's own value keylessDeploy call, its start record's {fmt(record)} charged before the "
+                 f"first frame, leaving {fmt(left)} for the frame: " +
+                 (f"one short of step 1's {fmt(overhead)}, so the frame halts out of gas and no NoEtherTransfer() is "
+                  "answered" if short else f"step 1's {fmt(overhead)} is paid and the call is answered NoEtherTransfer(), "
+                  "the record's history given back"),
+                 boundary=f"the frame's regular gas {'one below' if short else 'at'} {fmt(overhead)}", system=True,
+                 spec=spec, to=model.KEYLESS_DEPLOY, code=None, value=1, data=unpadded, gas=300_000,
+                 tune=("frame", left)))
+    # The data-size check of a hint: over the limit, not at it (SATIN-ORCL-010).
+    room = model.TX_DATA_LIMIT - model.TX_BODY_SIZE - count * big
+    for over in (False, True):
+        size = room + 1 if over else room
+        add(Case(f"satin/interception/send-hint/{'one-byte-over' if over else 'at'}-data-size-limit",
+                 f"after {NUMBERS.get(count, str(count))} admitted 1 MiB hints, a sendHint of {fmt(size)} input bytes " +
+                 ("takes the data size one byte over the limit: answered MegaLimitExceeded(0, limit), nothing counted"
+                  if over else "takes the data size exactly to the limit: admitted and counted"),
+                 boundary=f"the data size {'one byte over' if over else 'at'} TX_DATA_LIMIT", system=True, spec=spec,
+                 gas=4_000_000, code=big_hints(count, big) + push(0) + push(0) + push(size) + push(0) + push(0)
+                 + push(int.from_bytes(model.ORACLE, "big")) + push(1) + b"\xf1" + STOP))
+    # Give-backs credit the reservoir, deposits pay history (SATIN-HIST-012, SATIN-HIST-016).
+    add(Case("satin/sstore/fresh-then-restored-gas", "0 -> 1 -> 0, then GAS stored: the slot's state and history gas "
+             "come back into the reservoir, which GAS does not read", spec=spec,
+             code=sstore(1, 1) + sstore(1, 0) + store_gas(2) + STOP))
+    add(Case("satin/deposits/existing-caller/one-log", "a deposit from an existing account that emits one empty LOG0: "
+             "the deposit pays the log's history", spec=spec, deposit=(0, 1_000_000), sender_nonce=3,
+             code=log(0, 0, 0, []) + STOP))
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -514,7 +706,9 @@ def build(c: Case):
                       max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list,
                       authorizations=[(cid, target, n, ex.address_of(k)) for k, cid, target, n in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
-    result = model.Run(env, pre, tx, salt_bucket).run()
+    run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS)
+    result = run.run()
+    result.probe = run.probe
 
     inp = {
         "chain": {"chainId": q(CHAIN_ID)},
@@ -579,12 +773,85 @@ QUARANTINE = {
 # What each quarantined deposit keeps besides its body, for its verdict.
 QUARANTINE_RECORDS = {"satin/deposits/existing-caller/fresh-slot": "the fresh slot's write record"}
 
+# The cases of the charge-order edges that the revm-based implementation at its pin fails, for one of two
+# decided rules it has not made yet: every give-back credits the reservoir, never regular gas (SATIN-HIST-012),
+# and a deposit pays history gas (SATIN-HIST-016). Each records what that implementation's difference makes of
+# the derived figure: GAS above the rule's by the give-back the frame's reservoir holds when GAS reads, or a
+# deposit's gas used below the rule's by its whole history. tools/run-slice.sh checks the figure on every run.
+REVM_PIN = "4e39cfd6"
+GIVE_BACKS = {  # case -> (the slot its GAS is stored in, what the reservoir holds when GAS reads)
+    "satin/call-order/answered/access-control-two-records": (
+        3, "the history of the two records the opcode charged for the start that MegaAccessControl's answer replaced"),
+    "satin/call-order/answered/access-control-one-record": (
+        3, "the history of the record the opcode charged for the start that MegaAccessControl's answer replaced"),
+    "satin/call-order/answered/limit-control-two-records": (
+        3, "the history of the two records the opcode charged for the start that MegaLimitControl's answer replaced"),
+    "satin/call-order/answered/hint-over-data-size-limit": (
+        3, "the history of the two records the opcode charged for the start that the hint's data-size stop replaced"),
+    "satin/call-order/unfunded/empty-account": (
+        3, "the new account's state gas, its legacy share included, that the refused start gives back (SATIN-POOL-015)"),
+    "satin/sstore/fresh-then-restored-gas": (
+        2, "the fresh slot's state gas and its record's history, given back when the slot returns to zero "
+           "(SATIN-STATE-008, SATIN-HIST-006)"),
+}
+DEPOSIT_HISTORY = {"satin/deposits/existing-caller/one-log": "the log's"}
+
+
+def storage_path(address: bytes, slot: int) -> str:
+    return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
+
+
+def edge_quarantine(c: Case, fx: dict) -> dict | None:
+    """The quarantine record of an edge case the revm-based implementation fails, or None."""
+    adapter = "mega-eest-adapter-revm"
+    if c.case_id in GIVE_BACKS:
+        slot, what = GIVE_BACKS[c.case_id]
+        held, gas = c.probe["gas-reservoir"], c.probe["gas"]
+        if fx["expected"]["state"]["accounts"][h(CONTRACT)]["storage"].get(f"0x{slot:064x}") != q(gas):
+            raise SystemExit(f"{c.case_id}: slot {slot} does not hold the GAS the derivation read")
+        path = storage_path(CONTRACT, slot)
+        verdict = ("SATIN-HIST-012 makes every give-back of state or history gas credit the reservoir of the frame that "
+                   "receives it, never its regular gas, whichever pool paid the charge, and SATIN-POOL-009 makes GAS push "
+                   f"the regular gas alone; the revm-based implementation at {REVM_PIN} credits {what}, "
+                   f"{fmt(held)}, to the frame's regular gas, so the GAS it stores is {fmt(held)} above the rule's")
+        return {"adapter": adapter, "path": path, "expected": q(gas), "actual": q(gas + held), "verdict": verdict}
+    if c.case_id in DEPOSIT_HISTORY:
+        ledgers = fx["expected"]["gasLedgers"]
+        history, history_bytes = int(ledgers["history"], 16), int(ledgers["historyBytes"], 16)
+        used = int(ledgers["gasUsed"], 16)
+        price, body = model.COST_PER_HISTORY_BYTE, model.TX_BODY_SIZE
+        verdict = ("SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body "
+                   f"and its logs among the rest; the revm-based implementation at {REVM_PIN} charges a deposit no history "
+                   f"gas, so its gas used is {fmt(history)} below the rule's: the body's {body} bytes and "
+                   f"{DEPOSIT_HISTORY[c.case_id]} {history_bytes - body} at {price} gas, ({body} + {history_bytes - body}) x "
+                   f"{price} = {fmt(history)}")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used), "actual": q(used - history),
+                "verdict": verdict}
+    return None
+
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
                "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources"}
 
 
+def tuned(c: Case) -> None:
+    """Sets a tuned case's gas limit so its probe point holds the regular gas it names: below the execution
+    cap every charge before that point is fixed, so the probe moves with the gas limit one for one."""
+    point, want = c.tune
+    if c.gas > model.EXECUTION_CAP:
+        raise SystemExit(f"{c.case_id}: a tuned gas limit must be below the execution cap")
+    _, result, _ = build(c)
+    c.gas += want - result.probe[point]
+    _, result, _ = build(c)
+    if result.probe.get(point) != want:
+        raise SystemExit(f"{c.case_id}: the gas limit {c.gas} gives {point} {result.probe.get(point)}, not {want}")
+    c.tune = None
+
+
 def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str = SPEC_COMMITS[DEFAULT_SPEC]) -> dict:
+    if c.tune:
+        tuned(c)
     inp, result, decoded = build(c)
+    c.probe = result.probe
     for key, want in c.check.items():
         got = int(result.observations["gasLedgers"][key], 16)
         if got != want:
@@ -677,6 +944,8 @@ def outputs() -> dict[str, str]:
         if q_entry:
             q_entry = {**q_entry, "verdict": deposit_history_verdict(fx["expected"]["gasLedgers"],
                                                                      QUARANTINE_RECORDS.get(c.case_id, ""))}
+        else:
+            q_entry = edge_quarantine(c, fx)
         rel = f"{'quarantine' if q_entry else 'cases'}/{c.case_id.replace('/', '--')}.json"
         if q_entry:
             fx["provenance"]["quarantine"] = q_entry

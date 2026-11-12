@@ -2,24 +2,28 @@
 """A small executable model of Satin's transaction rules, for deriving expected values.
 
 This is the independent evidence behind the vertical slice's expectations: it restates, from the
-specification at `d34e626` (`specs/satin-d34e626`) and, for calls, interception and EIP-7702, at
-`d334ef8` (`specs/satin-d334ef8`), the arithmetic a `state-transition` case's observations follow,
-for the narrow class of transactions the slice uses:
+specification at `d34e626` (`specs/satin-d34e626`), for calls, interception and EIP-7702 at
+`d334ef8` (`specs/satin-d334ef8`), and for the charge-order principles at `5fb2688`
+(`specs/satin-5fb2688`), the arithmetic a `state-transition` case's observations follow, for the
+narrow class of transactions the slice uses:
 
 - the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`,
-  `CALLVALUE`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`, `REVERT` and `INVALID`, and
-  the stack, arithmetic, calldata, jump, return-data and `KECCAK256` opcodes a system contract's
-  dispatcher and decoder use; no creation opcode, self-destruct or volatile read;
+  `CALLVALUE`, `GAS`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`, `REVERT` and
+  `INVALID`, and the stack, arithmetic, calldata, jump, return-data and `KECCAK256` opcodes a
+  system contract's dispatcher and decoder use; no creation opcode, self-destruct or volatile read;
 - a `CALL` from that frame to a system contract, decided in the order of `SATIN-ICPT-007`: an
   interceptor's `NonZeroTransfer()`, the `sendHint` admission and its data-size stop, the frame
   start that refuses a value the caller cannot fund, and a child frame that reverts or halts; the
   opcode charges the history of the records its start would make, as the state stands, before all
-  of these;
+  of these, and a caller that cannot pay it halts in the opcode; a value `CALL` its caller cannot
+  fund to any other account, a contract or one empty under EIP-161, refused at its frame start;
 - a transaction's own `keylessDeploy` call, recognized or not (`SATIN-ICPT-006`), as far as the
-  refusals of steps 2 and 3;
+  refusals of steps 2 and 3 or a halt at step 1;
 - one-entry EIP-7702 lists whose entry is accepted, the authority present or absent, and a
-  transaction to an account holding a delegation, which pays its delegate's access before the
-  first frame;
+  transaction to an account holding a delegation, its sender's own among them, which pays its
+  delegate's access before the first frame;
+- a transaction that runs out of gas before its first frame with nothing applied but validation's
+  changes to its sender;
 - calls, value transfers, creation transactions and deposits, with or without a reservoir;
 - the refusals of transaction validation.
 
@@ -110,6 +114,10 @@ DELEGATION_STATE_BYTES = 23  # SATIN-STATE-003: the EIP-8037 byte count of a del
 AUTHORIZATION_SIZE = 101  # SATIN-HIST-002: bytes of an authorization entry
 KEYLESS_DEPLOY_OVERHEAD_GAS = 100_000  # SATIN-KEY-005 step 1
 MAX_U64 = 2**64 - 1
+# The charge-order principles (the specification at `5fb2688`).
+PRE_FORK_NEW_ACCOUNT_COST = 25_000  # SATIN-STATE-012: the pre-Satin price of a new account
+LEGACY_NEW_ACCOUNT_SHARE = PRE_FORK_NEW_ACCOUNT_COST - 0  # SATIN-STATE-012: a value CALL's new account has no execution charge
+DELEGATION_PREFIX = b"\xef\x01\x00"  # EIP-7702's delegation indicator, followed by the delegate's address
 
 ORACLE = bytes.fromhex("6342000000000000000000000000000000000001")
 KEYLESS_DEPLOY = bytes.fromhex("6342000000000000000000000000000000000003")
@@ -132,6 +140,11 @@ INTERCEPTED = {
 NON_ZERO_TRANSFER = selector("NonZeroTransfer()")  # SATIN-ICPT-003
 NO_ETHER_TRANSFER = selector("NoEtherTransfer()")  # SATIN-KEY-005 step 2
 MALFORMED_ENCODING = selector("MalformedEncoding()")  # SATIN-KEY-005 step 3
+
+
+def delegate_of(code: bytes) -> bytes | None:
+    """The delegate an EIP-7702 delegation indicator names, or None for any other code."""
+    return code[3:] if len(code) == 23 and code[:3] == DELEGATION_PREFIX else None
 
 
 def limit_exceeded(kind: int, limit: int) -> bytes:
@@ -303,10 +316,18 @@ def memory_cost(words: int) -> int:
 class Run:
     """One transaction against a complete pre-state."""
 
-    def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket):
+    def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
         self.salt_bucket = salt_bucket  # (address, slot or None) -> bucket id
         self.d = Derivation()
+        # The specification states the charge-order principles (`SATIN-HIST-023`, from `5fb2688` on): the
+        # derivation cites them where the earlier snapshots leave the orders to the owner's decision (D-58).
+        self.principles = principles
+        # Gas figures at fixed points of the run, for the cases that set an input from a threshold:
+        # "forward" is the caller's regular gas when the first CALL computes its forward, "frame" the
+        # regular gas the first frame starts with, "delegate" the regular gas before the delegate's access,
+        # "gas" and "gas-reservoir" the frame's regular gas and reservoir at its first GAS.
+        self.probe: dict[str, int] = {}
 
     # The refusals of transaction validation, in the order SATIN-VAL-003 fixes for Satin's own
     # checks; the base layer's checks come after, each case failing only one check.
@@ -335,7 +356,7 @@ class Run:
             return ("inclusion", "gas-limit-exceeds-block", ("SATIN-BLK-009", "SATIN-BLK-013", "SATIN-BASE-002"),
                     f"gas limit {fmt(tx.gas_limit)} > the {fmt(env.block_gas_limit)} the block's gas limit has left: "
                     "skipped for the block, a refusal at inclusion in engine isolation")
-        if sender.code:
+        if sender.code and delegate_of(sender.code) is None:  # EIP-7702 lets a delegated account send
             return ("validation", "sender-has-code", "SATIN-VAL-007",
                     "the sender's account has code (EIP-3607, a base-layer check)")
         if tx.nonce < sender.nonce:
@@ -445,6 +466,8 @@ class Run:
         from_res = min(reservoir, body_history)
         reservoir -= from_res
         regular -= body_history - from_res
+        self.reservoir_after_body = reservoir
+        self.hint_bytes = 0  # admitted hints' input bytes, which stay counted whatever follows (SATIN-ORCL-009)
         d.add("gasLedgers", f"body history {fmt(body_history)}: {fmt(from_res)} from the reservoir, "
               f"{fmt(body_history - from_res)} from the regular budget", "SATIN-POOL-006")
         self.regular_charges = 0  # regular charges made by the frame
@@ -498,27 +521,47 @@ class Run:
                   "SATIN-STATE-003", "SATIN-POOL-024")
         # Of step 3's history, the authorities' records drew the reservoir first, when the list was
         # applied; the first frame's start record draws what they left (D-58).
-        for amount in (pre_frame_history, pre_frame_state):
+        drawn = []  # what the reservoir paid of the start record and of the start's state gas
+        for amount, what in ((pre_frame_history, "the first frame's start record"),
+                             (pre_frame_state, "the recipient's or created account's state gas")):
             r = min(reservoir, amount)
-            reservoir -= r
             if amount - r > regular:
-                raise Unmodelled("a transaction that cannot pay a charge before its first frame")
+                if tx.authorizations or r or reservoir != self.reservoir_after_body or create:
+                    raise Unmodelled("a transaction that cannot pay a charge before its first frame")
+                return self.out_of_gas_before_frame(intrinsic, floor, price, reservoir,
+                                                    f"{what}, {fmt(amount)}, with {fmt(regular)} regular gas left")
+            reservoir -= r
             regular -= amount - r
+            drawn.append(r)
+        start_from_reservoir = drawn[0]
+        if self.principles and start_record and (tx.authorizations or self.reservoir_after_body):
+            records = "the authorities' records" if tx.authorizations else "no authority's record"
+            d.add("gasLedgers", f"of step 3's history the reservoir pays {records} first and the first frame's start record "
+                  f"with what they leave it: {fmt(start_from_reservoir)} of the record from the reservoir and "
+                  f"{fmt(pre_frame_history - start_from_reservoir)} from the regular budget", "SATIN-HIST-005",
+                  "SATIN-POOL-024", "SATIN-HIST-023")
 
         # A recipient that holds an EIP-7702 delegation, after the list applied: its delegate's access,
         # charged as the base layer charges it under EIP-2780, after step 4 — the warm read, then the
         # cold surcharge when the delegate is not warm, the delegate loaded only when the regular gas
         # left pays the surcharge — and the delegate's code runs in the recipient's frame (D-58).
-        delegate = None
-        held = b"" if create else self.state.get(recipient, Account()).code
-        if len(held) == 23 and held[:3] == b"\xef\x01\x00":
-            delegate = held[3:]
+        delegate = None if create else delegate_of(self.state.get(recipient, Account()).code)
+        if delegate is not None:
             if int.from_bytes(delegate, "big") <= 0x100:
                 raise Unmodelled("a delegation to a precompile")
             cold = delegate not in self.warm_accounts
             access = WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0)
+            self.probe.setdefault("delegate", regular)
             if regular < WARM_READ or (cold and regular - WARM_READ < COLD_ACCOUNT_SURCHARGE):
-                raise Unmodelled("a transaction that cannot pay its delegate's access before its first frame")
+                if start_record or pre_frame_state or regular < WARM_READ:
+                    raise Unmodelled("a transaction that cannot pay its delegate's access before its first frame")
+                d.add("gasLedgers", f"the recipient holds an EIP-7702 delegation to {h(delegate)}, which is not warm: the "
+                      f"delegate's access before the first frame, the warm read {WARM_READ} first, leaving "
+                      f"{fmt(regular - WARM_READ)} of regular gas, which cannot pay the cold surcharge "
+                      f"{fmt(COLD_ACCOUNT_SURCHARGE)}: the delegate is not loaded", "SATIN-SCHED-003", "SATIN-SCHED-008")
+                return self.out_of_gas_before_frame(intrinsic, floor, price, reservoir,
+                                                    f"its delegate's cold surcharge, {fmt(COLD_ACCOUNT_SURCHARGE)}, with "
+                                                    f"{fmt(regular - WARM_READ)} regular gas left after the warm read")
             regular -= access
             self.pre_frame_regular += access
             self.warm_accounts.add(delegate)
@@ -526,7 +569,8 @@ class Run:
                   f"the first frame, after step 4, warm read {WARM_READ}" +
                   (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)} = {fmt(access)}, the cold delegate loaded once the "
                    "regular gas left pays the surcharge" if cold else ", the delegate warm") +
-                  "; regular gas, and the delegate's code runs in the recipient's frame (D-58)",
+                  "; regular gas, and the delegate's code runs in the recipient's frame (" +
+                  ("SATIN-SCHED-008 step 5" if self.principles else "D-58") + ")",
                   "SATIN-SCHED-003", "SATIN-SCHED-008")
 
         # A recognized keylessDeploy call is decided by interception, before the frame start: no value
@@ -575,6 +619,7 @@ class Run:
         code = data if create else self.state.get(delegate or recipient, Account()).code
         self.address = recipient
         frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
+        self.probe.setdefault("frame", regular)
         snapshot = self.snapshot()
         status, output = "success", b""
         try:
@@ -598,11 +643,25 @@ class Run:
             # is consumed; its records, logs, state and storage are taken back. The start's record
             # and the created account's state gas: the part the reservoir paid returns (POOL-015,
             # HIST-005); here no reservoir paid them unless the case has one.
+            if self.hint_bytes:
+                raise Unmodelled("a halt after an admitted hint")
             self.restore(snapshot)
             spent_regular = tx.gas_limit - frame["reservoir_at_start"] - (pre_frame_history + pre_frame_state if reservoir else 0)
-            if keyless:
-                raise Unmodelled("a keyless call that halts")
-            self.undo_start(transfer, create, recipient, new_account, pre_frame_history, pre_frame_state)
+            if sum(drawn):
+                raise Unmodelled("a halt after the reservoir paid a charge for the first frame's start")
+            self.undo_start(moved, create, recipient, new_account, pre_frame_history, pre_frame_state)
+            if keyless and start_record:
+                self.history_gas -= pre_frame_history
+                self.history_bytes -= WRITE_RECORD_SIZE
+            if self.principles and start_record:
+                d.add("gasLedgers", f"the first frame's start record, {fmt(pre_frame_history)} of history gas charged before "
+                      f"the frame{', before interception decides the call,' if keyless else ''} is not kept: the "
+                      f"{fmt(start_from_reservoir)} the reservoir paid of it returns to the reservoir, and the "
+                      f"{fmt(pre_frame_history - start_from_reservoir)} the regular budget paid is consumed with the frame's "
+                      "regular gas" + ("; the authorities' records and state gas are the transaction's own and are kept"
+                                       if tx.authorizations else ""),
+                      "SATIN-HIST-005", "SATIN-POOL-024", "SATIN-HIST-023",
+                      *(("SATIN-AUTH-016",) if tx.authorizations else ()))
             reservoir_left = frame["reservoir_at_start"] + (pre_frame_history + pre_frame_state if frame["reservoir_at_start"] else 0)
             if frame["reservoir_at_start"] and (pre_frame_history or pre_frame_state):
                 raise Unmodelled("a halt after start charges the reservoir paid")
@@ -634,7 +693,32 @@ class Run:
             # A creation's output is what its initcode returned: the code it deposited.
             execution = {"status": "success", "output": h(output), "createdAddress": h(recipient) if create else None}
 
-        # Settlement: refund, floor, gas used (SATIN-POOL-018, SATIN-POOL-020).
+        return self.settle(total, floor, price, status, execution, create, recipient)
+
+    def out_of_gas_before_frame(self, intrinsic: int, floor: int, price: int, reservoir: int, what: str) -> Result:
+        """SATIN-SCHED-009 and SATIN-SCHED-010: a transaction that cannot pay a charge before its first frame
+        runs out of gas without running a frame. The model reaches this path only when nothing but
+        validation's changes to the sender was applied before the charge it cannot pay."""
+        tx, d = self.tx, self.d
+        d.add("outcome", f"the transaction cannot pay {what}: it runs out of gas before its first frame and runs no frame",
+              "SATIN-SCHED-009")
+        total = tx.gas_limit - reservoir
+        d.add("gasLedgers", "out of gas before the first frame: the intrinsic gas and the body's history stay charged, the "
+              f"rest of the regular budget is consumed, and the reservoir left, {fmt(reservoir)}, returns to the sender; "
+              f"total = gas limit {fmt(tx.gas_limit)} - {fmt(reservoir)} = {fmt(total)}", "SATIN-SCHED-010", "SATIN-POOL-017")
+        d.add("resources", "nothing applied before the first frame is kept but validation's changes to the sender: no write "
+              "record, no state growth, the data size the body's alone", "SATIN-SCHED-010")
+        self.refund = 0
+        return self.settle(total, floor, price, "halt", {"status": "halt", "output": "0x", "createdAddress": None}, False,
+                           None)
+
+    def settle(self, total: int, floor: int, price: int, status: str, execution: dict, create: bool,
+               recipient: bytes | None) -> Result:
+        """The settlement of an admitted transaction that is not a deposit: its refund, floor, gas used,
+        fees, ledgers, resources and receipt."""
+        tx, env, d = self.tx, self.env, self.d
+        sender_acct = self.state[tx.sender]
+        # Refund, floor, gas used (SATIN-POOL-018, SATIN-POOL-020).
         cap = total // REFUND_QUOTIENT
         refund = min(self.refund, cap)
         gas_used = max(total - refund, floor)
@@ -730,6 +814,11 @@ class Run:
             self.state_gas -= start_state
             if recipient in self.state and self.state[recipient].empty() and recipient not in self.pre:
                 del self.state[recipient]
+
+    def order(self) -> tuple[str, tuple[str, ...]]:
+        """Where the order of a call's charges and decisions is stated: the principle of `SATIN-HIST-023`
+        from `5fb2688` on, the owner's decision D-58 before it."""
+        return ("SATIN-HIST-023", ("SATIN-HIST-023",)) if self.principles else ("D-58", ())
 
     def charge_regular(self, frame, amount: int, what: str) -> None:
         if amount > frame["regular"]:
@@ -970,6 +1059,15 @@ class Run:
                     if dest not in jumpdests:
                         raise Halt("a jump to an invalid destination")
                     pc = dest
+            elif op == 0x5A:  # GAS
+                self.charge_regular(frame, G_BASE, "GAS")
+                stack.append(frame["regular"])
+                self.probe.setdefault("gas", frame["regular"])
+                self.probe.setdefault("gas-reservoir", frame["reservoir"])
+                steps.append(f"GAS {G_BASE}")
+                d.add("gasLedgers", f"GAS pushes the regular gas the frame has left after its own {G_BASE}, "
+                      f"{fmt(frame['regular'])}, and not the reservoir, which holds {fmt(frame['reservoir'])}",
+                      "SATIN-POOL-009")
             elif op == 0x5B:
                 self.charge_regular(frame, G_JUMPDEST, "JUMPDEST")
                 steps.append(f"JUMPDEST {G_JUMPDEST}")
@@ -1001,26 +1099,43 @@ class Run:
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
                     self.warm_accounts.add(target)
                 callee = self.state.get(target)
-                if value and (callee is None or callee.empty()):
-                    raise Unmodelled("a value call to an account empty under EIP-161")
                 if frame["reservoir"]:
                     raise Unmodelled("a call from a frame that holds a reservoir")
                 opcode_charges = self.regular_charges - before
+                new_account = 0
+                if value and (callee is None or callee.empty()):
+                    if not self.principles:
+                        raise Unmodelled("a value call to an account empty under EIP-161")
+                    # SATIN-HIST-010 step 2: the new account's state gas, its legacy share first, before the forward.
+                    m = bucket_multiplier(self.env, self.salt_bucket(target, None))
+                    new_account = ACCOUNT_STATE * m
+                    legacy = min(new_account, LEGACY_NEW_ACCOUNT_SHARE)
+                    self.charge_state(frame, new_account, legacy, "the new account")
+                    self.state_gas += new_account
+                    d.add("gasLedgers", f"step 2 of the value CALL to {h(target)}, an account empty under EIP-161, after the "
+                          "opcode's regular charges (step 1, below) and before the forward: the new "
+                          f"account's state gas {fmt(ACCOUNT_STATE)} x m={m} = {fmt(new_account)}, its legacy share "
+                          f"min({fmt(new_account)}, PRE_FORK_NEW_ACCOUNT_COST {fmt(PRE_FORK_NEW_ACCOUNT_COST)} - 0) = "
+                          f"{fmt(legacy)} from regular gas first, then the reservoir, which holds nothing, then the rest "
+                          f"{fmt(new_account - legacy)} from regular gas, which the forward is then computed from",
+                          "SATIN-HIST-010", "SATIN-STATE-001", "SATIN-STATE-003", "SATIN-STATE-012", "SATIN-POOL-008")
                 remaining = frame["regular"]
+                self.probe.setdefault("forward", remaining)
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
                 self.charge_regular(frame, forward, "the forward")
                 child_gas = forward + (CALL_STIPEND if value else 0)
+                operand = fmt(gas_req) if gas_req < 2**256 - 1 else "the gas operand 2^256 - 1"
                 d.add("gasLedgers", f"CALL to {h(target)} with value {value}: the opcode's own charges {fmt(opcode_charges)} = "
                       f"warm read {WARM_READ}" + (f" + value transfer {fmt(CALL_VALUE_COST)}" if value else "") +
                       (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}" if cold else "") +
                       (" + input memory" if opcode_charges > WARM_READ + (CALL_VALUE_COST if value else 0) +
                        (COLD_ACCOUNT_SURCHARGE if cold else 0) else "") +
-                      f"; forward min({fmt(gas_req)}, {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
+                      f"; forward min({operand}, {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
                       f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}"
                       + (f", the child's gas {fmt(forward)} + CALL_STIPEND {CALL_STIPEND} = {fmt(child_gas)}" if value else ""),
                       "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-003",
-                      "SATIN-HIST-010")
+                      "SATIN-HIST-010", *self.order()[1])
                 # The history of the records the start would make, as the state stands now (SATIN-HIST-015):
                 # charged by the opcode with its other charges, after the forward (SATIN-HIST-010 step 4) and
                 # before the depth gate, interception and the frame start; a start that would make them and
@@ -1034,7 +1149,16 @@ class Run:
                 if value and not fundable:
                     d.add("gasLedgers", f"the caller's balance {balance} cannot fund the value {value}: as the state stands, "
                           "the start would make no record, so the opcode charges no record history and has none to give "
-                          "back", "SATIN-HIST-015")
+                          "back", "SATIN-HIST-015", *self.order()[1])
+                if history and history > frame["reservoir"] + frame["regular"]:
+                    d.add("gasLedgers", f"the opcode charges the history of the {len(records)} records its start would make, "
+                          f"{len(records)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(history)}, after the forward: "
+                          f"the caller keeps {fmt(frame['regular'])} of regular gas and {fmt(frame['reservoir'])} of reservoir, "
+                          "which cannot pay it, so it halts out of gas in the opcode, before the depth gate: no interceptor "
+                          "answers, no hint is admitted and no frame starts", "SATIN-HIST-009", "SATIN-HIST-010",
+                          "SATIN-ICPT-007", *self.order()[1])
+                    raise Halt(f"out of gas paying the history of the start's records, {fmt(history)}, with "
+                               f"{fmt(frame['regular'])} regular gas left")
                 if history:
                     from_reservoir = min(frame["reservoir"], history)
                     self.charge_state(frame, history, 0, "the start's records")
@@ -1045,10 +1169,11 @@ class Run:
                           f"({whose}), {len(records)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(history)}, "
                           "with its other charges: after the forward, which it does not reduce, and before the depth gate, "
                           f"interception and the frame start: {fmt(from_reservoir)} from the caller's reservoir, which it "
-                          f"draws first, and {fmt(history - from_reservoir)} from its regular gas (D-58)", "SATIN-HIST-009",
-                          "SATIN-HIST-010", "SATIN-HIST-014", "SATIN-HIST-015", "SATIN-POOL-008")
+                          f"draws first, and {fmt(history - from_reservoir)} from its regular gas ({self.order()[0]})",
+                          "SATIN-HIST-009", "SATIN-HIST-010", "SATIN-HIST-014", "SATIN-HIST-015", "SATIN-POOL-008",
+                          *self.order()[1])
                 ok, out, left = self.call(frame, address, target, value, bytes(memory[a_off:a_off + a_size]), child_gas,
-                                          records, history)
+                                          records, history, new_account)
                 frame["regular"] += left
                 self.regular_charges -= left
                 returndata = out
@@ -1063,7 +1188,7 @@ class Run:
         return done("success", b"")
 
     def call(self, frame, caller: bytes, target: bytes, value: int, data: bytes, child_gas: int,
-             records: list, history: int):
+             records: list, history: int, new_account: int = 0):
         """A `CALL` from the transaction's own frame, once the opcode's own charges, the forward and
         the history of the start's `records` are made, decided in the order of SATIN-ICPT-007:
         interception, then the frame start. Returns (success, return data, the regular gas the child
@@ -1077,7 +1202,7 @@ class Run:
                   "NonZeroTransfer() before any value moves and before the frame start, whether or not the caller can "
                   "fund the value; the method's answer is not made", "SATIN-ICPT-001", "SATIN-ICPT-003", "SATIN-ICPT-007")
             d.add("gasLedgers", f"the answer charges nothing: the child's {fmt(child_gas)} regular gas returns untouched",
-                  "SATIN-ICPT-004", "SATIN-POOL-012")
+                  "SATIN-ICPT-004", "SATIN-POOL-012", *self.order()[1])
             self.give_back_start(frame, records, history, "the answer starts no frame")
             return False, NON_ZERO_TRANSFER, child_gas
         if target == ORACLE and data[:4] == SEND_HINT:
@@ -1090,11 +1215,16 @@ class Run:
                       "the caller can fund the value; nothing forwarded or counted, the caller catches the stop",
                       "SATIN-ORCL-010", "SATIN-ICPT-007", "SATIN-STOP-020", "SATIN-OUT-010")
                 d.add("gasLedgers", f"the stop is answered before any frame: the child's {fmt(child_gas)} regular gas returns",
-                      "SATIN-POOL-012", "SATIN-LIM-015")
+                      "SATIN-POOL-012", "SATIN-LIM-015", *self.order()[1])
                 d.add("resources", "the stopped hint counts none of its bytes", "SATIN-ORCL-010", "SATIN-ACCT-002")
                 self.give_back_start(frame, records, history, "the stop starts no frame")
                 return False, limit_exceeded(0, TX_DATA_LIMIT), child_gas
             self.data_size += len(data)
+            self.hint_bytes += len(data)
+            if self.principles:
+                d.add("resources", f"the sendHint's {fmt(len(data))} input bytes take the transaction's data size from "
+                      f"{fmt(self.data_size - len(data))} to {fmt(self.data_size)}, not over TX_DATA_LIMIT "
+                      f"{fmt(TX_DATA_LIMIT)}: the data-size check admits it", "SATIN-ORCL-010", "SATIN-LIM-001")
             d.add("resources", f"interception: the sendHint call's gas limit {fmt(child_gas)} is above zero and its frame's "
                   f"volatile-data access is on: admitted, before the frame start; its {fmt(len(data))} input bytes count as "
                   "data size on the transaction, on no frame's budget and with no history gas, and stay counted whatever the "
@@ -1102,8 +1232,6 @@ class Run:
         # The frame start: the caller's funds are checked and the value moves (SATIN-LIM-013, -015).
         caller_acct = self.state.setdefault(caller, Account())
         callee = self.state.get(target)
-        if callee is None or not callee.code:
-            raise Unmodelled("a call to an account without code")
         if value > caller_acct.balance:
             d.add("outcome", f"frame start: the caller's balance {caller_acct.balance} cannot fund the value {value}: the start "
                   "is refused, and the call fails with empty return data, counting nothing and making no record",
@@ -1111,9 +1239,20 @@ class Run:
             if history:
                 raise Unmodelled("a refused start charged for records")
             d.add("gasLedgers", f"the start is refused: it makes no record and was charged no history; the opcode's regular "
-                  f"charges stand, and the child's {fmt(child_gas)} regular gas, the stipend included, returns (D-56)",
-                  "SATIN-HIST-015", "SATIN-POOL-012")
+                  f"charges stand, and the child's {fmt(child_gas)} regular gas, the stipend included, returns "
+                  f"({'SATIN-HIST-023' if self.principles else 'D-56'})", "SATIN-HIST-015", "SATIN-POOL-012",
+                  *self.order()[1])
+            if new_account:
+                self.give_back(frame, new_account)
+                self.state_gas -= new_account
+                d.add("gasLedgers", f"the refused start adds no account: the new account's {fmt(new_account)} state gas, its "
+                      "legacy share included, is given back into the caller's reservoir, not its regular gas, when the call "
+                      "returns", "SATIN-POOL-015", "SATIN-HIST-012", "SATIN-HIST-015")
             return False, b"", child_gas
+        if new_account:
+            raise Unmodelled("a value call that adds an account")
+        if callee is None or not callee.code:
+            raise Unmodelled("a call to an account without code")
         if value:
             caller_acct.balance -= value
             callee.balance += value
@@ -1165,7 +1304,8 @@ class Run:
         self.history_bytes -= WRITE_RECORD_SIZE * len(records)
         self.d.add("gasLedgers", f"{why}: the {fmt(history)} history gas the opcode charged for the start's records is given back into the "
                    "caller's reservoir, not its regular gas; there it can pay the caller's later state and history charges, "
-                   "and what is left returns to the sender at the settlement (D-58)", "SATIN-HIST-012", "SATIN-POOL-017")
+                   f"and what is left returns to the sender at the settlement ({self.order()[0]})", "SATIN-HIST-012",
+                   "SATIN-POOL-017", *self.order()[1])
 
     def keyless_call(self, frame):
         """The transaction's own `CALL` to KeylessDeploy that SATIN-ICPT-006 recognizes: steps 1 to 3 of

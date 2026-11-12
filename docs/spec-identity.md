@@ -114,8 +114,9 @@ the same script, beside the earlier ones (decision D-35):
 | `specs/satin-5fb2688` | `5fb26884b5ed1d02bb622073dfdf1d7ea814f1be` | 410 (401 active) | `SATIN-HIST-023` added (the order of charges and decisions around a frame start, as a principle); `SATIN-DET-018`, `SATIN-HIST-005`, `-009`, `-015`, `SATIN-ICPT-002`, `-004`, `-007`, `SATIN-POOL-012`, `SATIN-SCHED-008`, `-009`, `SATIN-STOP-014`, `SATIN-TAKE-006` and `-010` reworded (the delegate's access before the first frame, the reservoir paying the authorities' records first, one charge under gas detention among them) |
 
 The vertical slice's first 63 cases and its quarantine pin `d34e626`; the cases added for
-interception, the keyless decoder and EIP-7702 existence pin `d334ef8`, the newest (decision
-D-54). Digests (SHA-256 of canonical bytes):
+interception, the keyless decoder and EIP-7702 existence pin `d334ef8` (decision D-54); the cases
+added for the edges of the charge-order principles pin `5fb2688`, the newest (decision D-59).
+Digests (SHA-256 of canonical bytes):
 
 | Bundle | descriptor.json | rules.json | sources.json |
 | --- | --- | --- | --- |

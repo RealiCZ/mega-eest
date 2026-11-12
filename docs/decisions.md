@@ -455,3 +455,49 @@ next round. `tools/satin_model.py` follows them.
   (`SATIN-SCHED-008` step 3), the applied authorities' records draw the reservoir first, as the
   list is applied, and the first frame's start record draws what they left (`SATIN-POOL-024`).
   The model already charged them in that order.
+
+**D-59. The edges of the charge-order principles.** The specification at `5fb2688` states as
+principles the orders D-58 recorded as the owner's decisions: the order around a frame start
+(`SATIN-HIST-023`), the delegate's access before the first frame (`SATIN-SCHED-008` step 5) and the
+reservoir paying the authorities' records first (`SATIN-HIST-005`). Twenty-seven cases pin their
+edges, and those of two decided rules the revm-based implementation has not made yet.
+
+- The new cases cite `specs/satin-5fb2688`. The model cites the principles for them, and D-58 for
+  the cases at `d334ef8`, whose text stays as it was; every earlier case, the quarantine and the
+  negative case are byte-identical.
+- One input, one case: a boundary is two cases, one gas or one byte each side of it. A case on a
+  gas threshold sets its gas limit from the model's own figure at a point of its run (the regular
+  gas when the call computes its forward, when the first frame starts, or before the delegate's
+  access), so the input follows the constants as the text does (D-57).
+- Observables. No adapter reports the pools, the reservoir or the read set, so the cases observe
+  what both implementations report: `GAS` stored in a slot right after the call, before any later
+  state charge draws the reservoir, for a charge given back into the reservoir (`SATIN-POOL-009`
+  makes `GAS` read regular gas alone); the outcome and gas used for a caller that cannot pay the
+  records; the data size for a hint. The read set of an authorization list that runs out of gas
+  part-way, and whether a delegate was loaded, are not observed.
+- Out of gas before the first frame (`SATIN-SCHED-009`, `-010`) is modelled for a transaction
+  with nothing applied before the charge it cannot pay but validation's changes to the sender:
+  the execution halts with empty output, gas used is the gas limit less the reservoir left, and
+  the ledgers hold the intrinsic gas and the body's history alone. A transaction whose list was
+  applied, or whose reservoir paid part of the charge, stays outside the model.
+- The transaction's own start record before interception answers its `keylessDeploy` call: the
+  input that separates charging it before the first frame from not charging it at all is a gas
+  limit that covers everything but one gas of it, with which the frame cannot pay step 1's
+  overhead and halts. A transaction that cannot pay the record itself runs out of gas before its
+  first frame, but a transaction that never charged the record would not be answered either, so
+  that input does not separate the orders.
+- The model adds `GAS`; a value `CALL` to an account empty under EIP-161 (the new account's state
+  gas with its legacy share at `SATIN-HIST-010` step 2, before the forward, given back into the
+  caller's reservoir when the start is refused, `SATIN-POOL-015`); a caller that cannot pay its
+  start's records halting in the opcode; an EIP-7702 delegated sender, which EIP-3607 admits; and
+  a recognized `keylessDeploy` call that halts at step 1.
+- Seven cases fail on the revm-based implementation at `4e39cfd6` and are quarantined: six store
+  `GAS` after a give-back, which that implementation credits to regular gas (`SATIN-HIST-012`),
+  and one is a deposit with a log, which it charges no history gas (`SATIN-HIST-016`). Their
+  `knownFail` figures are derived as their verdicts state them, the rule's figure plus the
+  reservoir the frame holds when `GAS` reads, or less the deposit's history, so they follow the
+  constants as the text does; each was checked equal to that implementation's run, and
+  `tools/run-slice.sh` checks it again on every run.
+- `tools/check_derived_text.py` moves `KEYLESS_DEPLOY_OVERHEAD_GAS` by seven instead of one: a
+  case one gas below the overhead would otherwise show the old value as its own, correctly
+  derived, figure.

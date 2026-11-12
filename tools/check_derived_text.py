@@ -44,14 +44,22 @@ def fmt(n: int) -> str:
     return f"{n:,}"
 
 
+def kept_threshold(m, history: int) -> list[int]:
+    """The least regular gas a caller forwarding all it may keeps `history` from, and one below it."""
+    at = -(-history * m.GAS_RETAINED_DENOMINATOR // m.GAS_RETAINED_NUMERATOR)
+    return [at, at - 1]
+
+
 # constant -> (the value it is changed to, the figures it feeds at its old value). A figure
-# function takes the model's old constants.
+# function takes the model's old constants. A constant is moved by more than one where a case sits one
+# below a threshold it sets, so that the figure one below the new value is not the old value itself.
 MUTATIONS = {
     "COST_PER_HISTORY_BYTE": (
         89,
         lambda m: [m.COST_PER_HISTORY_BYTE * k for k in (
-            1, m.TX_BODY_SIZE, m.WRITE_RECORD_SIZE, m.TX_BODY_SIZE + m.WRITE_RECORD_SIZE, m.LOG_BASE_SIZE,
-            m.AUTHORIZATION_SIZE, m.TX_BODY_SIZE + m.AUTHORIZATION_SIZE + m.WRITE_RECORD_SIZE)],
+            1, m.TX_BODY_SIZE, m.WRITE_RECORD_SIZE, 2 * m.WRITE_RECORD_SIZE, m.TX_BODY_SIZE + m.WRITE_RECORD_SIZE,
+            m.LOG_BASE_SIZE, m.AUTHORIZATION_SIZE, m.TX_BODY_SIZE + m.AUTHORIZATION_SIZE + m.WRITE_RECORD_SIZE)]
+        + kept_threshold(m, 2 * m.WRITE_RECORD_SIZE * m.COST_PER_HISTORY_BYTE),
     ),
     "COST_PER_STATE_BYTE": (
         1_531,
@@ -60,8 +68,8 @@ MUTATIONS = {
             m.ACCOUNT_STATE_BYTES + m.DELEGATION_STATE_BYTES)],
     ),
     "KEYLESS_DEPLOY_OVERHEAD_GAS": (
-        100_001,
-        lambda m: [m.KEYLESS_DEPLOY_OVERHEAD_GAS],
+        100_007,
+        lambda m: [m.KEYLESS_DEPLOY_OVERHEAD_GAS, m.KEYLESS_DEPLOY_OVERHEAD_GAS - 1],
     ),
 }
 
