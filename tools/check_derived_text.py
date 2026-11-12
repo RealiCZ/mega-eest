@@ -3,7 +3,7 @@
 
 The slice's human-readable text — each case's intent and boundary, its derivation steps, the
 quarantine verdicts, the negative case's note, and `slice/README.md` — must write every figure that
-depends on a constant of the specification from that constant (`tools/satin_model.py`), never as a
+depends on a constant of the specification from that constant (`tools/satin_model/constants.py`), never as a
 typed number. This check changes one constant at a time, regenerates the slice from a copy of the
 tools into a temporary directory, and fails if any text there still shows a figure computed from
 the constant's old value.
@@ -37,7 +37,8 @@ import sys
 import tempfile
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-TOOLS = ("make_slice.py", "satin_model.py", "make_examples.py", "salt_mapping.py")
+TOOLS = ("make_slice.py", "make_examples.py", "salt_mapping.py")
+MODEL = "satin_model"  # the model's package, copied whole; its constants are in constants.py
 
 
 def fmt(n: int) -> str:
@@ -82,10 +83,12 @@ def generate(out: str, constant: str | None = None, value: int | None = None) ->
     os.makedirs(tools)
     for name in TOOLS:
         shutil.copy(os.path.join(ROOT, "tools", name), tools)
+    shutil.copytree(os.path.join(ROOT, "tools", MODEL), os.path.join(tools, MODEL),
+                    ignore=shutil.ignore_patterns("__pycache__"))
     shutil.copy(os.path.join(ROOT, "tools", "system-contracts.json"), tools)
     os.symlink(os.path.join(ROOT, "specs"), os.path.join(out, "specs"))  # read only
     if constant is not None:
-        path = os.path.join(tools, "satin_model.py")
+        path = os.path.join(tools, MODEL, "constants.py")
         with open(path, encoding="utf-8") as f:
             text = f.read()
         text, n = re.subn(rf"^{constant} = [\d_]+", f"{constant} = {value}", text, flags=re.M)

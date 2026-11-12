@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+"""A small executable model of Satin's transaction rules, for deriving expected values.
+
+This is the independent evidence behind the vertical slice's expectations: it restates, from the
+specification at `d34e626` (`specs/satin-d34e626`), for calls, interception and EIP-7702 at
+`d334ef8` (`specs/satin-d334ef8`), and for the charge-order principles at `5fb2688`
+(`specs/satin-5fb2688`), the arithmetic a `state-transition` case's observations follow, for the
+narrow class of transactions the slice uses:
+
+- the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`,
+  `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`,
+  `REVERT` and `INVALID`, and the stack, arithmetic, calldata, jump, return-data and `KECCAK256`
+  opcodes a system contract's dispatcher and decoder use; no creation opcode or self-destruct, and
+  of the volatile reads only those below;
+- a `CALL` from that frame to a system contract, decided in the order of `SATIN-ICPT-007`: an
+  interceptor's `NonZeroTransfer()`, the `sendHint` admission and its data-size stop, the frame
+  start that refuses a value the caller cannot fund, and a child frame that reverts or halts; the
+  opcode charges the history of the records its start would make, as the state stands, before all
+  of these, and a caller that cannot pay it halts in the opcode; a value `CALL` its caller cannot
+  fund to any other account, a contract or one empty under EIP-161, refused at its frame start;
+- a transaction's own `keylessDeploy` call, recognized or not (`SATIN-ICPT-006`), as far as the
+  refusals of steps 2 and 3 or a halt at step 1;
+- one-entry EIP-7702 lists whose entry is accepted, the authority present or absent, and a
+  transaction to an account holding a delegation, its sender's own among them, which pays its
+  delegate's access before the first frame;
+- a transaction that runs out of gas before its first frame with nothing applied but validation's
+  changes to its sender, an authorization list's first write among the charges it cannot pay;
+- for the cases that ask, the `reads` group: what the transaction loads, as the stateless witness
+  needs it;
+- a stop of the transaction's own frame, its result: gas detention's crossing, and an `SSTORE`'s
+  record or a log's bytes held to the frame's budget and the transaction's limit;
+- gas detention: `TIMESTAMP`, a deposit's `SLOAD` in the Oracle's frame and `BALANCE` as reads, the
+  limit they set, every frame's spendable and withheld parts, each part an opcode deducts as one
+  charge, the crossing that stops a child frame and the out-of-gas beyond its whole gas; and
+  `disableVolatileDataAccess()` with the refusal of a volatile read in a frame whose access is off;
+- calls, value transfers, creation transactions and deposits, with or without a reservoir;
+- the refusals of transaction validation.
+
+Every charge is a step of a derivation that names the rule it applies, so a reviewer can check
+each number against the pinned rule text, and the case's assertions cite exactly the rules its
+steps applied. The model shares no code with either implementation or adapter. It is not an
+implementation of Satin: anything outside the class above raises `Unmodelled`. Its scope, and what
+lies outside it, is docs/model.md's.
+
+The package is cut by domain (docs/model.md, "Modules"): `constants` and `records` hold the
+specification's values and the run's inputs and outputs; `run.Run` composes the mixins that
+restate each domain over one run state: the transaction, settlement, the pools, gas detention, the
+interpreter, calls, interception, authorizations, storage, reads and the resource limits.
+
+Standard library only.
+"""
+
+from __future__ import annotations
+
+# What the slice's tools use: the constants, the records and helpers, and the run.
+from .constants import *  # noqa: F401,F403
+from .records import *  # noqa: F401,F403
+from .interception import keyless_arguments, rlp_decodes_as_list  # noqa: F401
+from .interpreter import jump_destinations, to_signed  # noqa: F401
+from .run import Run  # noqa: F401
