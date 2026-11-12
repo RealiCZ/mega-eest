@@ -13,7 +13,8 @@ for the narrow class of transactions the slice uses:
 - a `CALL` from that frame to a system contract, decided in the order of `SATIN-ICPT-007`: an
   interceptor's `NonZeroTransfer()`, the `sendHint` admission and its data-size stop, the frame
   start that refuses a value the caller cannot fund, and a child frame that reverts or halts; the
-  opcode charges the history of the records its start would make before all of these;
+  opcode charges the history of the records its start would make, as the state stands, before all
+  of these;
 - a transaction's own `keylessDeploy` call, recognized or not (`SATIN-ICPT-006`), as far as the
   refusals of steps 2 and 3;
 - one-entry EIP-7702 lists whose entry is accepted, the authority present or absent, and a
@@ -1020,13 +1021,20 @@ class Run:
                       + (f", the child's gas {fmt(forward)} + CALL_STIPEND {CALL_STIPEND} = {fmt(child_gas)}" if value else ""),
                       "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-003",
                       "SATIN-HIST-010")
-                # The history of the records the start would make, as the state stands now: charged by the
-                # opcode with its other charges, after the forward (SATIN-HIST-010 step 4) and before the
-                # depth gate, interception and the frame start; a start that does not happen gives it
-                # back (D-58).
-                records = [a for a in dict.fromkeys((address, target))
-                           if value and ("a", a) not in self.kv and a != tx.sender]
+                # The history of the records the start would make, as the state stands now (SATIN-HIST-015):
+                # charged by the opcode with its other charges, after the forward (SATIN-HIST-010 step 4) and
+                # before the depth gate, interception and the frame start; a start that would make them and
+                # does not happen gives it back (D-58). A value the caller cannot fund, and a value to the
+                # caller itself, make no record.
+                balance = self.state.get(address, Account()).balance
+                fundable = value <= balance
+                records = [a for a in (address, target)
+                           if value and fundable and target != address and ("a", a) not in self.kv and a != tx.sender]
                 history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE * len(records)
+                if value and not fundable:
+                    d.add("gasLedgers", f"the caller's balance {balance} cannot fund the value {value}: as the state stands, "
+                          "the start would make no record, so the opcode charges no record history and has none to give "
+                          "back", "SATIN-HIST-015")
                 if history:
                     from_reservoir = min(frame["reservoir"], history)
                     self.charge_state(frame, history, 0, "the start's records")
@@ -1037,7 +1045,8 @@ class Run:
                           f"({whose}), {len(records)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(history)}, "
                           "with its other charges: after the forward, which it does not reduce, and before the depth gate, "
                           f"interception and the frame start: {fmt(from_reservoir)} from the caller's reservoir, which it "
-                          f"draws first, and {fmt(history - from_reservoir)} from its regular gas (D-58)", "SATIN-HIST-009", "SATIN-HIST-010", "SATIN-HIST-014", "SATIN-POOL-008")
+                          f"draws first, and {fmt(history - from_reservoir)} from its regular gas (D-58)", "SATIN-HIST-009",
+                          "SATIN-HIST-010", "SATIN-HIST-014", "SATIN-HIST-015", "SATIN-POOL-008")
                 ok, out, left = self.call(frame, address, target, value, bytes(memory[a_off:a_off + a_size]), child_gas,
                                           records, history)
                 frame["regular"] += left
@@ -1099,9 +1108,11 @@ class Run:
             d.add("outcome", f"frame start: the caller's balance {caller_acct.balance} cannot fund the value {value}: the start "
                   "is refused, and the call fails with empty return data, counting nothing and making no record",
                   "SATIN-LIM-015", "SATIN-OUT-010", "SATIN-STOP-020", "SATIN-ICPT-007")
-            d.add("gasLedgers", f"the start is refused: the opcode's regular charges stand, and the child's "
-                  f"{fmt(child_gas)} regular gas, the stipend included, returns (D-56)", "SATIN-HIST-015", "SATIN-POOL-012")
-            self.give_back_start(frame, records, history, "the refused start makes no record")
+            if history:
+                raise Unmodelled("a refused start charged for records")
+            d.add("gasLedgers", f"the start is refused: it makes no record and was charged no history; the opcode's regular "
+                  f"charges stand, and the child's {fmt(child_gas)} regular gas, the stipend included, returns (D-56)",
+                  "SATIN-HIST-015", "SATIN-POOL-012")
             return False, b"", child_gas
         if value:
             caller_acct.balance -= value
@@ -1145,8 +1156,8 @@ class Run:
         return False, out, left
 
     def give_back_start(self, frame, records: list, history: int, why: str) -> None:
-        """A start that does not happen gives the history its opcode charged for its records back into
-        the caller's reservoir (SATIN-HIST-012, D-58)."""
+        """A start that would make records and does not happen gives the history its opcode charged for
+        them back into the caller's reservoir (SATIN-HIST-012, D-58)."""
         if not history:
             return
         self.give_back(frame, history)

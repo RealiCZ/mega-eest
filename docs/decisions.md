@@ -392,9 +392,10 @@ contract and the SequencerRegistry hold a placeholder (`0xfe`) there that no cal
   do so. Such a value call therefore costs its caller 9,000 of the value transfer's 11,300.
 - A value start's records, the caller's account and the callee's, are charged by the calling
   opcode after the forward, which they do not reduce (`SATIN-HIST-009`, `SATIN-HIST-010` step 4),
-  and before the depth gate, interception and the frame start (D-58). When the start does not
-  happen, or the child fails, their history goes back into the caller's reservoir
-  (`SATIN-HIST-007`, `-012`), never into its regular gas. The caller's next state charge pays its
+  and before the depth gate, interception and the frame start (D-58), as the state stands: a value
+  the caller cannot fund makes no record and is charged none (`SATIN-HIST-015`). When a start
+  that makes records does not happen, or the child fails, their history goes back into the
+  caller's reservoir (`SATIN-HIST-007`, `-012`), never into its regular gas. The caller's next state charge pays its
   legacy share from regular gas first, and only then draws that reservoir (`SATIN-POOL-008`); a
   history charge, which has no legacy share, draws it first.
 - An authority's `ACCOUNT_WRITE` is regular gas: `SATIN-TAKE-008` puts it in the regular-gas
@@ -421,24 +422,27 @@ runs it. The quarantine's recorded failures (`knownFail`'s expected and actual v
 of an implementation's run, not text, and stay as recorded.
 
 **D-58. Orders the owner decided for calls and for the charges before the first frame.** The
-specification at `d334ef8` leaves these orders implicit, or in one place states them otherwise;
-the owner decided them as both implementations already run them, and the specification is to
-state them as a principle in its next round. `tools/satin_model.py` follows them.
+specification at `d334ef8` leaves these orders implicit; the owner decided them as both
+implementations already run them, and the specification is to state them as a principle in its
+next round. `tools/satin_model.py` follows them.
 
 - History before interception. A calling opcode charges the history of the records its start
   would make, as the state stands when the opcode runs, with its other charges: after the forward
   (`SATIN-HIST-010` step 4), which it does not reduce, and before the depth gate, interception
-  and the frame start (`SATIN-ICPT-007`). A start that does not happen (an interceptor's answer,
-  a refusal for funds or for depth, a hint's data-size stop) gives that charge back into the
-  caller's reservoir when the call returns (`SATIN-HIST-012`). A start that happens makes the
-  records at the frame start, where nothing more is charged for them. `SATIN-HIST-015` says a
-  value the caller cannot fund is charged no history; the history kept is the same, none, and
-  only the pool that holds its price differs. The model used to charge the records at the frame
-  start, so an answered or refused call was charged nothing. No figure of a case moved: in the
-  seven interception cases whose call carries value, the caller's regular gas pays the records'
-  history in the opcode; where the start does not happen or the child fails, its reservoir holds
-  that history after the call, pays part of the next state charge once regular gas has paid its
-  legacy share, and returns what is left to the sender.
+  and the frame start (`SATIN-ICPT-007`). `SATIN-HIST-015` holds, and the model follows it: a
+  value the caller cannot fund makes no record, so the opcode charges no record history for it
+  and has none to give back, as both implementations do. A start whose records exist, the caller
+  able to fund the value, and which does not happen (an interceptor's answer, a hint's data-size
+  stop) gives that charge back into the caller's reservoir when the call returns
+  (`SATIN-HIST-012`); a refusal for depth is unreachable under the execution cap. A start that
+  happens makes the records at the frame start, where nothing more is charged for them. The
+  model used to charge the records at the frame start, so an answered call was charged nothing.
+  No figure of a case moved. In the three interception cases whose caller can fund its value,
+  the caller's regular gas pays the records' history in the opcode, and its reservoir holds that
+  history after the call (an interceptor's answer, or a child that reverts), pays part of the
+  next state charge once regular gas has paid its legacy share, and returns what is left to the
+  sender. The four whose caller cannot fund it, the hint stopped for the data-size limit among
+  them, are charged no record history.
 - The delegate's access. A transaction whose recipient holds an EIP-7702 delegation once the
   list is applied pays its delegate's access before the first frame, after step 4 of
   `SATIN-SCHED-008`, in regular gas, as the base layer charges it under EIP-2780: the warm read,
