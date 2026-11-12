@@ -7,9 +7,10 @@ envelope), the SALT capacities its state lands in — and its expected observati
 (`specs/satin-d34e626`; the cases added for interception, the keyless decoder and EIP-7702
 existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
 principles, gas detention, the Oracle's reads, the refused volatile read, the reads group, the
-stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64). No implementation is run: the filler's output is a candidate to compare
-with, never the source of these values (`tools/run-slice.sh` runs both implementations against
-them).
+stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64, and
+those for the take-back page's worked examples `specs/satin-cdded1e`, D-65). No implementation is
+run: the filler's output is a candidate to compare with, never the source of these values
+(`tools/run-slice.sh` runs both implementations against them).
 
 Each case's provenance carries the derivation of every assertion — the steps, their arithmetic and
 the rules each applies — and the text digest of every cited rule, so a reviewer can hold each
@@ -45,11 +46,13 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 SPEC_DIR = os.path.join(ROOT, "specs", "satin-d34e626")
 SPEC_COMMITS = {"satin-d34e626": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
                 "satin-d334ef8": "d334ef8748a6fb09dfcf1162704539fe22373aef",
-                "satin-5fb2688": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be"}
+                "satin-5fb2688": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
+                "satin-cdded1e": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558"}
 DEFAULT_SPEC = "satin-d34e626"
 INTERCEPTION_SPEC = "satin-d334ef8"  # interception before the frame start, SATIN-ICPT-007
 ORDERING_SPEC = "satin-5fb2688"  # the charge-order principles, SATIN-HIST-023
-PRINCIPLES_SPECS = {ORDERING_SPEC}  # the snapshots that state the principles the model cites
+TAKE_BACK_SPEC = "satin-cdded1e"  # one home for each rule, and the take-back page's worked examples as cases
+PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC}  # the snapshots that state the principles the model cites
 OUT = os.path.join(ROOT, "slice")
 
 KEY = ex.TEST_KEY
@@ -73,6 +76,13 @@ DELEGATE = bytes.fromhex("00000000000000000000000000000000000de1e9")  # the acco
 DETAINED = bytes.fromhex("00000000000000000000000000000000000c0de3")  # a contract that runs detained
 BURNER = bytes.fromhex("00000000000000000000000000000000000c0de4")  # a contract whose one charge passes the cap
 UNTOUCHED = bytes.fromhex("000000000000000000000000000000000000ba1a")  # an account no case's state holds
+# The take-back examples' contracts (SATIN-TAKE-005 to -012).
+WRITER = bytes.fromhex("00000000000000000000000000000000000c0de5")  # P of the descendant example
+DESCENDANT = bytes.fromhex("00000000000000000000000000000000000c0de6")  # C, whose code P runs by DELEGATECALL
+RETURNER = bytes.fromhex("00000000000000000000000000000000000c0de7")  # Q of the sent-back example
+SENDER_BACK = bytes.fromhex("00000000000000000000000000000000000c0de8")  # P of the sent-back example's last variant
+LOGGER = bytes.fromhex("00000000000000000000000000000000000c0de9")  # the log-reverted example's child
+WRITER_CHILD = bytes.fromhex("00000000000000000000000000000000000c0dea")  # the reverted and halted examples' child
 CHAIN_ID = 1
 BLOCK_GAS_LIMIT = 10_000_000_000
 BLOCK_TIMESTAMP = 0x6553F102
@@ -390,6 +400,7 @@ def cases() -> list[Case]:
     out += reads_cases()
     out += limit_cases()
     out += gas_pools_cases()
+    out += [c for c in take_back_cases() if c.case_id not in HELD]
     return out
 
 
@@ -908,6 +919,209 @@ def gas_pools_cases() -> list[Case]:
     return out
 
 
+# --- The take-back page's worked examples (SATIN-TAKE-005 to -012), one case each ----------------
+
+
+def delegatecall(gas: int, target: bytes) -> bytes:
+    """DELEGATECALL(gas, target, 0, 0, 0, 0)."""
+    return push(0) + push(0) + push(0) + push(0) + push(int.from_bytes(target, "big")) + push(gas) + b"\xf4"
+
+
+def create(value: int, init: bytes) -> bytes:
+    """CREATE of `init`, laid out in memory from offset 0, with `value` wei; the created address is popped."""
+    return bytes_to_memory(init) + push(len(init)) + push(0) + push(value) + b"\xf0\x50"
+
+
+def jump_if(cond: bytes, then: bytes, otherwise: bytes) -> bytes:
+    """`cond`, then `otherwise` when it is zero, or a jump to `then` when it is not."""
+    dest = len(cond) + 3 + len(otherwise)
+    assert dest < 256
+    return cond + bytes([0x60, dest]) + b"\x57" + otherwise + b"\x5b" + then
+
+
+def share_source(share: int) -> int:
+    """The least reservoir a caller keeps after a start's charges whose child's share is `share` (SATIN-POOL-011)."""
+    remaining = share
+    while remaining - remaining * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR < share:
+        remaining += 1
+    return remaining
+
+
+def take_back_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = TAKE_BACK_SPEC
+    record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
+    log0 = model.LOG_BASE_SIZE * model.COST_PER_HISTORY_BYTE
+    body = model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE
+
+    # SATIN-TAKE-005, descendant: P writes its slot, and C, run by P's DELEGATECALL on P's storage, writes it back.
+    # The first frame calls P, so that P's own end shows in the first frame's reservoir.
+    gas_back = b"\x5a" + push(0) + b"\x52" + ret(0, 32)  # GAS, MSTORE(0, GAS), RETURN(0, 32)
+    head = (f"in a transaction without a reservoir, P's slot 0, whose original is 7, is written to 8, its record's "
+            f"{fmt(record)} of history paid from P's regular gas; C, run by P's DELEGATECALL on P's storage with no "
+            f"reservoir, emits an empty LOG0, {fmt(log0)} of history from its regular gas, and writes the slot back to 7, "
+            f"giving the {fmt(record)} into its own reservoir")
+    for name, c_tail, p_tail, b_tail, tail in (
+        ("kept", gas_back, RETURN_RETURNDATA, RETURN_RETURNDATA,
+         f"; C's next GAS, returned as the transaction's output, reads its regular gas, which the give-back did not "
+         f"raise; C and P succeed, so the {fmt(record)} join P's reservoir and the first frame's, and return to the sender"),
+        ("descendant-reverted", revert(0, 0), STOP, STOP,
+         f"; C then reverts: the slot is 8 again and P's record stands, and C's rollback makes its reservoir "
+         f"{fmt(record)} + ({fmt(log0)} - {fmt(record)}) = {fmt(log0)}, which joins P's reservoir and, P succeeding, the "
+         "first frame's"),
+        ("both-reverted", revert(0, 0), revert(0, 0), STOP,
+         f"; C reverts, then P reverts: P's reservoir becomes {fmt(log0)} + {fmt(record)} = {fmt(log0 + record)}, what "
+         "C's rollback returned and P's own record, which join the first frame's reservoir"),
+        ("writer-halted", revert(0, 0), INVALID, STOP,
+         f"; C reverts, then P halts: P's reservoir becomes the zero it received, the {fmt(log0)} C's rollback returned "
+         "to it consumed with its regular gas"),
+    ):
+        c_code = log(0, 0, 0, []) + sstore(0, 7) + c_tail
+        p_code = sstore(0, 8) + delegatecall(MAX_GAS, DESCENDANT) + b"\x50" + p_tail
+        add(Case(f"satin/take-backs/descendant/{name}", head + tail, spec=spec, pools=True,
+                 code=call(MAX_GAS, WRITER, 0, 0) + b"\x50" + b_tail,
+                 accounts={WRITER: model.Account(nonce=1, code=p_code, storage={0: 7}),
+                           DESCENDANT: model.Account(nonce=1, code=c_code)}))
+
+    # SATIN-TAKE-006, sent-back: P (the first frame) calls Q with 1 wei, and Q calls P back with 1 wei.
+    back = call(MAX_GAS, CONTRACT, 1, 0) + b"\x50" + STOP
+    for name, first, tail in (
+        ("round-trip", b"",
+         f"the first start makes both accounts' records, {fmt(2 * record)} of history charged to P after its forward, "
+         f"and the second, Q's, takes both back; once P's re-entered frame returned, Q is given the {fmt(2 * record)} into "
+         "its reservoir, which joins P's when Q returns"),
+        ("nonce-bumped", create(0, b""),
+         f"P first bumps its nonce by a CREATE, so P's account differs already: the first start makes Q's record alone, "
+         f"{fmt(record)}, and the second takes Q's alone back, P's nonce keeping P's record"),
+    ):
+        p_code = jump_if(b"\x34", STOP, first + call(MAX_GAS, RETURNER, 1, 0) + b"\x50" + STOP)
+        add(Case(f"satin/take-backs/sent-back/{name}", "P, a contract the transaction has not changed, calls Q, unchanged "
+                 f"too, with 1 wei, and Q calls P back with 1 wei: {tail}", spec=spec, pools=True, contract_balance=10,
+                 code=p_code, accounts={RETURNER: model.Account(nonce=1, balance=10, code=back)}))
+    # The signs turned: Q first sends P 1 wei, then P's call to Q takes both records back, and Q's call back would make
+    # them again, which Q, left 5,000 of regular gas after its forward and no reservoir, cannot pay.
+    left = 5_000
+    keep = 3 * model.G_VERYLOW + model.WARM_READ + model.CALL_VALUE_COST + left  # PUSH2, SWAP1, SUB, the CALL, what is left
+    q_back = (push(0) + push(0) + push(0) + push(0) + push(1) + push(int.from_bytes(SENDER_BACK, "big")) + b"\x5a"
+              + bytes([0x61]) + keep.to_bytes(2, "big") + b"\x90\x03\xf1\x50" + STOP)
+    q_code = jump_if(b"\x36", call(0, SENDER_BACK, 1, 0) + b"\x50" + STOP, q_back)
+    p_code = jump_if(b"\x34", STOP, call(200_000, RETURNER, 1, 0) + b"\x50" + STOP)
+    add(Case("satin/take-backs/sent-back/signs-turned", "Q first sends P 1 wei, making both accounts' records and paying "
+             f"their {fmt(2 * record)}; then P calls Q with 1 wei, returning both balances to what was loaded, so that start "
+             f"takes both records back, and Q's call back with 1 wei would make them again: it charges Q {fmt(2 * record)} "
+             f"after the forward, which Q, left {fmt(left)} of regular gas and no reservoir, cannot pay, so Q runs out of "
+             "gas, and P's start, failing, keeps both records standing", spec=spec,
+             code=call(MAX_GAS, RETURNER, 0, 1) + b"\x50" + call(MAX_GAS, SENDER_BACK, 0, 0) + b"\x50" + STOP,
+             accounts={RETURNER: model.Account(nonce=1, balance=10, code=q_code),
+                       SENDER_BACK: model.Account(nonce=1, balance=10, code=p_code)}))
+
+    # SATIN-TAKE-007: P creates C, whose constructor writes two fresh slots and which deploys 100 bytes of code; P
+    # then calls C, which destroys itself to ABSENT, warmed first, with no balance or with the 1 wei P endowed it.
+    runtime = (push(int.from_bytes(ABSENT, "big")) + b"\x31\x50" + push(int.from_bytes(ABSENT, "big")) + b"\xff").ljust(100, STOP)
+    init = sstore(1, 1) + sstore(2, 1) + bytes_to_memory(runtime) + ret(0, len(runtime))
+    created = model.created_address(CONTRACT, 1)
+    state = model.ACCOUNT_STATE + 2 * model.SLOT_STATE + len(runtime) * model.CODE_STATE_PER_BYTE
+    history = 3 * record + len(runtime) * model.COST_PER_HISTORY_BYTE
+    shares = model.LEGACY_CREATE_SHARE + 2 * model.LEGACY_SSTORE_SHARE
+    made = (f"P creates C at an address the state holds no account for, every bucket at m = 1: the creation and C's "
+            f"constructor, which writes two fresh slots, and C's {len(runtime)} bytes of code charge {fmt(state)} of state "
+            f"gas and {fmt(history)} of history, and count state growth +3, KV +3 and data size "
+            f"+{3 * model.WRITE_RECORD_SIZE + len(runtime)}, their legacy shares, {fmt(shares)}, from regular gas, as all "
+            "else is in a transaction without a reservoir; P's nonce record stays; later, called by P, C destroys itself ")
+    add(Case("satin/take-backs/destroyed-creation/no-balance", made + "holding no balance: the destruction gives the "
+             f"{fmt(state + history)} back into C's reservoir and counts -3, -3 and -{3 * model.WRITE_RECORD_SIZE + len(runtime)} "
+             "on C's net, so the transaction keeps P's nonce record alone, and the reservoir returns to the sender",
+             spec=spec, pools=True, code=create(0, init) + call(MAX_GAS, created, 0, 0) + b"\x50" + STOP))
+    bens = model.ACCOUNT_STATE
+    add(Case("satin/take-backs/destroyed-creation/new-beneficiary", made + "holding the 1 wei P endowed it with, to a warm "
+             "beneficiary empty under EIP-161: first its regular charges, "
+             f"{fmt(model.SELFDESTRUCT_COST + model.SELFDESTRUCT_NEW_ACCOUNT_COST)}, and the beneficiary's {fmt(bens)} of state "
+             f"gas, its {fmt(model.LEGACY_SELFDESTRUCT_SHARE)} legacy share from regular gas, then the give-back of "
+             f"{fmt(state + history)} into C's reservoir, then the beneficiary's rise, record and transfer log, and last its "
+             f"record's {fmt(record)}, which the reservoir pays", spec=spec, pools=True, contract_balance=1,
+             code=create(1, init) + call(MAX_GAS, created, 0, 0) + b"\x50" + STOP))
+
+    # SATIN-TAKE-008, set-then-clear: two accepted entries of one absent authority, a delegation then a clear.
+    indicator = model.DELEGATION_STATE_BYTES * model.COST_PER_STATE_BYTE
+    add(Case("satin/take-backs/set-then-clear", "a list whose two entries are signed by an authority the state holds no "
+             "account for, neither the sender nor a value recipient, the first delegating at nonce 0 and the second "
+             f"clearing at nonce 1: the first charges the new account's {fmt(model.ACCOUNT_STATE)}, ACCOUNT_WRITE and the "
+             f"indicator's {fmt(indicator)}; the second charges nothing and gives the {fmt(indicator)} back to no one; the "
+             "list keeps one record and one unit of state growth, and leaves the authority with nonce 2 and no code",
+             spec=spec, ty=4, to=EOA, code=b"", gas=500_000,
+             authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0), (AUTH_KEY, CHAIN_ID, bytes(20), 1)]))
+
+    # SATIN-TAKE-009, log-reverted: a child emits LOG2 with 64 data bytes and reverts.
+    data = 64
+    log2 = (model.LOG_BASE_SIZE + 2 * model.LOG_TOPIC_SIZE + data) * model.COST_PER_HISTORY_BYTE
+    child = log(2, 0, data, [1, 2]) + revert(0, 0)
+    for name, value, tail in (
+        ("reverted", 0, f"the {fmt(log2)} come back into the child's reservoir by its rollback, though its regular gas "
+                        "paid them, and join the first frame's"),
+        ("allowance", 1, f"as a value call's child, its history allowance pays the {fmt(log2)} and nothing of them comes "
+                         f"back; the failed start's records give the first frame their {fmt(2 * record)}"),
+    ):
+        add(Case(f"satin/take-backs/log-reverted/{name}", f"a child emits LOG2 with {data} data bytes, "
+                 f"{model.LOG_BASE_SIZE + 2 * model.LOG_TOPIC_SIZE + data} bytes and {fmt(log2)} of history gas, and "
+                 f"reverts: {tail}", spec=spec, pools=True, contract_balance=value,
+                 code=call(100_000, LOGGER, value, 0) + b"\x50" + STOP,
+                 accounts={LOGGER: model.Account(nonce=1, code=child)}))
+
+    # SATIN-TAKE-010, answer-stopped. The text's KV budget of 3 cannot be reached under the protocol's KV limit; the
+    # same start crosses the state-growth budget instead. The first frame calls P, whose state-growth budget is its
+    # share of the first frame's 1,000; P's fresh slots bring its net to one below that budget, its value call to an
+    # empty account would add the account's leaf, and P then reverts with the stop as its data, so that its slots
+    # are not kept: the adapters' observations stay small (a state diff of every slot would not be).
+    budget = model.TX_STATE_GROWTH_LIMIT * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
+    growth = budget - 1
+    p_code = (b"".join(sstore(k, 1) for k in range(1, growth + 1)) + call(0, ABSENT, 1, 0) + b"\x50"
+              + b"\x3d\x5f\x5f\x3e\x3d\x5f\xfd")  # RETURNDATACOPY(0, 0, RETURNDATASIZE), REVERT(0, RETURNDATASIZE)
+    add(Case("satin/take-backs/answer-stopped", f"the first frame calls P, whose state-growth budget is {fmt(budget)}; P "
+             f"writes {fmt(growth)} fresh slots, one short of it, then calls an account empty under EIP-161, without code, "
+             "with 1 wei and no gas: the start would keep two records, a transfer log and the new account's leaf, and the "
+             "started frame's state-growth budget is the share of P's remaining 1, 0, which the leaf crosses; P was charged "
+             f"the new account's {fmt(model.ACCOUNT_STATE)}, its {fmt(model.LEGACY_NEW_ACCOUNT_SHARE)} legacy share first, "
+             f"before the forward and {fmt(2 * record)} after it, the answer is replaced by MegaLimitExceeded(3, 0) on the "
+             "stipend, and both charges are given back into P's reservoir; P then reverts with the stop as its data, which "
+             "the first frame returns", spec=spec, pools=True, gas=150_000_000,
+             code=call(MAX_GAS, WRITER, 0, 0) + b"\x50" + RETURN_RETURNDATA,
+             accounts={WRITER: model.Account(nonce=1, balance=1, code=p_code)}))
+
+    # SATIN-TAKE-011, reverted and halted: a child with a reservoir share of 100,000 writes a cold fresh slot. The
+    # forward covers the operands pushed before the write, so that the child holds 50,000 at its SSTORE.
+    share = 100_000
+    keeps = share_source(share)
+    # PUSH0, PUSH0 (REVERT's operands), PUSH3 of the slot's value, PUSH0. The value written is the share itself, an
+    # input of the case, so that its figure is the case's own and not a constant's (tools/check_derived_text.py).
+    pushes = 3 * model.G_BASE + model.G_VERYLOW
+    regular = 50_000
+    paid = model.SLOT_STATE - model.LEGACY_SSTORE_SHARE
+    for name, end, tail in (
+        ("reverted", b"\xfd", f"it reverts: its rollback makes its reservoir {fmt(share - paid - record)} + "
+                              f"{fmt(model.SLOT_STATE + record)} = {fmt(share + model.LEGACY_SSTORE_SHARE)}, which returns "
+                              "to the caller's reservoir, and its regular gas returns to the caller's"),
+        ("halted", INVALID, f"it halts: its reservoir becomes the {fmt(share)} it received, which returns, and its regular "
+                            "gas is consumed"),
+    ):
+        add(Case(f"satin/take-backs/failed-child/{name}", f"the first frame, with {fmt(keeps)} of reservoir, calls a child "
+                 f"that receives a reservoir share of {fmt(share)} and holds {fmt(regular)} of regular gas at its write of "
+                 f"a cold fresh slot at m = 1: the write's {fmt(model.COLD_SSTORE_ACCESS + model.SSTORE_SET)} of regular "
+                 f"gas, the {fmt(model.LEGACY_SSTORE_SHARE)} legacy share from regular gas and {fmt(paid)} from the "
+                 f"reservoir, then the record's {fmt(record)} from the reservoir, which is left with "
+                 f"{fmt(share - paid - record)}; " + tail, spec=spec, pools=True,
+                 gas=model.EXECUTION_CAP + body + keeps, code=call(regular + pushes, WRITER_CHILD, 0, 0) + b"\x50" + STOP,
+                 accounts={WRITER_CHILD: model.Account(nonce=1, code=push(0) + push(0) + sstore(0, share) + end)}))
+
+    # SATIN-TAKE-012, failed-deposit: a deposit from an absent sender whose own frame halts.
+    add(Case("satin/take-backs/failed-deposit", "a deposit with a gas limit of 1,000,000 from a sender empty under "
+             f"EIP-161, whose own frame halts after the caller's {fmt(model.ACCOUNT_STATE)} of state gas was paid: it reports "
+             "its whole gas limit as regular gas, no state and no history gas, one unit of state growth, zero KV updates "
+             "and its body's data size, the same bytes as its history bytes; the sender keeps its nonce bump and the mint",
+             spec=spec, deposit=(ETH, 1_000_000), absent_sender=True, code=INVALID))
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -1101,6 +1315,34 @@ POOLS_QUARANTINE = {
 }
 
 
+# The take-back examples the revm-based implementation fails: what it credits to regular gas, or None where a frame
+# halts and its spill leaves that implementation's counter.
+TAKE_BACKS_QUARANTINE = {
+    "satin/take-backs/descendant/kept": "the record's history C's write back to 7 gives back",
+    "satin/take-backs/descendant/descendant-reverted": "the LOG0's history C's rollback returns, net of the record it took "
+        "back",
+    "satin/take-backs/descendant/both-reverted": "what C's rollback returns and P's own record, which P's rollback returns",
+    "satin/take-backs/descendant/writer-halted": None,
+    "satin/take-backs/sent-back/round-trip": "the history of the two records Q's start took back",
+    "satin/take-backs/sent-back/nonce-bumped": "the history of Q's record, which Q's start took back",
+    "satin/take-backs/destroyed-creation/no-balance": "the state and history gas the destruction table gives back",
+    "satin/take-backs/destroyed-creation/new-beneficiary": "what is left of the destruction table's give-back once the "
+        "beneficiary's record is paid",
+    "satin/take-backs/log-reverted/reverted": "the LOG2's history, which the child's rollback returns",
+    "satin/take-backs/log-reverted/allowance": "the history of the two records the failed start made",
+    "satin/take-backs/answer-stopped": "what P's rollback returns, the stopped start's two charges given back to P among it",
+    "satin/take-backs/failed-child/reverted": "the fresh slot's legacy share, which the child's regular gas paid and its "
+        "rollback returns",
+    "satin/take-backs/failed-child/halted": None,
+}
+# Cases the model derives and that stay out of the slice until a disagreement with the evm2-based implementation
+# is decided (decision D-65).
+HELD = {
+    "satin/take-backs/failed-deposit": "both implementations report a failed deposit's floor as 0, where the model derives "
+        "the transaction's EIP-7623 floor (SATIN-POOL-020)",
+}
+
+
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -1131,6 +1373,30 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
                    f"{price} = {fmt(history)}")
         return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used), "actual": q(used - history),
                 "verdict": verdict}
+    if c.case_id in TAKE_BACKS_QUARANTINE:
+        pools = fx["expected"]["gasPools"]
+        what = TAKE_BACKS_QUARANTINE[c.case_id]
+        if what is None:
+            spilled = int(pools["spilled"], 16)
+            dropped = c.probe["halted-drawn"]
+            verdict = ("SATIN-POOL-014 consumes a halting frame's regular gas with the part of its state and history "
+                       "charges regular gas paid, and SATIN-HIST-012 never credits that part back, so it stays in what "
+                       f"regular gas paid for state and history, {fmt(spilled)}; the revm-based implementation at {REVM_PIN} "
+                       "counts in its spill only what a later refill may still credit to regular gas, its departure from "
+                       f"SATIN-HIST-012, and drops the halted frames' {fmt(dropped)}, so it reports {fmt(spilled - dropped)}")
+            return {"adapter": adapter, "path": "/expected/gasPools/spilled", "expected": q(spilled),
+                    "actual": q(spilled - dropped), "verdict": verdict}
+        regular_end = int(pools["regular"]["final"], 16)
+        more = int(pools["reservoir"]["final"], 16) - int(pools["reservoir"]["initial"], 16)
+        legacy = ("; SATIN-STATE-012 draws the legacy share from regular gas, which the revm-based implementation does "
+                  "not, and its revert returns the frame's spill to regular gas" if "legacy" in what else "")
+        verdict = ("SATIN-HIST-012 makes every give-back of state or history gas, a failed frame's rollback "
+                   "(SATIN-POOL-014) and the destruction table's (SATIN-SD-005) among them, credit the reservoir of the "
+                   "frame that receives it, never its regular gas, whichever pool paid the charge; the revm-based "
+                   f"implementation at {REVM_PIN} credits {what}, {fmt(more)}, to regular gas{legacy}, so the first frame "
+                   f"ends with {fmt(more)} more regular gas and as much less reservoir than the rule's")
+        return {"adapter": adapter, "path": "/expected/gasPools/regular/final", "expected": q(regular_end),
+                "actual": q(regular_end + more), "verdict": verdict}
     if c.case_id in POOLS_QUARANTINE:
         pools = fx["expected"]["gasPools"]
         regular_end = int(pools["regular"]["final"], 16)

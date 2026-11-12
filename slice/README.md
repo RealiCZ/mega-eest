@@ -1,11 +1,12 @@
 # The vertical slice
 
-110 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+112 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 63 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 20 for the
 edges of the charge-order principles, 5 for gas detention, 5 for the stops of a transaction's own
-frame and 2 that observe the gas pools at `5fb2688` (`specs/satin-5fb2688`), each case naming its
-own spec (decisions D-54, D-59, D-60, D-62, D-64). The cases whose expected `limit` is a stop are schema 1.1; every other case is
+frame and 2 that observe the gas pools at `5fb2688` (`specs/satin-5fb2688`), and 2 for the
+take-back page's worked examples at `cdded1e` (`specs/satin-cdded1e`), each case naming its own
+spec (decisions D-54, D-59, D-60, D-62, D-64, D-65). The cases whose expected `limit` is a stop are schema 1.1; every other case is
 1.0. They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
@@ -13,7 +14,7 @@ Every file here is written by `tools/make_slice.py` (`--check` verifies it), and
 case's text that depends on a constant of the specification is written from that constant
 (`tools/check_derived_text.py` checks it, D-57). Each case is
 authored there — its setup, its transaction as real signed bytes or a deposit envelope, the SALT
-capacities its state lands in — and its expectation is derived by `tools/satin_model.py`, an
+capacities its state lands in — and its expectation is derived by `tools/satin_model/`, an
 executable restatement of the cited rules that shares no code with either implementation. No
 implementation's output is copied into a case: the filler's candidates are compared with the
 derivation, and the two implementations run against it.
@@ -46,6 +47,7 @@ derivation, and the two implementations run against it.
 | `detention` | 5 | one charge under gas detention (`SATIN-DET-018`): a detained child frame whose spendable part cannot pay `BALANCE`'s static cost is stopped with `MegaLimitExceeded(2, limit)` when its whole regular gas can pay it and runs out of gas when it cannot (`SATIN-DET-020`); the spendable part one below the static cost and at it, the static cost staying spent once paid; a value `CALL` stopped at its value transfer after its static cost |
 | `limit-stops` | 5 | a stop of the transaction's own frame, its result (`SATIN-STOP-009`, `-021`), settled as a revert: gas detention's crossing at one memory expansion and at `BALANCE`'s static cost (kind 2); the fresh slot that takes the frame's state growth past its budget (kind 3, `SATIN-LIM-002`, `-010`); and, after hints used what the transaction had left, a log one byte past the transaction's data-size limit while the frame's budget holds it (kind 0, `SATIN-LIM-011`, `-012`), with the log that lands exactly on the limit |
 | `gas-pools` | 2 | the first frame's pools observed directly (`gasPools`, D-64): a plain transfer as the control, and a fresh slot whose state gas a small reservoir pays in part, regular gas paying the legacy share, the rest and the record (`SATIN-POOL-008`) |
+| `take-backs` | 2 | the worked examples of the take-back page (`SATIN-TAKE-005` to `-012`), one case each, of which these two gate: a list whose two entries for one absent authority delegate and then clear (`SATIN-TAKE-008`, `SATIN-AUTH-009`), and a value round trip whose earlier transfer turns the signs, the second start's records charged to a caller left too little regular gas, which runs out of gas (`SATIN-TAKE-006`, `SATIN-HIST-009`); the other thirteen are quarantined below |
 | `pre-frame` | 3 | the reservoir pays the authorities' records first (`SATIN-HIST-005`), shown by a first frame that halts; the transaction's own start record charged before interception answers its `keylessDeploy` call, one gas below step 1's overhead and at it |
 
 The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
@@ -53,11 +55,11 @@ empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and 
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-118 rules in 19 areas are cited. `index.json` lists each case with its area, rules and file digest.
+121 rules in 19 areas are cited. `index.json` lists each case with its area, rules and file digest.
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: twenty-five cases the revm-based implementation fails against a decided rule it
+- `quarantine/`: thirty-eight cases the revm-based implementation fails against a decided rule it
   has not made yet, each passing on the evm2-based implementation:
   - four deposit cases. `SATIN-HIST-016` and `SATIN-DEP-001` make a deposit pay history gas for its
     body, its logs and its write records; the revm-based implementation charges none. The
@@ -91,6 +93,14 @@ system contracts a call can reach (D-55).
     revm-based implementation credits the give-back to regular gas (`SATIN-HIST-012`), and a fresh
     slot under a large reservoir, where it draws no legacy share from regular gas
     (`SATIN-STATE-012`, `SATIN-POOL-008`).
+  - thirteen of the take-back page's worked examples (D-65): a slot's record another frame takes
+    back by `DELEGATECALL` (four endings), a value round trip and its variant after a nonce bump, a
+    creation destroyed with no balance and to a new beneficiary, a log in a reverted child and in a
+    value call's child whose allowance pays it, a value start answered without a frame that crosses
+    its frame budget, and a child with a reservoir share that reverts or halts. The first frame's
+    pools show where each give-back lands: `SATIN-HIST-012` and `SATIN-POOL-014` put it in a
+    reservoir; the revm-based implementation credits it to regular gas, and, where a frame halts,
+    its spill counter drops what the halted frame paid.
 
   The expectation is the rule's; the cases stay out of the gating slice until that implementation
   is fixed, and `tools/run-slice.sh` checks that each still fails exactly as `index.json` records
@@ -102,13 +112,15 @@ system contracts a call can reach (D-55).
 
 A stop's diagnostics (scope, call path, operation, phase and commit flags, which neither
 implementation's result carries, D-62), a stop of the KV-update limit (half a million write
-records cost more gas than a transaction holds), gas detention beyond `TIMESTAMP`, a deposit's Oracle read and `BALANCE`,
-nested frames beyond a call to a system contract, a refused call or a detained child, EIP-7702
-lists beyond one accepted entry or two applied ones, an Oracle read that asks the oracle service
-(the evm2-based adapter runs no oracle transcript), the reservoir as an observation (no adapter
-reports it), a gating case with `reads` (the revm-based implementation reads the SequencerRegistry
-in every transaction, D-61), and every block, building and witness profile: they need observations
-or consumers the next phases add.
+records cost more gas than a transaction holds; for the same reason the answer-stopped example's KV
+budget of 3 is pinned on the state-growth budget instead, D-65), gas detention beyond `TIMESTAMP`, a
+deposit's Oracle read and `BALANCE`, frames and creations beyond the shapes the take-back examples
+build (D-65), EIP-7702 lists beyond one accepted entry, two applied ones or one authority's
+delegation and clear, an Oracle read that asks the oracle service (the evm2-based adapter runs no
+oracle transcript), a gating case with `reads` (the revm-based implementation reads the
+SequencerRegistry in every transaction, D-61), the failed-deposit example (both implementations
+report its floor as 0, D-65), and every block, building and witness profile: they need
+observations or consumers the next phases add.
 
 ## Running it
 
@@ -120,7 +132,7 @@ builds the format CLI and both adapters (fetching the evm2-based implementation 
 consumes `cases/` with each adapter plain and instrumented, and prints
 
 ```text
-SLICE cases=110 adapters=2 pass=220 fail=0 unsupported=0 error=0 digests=identical
-PARITY adapters=2 cases=110 mismatches=0
+SLICE cases=112 adapters=2 pass=224 fail=0 unsupported=0 error=0 digests=identical
+PARITY adapters=2 cases=112 mismatches=0
 NEGATIVE wrong-expected verdict=fail rewritten=no
 ```
