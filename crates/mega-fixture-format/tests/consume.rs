@@ -177,8 +177,13 @@ mod process {
         fn hanging_adapter(&self, close_pipes: bool) -> ProcessAdapter {
             let program = self.0.join("hang.sh");
             let close = if close_pipes { "cat >/dev/null\nexec 0<&- 1>&- 2>&-\n" } else { "" };
-            fs::write(&program, format!("#!/bin/sh\nprintf '%s' \"$$\" > \"${{0%/*}}/pid\"\n{close}exec sleep 60\n")).unwrap();
+            fs::write(
+                &program,
+                format!("#!/bin/sh\nif [ \"$1\" = --warmup ]; then exit 0; fi\nprintf '%s' \"$$\" > \"${{0%/*}}/pid\"\n{close}exec sleep 60\n"),
+            )
+            .unwrap();
             fs::set_permissions(&program, fs::Permissions::from_mode(0o700)).unwrap();
+            warm_up(&program);
             let mut adapter = ProcessAdapter::new(program);
             adapter.timeout = Duration::from_secs(3);
             adapter
@@ -186,13 +191,21 @@ mod process {
 
         fn adapter(&self, body: &str) -> ProcessAdapter {
             let program = self.0.join("adapter.py");
-            fs::write(&program, format!("#!/usr/bin/env python3\nimport json, os, pathlib, signal, sys, time\nroot = pathlib.Path(__file__).parent\n{body}\n"))
+            fs::write(&program, format!("#!/usr/bin/env python3\nimport sys\nif sys.argv[1:] == ['--warmup']:\n    sys.exit(0)\nimport json, os, pathlib, signal, time\nroot = pathlib.Path(__file__).parent\n{body}\n"))
                 .unwrap();
             fs::set_permissions(&program, fs::Permissions::from_mode(0o700)).unwrap();
+            warm_up(&program);
             let mut adapter = ProcessAdapter::new(program);
             adapter.timeout = Duration::from_secs(10);
             adapter
         }
+    }
+
+    // A fresh executable can spend seconds in macOS assessment. Complete that first launch
+    // before the transport deadline starts; the warmup exits before any adapter side effects.
+    fn warm_up(program: &Path) {
+        let output = Command::new(program).arg("--warmup").output().expect("adapter warmup starts");
+        assert!(output.status.success(), "adapter warmup failed: {}", String::from_utf8_lossy(&output.stderr));
     }
 
     impl Drop for Scratch {
