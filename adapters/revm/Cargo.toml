@@ -21,7 +21,7 @@ path = "src/main.rs"
 mega-fixture-format = { path = "../../crates/mega-fixture-format" }
 
 # The implementation, pinned by commit (adapters/implementations.env: REVM_IMPL_REV).
-mega-evm = { git = "https://github.com/megaeth-labs/mega-evm", rev = "5e3f30ad4692f3815105dea1368f789f032ddd2b", features = ["test-utils"] }
+mega-evm = { git = "https://github.com/megaeth-labs/mega-evm", rev = "4e39cfd657c18ad6f49fcdf3fc37189a6564d14b", features = ["test-utils"] }
 
 # The versions mega-evm's own root manifest pins at that revision.
 revm = { version = "=40.0.3" }

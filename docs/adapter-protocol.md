@@ -126,7 +126,7 @@ adapter implements them on its own (decisions D-40, D-41):
 
 | Adapter | Implementation | Pinned by | Build |
 | --- | --- | --- | --- |
-| `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `5e3f30ad`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
+| `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `4e39cfd6`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
 | `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `f3d84454` with `RealiCZ/evm2` at `390a3876`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
 Both declare `state-transition` with its mandatory groups and the features `deposit`, `salt` and
