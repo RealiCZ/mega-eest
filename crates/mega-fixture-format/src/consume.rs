@@ -133,9 +133,15 @@ enum PipeEvent {
 #[cfg(unix)]
 fn exit_notification(child: &Child) -> impl FnOnce() -> Result<(), String> + Send + 'static {
     let pid = child.id();
+    #[cfg(any(target_os = "freebsd", target_os = "dragonfly"))]
+    let pid = i64::from(pid);
     move || {
+        #[cfg(any(target_os = "freebsd", target_os = "dragonfly"))]
+        type Id = i64;
+        #[cfg(not(any(target_os = "freebsd", target_os = "dragonfly")))]
+        type Id = u32;
         extern "C" {
-            fn waitid(id_type: i32, id: u32, info: *mut std::ffi::c_void, options: i32) -> i32;
+            fn waitid(id_type: i32, id: Id, info: *mut std::ffi::c_void, options: i32) -> i32;
         }
         #[cfg(any(target_os = "linux", target_os = "android"))]
         const WNOWAIT: i32 = 0x01000000;
