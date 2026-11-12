@@ -649,7 +649,7 @@ mandatory groups still come from the implementations' results alone. No engine c
 specification's rule is that a worked example lives in a conformance case, the case coming first and
 the example leaving the text after it (the owner's QI-30 at `cdded1e`). The nine examples of the
 take-back page (`SATIN-TAKE-005` to `-012`) are now derived at `cdded1e` (`specs/satin-cdded1e`), in
-the area `take-backs`: sixteen cases, an example's endings and variants each a case of its own. Each
+the area `take-backs`: seventeen cases, an example's endings and variants each a case of its own. Each
 reproduces its example's figures; where the observation is which pool receives a give-back, the case
 carries `gasPools`, and a frame whose own end the example is about is a child of the first frame, so
 that what it returns shows in the first frame's reservoir.

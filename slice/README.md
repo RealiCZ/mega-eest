@@ -47,7 +47,7 @@ derivation, and the two implementations run against it.
 | `detention` | 5 | one charge under gas detention (`SATIN-DET-018`): a detained child frame whose spendable part cannot pay `BALANCE`'s static cost is stopped with `MegaLimitExceeded(2, limit)` when its whole regular gas can pay it and runs out of gas when it cannot (`SATIN-DET-020`); the spendable part one below the static cost and at it, the static cost staying spent once paid; a value `CALL` stopped at its value transfer after its static cost |
 | `limit-stops` | 5 | a stop of the transaction's own frame, its result (`SATIN-STOP-009`, `-021`), settled as a revert: gas detention's crossing at one memory expansion and at `BALANCE`'s static cost (kind 2); the fresh slot that takes the frame's state growth past its budget (kind 3, `SATIN-LIM-002`, `-010`); and, after hints used what the transaction had left, a log one byte past the transaction's data-size limit while the frame's budget holds it (kind 0, `SATIN-LIM-011`, `-012`), with the log that lands exactly on the limit |
 | `gas-pools` | 2 | the first frame's pools observed directly (`gasPools`, D-64): a plain transfer as the control, and a fresh slot whose state gas a small reservoir pays in part, regular gas paying the legacy share, the rest and the record (`SATIN-POOL-008`) |
-| `take-backs` | 2 | the worked examples of the take-back page (`SATIN-TAKE-005` to `-012`), one case each, of which these two gate: a list whose two entries for one absent authority delegate and then clear (`SATIN-TAKE-008`, `SATIN-AUTH-009`), and a value round trip whose earlier transfer turns the signs, the second start's records charged to a caller left too little regular gas, which runs out of gas (`SATIN-TAKE-006`, `SATIN-HIST-009`); the other thirteen are quarantined below |
+| `take-backs` | 2 | the worked examples of the take-back page (`SATIN-TAKE-005` to `-012`), one case each, of which these two gate: a list whose two entries for one absent authority delegate and then clear (`SATIN-TAKE-008`, `SATIN-AUTH-009`), and a value round trip whose earlier transfer turns the signs, the second start's records charged to a caller left too little regular gas, which runs out of gas (`SATIN-TAKE-006`, `SATIN-HIST-009`); the other fourteen are quarantined below |
 | `pre-frame` | 3 | the reservoir pays the authorities' records first (`SATIN-HIST-005`), shown by a first frame that halts; the transaction's own start record charged before interception answers its `keylessDeploy` call, one gas below step 1's overhead and at it |
 
 The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
@@ -59,7 +59,7 @@ system contracts a call can reach (D-55).
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: thirty-eight cases the revm-based implementation fails against a decided rule it
+- `quarantine/`: thirty-nine cases the revm-based implementation fails against a decided rule it
   has not made yet, each passing on the evm2-based implementation:
   - four deposit cases. `SATIN-HIST-016` and `SATIN-DEP-001` make a deposit pay history gas for its
     body, its logs and its write records; the revm-based implementation charges none. The
@@ -93,11 +93,12 @@ system contracts a call can reach (D-55).
     revm-based implementation credits the give-back to regular gas (`SATIN-HIST-012`), and a fresh
     slot under a large reservoir, where it draws no legacy share from regular gas
     (`SATIN-STATE-012`, `SATIN-POOL-008`).
-  - thirteen of the take-back page's worked examples (D-65): a slot's record another frame takes
-    back by `DELEGATECALL` (four endings), a value round trip and its variant after a nonce bump, a
-    creation destroyed with no balance and to a new beneficiary, a log in a reverted child and in a
-    value call's child whose allowance pays it, a value start answered without a frame that crosses
-    its frame budget, and a child with a reservoir share that reverts or halts. The first frame's
+  - fourteen of the take-back page's worked examples (D-65): a slot's record another frame takes
+    back by `DELEGATECALL` (four endings); a value round trip, after a nonce bump, and with its
+    signs turned by an earlier transfer, the second start paid; a creation destroyed with no balance
+    and to a new beneficiary; a log in a reverted child and in a value call's child whose allowance
+    pays it; a value start answered without a frame that crosses its frame budget; and a child with
+    a reservoir share that reverts or halts. The first frame's
     pools show where each give-back lands: `SATIN-HIST-012` and `SATIN-POOL-014` put it in a
     reservoir; the revm-based implementation credits it to regular gas, and, where a frame halts,
     its spill counter drops what the halted frame paid.

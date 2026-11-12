@@ -1007,6 +1007,15 @@ def take_back_cases() -> list[Case]:
               + bytes([0x61]) + keep.to_bytes(2, "big") + b"\x90\x03\xf1\x50" + STOP)
     q_code = jump_if(b"\x36", call(0, SENDER_BACK, 1, 0) + b"\x50" + STOP, q_back)
     p_code = jump_if(b"\x34", STOP, call(200_000, RETURNER, 1, 0) + b"\x50" + STOP)
+    q_paid = jump_if(b"\x36", call(0, SENDER_BACK, 1, 0) + b"\x50" + STOP, call(100_000, SENDER_BACK, 1, 0) + b"\x50" + STOP)
+    add(Case("satin/take-backs/sent-back/signs-turned-paid", "Q first sends P 1 wei, making both accounts' records and "
+             f"paying their {fmt(2 * record)}; then P calls Q with 1 wei, returning both balances to what was loaded, so "
+             f"that start takes both records back, and Q's call back with 1 wei, which Q can pay, makes them again, "
+             f"charging Q {fmt(2 * record)} before its start; once Q returns, P's start kept, P is given the "
+             f"{fmt(2 * record)} of the records its start took back into its reservoir", spec=spec, pools=True,
+             code=call(MAX_GAS, RETURNER, 0, 1) + b"\x50" + call(MAX_GAS, SENDER_BACK, 0, 0) + b"\x50" + STOP,
+             accounts={RETURNER: model.Account(nonce=1, balance=10, code=q_paid),
+                       SENDER_BACK: model.Account(nonce=1, balance=10, code=p_code)}))
     add(Case("satin/take-backs/sent-back/signs-turned", "Q first sends P 1 wei, making both accounts' records and paying "
              f"their {fmt(2 * record)}; then P calls Q with 1 wei, returning both balances to what was loaded, so that start "
              f"takes both records back, and Q's call back with 1 wei would make them again: it charges Q {fmt(2 * record)} "
@@ -1325,6 +1334,7 @@ TAKE_BACKS_QUARANTINE = {
     "satin/take-backs/descendant/writer-halted": None,
     "satin/take-backs/sent-back/round-trip": "the history of the two records Q's start took back",
     "satin/take-backs/sent-back/nonce-bumped": "the history of Q's record, which Q's start took back",
+    "satin/take-backs/sent-back/signs-turned-paid": "the history of the two records P's start took back",
     "satin/take-backs/destroyed-creation/no-balance": "the state and history gas the destruction table gives back",
     "satin/take-backs/destroyed-creation/new-beneficiary": "what is left of the destruction table's give-back once the "
         "beneficiary's record is paid",
