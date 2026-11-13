@@ -44,6 +44,13 @@ specification's text and constants:
   what they kept before the frame runs, with the creator's nonce record held to the creator's limits;
   a hint admitted in a frame that fails, and the data-size stop of the frame the failure returns into;
   a deposit whose own frame is stopped; an EIP-7702 list that does not fit, skipped.
+- **The authorization page's shapes** (D-88): an EIP-7702 entry skipped by its gates (its chain id,
+  a nonce of `2^64 − 1`, a signature that recovers no authority), unread and unwarmed; an authority
+  with code other than a delegation indicator, or whose nonce does not match, loaded, warm and
+  skipped; the sender's own authorization; an authority holding an indicator at the transaction's
+  start; a list at the state-growth limit and one past it, with entries that keep nothing; a first
+  frame that halts after the reservoir paid its start record; and the frame's `ORIGIN` and
+  `GASPRICE`.
 - **The edges of gas detention's rules** (D-67): the volatile reads of the block environment
   (`NUMBER`, `BLOCKHASH`, `COINBASE`, `PREVRANDAO`, `GASLIMIT`, `BASEFEE`, `BLOBBASEFEE`, `SLOTNUM`), of
   the beneficiary's account (`SELFBALANCE` of its own frame, `EXTCODESIZE`, `EXTCODEHASH`) and their
@@ -85,12 +92,12 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `precompiles.py` | A call to a precompile: the funds check, the price read before it runs, and under gas detention the decision from it (`SATIN-DET-021` to `-024`) |
 | `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, the give-back into the reservoir |
 | `detention.py` | The limit a volatile read sets, the caps it is set from, a frame's spendable and withheld parts, and a transaction detained from its start |
-| `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use, the volatile reads and their refusal, the opcode charges of a call, a `DELEGATECALL`, a creation and a `SELFDESTRUCT`; under gas detention's cases, the readers of the whole regular gas |
+| `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use (`ORIGIN` and `GASPRICE` among them since D-88), the volatile reads and their refusal, the opcode charges of a call, a `DELEGATECALL`, a creation and a `SELFDESTRUCT`; under gas detention's cases, the readers of the whole regular gas |
 | `calls.py` | A call decided in the order of `SATIN-ICPT-007`: interception, the frame start, the records a value start makes and takes back, the child and what it returns |
 | `frames.py` | A child frame's budgets and reservoir share, the snapshot its failure returns to, how it ends (`SATIN-POOL-012`, `-014`), a stop it catches, a start held to the started frame's budget, a failed frame's hints and the data-size stop of the frame it returns into, and `DELEGATECALL` |
 | `creation.py` | A `CREATE` from a frame, onto an absent address or one whose storage then reads zero, or stopped at its start with its creator's nonce record; a `SELFDESTRUCT` in the order of `SATIN-SD-019`: the first of an account created in the transaction with the destruction table and its mark, a repeated one, and one of an account the transaction did not create |
 | `interception.py` | The transaction's own `keylessDeploy` call: the decoder's conditions and the deployment's first steps |
-| `authorizations.py` | An EIP-7702 list before the first frame: its simulation, a list that does not fit and is skipped, each entry's charges and records, a further entry for one authority |
+| `authorizations.py` | An EIP-7702 list before the first frame: its simulation, each entry's gates and the checks of its authority's code and nonce, a list that does not fit and is skipped, each entry's charges and records, the sender's own entry, a further entry for one authority |
 | `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, in a detained frame its static cost apart and its state and history drawn from the withheld part first, and a creation's deposited code |
 | `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it |
 | `limits.py` | A write held to its frame's budget, the transaction's own or a child's, and then the transaction's limit, and the rules a case that pins the limit-stop page cites (D-73) |

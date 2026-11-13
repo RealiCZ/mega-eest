@@ -181,9 +181,7 @@ class TransactionMixin:
             sender_acct.nonce += 1
 
         if tx.authorizations:
-            for chain_id, target, nonce, authority in tx.authorizations:
-                self.load(authority, "an authority the list's simulation loads, the whole list walked, whether or not the "
-                          "list is then applied", "SATIN-AUTH-005", "SATIN-WIT-004", "SATIN-WIT-008")
+            self.load_authorities()
             skipped = self.list_crossing()
             if skipped:
                 return self.list_skipped(skipped, intrinsic, floor, price)
@@ -336,10 +334,14 @@ class TransactionMixin:
         # beneficiary is detained from its start; a creation onto the beneficiary's address is not (SATIN-DET-006).
         parties = [name for name, who in (("sender", tx.sender), ("call recipient", None if create else recipient))
                    if who == env.coinbase]
-        if any(authority == env.coinbase for *_, authority in tx.authorizations):
+        if env.coinbase in self.applied_authorities:
             parties.append("applied EIP-7702 authority")
         if parties:
             self.detain_from_start(frame, parties)
+        elif self.lists and self.applied_authorities:
+            d.add("gasLedgers", "no applied authority is the block beneficiary" + (", the sender's own authorization "
+                  "among them" if tx.sender in self.applied_authorities else "") + ", nor is the sender or the recipient: "
+                  "the transaction is not detained from its start", "SATIN-DET-008")
         elif create and recipient == env.coinbase:
             d.add("gasLedgers", f"the created address {h(recipient)} is the block beneficiary: the creation transaction is "
                   "not detained from its start for it, its loads of the sender and the created address being the "
@@ -394,8 +396,9 @@ class TransactionMixin:
                 d.add("limit", "the frame halts: a halt is not a limit stop, so the transaction reports no stop",
                       "SATIN-STOP-002", "SATIN-OUT-007")
             spent_regular = tx.gas_limit - frame["reservoir_at_start"] - (pre_frame_history + pre_frame_state if reservoir else 0)
-            if sum(drawn):
-                raise Unmodelled("a halt after the reservoir paid a charge for the first frame's start")
+            if drawn[1] or (keyless and drawn[0]):
+                raise Unmodelled("a halt after the reservoir paid the state gas of the first frame's start, or the start "
+                                 "record of an intercepted call")
             self.undo_start(moved, create, recipient, new_account, pre_frame_history, pre_frame_state)
             if keyless and start_record:
                 self.history_gas -= pre_frame_history
@@ -410,13 +413,22 @@ class TransactionMixin:
                       "SATIN-HIST-005", "SATIN-POOL-024", "SATIN-HIST-023",
                       *(("SATIN-AUTH-016",) if tx.authorizations else ()))
             reservoir_left = frame["reservoir_at_start"] + (pre_frame_history + pre_frame_state if frame["reservoir_at_start"] else 0)
-            if frame["reservoir_at_start"] and (pre_frame_history or pre_frame_state):
+            if frame["reservoir_at_start"] and (pre_frame_history or pre_frame_state) and not start_from_reservoir:
                 raise Unmodelled("a halt after start charges the reservoir paid")
-            total = tx.gas_limit - frame["reservoir_at_start"]
-            d.add("gasLedgers", f"halt: every regular gas the frame held is consumed, the reservoir {fmt(frame['reservoir_at_start'])} "
-                  f"returns; total = gas limit {fmt(tx.gas_limit)} - {fmt(frame['reservoir_at_start'])} = {fmt(total)}; the "
-                  "frame's state and history charges are not kept, so what regular gas paid of them is on the regular "
-                  "ledger (D-51)", "SATIN-POOL-014", "SATIN-POOL-017")
+            if start_from_reservoir:
+                # SATIN-HIST-005: the part of the start record the reservoir paid returns to the reservoir.
+                total = tx.gas_limit - frame["reservoir_at_start"] - start_from_reservoir
+                d.add("gasLedgers", f"halt: every regular gas the frame held is consumed; the reservoir it received, "
+                      f"{fmt(frame['reservoir_at_start'])}, returns, and with it the {fmt(start_from_reservoir)} the "
+                      f"reservoir paid of the start record; total = gas limit {fmt(tx.gas_limit)} - "
+                      f"{fmt(frame['reservoir_at_start'])} - {fmt(start_from_reservoir)} = {fmt(total)}",
+                      "SATIN-POOL-014", "SATIN-POOL-017", "SATIN-HIST-005")
+            else:
+                total = tx.gas_limit - frame["reservoir_at_start"]
+                d.add("gasLedgers", f"halt: every regular gas the frame held is consumed, the reservoir {fmt(frame['reservoir_at_start'])} "
+                      f"returns; total = gas limit {fmt(tx.gas_limit)} - {fmt(frame['reservoir_at_start'])} = {fmt(total)}; the "
+                      "frame's state and history charges are not kept, so what regular gas paid of them is on the regular "
+                      "ledger (D-51)", "SATIN-POOL-014", "SATIN-POOL-017")
             del spent_regular, reservoir_left
             self.refund = 0
             execution = {"status": "halt", "output": "0x", "createdAddress": None}

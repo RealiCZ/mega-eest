@@ -1076,3 +1076,102 @@ expansion, the first fill batch's clarifications, and that refusal's follow-ups.
 - **The corpus inventory.** Section 2 of [the corpus inventory](corpus-inventory.md) is read again
   at the revm-based pin, `7110d87b`. Its integration tests, replay fixtures and deviation registry are
   byte-identical to `4e39cfd6`'s, so every count stands.
+
+From the authorization page's uncited rules:
+
+**D-88. The authorization page's own rules are cases at `c130558`, and the model learns the list's
+other entries (D-63 and D-75 amended).** Twelve rules of the EIP-7702 page had no case:
+`SATIN-AUTH-001` to `-003`, `-006`, `-007`, `-010` to `-014`, `-017` and `-018`. The area
+`authorizations` gains sixteen gating cases and two quarantined ones (D-90), each at an edge of a
+rule, with its control where one is cheap, citing `specs/satin-c130558`:
+
+- **The gates** (`SATIN-AUTH-002`): an entry for chain 2, at nonce `2^64 − 1`, or whose signature,
+  all zero, recovers no authority, is skipped before any authority is read; the frame's `BALANCE` of
+  the account its key signs for pays the cold access, and the entry pays its `PER_AUTH_BASE_COST`
+  alone (`SATIN-AUTH-007`, `-014`, `SATIN-SCHED-007`). The control is an entry for chain id zero,
+  applied and warm.
+- **The authority's code** (`SATIN-AUTH-003`): code other than a delegation indicator skips the entry
+  after the load, which warms the authority; an indicator does not, and the authority, delegated
+  again, is charged no indicator (`SATIN-AUTH-009`). A nonce that does not match skips the entry
+  after the load too (`SATIN-AUTH-004`, `-014`).
+- **The sender's own authorization**: at its nonce after validation's bump it is applied with the
+  indicator's state gas and no `ACCOUNT_WRITE` or record (`SATIN-AUTH-008`, `-015`); at its nonce
+  before the bump it is skipped; and applied, it does not detain the transaction, its sender not
+  being the block beneficiary (`SATIN-DET-008`), so a frame computing past the cap succeeds.
+- **The start record when the list keeps no record**: the reservoir pays the first frame's start
+  record whole, and the first frame's halt returns that part (`SATIN-HIST-005`).
+- **A frame of a list's transaction** reads its sender as `ORIGIN` and its effective price as
+  `GASPRICE`.
+- **The state-growth total at the limit** (`SATIN-AUTH-008`, `-010`): 1,000 new authorities, each with
+  a zero delegation target, fit and are applied; so do they after three accepted entries whose
+  authorities exist (an empty leaf, an account with a balance, one holding a delegation, which the
+  third entry clears: `SATIN-STATE-011`, `SATIN-ACCT-015`), and with five entries that keep nothing (a
+  chain-2 entry, a nonce of `2^64 − 1`, an unrecoverable signature, a nonce that does not match, and a
+  second accepted entry for one of the 1,000). One new authority more skips the whole list, an
+  existing authority and the sender's own entry that would have fitted included: the sender keeps
+  validation's bump alone and the transaction is included with its frame stopped (`SATIN-AUTH-011`,
+  `-013`, `-018`).
+- **The caller a deposit creates** is no authorization (`SATIN-AUTH-017`): a caller whose leaf the
+  state holds, empty under EIP-161, is new by emptiness, not by existence.
+
+D-75 left the list at the limit out as costly. It is in now: the totals are where the simulation's
+predicates show, and with zero targets each fitting case is about 360 KB, its state diff a thousand
+accounts at nonce 1. Its state gas, 183,600,000, is paid from a reservoir of 200,000,000.
+
+The model (`tools/satin_model/authorizations.py`) learns, for every list: the gates, which skip an
+entry unread (the simulation no longer loads a gated entry's authority); an authority with code
+other than an indicator and a nonce that does not match, skipped after the load, which warms the
+authority; the sender's own entry, at its nonce after validation's bump, with no `ACCOUNT_WRITE`
+and no record; an authority holding an indicator at the start of the transaction, charged no
+indicator; and the list's totals from the same simulation. Only the authorities an applied entry
+wrote detain a transaction whose beneficiary they are (`SATIN-DET-008`); before, the model counted
+every entry's authority, which no case's derivation told apart. A halt of a first frame whose start
+record the reservoir paid returns that part to the reservoir (`SATIN-HIST-005`), where the model
+raised `Unmodelled`. The interpreter learns `ORIGIN` (0x32) and `GASPRICE` (0x3A).
+
+A case of the page carries `lists` (`Case.lists`, `Run.lists`): its derivation cites the list's
+simulation for every list (`SATIN-AUTH-001`, `-007`, `-008`, `-010`, and `-002` to `-005` where an
+entry reaches them), what each skipped entry leaves warm (`SATIN-AUTH-014`), and the skip's
+all-or-nothing and its inclusion (`SATIN-AUTH-013`, `-018`). The cases before it do not, so their
+pinned rules stay as they were; no file of theirs changes.
+
+`tools/make_slice.py` signs through `signing_hash`, which refuses a pre-image of 135 bytes modulo
+136. `make_examples.keccak256` pads such an input as two blocks where Keccak's padding is the one
+byte `0x81`, so its hash is not Keccak-256: the first draft of the `ORIGIN` case signed a 135-byte
+payload, and both implementations recovered another sender and refused the transaction for its
+funds. No committed case has such a pre-image, nor a code hash or address over one, since each
+passes on both implementations; `make_examples.py` is left as it is, its inputs never reaching that
+length. The case now carries a priority fee of 1,000, and its payload is 134 bytes.
+
+**D-89. What the authorization cases cannot hold.**
+
+- **`SATIN-AUTH-006`**, a failed read of an authority, needs an injected fault (`input.faults`), which
+  both adapters report unsupported; a case would be unsupported on both.
+- **`SATIN-AUTH-012`**, the warmth a skipped list leaves. A skip stops the transaction's own frame
+  before it runs, so no opcode reads an authority's warmth after it. The one access left is a
+  delegated recipient's delegate access at `SATIN-SCHED-008` step 5, but whether steps 3 to 5 are
+  made for a transaction whose list is skipped, before its frame is stopped, is not stated
+  (`SATIN-AUTH-010` and `SATIN-STOP-009` name the frame's stop and its settlement, not those
+  charges). The model keeps raising `Unmodelled` for a skip whose first frame starts with a charge,
+  and D-88's skipped case does not cite `SATIN-AUTH-012`.
+- **A KV total over its limit** (`SATIN-AUTH-010`'s kind 1, and the kind when both totals cross). A
+  list keeps at most one record for each distinct authority, so it crosses the 500,000 KV updates
+  only with more entries than validation lets a transaction carry: the execution cap of
+  `SATIN-VAL-003` step 4 holds a list to 25,586 entries at `PER_AUTH_BASE_COST`, and the data-size
+  limit of step 1 to 92,956. That clause is unreachable, and so is any difference in the
+  simulation's record count alone.
+- **`SATIN-AUTH-018`** is pinned by the skipped case's outcome, an included transaction whose frame is
+  stopped; no pool profile is part of the slice.
+
+**D-90. Two authorization cases are quarantined against the revm-based implementation.** At
+`7110d87b` it fails two of D-88's cases, each for a rule the quarantine already names, each case's
+own edge being the rule's there:
+
+- `satin/authorizations/reads/short-list-out-of-gas` carries `reads` (D-61): its first difference is
+  the registry's account, which that implementation reads in every transaction (`SATIN-REG-002`);
+  its simulation of the short list is the rule's, the gated entry's authority unread.
+- `satin/authorizations/deposit-caller/empty-leaf` is a deposit: its gas used is short by its body's
+  history, which that implementation does not charge a deposit (`SATIN-HIST-016`); its created
+  caller is the rule's.
+
+The evm2-based implementation passes all eighteen cases.

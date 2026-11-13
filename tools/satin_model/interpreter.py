@@ -135,6 +135,17 @@ class InterpreterMixin:
                 self.charge_regular(frame, G_BASE, "CALLER")
                 stack.append(int.from_bytes(caller, "big"))
                 steps.append(f"CALLER {G_BASE}")
+            elif op == 0x32:  # ORIGIN
+                self.charge_regular(frame, G_BASE, "ORIGIN")
+                stack.append(int.from_bytes(tx.sender, "big"))
+                steps.append(f"ORIGIN {G_BASE}")
+                d.add("outcome", f"ORIGIN pushes the transaction's sender, {h(tx.sender)}", "SATIN-BASE-001")
+            elif op == 0x3A:  # GASPRICE
+                self.charge_regular(frame, G_BASE, "GASPRICE")
+                stack.append(self.effective_price())
+                steps.append(f"GASPRICE {G_BASE}")
+                d.add("outcome", f"GASPRICE pushes the transaction's effective gas price, {fmt(self.effective_price())}",
+                      "SATIN-BASE-001")
             elif op == 0x34:  # CALLVALUE
                 self.charge_regular(frame, G_BASE, "CALLVALUE")
                 stack.append(value_in)
@@ -424,6 +435,10 @@ class InterpreterMixin:
                     self.warm_accounts.add(who)
                 if who == self.env.coinbase:
                     raise Unmodelled("a BALANCE of the beneficiary that reads")
+                note = self.authority_warmth.get(who) if self.lists else None
+                if note is not None and cold == note[0].startswith("is not"):
+                    d.add("gasLedgers", f"BALANCE's account {h(who)}, an authority of the list, {note[0]}: its access costs "
+                          f"{fmt(WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0))}", *note[1])
                 self.load(who, "BALANCE's account, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
                 stack.append(self.state.get(who, Account()).balance)
                 steps.append(f"BALANCE {fmt(WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0))}")

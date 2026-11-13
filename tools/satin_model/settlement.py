@@ -149,6 +149,12 @@ class SettlementMixin:
             d.add("gasLedgers", f"the caller is empty under EIP-161: its new-account state gas {fmt(ACCOUNT_STATE)} x m={m} = "
                   f"{fmt(caller_state)}, the first charge before the frame", "SATIN-DEP-003", "SATIN-SCHED-008")
             d.add("resources", "the created caller is one unit of state growth", "SATIN-DEP-003", "SATIN-ACCT-014")
+            if self.lists:
+                d.add("gasLedgers", "the caller the deposit creates is no authorization and is not held to the list rule: "
+                      "it is decided by EIP-161 emptiness, not by an authority's existence, so " +
+                      ("its leaf, which the state holds empty, " if tx.sender in self.pre else "it ") +
+                      "is new; it is charged no ACCOUNT_WRITE and makes no write record, its account being a fixed record "
+                      "of the body", "SATIN-AUTH-017", "SATIN-STATE-011", "SATIN-ACCT-015", "SATIN-ACCT-008")
         self.state_gas += caller_state
         d.add("state", f"the mint {fmt(tx.mint)} is credited to the sender, its nonce bumped", "SATIN-DEP-004")
         if tx.value:

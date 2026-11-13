@@ -1,0 +1,167 @@
+{
+  "caseId": "satin/authorizations/start-record/reservoir-pays-it-whole",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xbebc200",
+      "floor": "0x5208",
+      "gasUsed": "0xbec4f48",
+      "history": "0x8d48",
+      "historyBytes": "0x19b",
+      "refund": "0x0",
+      "regular": "0xbebc200",
+      "state": "0x0",
+      "total": "0xbec4f48"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "halt"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xbec4f48",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x4"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "411",
+        "reported": "0x19b"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x125940c60de364f680a70be9c6896c520e724770": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0x04f8c201808080840bec60f09400000000000000000000000000000000000c0de10180c0f85cf85a029400000000000000000000000000000000000c0de18080a00a058aad95345e20e696c2d2cd8ee7d4b12b686a37ae493fe8c5599371b6df6da07764f87245052b50b7753378fe3d013829672175668e86028eb129f1ed2c095d01a011b9e0761bafb9c5950bf71feb3eede74c0cdd437c91a76679d99bd0a1736e51a05673bd9775fd3c2a55f960dd0f04b3258089abe1ae6e6662310c809dd34a686f"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a value call to a contract that halts, whose one entry, for chain 2, is skipped by its gate and keeps no authority record: the reservoir, after the body's history, pays the first frame's start record, 3,520, whole, before the authorities' records, of which there are none, and the halt returns that part to the reservoir and to the sender (SATIN-HIST-005)"
+    },
+    "definition": "tools/make_slice.py::authorization_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "c130558e2f38a913982dc17f0cd8eb8834967262",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-AUTH-001",
+    "SATIN-AUTH-002",
+    "SATIN-AUTH-007",
+    "SATIN-AUTH-008",
+    "SATIN-AUTH-010",
+    "SATIN-AUTH-014",
+    "SATIN-AUTH-016",
+    "SATIN-HIST-005",
+    "SATIN-SCHED-007"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+    "name": "megaeth/Satin"
+  }
+}

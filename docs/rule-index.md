@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-c130558], source commit `c130558e2f38a913982dc17f0
 (committed `2026-11-13T14:39:19+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **262** (220 gating, 42 quarantined).
-Cited rule IDs: **193**. Uncited rule IDs in that registry: **217**
-(207 active, 10 retired).
+Cases: **280** (236 gating, 44 quarantined).
+Cited rule IDs: **203**. Uncited rule IDs in that registry: **207**
+(197 active, 10 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -113,7 +113,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/deposit-caller/empty-leaf] | quarantined | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
 | [satin/value-transfer/empty-leaf-recipient] | gating | unqualified | [satin-d334ef8] |
 
 ### SATIN-ACCT-016
@@ -132,47 +141,249 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/sstore/sload-then-fresh-write] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/two-fresh-slots/two-buckets] | gating | unqualified | [satin-d34e626] |
 
+### SATIN-AUTH-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
+
+### SATIN-AUTH-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
+
+### SATIN-AUTH-003
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
+
 ### SATIN-AUTH-004
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-AUTH-005
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
+
+### SATIN-AUTH-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-AUTH-008
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-AUTH-009
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
 | [satin/take-backs/set-then-clear] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-AUTH-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
+
+### SATIN-AUTH-011
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+
+### SATIN-AUTH-013
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+
+### SATIN-AUTH-014
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-AUTH-015
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-AUTH-016
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
+
+### SATIN-AUTH-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/deposit-caller/empty-leaf] | quarantined | unqualified | [satin-c130558] |
+
+### SATIN-AUTH-018
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-BLK-009
 
@@ -190,6 +401,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/authorizations/deposit-caller/empty-leaf] | quarantined | unqualified | [satin-c130558] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
@@ -407,6 +619,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
@@ -919,6 +1132,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
 | [satin/creation/code-bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/empty-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/initcode-reverts] | gating | unqualified | [satin-d34e626] |
@@ -1034,6 +1248,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/authorizations/deposit-caller/empty-leaf] | quarantined | unqualified | [satin-c130558] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
@@ -1850,7 +2065,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/code/contract-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/nonce/mismatch] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-before-bump] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/start-record/reservoir-pays-it-whole] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-SCHED-008
 
@@ -2354,7 +2586,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/deposit-caller/empty-leaf] | quarantined | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-growth-limit] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-entries-adding-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/at-limit-existing-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/limit/one-over-all-or-nothing] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/reads/short-list-out-of-gas] | quarantined | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 | [satin/value-transfer/empty-leaf-recipient] | gating | unqualified | [satin-d334ef8] |
 
@@ -2955,18 +3198,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-ACT-010` | active | [block/activation.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/block/activation.md) |
 | `SATIN-ACT-011` | active | [block/activation.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/block/activation.md) |
 | `SATIN-ACT-012` | active | [block/activation.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/block/activation.md) |
-| `SATIN-AUTH-001` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-002` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-003` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
 | `SATIN-AUTH-006` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-007` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-010` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-011` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
 | `SATIN-AUTH-012` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-013` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-014` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-017` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-018` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/authorizations.md) |
 | `SATIN-BASE-001` | active | [base-layer.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/base-layer.md) |
 | `SATIN-BASE-002` | active | [base-layer.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/base-layer.md) |
 | `SATIN-BASE-003` | active | [base-layer.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/base-layer.md) |
@@ -3153,7 +3386,25 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/access-control/refused-read]: ../slice/cases/satin/access-control/refused-read.json
 [satin/access-control/refused-read-under-static-gas]: ../slice/cases/satin/access-control/refused-read-under-static-gas.json
 [satin/authorizations/absent-authority]: ../slice/cases/satin/authorizations/absent-authority.json
+[satin/authorizations/code/contract-authority]: ../slice/cases/satin/authorizations/code/contract-authority.json
+[satin/authorizations/code/delegated-authority]: ../slice/cases/satin/authorizations/code/delegated-authority.json
+[satin/authorizations/deposit-caller/empty-leaf]: ../slice/quarantine/satin/authorizations/deposit-caller/empty-leaf.json
 [satin/authorizations/empty-leaf-authority]: ../slice/cases/satin/authorizations/empty-leaf-authority.json
+[satin/authorizations/frame/origin-and-gas-price]: ../slice/cases/satin/authorizations/frame/origin-and-gas-price.json
+[satin/authorizations/gates/chain-id-other]: ../slice/cases/satin/authorizations/gates/chain-id-other.json
+[satin/authorizations/gates/chain-id-zero]: ../slice/cases/satin/authorizations/gates/chain-id-zero.json
+[satin/authorizations/gates/nonce-max]: ../slice/cases/satin/authorizations/gates/nonce-max.json
+[satin/authorizations/gates/signature-recovers-nothing]: ../slice/cases/satin/authorizations/gates/signature-recovers-nothing.json
+[satin/authorizations/limit/at-growth-limit]: ../slice/cases/satin/authorizations/limit/at-growth-limit.json
+[satin/authorizations/limit/at-limit-entries-adding-nothing]: ../slice/cases/satin/authorizations/limit/at-limit-entries-adding-nothing.json
+[satin/authorizations/limit/at-limit-existing-authorities]: ../slice/cases/satin/authorizations/limit/at-limit-existing-authorities.json
+[satin/authorizations/limit/one-over-all-or-nothing]: ../slice/cases/satin/authorizations/limit/one-over-all-or-nothing.json
+[satin/authorizations/nonce/mismatch]: ../slice/cases/satin/authorizations/nonce/mismatch.json
+[satin/authorizations/reads/short-list-out-of-gas]: ../slice/quarantine/satin/authorizations/reads/short-list-out-of-gas.json
+[satin/authorizations/sender/own-entry]: ../slice/cases/satin/authorizations/sender/own-entry.json
+[satin/authorizations/sender/own-entry-before-bump]: ../slice/cases/satin/authorizations/sender/own-entry-before-bump.json
+[satin/authorizations/sender/own-entry-not-detained]: ../slice/cases/satin/authorizations/sender/own-entry-not-detained.json
+[satin/authorizations/start-record/reservoir-pays-it-whole]: ../slice/cases/satin/authorizations/start-record/reservoir-pays-it-whole.json
 [satin/call-order/answered/access-control-one-record]: ../slice/quarantine/satin/call-order/answered/access-control-one-record.json
 [satin/call-order/answered/access-control-two-records]: ../slice/quarantine/satin/call-order/answered/access-control-two-records.json
 [satin/call-order/answered/hint-over-data-size-limit]: ../slice/quarantine/satin/call-order/answered/hint-over-data-size-limit.json

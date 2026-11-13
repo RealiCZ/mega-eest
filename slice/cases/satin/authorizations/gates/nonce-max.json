@@ -1,0 +1,165 @@
+{
+  "caseId": "satin/authorizations/gates/nonce-max",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x64dd",
+      "floor": "0x3a98",
+      "gasUsed": "0xf225",
+      "history": "0x8d48",
+      "historyBytes": "0x19b",
+      "refund": "0x0",
+      "regular": "0x64dd",
+      "state": "0x0",
+      "total": "0xf225"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xf225",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x4"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "411",
+        "reported": "0x19b"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x73125940c60de364f680a70be9c6896c520e724770315000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x125940c60de364f680a70be9c6896c520e724770": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0x04f8c901808080830493e09400000000000000000000000000000000000c0de18080c0f864f862019400000000000000000000000000000000000c0de188ffffffffffffffff80a0221f3251925e07438ef13b71e4a62c6d6f8fa98e1e4c9177b3224603a9b77451a001a172c24e73c91aa29cac41c33799375a65c3a62d108c85a068e156669a5dfa01a068bf1ddad21d0d7f50175d979fbba203a165485bcf4aab0180379956340667d0a02f50b2272d5e53d7c1e740c713e6a4f8db9779f69074ce42879bb93a0f00fb0d"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "an entry whose nonce is 2^64 - 1 is skipped before any authority is read: it pays its PER_AUTH_BASE_COST 7,816 and nothing else, the authority its key signs for keeps its account as it was, and the frame's BALANCE of that account pays the cold access, 3,000"
+    },
+    "definition": "tools/make_slice.py::authorization_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "c130558e2f38a913982dc17f0cd8eb8834967262",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-AUTH-001",
+    "SATIN-AUTH-002",
+    "SATIN-AUTH-007",
+    "SATIN-AUTH-008",
+    "SATIN-AUTH-010",
+    "SATIN-AUTH-014",
+    "SATIN-SCHED-007"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+    "name": "megaeth/Satin"
+  }
+}

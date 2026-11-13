@@ -10,7 +10,8 @@ principles, gas detention, the Oracle's reads, the refused volatile read, the re
 stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64, and
 those for the take-back page's worked examples, the destruction page's own rules and gas detention's
 rules `specs/satin-cdded1e`, D-65, D-70 and D-67, and the two whose derivation takes `SATIN-DET-011`'s
-halting precompile `specs/satin-c130558`, D-78). No implementation is
+halting precompile and those for the authorization page's own rules `specs/satin-c130558`, D-78 and
+D-88). No implementation is
 run: the filler's output is a candidate to compare with, never the source of these values
 (`tools/run-slice.sh` runs both implementations against them).
 
@@ -37,6 +38,7 @@ Standard library only.
 
 from __future__ import annotations
 
+import functools
 import hashlib
 import json
 import os
@@ -179,15 +181,24 @@ def init_returning(code: bytes) -> bytes:
 # --- Transactions -------------------------------------------------------------------------------
 
 
+def signing_hash(payload: bytes) -> bytes:
+    """The Keccak-256 a signature covers. `make_examples.keccak256` pads an input of 135 bytes modulo its 136-byte
+    rate as two blocks where Keccak's padding is the one byte 0x81, so its hash of such an input is not Keccak-256:
+    a case whose signed bytes have that length is refused, and its author changes a field of it."""
+    if len(payload) % 136 == 135:
+        raise SystemExit(f"a signed pre-image of {len(payload)} bytes, 135 modulo Keccak's rate: change a field")
+    return ex.keccak256(payload)
+
+
 def _signed(ty: int, fields: list, key: int) -> bytes:
     payload = bytes([ty]) + ex.rlp(fields) if ty else ex.rlp(fields)
-    recid, r, s = ex.sign(key, ex.keccak256(payload))
+    recid, r, s = ex.sign(key, signing_hash(payload))
     return bytes([ty]) + ex.rlp(fields + [recid, r, s])
 
 
 def legacy(nonce, gas_price, gas, to, value, data, chain_id=CHAIN_ID, key=KEY) -> bytes:
     fields = [nonce, gas_price, gas, to if to is not None else b"", value, data]
-    recid, r, s = ex.sign(key, ex.keccak256(ex.rlp(fields + [chain_id, 0, 0])))
+    recid, r, s = ex.sign(key, signing_hash(ex.rlp(fields + [chain_id, 0, 0])))
     return ex.rlp(fields + [recid + 35 + 2 * chain_id, r, s])
 
 
@@ -200,10 +211,29 @@ def eip1559(nonce, max_priority, max_fee, gas, to, value, data) -> bytes:
     return _signed(2, [CHAIN_ID, nonce, max_priority, max_fee, gas, to, value, data, []], KEY)
 
 
-def authorization(key: int, chain_id: int, target: bytes, nonce: int) -> list:
-    """A signed EIP-7702 authorization tuple: the signature is over 0x05 || rlp([chain_id, address, nonce])."""
-    recid, r, s = ex.sign(key, ex.keccak256(b"\x05" + ex.rlp([chain_id, target, nonce])))
-    return [chain_id, target, nonce, recid, r, s]
+UNRECOVERABLE = "unrecoverable"  # an entry whose signature recovers no authority: y_parity, r and s all zero
+
+
+@functools.lru_cache(maxsize=None)
+def authorization(key: int, chain_id: int, target: bytes, nonce: int, signature: str = "") -> tuple:
+    """A signed EIP-7702 authorization tuple: the signature is over 0x05 || rlp([chain_id, address, nonce]), or,
+    for an UNRECOVERABLE entry, the zero signature, which recovers no authority. Cached: a list of a thousand
+    entries is signed once."""
+    if signature == UNRECOVERABLE:
+        return (chain_id, target, nonce, 0, 0, 0)
+    recid, r, s = ex.sign(key, signing_hash(b"\x05" + ex.rlp([chain_id, target, nonce])))
+    return (chain_id, target, nonce, recid, r, s)
+
+
+@functools.lru_cache(maxsize=None)
+def key_address(key: int) -> bytes:
+    """A key's address, cached: a list of a thousand entries recovers a thousand of them."""
+    return ex.address_of(key)
+
+
+def authority_of(entry: tuple) -> bytes | None:
+    """The authority an entry's signature recovers: its key's address, or None for an UNRECOVERABLE entry."""
+    return None if entry[4:] == (UNRECOVERABLE,) else key_address(entry[0])
 
 
 def eip7702(nonce, max_priority, max_fee, gas, to, value, data, auths) -> bytes:
@@ -236,7 +266,7 @@ class Case:
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
                  contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
                  params=None, retune=None, reads=False, pools=False, destruction=False, coinbase=COINBASE,
-                 detention=False, block_hashes=None, stops=False):
+                 detention=False, block_hashes=None, stops=False, lists=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -272,6 +302,7 @@ class Case:
         self.detention = detention  # a case of gas detention's rules at cdded1e (D-67)
         self.block_hashes = block_hashes or {}  # number -> the hash BLOCKHASH answers
         self.stops = stops  # the case pins the limit-stop page: its derivation cites which endings are stops (D-73)
+        self.lists = lists  # a case of the authorization page's own rules: its derivation cites them (D-88)
         self.definition = ""  # the function of this file that defines the case, set by cases()
         if make:
             self.code = make(**self.params)
@@ -422,7 +453,7 @@ def cases() -> list[Case]:
     for c in out:
         c.definition = "cases"
     for group in (interception_cases, ordering_cases, detention_cases, detention_rule_cases, reads_cases, limit_cases,
-                  gas_pools_cases, take_back_cases, selfdestruct_cases, limit_stop_cases):
+                  gas_pools_cases, take_back_cases, selfdestruct_cases, limit_stop_cases, authorization_cases):
         made = group()
         for c in made:
             c.definition = group.__name__
@@ -1856,6 +1887,152 @@ def limit_stop_cases() -> list[Case]:
     return out
 
 
+# --- The authorization page's own rules (D-88) -----------------------------------------------------
+
+THIRD_AUTH_KEY = 0x6E5D4C3B2A1908F7E6D5C4B3A29180706F5E4D3C2B1A0908F7E6D5C4B3A29181
+THIRD_AUTHORITY = ex.address_of(THIRD_AUTH_KEY)
+
+
+def balance_of(address: bytes) -> bytes:
+    """BALANCE of `address`, its result dropped: the frame pays the account's access, warm or cold."""
+    return push(int.from_bytes(address, "big")) + b"\x31\x50"
+
+
+def authorization_cases() -> list[Case]:
+    out: list[Case] = []
+    spec = CURRENT_SPEC
+
+    def add(name: str, intent: str, **kw) -> None:
+        kw.setdefault("ty", 4)
+        kw.setdefault("gas", 300_000)
+        out.append(Case(f"satin/authorizations/{name}", intent, spec=spec, lists=True, **kw))
+
+    funded = {AUTHORITY: model.Account(balance=1)}
+    probe = balance_of(AUTHORITY) + STOP
+    warm, cold = model.WARM_READ, model.COLD_ACCOUNT_ACCESS
+    base = model.PER_AUTH_BASE_COST
+
+    # The gates of SATIN-AUTH-002: an entry they skip reads nothing and warms nothing (SATIN-AUTH-014), and pays its
+    # PER_AUTH_BASE_COST alone (SATIN-AUTH-007, SATIN-SCHED-007). The frame's BALANCE of the authority shows its warmth.
+    for name, entry, why in (
+            ("chain-id-other", (AUTH_KEY, 2, CONTRACT, 0), "signed for chain 2"),
+            ("nonce-max", (AUTH_KEY, CHAIN_ID, CONTRACT, model.MAX_U64), "whose nonce is 2^64 - 1"),
+            ("signature-recovers-nothing", (AUTH_KEY, CHAIN_ID, CONTRACT, 0, UNRECOVERABLE),
+             "whose signature, all zero, recovers no authority")):
+        add(f"gates/{name}", f"an entry {why} is skipped before any authority is read: it pays its PER_AUTH_BASE_COST "
+            f"{fmt(base)} and nothing else, the authority its key signs for keeps its account as it was, and the frame's "
+            f"BALANCE of that account pays the cold access, {fmt(cold)}", authorizations=[entry], accounts=funded,
+            code=probe)
+    add("gates/chain-id-zero", "the gates' control: an entry for chain id zero passes the chain-id gate and is applied, "
+        f"its existing authority loaded and warm, so the frame's BALANCE of it pays the warm read, {fmt(warm)}",
+        authorizations=[(AUTH_KEY, 0, CONTRACT, 0)], accounts=funded, code=probe)
+
+    # SATIN-AUTH-003: an authority whose code is not a delegation indicator is loaded and skipped, and warm.
+    add("code/contract-authority", "an entry at its authority's nonce whose authority holds code other than a delegation "
+        "indicator: the authority is loaded with its code and the entry is skipped, its nonce not bumped and nothing "
+        f"charged; the application loaded it, so the frame's BALANCE of it pays the warm read, {fmt(warm)}",
+        authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 1)],
+        accounts={AUTHORITY: model.Account(nonce=1, balance=1, code=STOP)}, code=probe)
+    add("code/delegated-authority", "the control: an authority that holds a delegation indicator is no contract, and its "
+        "entry is applied, delegating it again; holding an indicator at the start of the transaction, it is charged no "
+        "indicator state gas, but its ACCOUNT_WRITE and its write record", authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 1)],
+        accounts={AUTHORITY: model.Account(nonce=1, balance=1, code=model.DELEGATION_PREFIX + DELEGATE)}, code=probe)
+    # SATIN-AUTH-004 and -014: a nonce that does not match skips the entry after the load, which warms the authority.
+    add("nonce/mismatch", "an entry whose nonce, 1, is not its existing authority's, 0: skipped and nothing charged, the "
+        f"authority's nonce unchanged; the application loaded it first, so the frame's BALANCE of it pays the warm read, "
+        f"{fmt(warm)}", authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 1)], accounts=funded, code=probe)
+
+    # The sender's own authorization (SATIN-AUTH-004, -008, -015).
+    add("sender/own-entry", "the sender's own authorization at its nonce after validation's bump, 1: applied, the sender "
+        "holding the delegation indicator at nonce 2; it is charged the indicator's state gas, but no ACCOUNT_WRITE, "
+        "which validation paid, and it makes no write record, its account being a fixed record of the body",
+        authorizations=[(KEY, CHAIN_ID, DELEGATE, 1)])
+    add("sender/own-entry-before-bump", "the sender's own authorization signed for its nonce before the transaction, 0: "
+        "its effective nonce is validation's bump, 1, so the entry is skipped; the sender keeps that bump alone and no "
+        "code", authorizations=[(KEY, CHAIN_ID, DELEGATE, 0)])
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    add("sender/own-entry-not-detained", "the sender's own authorization applied, the block beneficiary another account: "
+        "SATIN-DET-008 detains a transaction from its start for an applied authority that is the beneficiary, which the "
+        f"sender is not, so the frame's one memory expansion past the {fmt(cap)} cap completes and the transaction "
+        "succeeds", authorizations=[(KEY, CHAIN_ID, DELEGATE, 1)], code=over_cap(cap) + STOP, gas=21_500_000)
+
+    # The first frame's start record when the list keeps no authority record: the reservoir pays it whole, and a halt
+    # returns that part to the reservoir (SATIN-HIST-005).
+    body = (model.TX_BODY_SIZE + model.AUTHORIZATION_SIZE) * model.COST_PER_HISTORY_BYTE
+    record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
+    add("start-record/reservoir-pays-it-whole", "a value call to a contract that halts, whose one entry, for chain 2, is "
+        "skipped by its gate and keeps no authority record: the reservoir, after the body's history, pays the first "
+        f"frame's start record, {fmt(record)}, whole, before the authorities' records, of which there are none, and the "
+        "halt returns that part to the reservoir and to the sender (SATIN-HIST-005)",
+        authorizations=[(AUTH_KEY, 2, CONTRACT, 0)], accounts=funded, value=1, code=INVALID,
+        gas=model.EXECUTION_CAP + body + record + 1_000)
+
+    # The frame of an applied list's transaction: its sender as ORIGIN, its effective price as GASPRICE.
+    env = b"\x32" + push(0) + b"\x52" + b"\x3a" + push(32) + b"\x52" + ret(0, 64)
+    add("frame/origin-and-gas-price", "an applied list's transaction runs its frame with its sender as ORIGIN and its "
+        "effective gas price, the base fee and the priority fee, as GASPRICE, which the frame returns",
+        authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 0)], accounts=funded, code=env, max_priority=1_000,
+        max_fee=5_000_000, base_fee=1_000_000)
+
+    # The list's totals at the state-growth limit (SATIN-AUTH-008, -010): new authorities exactly at the limit fit, and
+    # entries that keep nothing more leave the total there; one more new authority skips the whole list.
+    growth = model.TX_STATE_GROWTH_LIMIT
+    fresh = [(LIST_KEY + i, CHAIN_ID, bytes(20), 0) for i in range(growth)]
+    held = model.EXECUTION_CAP * 2
+    add("limit/at-growth-limit", f"an EIP-7702 list of {fmt(growth)} entries, each signed by an authority the state holds "
+        f"no account for, with a zero delegation target: its state-growth total is the transaction's limit, {fmt(growth)}, "
+        "which it does not exceed, so the list fits and is applied, each authority created at nonce 1 with no code and "
+        "charged its new-account state gas, its ACCOUNT_WRITE and its write record, and no indicator",
+        boundary=f"the list's state-growth total at the limit, {fmt(growth)}",
+        authorizations=fresh, to=EOA, code=b"", gas=held)
+    existing = {SECOND_AUTHORITY: model.Account(), AUTHORITY: model.Account(balance=1),
+                THIRD_AUTHORITY: model.Account(nonce=1, code=model.DELEGATION_PREFIX + DELEGATE)}
+    add("limit/at-limit-existing-authorities", f"the {fmt(growth)} new authorities at the limit, after three accepted "
+        "entries whose authorities the state holds: an empty leaf, an account with a balance, and one holding a "
+        "delegation, which the third entry clears: an authority whose account the state holds is no rise, empty under "
+        "EIP-161 or not (SATIN-STATE-011, SATIN-ACCT-015), so the total stays at the limit and the whole list is applied",
+        boundary=f"the list's state-growth total at the limit, {fmt(growth)}",
+        authorizations=[(SECOND_AUTH_KEY, CHAIN_ID, bytes(20), 0), (AUTH_KEY, CHAIN_ID, bytes(20), 0),
+                        (THIRD_AUTH_KEY, CHAIN_ID, bytes(20), 1)] + fresh,
+        accounts=existing, to=EOA, code=b"", gas=held)
+    spare = [LIST_KEY + growth + i for i in range(4)]  # authorities the state holds no account for, besides the list's
+    add("limit/at-limit-entries-adding-nothing", f"the {fmt(growth)} new authorities at the limit, with five more entries "
+        "for authorities the state holds no account for that keep nothing: one signed for chain 2, one at nonce 2^64 - "
+        "1, one whose signature recovers nothing, one whose nonce, 1, does not match, and a second entry for one of the "
+        "list's authorities, accepted at nonce 1 but counted once: the total stays at the limit and the list is applied",
+        boundary=f"the list's state-growth total at the limit, {fmt(growth)}",
+        authorizations=[(spare[0], 2, bytes(20), 0), (spare[1], CHAIN_ID, bytes(20), model.MAX_U64),
+                        (spare[2], CHAIN_ID, bytes(20), 0, UNRECOVERABLE), (spare[3], CHAIN_ID, bytes(20), 1)]
+        + fresh + [(LIST_KEY, CHAIN_ID, bytes(20), 1)], to=EOA, code=b"", gas=held)
+    add("limit/one-over-all-or-nothing", f"an existing authority's entry and the sender's own, each of which would fit "
+        f"by itself, before {fmt(growth + 1)} entries for new authorities: the list's state-growth total crosses the "
+        f"transaction's limit of {fmt(growth)}, so none of it is applied, the existing authority and the sender among "
+        "them: the sender keeps validation's bump alone, nothing is charged beyond the intrinsic gas and the body's "
+        f"history, and the transaction, included, has its own frame stopped with MegaLimitExceeded(3, {fmt(growth)})",
+        boundary=f"the list's state-growth total one past the limit, {fmt(growth + 1)}", stops=True,
+        authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0), (KEY, CHAIN_ID, DELEGATE, 1)]
+        + [(LIST_KEY + i, CHAIN_ID, bytes(20), 0) for i in range(growth + 1)],
+        accounts=funded, to=EOA, code=b"", gas=20_000_000)
+
+    # The simulation of a short list, its loads in the reads (SATIN-AUTH-001, -002, -005).
+    three = {AUTHORITY: model.Account(balance=1), SECOND_AUTHORITY: model.Account(balance=1),
+             THIRD_AUTHORITY: model.Account(balance=1)}
+    add("reads/short-list-out-of-gas", "a three-entry list, too short to cross a limit, whose first entry's ACCOUNT_WRITE, "
+        f"{fmt(model.ACCOUNT_WRITE)}, is one gas beyond the regular gas left: the transaction runs out of gas before its "
+        "first frame with nothing of the list applied, but the list was simulated all the same, so the first and the "
+        "third authorities are in the reads; the second entry, signed for chain 2, is skipped before its authority is "
+        "read, which is not in the reads, and neither is the recipient", reads=True, to=EOA, code=b"", gas=500_000,
+        authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0), (SECOND_AUTH_KEY, 2, DELEGATE, 0),
+                        (THIRD_AUTH_KEY, CHAIN_ID, DELEGATE, 0)], accounts=three, tune=("list", model.ACCOUNT_WRITE - 1))
+
+    # The caller a deposit creates is no authorization (SATIN-AUTH-017): it is new by EIP-161 emptiness, not existence.
+    add("deposit-caller/empty-leaf", "a deposit whose caller's leaf the state holds, empty under EIP-161: the caller a "
+        "deposit creates is no authorization, so it is decided by emptiness, not by an authority's existence, and is "
+        "new: its new-account state gas and one unit of state growth, and no ACCOUNT_WRITE, write record or list rule",
+        ty=0, deposit=(ETH, 1_000_000), absent_sender=True, accounts={OTHER: model.Account()})
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -1906,16 +2083,16 @@ def build(c: Case):
         elif c.ty == 1:
             raw = eip2930(c.nonce, c.gas_price, c.gas, c.to, c.value, c.data, c.access_list)
         elif c.ty == 4:
-            auths = [authorization(k, cid, target, n) for k, cid, target, n in c.authorizations]
+            auths = [list(authorization(*e)) for e in c.authorizations]
             raw = eip7702(c.nonce, c.max_priority, c.max_fee, c.gas, c.to, c.value, c.data, auths)
         else:
             raw = eip1559(c.nonce, c.max_priority, c.max_fee, c.gas, c.to, c.value, c.data)
         tx = model.Tx("signed", c.ty, sender, c.to, c.nonce, c.gas, c.value, c.data, c.chain_id, gas_price=c.gas_price,
                       max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list,
-                      authorizations=[(cid, target, n, ex.address_of(k)) for k, cid, target, n in c.authorizations])
+                      authorizations=[(e[1], e[2], e[3], authority_of(e)) for e in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
     run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
-                    destruction=c.destruction, detention=c.detention, stops=c.stops)
+                    destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists)
     result = run.run()
     result.probe = run.probe
 
@@ -1939,8 +2116,9 @@ def build(c: Case):
         decoded["mint"] = q(c.deposit[0])
         decoded["sourceHash"] = h(SOURCE_HASH)
     if c.authorizations:
-        decoded["authorizationList"] = [{"chainId": q(cid), "address": h(target), "nonce": q(n),
-                                         "authority": h(ex.address_of(k))} for k, cid, target, n in c.authorizations]
+        decoded["authorizationList"] = [{"chainId": q(e[1]), "address": h(e[2]), "nonce": q(e[3]),
+                                         "authority": h(authority_of(e)) if authority_of(e) else None}
+                                        for e in c.authorizations]
     return inp, result, decoded
 
 
@@ -2117,6 +2295,42 @@ def detention_quarantine(c: Case, fx: dict) -> dict:
 STOP_DEPOSITS = {"satin/limit-stops/deposit/stopped", "satin/limit-stops/deposit/out-of-gas"}
 
 
+# The authorization page's cases the revm-based implementation fails at its pin (D-90): the list's reads, where it reads
+# the SequencerRegistry in every transaction (SATIN-REG-002, as for the reads cases of D-61), and a deposit's created
+# caller, where it charges a deposit no history gas (SATIN-HIST-016). Each verdict says the case's own edge is the rule's.
+AUTHORIZATIONS_QUARANTINE = {"satin/authorizations/reads/short-list-out-of-gas", "satin/authorizations/deposit-caller/empty-leaf"}
+
+
+def authorization_quarantine(c: Case, fx: dict) -> dict:
+    adapter = "mega-eest-adapter-revm"
+    if c.case_id.endswith("/empty-leaf"):
+        ledgers = fx["expected"]["gasLedgers"]
+        used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
+        body, price = model.TX_BODY_SIZE, model.COST_PER_HISTORY_BYTE
+        if history != body * price:
+            raise SystemExit(f"{c.case_id}: the deposit keeps more history than its body")
+        verdict = ("SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body "
+                   f"among the rest; the revm-based implementation at {REVM_REMADE} charges a deposit none, so its gas used "
+                   f"is the body's {body} x {price} = {fmt(history)} below the rule's, the first difference, and its history "
+                   "ledger and history bytes are 0. Its created caller is the rule's: the leaf the state holds, empty under "
+                   "EIP-161, is new by emptiness, not by an authority's existence (SATIN-AUTH-017, SATIN-STATE-011), with "
+                   "its new-account state gas, one unit of state growth and no write record")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
+                "actual": q(used - history), "verdict": verdict}
+    registry = fx["input"]["pre"]["accounts"][h(REGISTRY)]
+    read = {"balance": registry["balance"], "codeHash": h(ex.keccak256(bytes.fromhex(registry["code"][2:]))),
+            "nonce": registry["nonce"]}
+    verdict = ("SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no "
+               "transaction read the registry for its classification, so a transaction's reads hold neither the registry's "
+               f"account nor its slot 0; the revm-based implementation at {REVM_REMADE} reads both in every transaction's "
+               "validation, so its reads hold the registry's account, the first difference. Its simulation of the list is "
+               "the rule's: the list, too short to cross a limit, is simulated all the same, its first and third "
+               "authorities loaded and the second, skipped by its chain-id gate, not read (SATIN-AUTH-001, "
+               "SATIN-AUTH-002, SATIN-AUTH-005)")
+    return {"adapter": adapter, "path": f"/expected/reads/accounts/{h(REGISTRY)}", "expected": None, "actual": read,
+            "verdict": verdict}
+
+
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -2260,6 +2474,8 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
         verdict = f"{reg}, so its reads hold the registry's account, the first difference{extra}"
         return {"adapter": adapter, "path": f"/expected/reads/accounts/{h(REGISTRY)}", "expected": None, "actual": read,
                 "verdict": verdict}
+    if c.case_id in AUTHORIZATIONS_QUARANTINE:
+        return authorization_quarantine(c, fx)
     if c.case_id in ORACLE_READS:
         ledgers = fx["expected"]["gasLedgers"]
         used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
