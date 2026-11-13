@@ -1518,6 +1518,40 @@
       }
     },
     {
+      "area": "access-control",
+      "caseId": "satin/access-control/refused-read",
+      "file": "cases/satin/access-control/refused-read.json",
+      "fileDigest": "sha256:e24942573a46834f0815742bdd303abcc65ce03119e94069a36b6a4e09c05dc8",
+      "rules": [
+        "SATIN-MAC-001",
+        "SATIN-MAC-002",
+        "SATIN-MAC-003",
+        "SATIN-MAC-004",
+        "SATIN-MAC-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "access-control",
+      "caseId": "satin/access-control/refused-read-under-static-gas",
+      "file": "cases/satin/access-control/refused-read-under-static-gas.json",
+      "fileDigest": "sha256:faf43eba8998d74c7dd7d05fe07c8075d4a97f30fa2b03b96c4992c6783cba25",
+      "rules": [
+        "SATIN-MAC-001",
+        "SATIN-MAC-002",
+        "SATIN-MAC-003",
+        "SATIN-MAC-004",
+        "SATIN-MAC-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
       "area": "detention",
       "caseId": "satin/detention/not-volatile/blobhash",
       "file": "cases/satin/detention/not-volatile/blobhash.json",
@@ -2554,6 +2588,32 @@
         "SATIN-DET-019",
         "SATIN-DET-021",
         "SATIN-DET-023"
+      ],
+      "spec": {
+        "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "detention",
+      "caseId": "satin/detention/precompile/modexp/over-bound-past-allowance",
+      "file": "cases/satin/detention/precompile/modexp/over-bound-past-allowance.json",
+      "fileDigest": "sha256:996e648de1fceb6640db89697f337196836c5124949ae46f6194b0d4c9592fa4",
+      "rules": [
+        "SATIN-DET-001",
+        "SATIN-DET-003",
+        "SATIN-DET-009",
+        "SATIN-DET-011",
+        "SATIN-DET-012",
+        "SATIN-DET-013",
+        "SATIN-DET-014",
+        "SATIN-DET-015",
+        "SATIN-DET-016",
+        "SATIN-DET-017",
+        "SATIN-DET-019",
+        "SATIN-DET-021",
+        "SATIN-DET-023",
+        "SATIN-DET-024"
       ],
       "spec": {
         "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
@@ -4227,13 +4287,13 @@
       "area": "oracle",
       "caseId": "satin/oracle/read-short-of-warm-base",
       "file": "quarantine/satin/oracle/read-short-of-warm-base.json",
-      "fileDigest": "sha256:64ca1108e0b9f543c2a453298b4b5ccc5b83a51d88a4856cbfb547b854409099",
+      "fileDigest": "sha256:b072157f72725d50b394f4af0fca80c65833b0edf412662cdab801fcb3859c9e",
       "knownFail": {
-        "actual": "0x13180ac",
+        "actual": "0x5367",
         "adapter": "mega-eest-adapter-revm",
-        "expected": "0x5367",
-        "path": "/expected/gasLedgers/blockGas",
-        "verdict": "SATIN-ORCL-004 makes the Oracle's SLOAD load the slot and mark the read before its cold access, which is then one charge; the revm-based implementation at 4e39cfd6 charges the read's warm base, 100, first and skips the read when the cold access cannot be paid, marking nothing, so the later call's charge past the Oracle's cap is paid instead of stopped (SATIN-DET-003, SATIN-DET-012). Its regular ledger, which the block counts, is 20,000,069 above the rule's; the deposit's history, which it does not charge either (SATIN-HIST-016), is not in that figure"
+        "expected": "0xbdf7",
+        "path": "/expected/gasLedgers/gasUsed",
+        "verdict": "SATIN-HIST-016 makes a deposit pay history gas as any transaction does, for its body among the rest; the revm-based implementation at 7110d87b charges a deposit none, so its gas used is the body's 310 x 88 = 27,280 below the rule's, the first difference. Its Oracle read is the rule's: the SLOAD loads the slot and marks the read before its cold access, which is then one charge (SATIN-ORCL-004), so the later call's charge past the Oracle's cap is stopped (SATIN-DET-003, SATIN-DET-012); its regular ledger, which the block counts, is the rule's"
       },
       "rules": [
         "SATIN-DET-003",
@@ -4253,13 +4313,13 @@
       "area": "oracle",
       "caseId": "satin/oracle/read-short-of-cold-access",
       "file": "quarantine/satin/oracle/read-short-of-cold-access.json",
-      "fileDigest": "sha256:07525cc05bd38a436aee6f748c4dc25a47d30b897134f68a6e265ff7a0774197",
+      "fileDigest": "sha256:9b892c778a517b7196988846b00865a29e3b754aef6c0983a5bfb3252d96c085",
       "knownFail": {
-        "actual": "0x1318462",
+        "actual": "0x571d",
         "adapter": "mega-eest-adapter-revm",
-        "expected": "0x571d",
-        "path": "/expected/gasLedgers/blockGas",
-        "verdict": "SATIN-ORCL-004 makes the Oracle's SLOAD load the slot and mark the read before its cold access, which is then one charge; the revm-based implementation at 4e39cfd6 charges the read's warm base, 100, first and skips the read when the cold access cannot be paid, marking nothing, so the later call's charge past the Oracle's cap is paid instead of stopped (SATIN-DET-003, SATIN-DET-012). Its regular ledger, which the block counts, is 20,000,069 above the rule's; the deposit's history, which it does not charge either (SATIN-HIST-016), is not in that figure"
+        "expected": "0xc1ad",
+        "path": "/expected/gasLedgers/gasUsed",
+        "verdict": "SATIN-HIST-016 makes a deposit pay history gas as any transaction does, for its body among the rest; the revm-based implementation at 7110d87b charges a deposit none, so its gas used is the body's 310 x 88 = 27,280 below the rule's, the first difference. Its Oracle read is the rule's: the SLOAD loads the slot and marks the read before its cold access, which is then one charge (SATIN-ORCL-004), so the later call's charge past the Oracle's cap is stopped (SATIN-DET-003, SATIN-DET-012); its regular ledger, which the block counts, is the rule's"
       },
       "rules": [
         "SATIN-DET-003",
@@ -4279,13 +4339,13 @@
       "area": "oracle",
       "caseId": "satin/oracle/read-at-crossing",
       "file": "quarantine/satin/oracle/read-at-crossing.json",
-      "fileDigest": "sha256:f0db5abe9a0d25a3684626b552ebf626dd6e5e800d60f8fe0a45364dbf4c610f",
+      "fileDigest": "sha256:3c3578bee856c8eae7c5b880dcc7f934e598e88afeb8367017ca2a8640dec4c9",
       "knownFail": {
-        "actual": "0x1316789",
+        "actual": "0x1316b68",
         "adapter": "mega-eest-adapter-revm",
-        "expected": "0x1316b68",
-        "path": "/expected/gasLedgers/blockGas",
-        "verdict": "SATIN-ORCL-004 makes the Oracle's SLOAD load the slot and mark the read before its cold access, which is then one charge; the revm-based implementation at 4e39cfd6 charges the read's warm base, 100, first, which the spendable part cannot pay and the whole regular gas can: the crossing, which stops the Oracle's frame and returns its regular gas to its caller, where the rule's one charge of 2,100, beyond the whole, is an out-of-gas (SATIN-DET-018, SATIN-DET-020) that burns it. Its regular ledger, which the block counts, is 991 below the rule's; the deposit's history, which it does not charge either (SATIN-HIST-016), is not in that figure"
+        "expected": "0x131d5f8",
+        "path": "/expected/gasLedgers/gasUsed",
+        "verdict": "SATIN-HIST-016 makes a deposit pay history gas as any transaction does, for its body among the rest; the revm-based implementation at 7110d87b charges a deposit none, so its gas used is the body's 310 x 88 = 27,280 below the rule's, the first difference. Its Oracle read is the rule's: the SLOAD marks the read before its cold access, which is then one charge (SATIN-ORCL-004), and that charge of 2,100, beyond the whole regular gas, is an out-of-gas (SATIN-DET-018, SATIN-DET-020); its regular ledger, which the block counts, is the rule's"
       },
       "rules": [
         "SATIN-DET-018",
@@ -4298,87 +4358,6 @@
       ],
       "spec": {
         "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
-        "name": "megaeth/Satin"
-      }
-    },
-    {
-      "area": "access-control",
-      "caseId": "satin/access-control/refused-read",
-      "file": "quarantine/satin/access-control/refused-read.json",
-      "fileDigest": "sha256:f25ad60962ef3f2a2b492cab9312c33e3c8c127aeb1fe2715b55595d2dbeb2d0",
-      "knownFail": {
-        "actual": "0x46d5",
-        "adapter": "mega-eest-adapter-revm",
-        "expected": "0x4671",
-        "path": "/expected/gasLedgers/blockGas",
-        "verdict": "SATIN-MAC-003 and SATIN-MAC-004 refuse a volatile read in a frame whose access is off before the opcode charges anything, the frame reverting on the gas it held at the opcode; the revm-based implementation at 4e39cfd6 charges BALANCE's static cost, 100, before it refuses the read at the load, so the frame reverts on 100 less: the regular ledger, which the block counts, is 100 above the rule's"
-      },
-      "rules": [
-        "SATIN-MAC-001",
-        "SATIN-MAC-002",
-        "SATIN-MAC-003",
-        "SATIN-MAC-004",
-        "SATIN-MAC-005"
-      ],
-      "spec": {
-        "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
-        "name": "megaeth/Satin"
-      }
-    },
-    {
-      "area": "access-control",
-      "caseId": "satin/access-control/refused-read-under-static-gas",
-      "file": "quarantine/satin/access-control/refused-read-under-static-gas.json",
-      "fileDigest": "sha256:1ee10122f01e35774ba8fbb1d047052cc7c1b4c62e671d81033a0a3073056e73",
-      "knownFail": {
-        "actual": "0x46a3",
-        "adapter": "mega-eest-adapter-revm",
-        "expected": "0x4671",
-        "path": "/expected/gasLedgers/blockGas",
-        "verdict": "SATIN-MAC-003 and SATIN-MAC-004 refuse a volatile read in a frame whose access is off before the opcode charges anything, the frame reverting on the gas it held at the opcode; the revm-based implementation at 4e39cfd6 charges BALANCE's static cost, 100, first, which the 50 of regular gas the frame holds cannot pay: the frame runs out of gas instead of being refused, and burns them: the regular ledger, which the block counts, is 50 above the rule's"
-      },
-      "rules": [
-        "SATIN-MAC-001",
-        "SATIN-MAC-002",
-        "SATIN-MAC-003",
-        "SATIN-MAC-004",
-        "SATIN-MAC-005"
-      ],
-      "spec": {
-        "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
-        "name": "megaeth/Satin"
-      }
-    },
-    {
-      "area": "detention",
-      "caseId": "satin/detention/precompile/modexp/over-bound-past-allowance",
-      "file": "quarantine/satin/detention/precompile/modexp/over-bound-past-allowance.json",
-      "fileDigest": "sha256:36c16aaabc1ee581c6693b05679ff96178d3eb373fb17060211a9ea680dc24e1",
-      "knownFail": {
-        "actual": "0x13fb752",
-        "adapter": "mega-eest-adapter-revm",
-        "expected": "0x130e5af",
-        "path": "/expected/gasLedgers/blockGas",
-        "verdict": "SATIN-DET-023 prices a ModExp input by its Osaka formula whatever its lengths, an input over EIP-7823's bound included, since SATIN-PCMP-007 charges that price before the bound check, and SATIN-DET-024 makes an input priced past the allowance and within the forward that would fail a check after its gas charge the crossing, which moves nothing and returns the forward; the revm-based implementation at 4e39cfd6 runs the call instead, which fails the bound and consumes its forward of 971,180, and its caller copies empty return data where the rule's copies the stop's 3 words at 3 each: its regular ledger, which the block counts, is 971,180 - 9 = 971,171 above the rule's"
-      },
-      "rules": [
-        "SATIN-DET-001",
-        "SATIN-DET-003",
-        "SATIN-DET-009",
-        "SATIN-DET-011",
-        "SATIN-DET-012",
-        "SATIN-DET-013",
-        "SATIN-DET-014",
-        "SATIN-DET-015",
-        "SATIN-DET-016",
-        "SATIN-DET-017",
-        "SATIN-DET-019",
-        "SATIN-DET-021",
-        "SATIN-DET-023",
-        "SATIN-DET-024"
-      ],
-      "spec": {
-        "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
         "name": "megaeth/Satin"
       }
     },
@@ -4419,7 +4398,7 @@
       "area": "reads",
       "caseId": "satin/reads/list-simulated-out-of-gas",
       "file": "quarantine/satin/reads/list-simulated-out-of-gas.json",
-      "fileDigest": "sha256:1b12e981b27674e8dde9ade824038e84355c0fdde7923f7795bd6c8762cd78e8",
+      "fileDigest": "sha256:923cb7c50049266ce93c5f5545414588aaea84909bca42212e618bcc8d184ef2",
       "knownFail": {
         "actual": {
           "balance": "0x0",
@@ -4429,7 +4408,7 @@
         "adapter": "mega-eest-adapter-revm",
         "expected": null,
         "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
-        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 4e39cfd6 reads both in every transaction's validation, so its reads hold the registry's account, the first difference; it also skips the simulation of a list too short to cross a limit (SATIN-AUTH-005, SATIN-WIT-004), so the list that runs out of gas at its first entry leaves the second authority unloaded and out of its reads"
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference; its simulation of the list is the rule's: the list, too short to cross a limit, is simulated all the same (SATIN-AUTH-005, SATIN-WIT-004), so the list that runs out of gas at its first entry leaves both authorities in its reads"
       },
       "rules": [
         "SATIN-AUTH-005",
@@ -4543,13 +4522,13 @@
       "area": "reads",
       "caseId": "satin/reads/oracle-slot-before-charge",
       "file": "quarantine/satin/reads/oracle-slot-before-charge.json",
-      "fileDigest": "sha256:4f7d403beff17a76dfe52fb0f7c73da9ef1bec4a31f063a789d5091a1f763ee3",
+      "fileDigest": "sha256:7acd63c5b2737dcf33f95da947aaae18596625cff95c456bd466073aac63e311",
       "knownFail": {
         "actual": "0x477e",
         "adapter": "mega-eest-adapter-revm",
         "expected": "0xb20e",
         "path": "/expected/gasLedgers/gasUsed",
-        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas, and the revm-based implementation at 4e39cfd6 charges it none, so its gas used is 27,280 below the rule's, the first difference; its reads differ too: SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 4e39cfd6 reads both in every transaction's validation, and it skips the Oracle read it cannot pay the cold access of (SATIN-ORCL-004), so its reads lack the Oracle's slot"
+        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas, and the revm-based implementation at 7110d87b charges it none, so its gas used is 27,280 below the rule's, the first difference; its reads differ too: SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation; its Oracle read is the rule's: the slot is loaded before the charge (SATIN-ORCL-004), and is in its reads"
       },
       "rules": [
         "SATIN-DEP-001",
