@@ -1,0 +1,172 @@
+{
+  "caseId": "satin/value-transfer/absent-recipient/minimum-bucket",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x5208",
+      "floor": "0x5208",
+      "gasUsed": "0x39788",
+      "history": "0x7850",
+      "historyBytes": "0x15e",
+      "refund": "0x0",
+      "regular": "0x5208",
+      "state": "0x2cd30",
+      "total": "0x39788"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x39788",
+      "logs": [
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x000000000000000000000000000000000000000000000000000000003b9aca00",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+            "0x000000000000000000000000000000000000000000000000000000000000dead"
+          ]
+        }
+      ],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "510",
+        "reported": "0x1fe"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "1",
+        "reported": "0x1"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x000000000000000000000000000000000000dead": {
+          "balance": "0x3b9aca00",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b36bc93600",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8648080830f424094000000000000000000000000000000000000dead843b9aca008025a0a2f2626b0f9788a4bd6c51a870ae734393da6ec8ad6efca5b55cfa604ff8bac9a05813d6faa1aeaea3c236a5a12f93515f97363ca0a87f51a87fb986781f7d46bf"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "value to an absent account: new-account state gas at step 4, no legacy share, one unit of state growth"
+    },
+    "definition": "tools/make_slice.py::cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-005",
+    "SATIN-ACCT-014",
+    "SATIN-HIST-005",
+    "SATIN-LOG-001",
+    "SATIN-LOG-002",
+    "SATIN-LOG-006",
+    "SATIN-POOL-024",
+    "SATIN-SCHED-008",
+    "SATIN-STATE-001",
+    "SATIN-STATE-003"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
+    "name": "megaeth/Satin"
+  }
+}

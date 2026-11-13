@@ -1,0 +1,197 @@
+{
+  "caseId": "satin/take-backs/descendant/kept",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x838c",
+      "floor": "0x3a98",
+      "gasUsed": "0xd20c",
+      "history": "0x7590",
+      "historyBytes": "0x156",
+      "refund": "0x2710",
+      "regular": "0x838c",
+      "state": "0x0",
+      "total": "0xf91c"
+    },
+    "gasPools": {
+      "regular": {
+        "final": "0xe3b64",
+        "initial": "0xe9d18"
+      },
+      "reservoir": {
+        "final": "0xdc0",
+        "initial": "0x0"
+      },
+      "returned": "0xe7034",
+      "spilled": "0x18c0"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x00000000000000000000000000000000000000000000000000000000000da962",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xd20c",
+      "logs": [
+        {
+          "address": "0x00000000000000000000000000000000000c0de5",
+          "data": "0x",
+          "topics": []
+        }
+      ],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "342",
+        "reported": "0x156"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x5f5f5f5f5f620c0de57ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1503d5f5f3e3d5ff3",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0de5": {
+          "balance": "0x0",
+          "code": "0x60085f555f5f5f5f620c0de67ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff4503d5f5f3e3d5ff3",
+          "nonce": "0x1",
+          "storage": {
+            "0x0000000000000000000000000000000000000000000000000000000000000000": "0x7"
+          }
+        },
+        "0x00000000000000000000000000000000000c0de6": {
+          "balance": "0x0",
+          "code": "0x5f5fa060075f555a5f5260205ff3",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1808026a037abd59b2ae917db9ae6528f8e6a7e588b445bd1372ea295b330cecfdb76351da00af281f0a2f8216a03102560bc82b936a2cb1e51b7b5052600045195e427b885"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "in a transaction without a reservoir, P's slot 0, whose original is 7, is written to 8, its record's 3,520 of history paid from P's regular gas; C, run by P's DELEGATECALL on P's storage with no reservoir, emits an empty LOG0, 2,816 of history from its regular gas, and writes the slot back to 7, giving the 3,520 into its own reservoir; C's next GAS, returned as the transaction's output, reads its regular gas, which the give-back did not raise; C and P succeed, so the 3,520 join P's reservoir and the first frame's, and return to the sender"
+    },
+    "definition": "tools/make_slice.py::take_back_cases",
+    "generator": "tools/make_slice.py",
+    "quarantine": {
+      "actual": "0xe4924",
+      "adapter": "mega-eest-adapter-revm",
+      "expected": "0xe3b64",
+      "path": "/expected/gasPools/regular/final",
+      "verdict": "SATIN-HIST-012 makes every give-back of state or history gas, a failed frame's rollback (SATIN-POOL-014) and the destruction table's (SATIN-SD-005) among them, credit the reservoir of the frame that receives it, never its regular gas, whichever pool paid the charge; the revm-based implementation at 4e39cfd6 credits the record's history C's write back to 7 gives back, 3,520, to regular gas, so the first frame ends with 3,520 more regular gas and as much less reservoir than the rule's"
+    },
+    "specCommit": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:gas-pools",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-HIST-012",
+    "SATIN-TAKE-002",
+    "SATIN-TAKE-003",
+    "SATIN-TAKE-004",
+    "SATIN-TAKE-005"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+    "name": "megaeth/Satin"
+  }
+}

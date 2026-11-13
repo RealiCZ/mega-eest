@@ -1,0 +1,160 @@
+{
+  "caseId": "satin/creation/thirty-two-byte-code",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x6780",
+      "floor": "0x6780",
+      "gasUsed": "0x47d72",
+      "history": "0x90b8",
+      "historyBytes": "0x1a5",
+      "refund": "0x0",
+      "regular": "0x604a",
+      "state": "0x38c70",
+      "total": "0x47d72"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": "0x6295ee1b4f6dd65047762f924ecd367c17eabf8f",
+        "output": "0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x47d72",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "421",
+        "reported": "0x1a5"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "1",
+        "reported": "0x1"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x6295ee1b4f6dd65047762f924ecd367c17eabf8f": {
+          "balance": "0x0",
+          "code": "0x0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8738080830f42408080a77f0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f205f5260205ff326a03d0fb262a084fc61b2901acbc1ceb1089945e1da136191280cfcf19f806ab2eaa02634730a52d1e5fd47b5955ead3023260184f5e3fdacac6aca4fdfeabc217b39"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a creation that deploys 32 bytes"
+    },
+    "definition": "tools/make_slice.py::cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-005",
+    "SATIN-ACCT-013",
+    "SATIN-ACCT-014",
+    "SATIN-HIST-005",
+    "SATIN-POOL-024",
+    "SATIN-SCHED-011",
+    "SATIN-STATE-001",
+    "SATIN-STATE-003"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
+    "name": "megaeth/Satin"
+  }
+}

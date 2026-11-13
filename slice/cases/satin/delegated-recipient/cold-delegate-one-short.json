@@ -1,0 +1,163 @@
+{
+  "caseId": "satin/delegated-recipient/cold-delegate-one-short",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x464f",
+      "floor": "0x3a98",
+      "gasUsed": "0xb0df",
+      "history": "0x6a90",
+      "historyBytes": "0x136",
+      "refund": "0x0",
+      "regular": "0x464f",
+      "state": "0x0",
+      "total": "0xb0df"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "halt"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xb0df",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000de1e9": {
+          "balance": "0x0",
+          "code": "0x00",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x0000000000000000000000000000000000de1e9a": {
+          "balance": "0x0",
+          "code": "0xef010000000000000000000000000000000000000de1e9",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf85f808082b0df940000000000000000000000000000000000de1e9a808026a04f54fc3b0237e2e09c0aa5543f5e4d19e4fa3f8e097def62bd132f86fd5a4a06a040dd513c6734a899eb56dd21b215b0e2028aacddd19bed76af1e663cd6996e26"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the regular gas left for the delegate's access one below 3,000",
+      "intent": "the cold-delegate transaction with 2,999 of regular gas left for the delegate's access: the warm read is paid and the cold surcharge is not, so the delegate is not loaded and the transaction runs out of gas before its first frame"
+    },
+    "definition": "tools/make_slice.py::ordering_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-SCHED-006",
+    "SATIN-SCHED-008",
+    "SATIN-SCHED-009",
+    "SATIN-SCHED-010"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
+    "name": "megaeth/Satin"
+  }
+}

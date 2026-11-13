@@ -1,0 +1,160 @@
+{
+  "caseId": "satin/detention/creation/beneficiary-selfbalance",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x6080",
+      "floor": "0x6080",
+      "gasUsed": "0xccd7",
+      "history": "0x6e58",
+      "historyBytes": "0x141",
+      "refund": "0x0",
+      "regular": "0x5e7f",
+      "state": "0x0",
+      "total": "0xccd7"
+    },
+    "limit": {
+      "dimension": "compute",
+      "limit": "0x1312d05",
+      "returnData": "0x84b9026700000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000001312d05"
+    },
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x84b9026700000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000001312d05",
+        "status": "revert"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xccd7",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "321",
+        "reported": "0x141"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x6295ee1b4f6dd65047762f924ecd367c17eabf8f",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8588080840148106080808b47506231096051505f5ff325a07a256790c1d6b8b184b59fc94bda92223a159705b78b1b77048fba01c7fe8af7a06eb9be8d26cc353e45fa504955bd8141a561f01b60eef4f34a6a2df7e0c100e0"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "the same creation's initcode, running as the block beneficiary, reads its own balance by SELFBALANCE: a read of the beneficiary's account, so the memory expansion after it, past the cap, stops the transaction's own frame"
+    },
+    "definition": "tools/make_slice.py::detention_rule_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:limit-stop",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-DET-001",
+    "SATIN-DET-003",
+    "SATIN-DET-006",
+    "SATIN-DET-007",
+    "SATIN-DET-012",
+    "SATIN-DET-013",
+    "SATIN-DET-014",
+    "SATIN-DET-016",
+    "SATIN-DET-018"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+    "name": "megaeth/Satin"
+  }
+}

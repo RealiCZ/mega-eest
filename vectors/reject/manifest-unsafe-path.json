@@ -8,10 +8,10 @@
  "schemas": {
   "schema/block-build.json": "sha256:0f0ef875b9f4f0cb7285ea0d98abeccbe6c38c4f3288fb844975ba440f760289",
   "schema/block-import.json": "sha256:3b4785f3d4bfd8e93f25f39d948a7a4e13f110025c32824387c2e9aafb3d89e0",
-  "schema/common.json": "sha256:ad3a91a1935437cfd5db4220084cce10df7716a33009a572b85feeb314f4b7e9",
-  "schema/fixture.json": "sha256:c56ff249ba2c0c415dc3006153700ef561459fe94558a660382272368818f5a7",
+  "schema/common.json": "sha256:e0dc9d6c3429171d0d6ee8b9ad6a4769e6f9aaaef9774595df98785a910efbcd",
+  "schema/fixture.json": "sha256:45c0f6775e0606d3fd5646e6d1eb98b70e445b84a34f3053f06e79841945e9cb",
   "schema/manifest.json": "sha256:deb06dd8c48b5b641479ffcaaa1497e23905e3f50a7910549ba11bae01292e0f",
-  "schema/state-transition.json": "sha256:23f93723be07a62239e12f138e6de2ebe465f7795a3cf3e846e69c7cf37dbdff",
+  "schema/state-transition.json": "sha256:7c140c7eea3dca6810e89821ad1d02600896554b647c031a3ca897642ea4af6f",
   "schema/stateless-block.json": "sha256:5b4e64205e469652b9c7c23890409f321ce2431348d3b5e437920d0ad0833630",
   "schema/transaction-validation.json": "sha256:5055afe735744e750e58b87bcfae537768a0eccc35a2b3d46816f69edaf13378"
  },
@@ -33,8 +33,8 @@
     "group:state"
    ],
    "path": "../outside.json",
-   "file": "sha256:02a7d9afd6283e6eef5e3f69872bfcddd7e855c450d7158101c90e4366f72a34",
-   "semantic": "sha256:398fe585dba4a26ee074b52e35f705d1c50c3c562f6623e2864f7f5aa7d1b536"
+   "file": "sha256:c1faf136397f393c134da2835f36acc04df3e8eea6aca92b1a0daf5879a56014",
+   "semantic": "sha256:eb1f3336bf316b8fd675ea55f3372ddfe6de294e3a34bf7629771cabb343d160"
   },
   {
    "caseId": "satin/deposits/empty-caller/new-account-charged-once",
@@ -49,8 +49,8 @@
     "group:state"
    ],
    "path": "examples/deposit-state-transition-new-caller.json",
-   "file": "sha256:18515110006378ba00749db56f7e14b25878ebcadce0daab11ed9cfa75f9151b",
-   "semantic": "sha256:cddbf199a7d82c84e62469455a3fd9d68617bb626f38dfdc86270a5e62a803af"
+   "file": "sha256:7f070be48f46b15121b671e608498e31b38743c33f5fb8019daf6488cdaaf521",
+   "semantic": "sha256:c127587829fef6df28e53c8e5aa1348795907bace8a0c6c12140d4b4264bf332"
   },
   {
    "caseId": "satin/sequencer-registry/foreign-code/block-invalid",
@@ -63,8 +63,8 @@
     "group:state"
    ],
    "path": "examples/invalid-block-foreign-registry-code.json",
-   "file": "sha256:37632f157e24ab59da6fc39426c55fabc3c84d9546e816a8a96796affe0a783e",
-   "semantic": "sha256:0cf46ff52699a74f82b1f88652206f61abea5e504a51c722ea1b506abffcdead"
+   "file": "sha256:fd00d206894fd5373643d8731c3dd9fd479c00860ccc1f3297249c2d29a3b220",
+   "semantic": "sha256:ef462d4a3accd6695b249682e4084900071676a923f7bea4104b65fcbf0f15bc"
   },
   {
    "caseId": "satin/state-gas/sstore-fresh-slot/minimum-bucket",
@@ -80,8 +80,8 @@
     "group:state"
    ],
    "path": "examples/state-transition-sstore-fresh-slot.json",
-   "file": "sha256:1b713166e76badac97bb0cc621712e7bc09162d96acec2087b78e261bf4b0f32",
-   "semantic": "sha256:4d7f85917e327fb10521d5b52ac2c5551d194b8d8fc4719d8bfae820825c8c6e"
+   "file": "sha256:55929dfbd51b5a304206f8ad5637d4c08aa79ed09fcf13d9e5d2ba3919210f35",
+   "semantic": "sha256:86670f918abc84b0b2efcc574151ee74ec6ac1193a5af7a9341525d70099b67a"
   },
   {
    "caseId": "satin/stateless-witness/parent-anchor/wrong-parent-hash",
@@ -94,8 +94,8 @@
     "group:witness"
    ],
    "path": "examples/stateless-block-witness-wrong-parent-anchor.json",
-   "file": "sha256:d153b905993d404ffe321eaeb37fbf44f8cb2163e78f797af750943f2d4bcbd8",
-   "semantic": "sha256:1f1843009001c8b76ad1fbd712d02ea51c5ea955590ee8005f08467c50599739"
+   "file": "sha256:e4ce4ec13105c984b74fdeac226dcd3efbd626372cb6b35b326e6b5b115784ba",
+   "semantic": "sha256:0e8a2c93812441f19e813ee046af9fa939f2c5112514a00b601e2e5987192840"
   },
   {
    "caseId": "satin/transaction-validation/gas-limit-below-intrinsic-regular",
@@ -104,8 +104,8 @@
     "group:validation"
    ],
    "path": "examples/transaction-validation-gas-below-intrinsic.json",
-   "file": "sha256:f570a28ed741cac3040b0e78de1e9289309fd4b0f8048b33d0c0125339306e0c",
-   "semantic": "sha256:003f30a40fdd4f863ac2a37055ef4a1f16c5568faadebc5d7282aa6f7f4b78c7"
+   "file": "sha256:fdaaf5acc94477b49ded5349d9a5a9debb378e40df9da7de5ca3186e237a771e",
+   "semantic": "sha256:ad1d22d99b1f755bd3fb1b1e8723e427c78058d0a212fccbf03907d12903cc93"
   }
  ],
  "shards": {

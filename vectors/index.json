@@ -71,56 +71,56 @@
       "kind": "case",
       "input": "accept/case-block-build-policy-skip.in.json",
       "canonical": "accept/case-block-build-policy-skip.canonical.json",
-      "fileDigest": "sha256:02a7d9afd6283e6eef5e3f69872bfcddd7e855c450d7158101c90e4366f72a34",
-      "semanticDigest": "sha256:398fe585dba4a26ee074b52e35f705d1c50c3c562f6623e2864f7f5aa7d1b536"
+      "fileDigest": "sha256:c1faf136397f393c134da2835f36acc04df3e8eea6aca92b1a0daf5879a56014",
+      "semanticDigest": "sha256:eb1f3336bf316b8fd675ea55f3372ddfe6de294e3a34bf7629771cabb343d160"
     },
     {
       "id": "case-deposit-state-transition-new-caller",
       "kind": "case",
       "input": "accept/case-deposit-state-transition-new-caller.in.json",
       "canonical": "accept/case-deposit-state-transition-new-caller.canonical.json",
-      "fileDigest": "sha256:18515110006378ba00749db56f7e14b25878ebcadce0daab11ed9cfa75f9151b",
-      "semanticDigest": "sha256:cddbf199a7d82c84e62469455a3fd9d68617bb626f38dfdc86270a5e62a803af"
+      "fileDigest": "sha256:7f070be48f46b15121b671e608498e31b38743c33f5fb8019daf6488cdaaf521",
+      "semanticDigest": "sha256:c127587829fef6df28e53c8e5aa1348795907bace8a0c6c12140d4b4264bf332"
     },
     {
       "id": "case-invalid-block-foreign-registry-code",
       "kind": "case",
       "input": "accept/case-invalid-block-foreign-registry-code.in.json",
       "canonical": "accept/case-invalid-block-foreign-registry-code.canonical.json",
-      "fileDigest": "sha256:37632f157e24ab59da6fc39426c55fabc3c84d9546e816a8a96796affe0a783e",
-      "semanticDigest": "sha256:0cf46ff52699a74f82b1f88652206f61abea5e504a51c722ea1b506abffcdead"
+      "fileDigest": "sha256:fd00d206894fd5373643d8731c3dd9fd479c00860ccc1f3297249c2d29a3b220",
+      "semanticDigest": "sha256:ef462d4a3accd6695b249682e4084900071676a923f7bea4104b65fcbf0f15bc"
     },
     {
       "id": "case-state-transition-sstore-fresh-slot",
       "kind": "case",
       "input": "accept/case-state-transition-sstore-fresh-slot.in.json",
       "canonical": "accept/case-state-transition-sstore-fresh-slot.canonical.json",
-      "fileDigest": "sha256:1b713166e76badac97bb0cc621712e7bc09162d96acec2087b78e261bf4b0f32",
-      "semanticDigest": "sha256:4d7f85917e327fb10521d5b52ac2c5551d194b8d8fc4719d8bfae820825c8c6e"
+      "fileDigest": "sha256:55929dfbd51b5a304206f8ad5637d4c08aa79ed09fcf13d9e5d2ba3919210f35",
+      "semanticDigest": "sha256:86670f918abc84b0b2efcc574151ee74ec6ac1193a5af7a9341525d70099b67a"
     },
     {
       "id": "case-stateless-block-witness-wrong-parent-anchor",
       "kind": "case",
       "input": "accept/case-stateless-block-witness-wrong-parent-anchor.in.json",
       "canonical": "accept/case-stateless-block-witness-wrong-parent-anchor.canonical.json",
-      "fileDigest": "sha256:d153b905993d404ffe321eaeb37fbf44f8cb2163e78f797af750943f2d4bcbd8",
-      "semanticDigest": "sha256:1f1843009001c8b76ad1fbd712d02ea51c5ea955590ee8005f08467c50599739"
+      "fileDigest": "sha256:e4ce4ec13105c984b74fdeac226dcd3efbd626372cb6b35b326e6b5b115784ba",
+      "semanticDigest": "sha256:0e8a2c93812441f19e813ee046af9fa939f2c5112514a00b601e2e5987192840"
     },
     {
       "id": "case-transaction-validation-gas-below-intrinsic",
       "kind": "case",
       "input": "accept/case-transaction-validation-gas-below-intrinsic.in.json",
       "canonical": "accept/case-transaction-validation-gas-below-intrinsic.canonical.json",
-      "fileDigest": "sha256:f570a28ed741cac3040b0e78de1e9289309fd4b0f8048b33d0c0125339306e0c",
-      "semanticDigest": "sha256:003f30a40fdd4f863ac2a37055ef4a1f16c5568faadebc5d7282aa6f7f4b78c7"
+      "fileDigest": "sha256:fdaaf5acc94477b49ded5349d9a5a9debb378e40df9da7de5ca3186e237a771e",
+      "semanticDigest": "sha256:ad1d22d99b1f755bd3fb1b1e8723e427c78058d0a212fccbf03907d12903cc93"
     },
     {
       "id": "case-same-semantics-other-name",
       "kind": "case",
       "input": "accept/case-same-semantics-other-name.in.json",
       "canonical": "accept/case-same-semantics-other-name.canonical.json",
-      "fileDigest": "sha256:04b68e51e3845cd8217a165395dfb3c426486cbda65ec34668349d83cc313298",
-      "semanticDigest": "sha256:4d7f85917e327fb10521d5b52ac2c5551d194b8d8fc4719d8bfae820825c8c6e"
+      "fileDigest": "sha256:20eaba35c407d3904381be8d740ed9f9a8a3448f7fae6a79e8cd38a4019c9b6f",
+      "semanticDigest": "sha256:86670f918abc84b0b2efcc574151ee74ec6ac1193a5af7a9341525d70099b67a"
     },
     {
       "id": "json-duplicate-key",
@@ -348,9 +348,9 @@
       }
     },
     {
-      "id": "case-schema-major-2",
+      "id": "case-schema-major-1",
       "kind": "case",
-      "input": "reject/case-schema-major-2.json",
+      "input": "reject/case-schema-major-1.json",
       "error": {
         "code": "unsupported-schema-version",
         "path": "/schemaVersion"
@@ -492,11 +492,11 @@
       }
     },
     {
-      "id": "case-assertions-duplicate-path",
+      "id": "case-assertions-member",
       "kind": "case",
-      "input": "reject/case-assertions-duplicate-path.json",
+      "input": "reject/case-assertions-member.json",
       "error": {
-        "code": "unsorted-set",
+        "code": "unknown-field",
         "path": "/assertions"
       }
     },
@@ -532,7 +532,7 @@
       "kind": "manifest",
       "input": "accept/manifest-examples.in.json",
       "canonical": "accept/manifest-examples.canonical.json",
-      "digest": "sha256:f427a3e359fb64a2ee96393d4ab3c3b9c2ac9a08e70957ac431e710ac8b0acf9"
+      "digest": "sha256:355e18d1d6b5f0cd1ef4451d517eef32ce6884934d06b1cd7e1cc1cea323dde1"
     },
     {
       "id": "manifest-unsorted-cases",

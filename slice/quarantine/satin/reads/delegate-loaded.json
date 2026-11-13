@@ -1,0 +1,224 @@
+{
+  "caseId": "satin/reads/delegate-loaded",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x4650",
+      "floor": "0x3a98",
+      "gasUsed": "0xb0e0",
+      "history": "0x6a90",
+      "historyBytes": "0x136",
+      "refund": "0x0",
+      "regular": "0x4650",
+      "state": "0x0",
+      "total": "0xb0e0"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "reads": {
+      "accounts": {
+        "0x00000000000000000000000000000000000de1e9": {
+          "balance": "0x0",
+          "codeHash": "0xbc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a",
+          "nonce": "0x1"
+        },
+        "0x0000000000000000000000000000000000de1e9a": {
+          "balance": "0x0",
+          "codeHash": "0xc492bfbae8537a4545c7eef2a2100f59e2e331b1fe92fa6da384ecd1c8beaaba",
+          "nonce": "0x1"
+        },
+        "0x4200000000000000000000000000000000000011": null,
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": null,
+        "0x420000000000000000000000000000000000001a": null,
+        "0x420000000000000000000000000000000000001b": null,
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        }
+      },
+      "blockHashes": {},
+      "buckets": {},
+      "codes": [
+        "0xbc36789e7a1e281436464229828f817d6612f7b477d66591ff96a9e064bcc98a",
+        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+        "0xc492bfbae8537a4545c7eef2a2100f59e2e331b1fe92fa6da384ecd1c8beaaba"
+      ],
+      "hints": [],
+      "oracle": [],
+      "storage": {
+        "0x4200000000000000000000000000000000000015": {
+          "0x0000000000000000000000000000000000000000000000000000000000000001": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000003": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000005": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000007": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000008": "0x0"
+        }
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xb0e0",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000de1e9": {
+          "balance": "0x0",
+          "code": "0x00",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x0000000000000000000000000000000000de1e9a": {
+          "balance": "0x0",
+          "code": "0xef010000000000000000000000000000000000000de1e9",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf85f808082b0e0940000000000000000000000000000000000de1e9a808025a0506b3137d68073b5fee418c4ceb29607d35f74a3c4283314c9ec702a49ce3328a03862608ae651ea64f5e96c70c017cfcfe7b8fdde758a05ff42fe0a537dfb7bbd"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the regular gas left for the delegate's access at 3,000",
+      "intent": "a transaction to an account delegating to an account that is not warm, with 3,000 of regular gas left for the delegate's access: the access is paid, so the delegate is loaded and is in the reads"
+    },
+    "definition": "tools/make_slice.py::reads_cases",
+    "generator": "tools/make_slice.py",
+    "quarantine": {
+      "actual": {
+        "balance": "0x0",
+        "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+        "nonce": "0x0"
+      },
+      "adapter": "mega-eest-adapter-revm",
+      "expected": null,
+      "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+      "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 4e39cfd6 reads both in every transaction's validation, so its reads hold the registry's account, the first difference"
+    },
+    "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:reads",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-WIT-001",
+    "SATIN-WIT-002",
+    "SATIN-WIT-003",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008",
+    "SATIN-WIT-011",
+    "SATIN-WIT-013"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
+    "name": "megaeth/Satin"
+  }
+}

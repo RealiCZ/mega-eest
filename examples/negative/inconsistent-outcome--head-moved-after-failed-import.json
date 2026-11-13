@@ -1,6 +1,6 @@
 {
   "format": "mega-execution-fixture",
-  "schemaVersion": "1.0",
+  "schemaVersion": "2.0",
   "caseId": "satin/sequencer-registry/foreign-code/block-invalid",
   "specRef": {
     "name": "megaeth/Satin",
@@ -16,26 +16,6 @@
   ],
   "rules": [
     "SATIN-REG-004"
-  ],
-  "assertions": [
-    {
-      "path": "/expected/blocks/0",
-      "rules": [
-        "SATIN-REG-004"
-      ]
-    },
-    {
-      "path": "/expected/head",
-      "rules": [
-        "SATIN-REG-004"
-      ]
-    },
-    {
-      "path": "/expected/state",
-      "rules": [
-        "SATIN-REG-004"
-      ]
-    }
   ],
   "input": {
     "chain": {

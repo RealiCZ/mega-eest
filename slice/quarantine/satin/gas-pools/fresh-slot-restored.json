@@ -1,0 +1,183 @@
+{
+  "caseId": "satin/gas-pools/fresh-slot-restored",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x6a4b",
+      "floor": "0x3a98",
+      "gasUsed": "0xadcb",
+      "history": "0x6a90",
+      "historyBytes": "0x136",
+      "refund": "0x2710",
+      "regular": "0x6a4b",
+      "state": "0x0",
+      "total": "0xd4db"
+    },
+    "gasPools": {
+      "regular": {
+        "final": "0xce125",
+        "initial": "0xe9d18"
+      },
+      "reservoir": {
+        "final": "0x18c40",
+        "initial": "0x0"
+      },
+      "returned": "0xe9475",
+      "spilled": "0x18c40"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xadcb",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x60016001555f60015500",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1808026a037abd59b2ae917db9ae6528f8e6a7e588b445bd1372ea295b330cecfdb76351da00af281f0a2f8216a03102560bc82b936a2cb1e51b7b5052600045195e427b885"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "0 -> 1 -> 0 with no reservoir: regular gas pays the slot's state gas and record, 101,440, and the give-back lands in the reservoir, which the first frame ends with and which returns to the sender"
+    },
+    "definition": "tools/make_slice.py::gas_pools_cases",
+    "generator": "tools/make_slice.py",
+    "quarantine": {
+      "actual": "0xe6d65",
+      "adapter": "mega-eest-adapter-revm",
+      "expected": "0xce125",
+      "path": "/expected/gasPools/regular/final",
+      "verdict": "SATIN-HIST-012 makes every give-back of state or history gas credit the reservoir of the frame that receives it, never its regular gas, whichever pool paid the charge; the revm-based implementation at 4e39cfd6 credits the fresh slot's state gas and its record's history, given back when the slot returns to zero, 101,440, to the first frame's regular gas, so the frame ends with 101,440 more regular gas and as much less reservoir than the rule's"
+    },
+    "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:gas-pools",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-HIST-012",
+    "SATIN-POOL-005",
+    "SATIN-POOL-006",
+    "SATIN-POOL-007",
+    "SATIN-POOL-008",
+    "SATIN-POOL-010",
+    "SATIN-POOL-017",
+    "SATIN-POOL-018",
+    "SATIN-POOL-019",
+    "SATIN-POOL-020",
+    "SATIN-POOL-024"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
+    "name": "megaeth/Satin"
+  }
+}

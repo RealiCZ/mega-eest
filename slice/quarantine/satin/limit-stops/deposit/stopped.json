@@ -1,0 +1,172 @@
+{
+  "caseId": "satin/limit-stops/deposit/stopped",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x3aa2",
+      "floor": "0x3a98",
+      "gasUsed": "0x37262",
+      "history": "0x6a90",
+      "historyBytes": "0x136",
+      "refund": "0x0",
+      "regular": "0x3aa2",
+      "state": "0x2cd30",
+      "total": "0x37262"
+    },
+    "limit": {
+      "dimension": "compute",
+      "limit": "0x1312d02",
+      "returnData": "0x84b9026700000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000001312d02"
+    },
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x84b9026700000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000001312d02",
+        "status": "revert"
+      }
+    },
+    "receipt": {
+      "depositNonce": "0x0",
+      "depositReceiptVersion": "0x1",
+      "gasUsed": "0x37262",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x7e"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x703c4b2bd70c169f5717101caee543299fc946c7": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x425062310960515000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "deposit",
+      "raw": "0x7ef85ca0000000000000000000000000000000000000000000000000000000000000005d94703c4b2bd70c169f5717101caee543299fc946c79400000000000000000000000000000000000c0de1880de0b6b3a7640000808401349fb18080"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the regular gas at the expansion at its charge",
+      "intent": "a deposit from a sender empty under EIP-161, whose caller account it creates, reads TIMESTAMP and holds exactly the 20,000,079 of one memory expansion past what gas detention's limit leaves it: the expansion is the crossing, the frame is stopped with MegaLimitExceeded(2, limit), and the deposit settles as a revert, keeping its mint, its nonce bump and its created caller"
+    },
+    "definition": "tools/make_slice.py::limit_stop_cases",
+    "generator": "tools/make_slice.py",
+    "quarantine": {
+      "actual": "0x307d2",
+      "adapter": "mega-eest-adapter-revm",
+      "expected": "0x37262",
+      "path": "/expected/gasLedgers/gasUsed",
+      "verdict": "SATIN-STOP-010 settles a deposit whose own frame is stopped as the revert of SATIN-STOP-009, which keeps the body's history, and SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does; the revm-based implementation at 4e39cfd6 settles the stop as a revert but charges the deposit no history gas, so its gas used is 27,280 below the rule's: the body's 310 bytes at 88 gas"
+    },
+    "specCommit": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:deposit",
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:limit-stop",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-HIST-016",
+    "SATIN-LIM-007",
+    "SATIN-STOP-001",
+    "SATIN-STOP-002",
+    "SATIN-STOP-003",
+    "SATIN-STOP-004",
+    "SATIN-STOP-009",
+    "SATIN-STOP-010",
+    "SATIN-STOP-011",
+    "SATIN-STOP-018",
+    "SATIN-STOP-019",
+    "SATIN-STOP-021"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+    "name": "megaeth/Satin"
+  }
+}

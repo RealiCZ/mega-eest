@@ -1,6 +1,6 @@
 {
   "format": "mega-execution-fixture",
-  "schemaVersion": "1.0",
+  "schemaVersion": "2.0",
   "caseId": "satin/block-building/policy-data-size/skip-and-continue",
   "specRef": {
     "name": "megaeth/Satin",
@@ -16,20 +16,6 @@
   ],
   "rules": [
     "SATIN-BLK-011"
-  ],
-  "assertions": [
-    {
-      "path": "/expected/committed",
-      "rules": [
-        "SATIN-BLK-011"
-      ]
-    },
-    {
-      "path": "/expected/decisions",
-      "rules": [
-        "SATIN-BLK-011"
-      ]
-    }
   ],
   "input": {
     "chain": {
