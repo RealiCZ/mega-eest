@@ -23,8 +23,12 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
     """One transaction against a complete pre-state."""
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
-                 reads: bool = False, pools: bool = False):
+                 reads: bool = False, pools: bool = False, destruction: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
+        # The cases of the destruction page's own rules (decision D-70) cite them where their steps apply them:
+        # the first effective destruction and its mark, a destruction without the table, the marked account and
+        # its removal at the transaction's end (SATIN-SD-001 to -003, -010 to -017, -020).
+        self.destruction = destruction
         # The `gasPools` group (decision D-64): the first frame's pools at its start and end, and the
         # regular gas it and its children paid for state and history charges.
         self.pools = pools
@@ -57,7 +61,11 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # The stop of the transaction's own frame, (kind, limit), when one is its result.
         self.stop: tuple[int, int] | None = None
         self.frame_start_counts = (0, 0, 0)
-        # The accounts created in the transaction, which a SELFDESTRUCT deletes (EIP-6780), and those destroyed.
+        # The accounts created in the transaction, which a SELFDESTRUCT deletes (EIP-6780), and those destroyed: the
+        # marked accounts, which stay until the transaction's end (SATIN-SD-015).
         self.created: set[bytes] = set()
         self.record_frames: dict = {}  # each storage write record and the frame that made it
         self.destroyed: set[bytes] = set()
+        # The created accounts whose slots read zero from the creation on, the state having held storage there
+        # (SATIN-SD-003, -016).
+        self.zero_storage: set[bytes] = set()

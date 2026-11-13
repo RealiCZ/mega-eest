@@ -4,8 +4,8 @@
 This is the independent evidence behind the vertical slice's expectations: it restates, from the
 specification at `d34e626` (`specs/satin-d34e626`), for calls, interception and EIP-7702 at
 `d334ef8` (`specs/satin-d334ef8`), for the charge-order principles at `5fb2688`
-(`specs/satin-5fb2688`), and for the take-back page's worked examples at `cdded1e`
-(`specs/satin-cdded1e`), the arithmetic a `state-transition` case's observations follow, for the
+(`specs/satin-5fb2688`), and for the take-back page's worked examples and the destruction page's own
+rules at `cdded1e` (`specs/satin-cdded1e`), the arithmetic a `state-transition` case's observations follow, for the
 narrow class of transactions the slice uses:
 
 - the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`,
@@ -26,6 +26,13 @@ narrow class of transactions the slice uses:
   frame's budget (`SATIN-LIM-013`); `DELEGATECALL` to a contract; a `CREATE` that succeeds, and the
   first `SELFDESTRUCT` of an account created in the transaction (`SATIN-SD-019`); a value child's
   history allowance (`SATIN-HIST-019`);
+- the destruction page's shapes: a `SELFDESTRUCT` of an account the transaction did not create
+  (`SATIN-SD-012`), to another account or to itself, and a repeated one while the mark stands
+  (`SATIN-SD-011`); the marked account, its stores (`SATIN-SD-013`), a code deposit after its
+  constructor destroyed it (`SATIN-SD-014`), a value sent to it and its removal at the end
+  (`SATIN-SD-015`); a creation onto an address whose leaf the state holds with storage, its slots
+  reading zero (`SATIN-SD-003`, `-016`, `-017`); a mark a failed frame discards (`SATIN-SD-010`); and
+  the read of a destruction's beneficiary that is the block beneficiary (`SATIN-SD-020`);
 - a transaction's own `keylessDeploy` call, recognized or not (`SATIN-ICPT-006`), as far as the
   refusals of steps 2 and 3 or a halt at step 1;
 - EIP-7702 lists whose entries are accepted, the authority present or absent, a second entry for

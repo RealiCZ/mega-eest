@@ -367,6 +367,7 @@ class TransactionMixin:
             if self.hint_bytes:
                 raise Unmodelled("a halt after an admitted hint")
             self.restore(snapshot)
+            self.destroyed = set()  # the first frame's failure discards every mark (SATIN-SD-010)
             spent_regular = tx.gas_limit - frame["reservoir_at_start"] - (pre_frame_history + pre_frame_state if reservoir else 0)
             if sum(drawn):
                 raise Unmodelled("a halt after the reservoir paid a charge for the first frame's start")
@@ -396,6 +397,7 @@ class TransactionMixin:
             execution = {"status": "halt", "output": "0x", "createdAddress": None}
         elif status == "revert":
             self.restore(snapshot)
+            self.destroyed = set()  # the first frame's failure discards every mark (SATIN-SD-010)
             if self.hint_bytes:
                 # An admitted hint is the transaction's, on no frame: it stays counted (SATIN-STOP-012, ORCL-009).
                 if self.stop is None:

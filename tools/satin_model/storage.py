@@ -18,7 +18,9 @@ class StorageMixin:
         d = self.d
         acct = self.state.setdefault(address, Account())
         present = acct.storage.get(key, 0)
-        original = self.original.setdefault((address, key), self.pre.get(address, Account()).storage.get(key, 0))
+        first_access = (address, key) not in self.original
+        original = self.original.setdefault((address, key), 0 if address in self.zero_storage else
+                                            self.pre.get(address, Account()).storage.get(key, 0))
         if frame.get("spendable") is not None:
             raise Unmodelled("an SSTORE in a detained frame")
         if frame["regular"] <= CALL_STIPEND:
@@ -30,6 +32,12 @@ class StorageMixin:
         write = 0
         if new != present and present == original:
             write = SSTORE_SET if original == 0 else SSTORE_RESET
+        if first_access and address in self.zero_storage and self.pre[address].storage.get(key, 0):
+            d.add("gasLedgers", f"slot {key} of the created account, which the state held as "
+                  f"{self.pre[address].storage[key]}, is first accessed after the creation: it reads zero and its "
+                  "original is zero", "SATIN-SD-003", "SATIN-SD-016")
+        if address in self.destroyed:
+            return self.sstore_marked(frame, address, key, new, present, original, access, write, cold)
         self.charge_regular(frame, access + write, "SSTORE")
         label = f"SSTORE slot {key} {original}->{present}->{new}: {'cold' if cold else 'warm'} access {fmt(access)}"
         rules = ["SATIN-SCHED-003", "SATIN-SCHED-004"] if cold else ["SATIN-SCHED-003"]
@@ -134,14 +142,40 @@ class StorageMixin:
                   "SATIN-STATE-012")
         return f"SSTORE {fmt(access + write)}"
 
+    def sstore_marked(self, frame, address: bytes, key: int, new: int, present: int, original: int, access: int,
+                      write: int, cold: bool) -> str:
+        """An `SSTORE` of a slot of an account the first effective destruction marked (SATIN-SD-013): its regular gas
+        as any write's, and no state gas, no rise or fall and no record."""
+        d = self.d
+        restored = new != present and new == original and present != original
+        cleared = new != present and original != 0 and (present == original and new == 0 or present != original)
+        if restored or cleared:
+            raise Unmodelled("an SSTORE of a marked account that moves the refund counter")
+        self.charge_regular(frame, access + write, "SSTORE")
+        acct = self.state[address]
+        if new == 0:
+            acct.storage.pop(key, None)
+        else:
+            acct.storage[key] = new
+        label = (f"SSTORE slot {key} {original}->{present}->{new} of the marked account: {'cold' if cold else 'warm'} "
+                 f"access {fmt(access)}" + (f" + {'fresh-slot write' if original == 0 else 'reset'} {fmt(write)}" if write
+                                             else ""))
+        d.add("gasLedgers", label + ", its regular gas as any write's; while the mark stands the account keeps no further "
+              "state gas, so the write neither charges nor refills a fresh slot's state gas", "SATIN-SD-013",
+              "SATIN-SCHED-003", *(("SATIN-SCHED-004",) if cold else ()))
+        d.add("resources", f"the write to slot {key} of the marked account adds nothing to state growth and makes no "
+              "record", "SATIN-SD-013")
+        return f"SSTORE {fmt(access + write)}"
+
     def deposit_code(self, code: bytes, frame, address: bytes) -> None:
         """SATIN-SCHED-011: hashing, state gas and history gas of the deposited code."""
         d = self.d
         words = (len(code) + 31) // 32
         keccak = KECCAK_WORD * words
         self.charge_regular(frame, keccak, "code deposit hashing")
+        marked = address in self.destroyed
         m = self.multiplier(self.salt_bucket(address, None))
-        state = CODE_STATE_PER_BYTE * m * len(code)
+        state = 0 if marked else CODE_STATE_PER_BYTE * m * len(code)
         self.charge_state(frame, state, 0, "deposited code")
         history = COST_PER_HISTORY_BYTE * len(code)
         self.charge_state(frame, history, 0, "deposited code's history")
@@ -150,8 +184,14 @@ class StorageMixin:
         self.history_bytes += len(code)
         self.data_size += len(code)
         self.state[address].code = code
-        d.add("gasLedgers", f"code deposit of {len(code)} bytes: hashing {words} words x {KECCAK_WORD} = {keccak}; state "
-              f"{CODE_STATE_PER_BYTE} x m={m} x {len(code)} = {fmt(state)}; history {COST_PER_HISTORY_BYTE} x {len(code)} = "
-              f"{fmt(history)}", "SATIN-SCHED-011", "SATIN-STATE-003", "SATIN-HIST-002")
+        if marked:
+            d.add("gasLedgers", f"code deposit of {len(code)} bytes after the constructor destroyed its own account, the "
+                  f"absent-then-absent row: hashing {words} words x {KECCAK_WORD} = {keccak}; no state gas; history "
+                  f"{COST_PER_HISTORY_BYTE} x {len(code)} = {fmt(history)}, as any deposited code's, which no later "
+                  "destruction takes back", "SATIN-SD-014", "SATIN-SCHED-011", "SATIN-HIST-002")
+        else:
+            d.add("gasLedgers", f"code deposit of {len(code)} bytes: hashing {words} words x {KECCAK_WORD} = {keccak}; state "
+                  f"{CODE_STATE_PER_BYTE} x m={m} x {len(code)} = {fmt(state)}; history {COST_PER_HISTORY_BYTE} x "
+                  f"{len(code)} = {fmt(history)}", "SATIN-SCHED-011", "SATIN-STATE-003", "SATIN-HIST-002")
         d.add("resources", f"deposited code adds {len(code)} bytes of data size, no state growth of its own",
               "SATIN-ACCT-002", "SATIN-ACCT-013")
