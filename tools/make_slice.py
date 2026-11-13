@@ -84,6 +84,13 @@ RETURNER = bytes.fromhex("00000000000000000000000000000000000c0de7")  # Q of the
 SENDER_BACK = bytes.fromhex("00000000000000000000000000000000000c0de8")  # P of the sent-back example's last variant
 LOGGER = bytes.fromhex("00000000000000000000000000000000000c0de9")  # the log-reverted example's child
 WRITER_CHILD = bytes.fromhex("00000000000000000000000000000000000c0dea")  # the reverted and halted examples' child
+STOPPED_CHILD = bytes.fromhex("00000000000000000000000000000000000c0e01")  # a child a limit stops
+STARTED = bytes.fromhex("00000000000000000000000000000000000c0e02")  # a value call's target whose start is held
+TAKER = bytes.fromhex("00000000000000000000000000000000000c0e03")  # code that takes a record back and sends a hint
+RELAY_B = bytes.fromhex("00000000000000000000000000000000000c0e04")  # the relays of a chain three calls deep
+RELAY_C = bytes.fromhex("00000000000000000000000000000000000c0e05")
+DEEP = bytes.fromhex("00000000000000000000000000000000000c0e06")  # the frame three calls below the first
+LIST_KEY = 0x5EED_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0001  # the first of a list's keys
 CHAIN_ID = 1
 BLOCK_GAS_LIMIT = 10_000_000_000
 BLOCK_TIMESTAMP = 0x6553F102
@@ -218,7 +225,7 @@ class Case:
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
                  contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
-                 params=None, retune=None, reads=False, pools=False, destruction=False):
+                 params=None, retune=None, reads=False, pools=False, destruction=False, stops=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -250,6 +257,7 @@ class Case:
         self.reads = reads  # the case carries the reads group (D-61)
         self.pools = pools  # the case carries the gasPools group (D-64)
         self.destruction = destruction  # the case cites the destruction page's own rules (D-70)
+        self.stops = stops  # the case pins the limit-stop page: its derivation cites which endings are stops (D-73)
         if make:
             self.code = make(**self.params)
 
@@ -404,6 +412,7 @@ def cases() -> list[Case]:
     out += gas_pools_cases()
     out += take_back_cases()
     out += selfdestruct_cases()
+    out += limit_stop_cases()
     return out
 
 
@@ -688,6 +697,7 @@ def ordering_cases() -> list[Case]:
 # --- Gas detention, the Oracle's reads, the refused volatile read ---------------------------------
 
 RETURN_RETURNDATA = b"\x3d\x5f\x5f\x3e\x3d\x5f\xf3"  # RETURNDATACOPY(0, 0, RETURNDATASIZE), RETURN(0, RETURNDATASIZE)
+REVERT_RETURNDATA = b"\x3d\x5f\x5f\x3e\x3d\x5f\xfd"  # RETURNDATACOPY(0, 0, RETURNDATASIZE), REVERT(0, RETURNDATASIZE)
 
 
 def burn(words: int) -> bytes:
@@ -1338,6 +1348,229 @@ def selfdestruct_cases() -> list[Case]:
     return out
 
 
+# --- The limit-stop page's rules: stops below the first frame, at a start, and which endings are stops --
+
+
+def hints_leaving(room: int, kept: int = 0) -> bytes:
+    """Admitted hints, 1 MiB each and one smaller, forwarded 1 gas, that leave the transaction `room` bytes of data
+    size below TX_DATA_LIMIT, after its body and `kept` more bytes its frames counted before them."""
+    big = 1 << 20
+    total = model.TX_DATA_LIMIT - model.TX_BODY_SIZE - kept - room
+    count, last = divmod(total, big)
+    code = big_hints(count, big)
+    if last:
+        code += push(0) + push(0) + push(last) + push(0) + push(0) + push(int.from_bytes(model.ORACLE, "big")) + push(1) \
+            + b"\xf1\x50"
+    return code
+
+
+def limit_stop_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = TAKE_BACK_SPEC
+    limit = fmt(model.TX_DATA_LIMIT)
+    log0 = model.LOG_BASE_SIZE
+    record = model.WRITE_RECORD_SIZE
+    transfer_log = model.TRANSFER_LOG_SIZE
+
+    # A child stopped by the transaction's data-size limit; its caller catches the stop and carries on, held to what
+    # the transaction has left once the child's counts are discarded (SATIN-STOP-005 to -008).
+    room = 100
+    child_data = room - log0 + 1 - log0  # the child's second LOG0, one byte past what its first left
+    child = log(0, 0, 0, []) + log(0, 0, child_data, []) + STOP
+    for crosses in (False, True):
+        data = room - log0 + (1 if crosses else 0)
+        add(Case(f"satin/limit-stops/child-stopped/caller-log-{'crosses' if crosses else 'fits'}",
+                 f"hints leave the transaction {room} bytes of data size; a child emits an empty LOG0, kept, then a LOG0 "
+                 f"of {child_data} data bytes one byte past what is left, and is stopped with MegaLimitExceeded(0, "
+                 f"{limit}); its caller catches the stop, the child's kept log discarded with it, and emits a LOG0 of "
+                 f"{data} data bytes, " + ("one byte past the room the discard gave back: the caller is stopped in turn "
+                                           "and the stop is the transaction's result" if crosses else
+                                           "exactly the room the discard gave back: kept, and the transaction succeeds "
+                                           "with the child's stop as its output, keeping the caller's log and nothing of "
+                                           "the child"),
+                 boundary=f"the caller's log {'one byte over' if crosses else 'at'} the room the child's discard left",
+                 system=True, spec=spec, stops=True, gas=8_000_000,
+                 code=hints_leaving(room) + call(MAX_GAS, STOPPED_CHILD, 0, 0) + b"\x50" + log(0, 0, data, [])
+                 + RETURN_RETURNDATA, accounts={STOPPED_CHILD: model.Account(nonce=1, code=child)}))
+
+    # A value call's start held to what it kept, two records and a transfer log, before its frame runs (SATIN-STOP-013).
+    start = 2 * record + transfer_log
+    ran = revert(0, 32)  # the target, when it runs, reverts with a word of memory, zero
+    for crosses in (False, True):
+        left = start - (1 if crosses else 0)
+        add(Case(f"satin/limit-stops/start-crossing/value-call-{'one-byte-over' if crosses else 'at-limit'}",
+                 f"hints leave the transaction {left} bytes of data size, and a contract calls another with 1 wei, whose "
+                 f"start keeps two records and a transfer log, {start} bytes: " +
+                 ("one byte more than is left, so the started frame is stopped before it runs an instruction, the value "
+                  "and the transfer log reverted with it, and the caller returns the stop" if crosses else
+                  "exactly what is left, so the frame runs, reverts with its word, and the caller returns that word"),
+                 boundary=f"the start's {start} bytes {'one byte over' if crosses else 'at'} what the transaction has left",
+                 system=True, spec=spec, stops=True, gas=8_000_000, contract_balance=1,
+                 code=hints_leaving(left) + call(MAX_GAS, STARTED, 1, 0) + b"\x50" + RETURN_RETURNDATA,
+                 accounts={STARTED: model.Account(nonce=1, code=mstore(0, 0) + ran)}))
+
+    # A creation stopped at its start: the creator keeps its nonce bump, whose record is counted on the creator once
+    # the creation returned and held to the creator's limits (SATIN-STOP-013, -015, SATIN-LIM-008).
+    created = start - record  # the created account's record and the endowment's transfer log
+    for crosses in (False, True):
+        left = record - (1 if crosses else 0)
+        add(Case(f"satin/limit-stops/creation-stopped/creator-record-{'crosses' if crosses else 'fits'}",
+                 f"hints leave the transaction {left} bytes of data size, and a contract creates with 1 wei and empty init "
+                 f"code: the creation's start keeps the created account's record and the endowment's transfer log, "
+                 f"{created} bytes, and is stopped before its init code runs, the created account and the endowment "
+                 f"reverted with it; the creator keeps its nonce bump, whose {record}-byte record is counted on the creator "
+                 "once the creation returned, " + ("one byte past what is left: the creator is stopped in turn, and the "
+                                                   "stop is the transaction's result" if crosses else
+                                                   "exactly what is left: the creator runs on and returns the creation's "
+                                                   "stop"),
+                 boundary=f"the creator's nonce record {'one byte over' if crosses else 'at'} what the transaction has left",
+                 system=True, spec=spec, stops=True, gas=8_000_000, contract_balance=1,
+                 code=hints_leaving(left) + create(1, b"") + RETURN_RETURNDATA))
+
+    # A hint sent into room a take-back freed, by a frame that then fails (SATIN-STOP-006): the record stands again,
+    # the hint stays counted, and the frame it returns into returns the stop of the transaction's data-size limit.
+    oracle = int.from_bytes(model.ORACLE, "big")
+    hint = mstore(0, int.from_bytes(model.SEND_HINT, "big") << 224) + push(0) + push(0) + push(record) + push(0) \
+        + push(0) + push(oracle) + push(1) + b"\xf1\x50"
+    for name, tail, what in (
+            ("kept", STOP, "succeeds: the take-back and the hint merge, the transaction exactly at its limit, and the "
+                           "caller runs on"),
+            ("reverted", revert(0, 0), "reverts"),
+            ("halted", INVALID, "halts"),
+            ("stopped", log(0, 0, 0, []) + STOP, f"emits an empty LOG0, {log0} bytes past the limit, and is itself stopped"),
+    ):
+        failed = name != "kept"
+        add(Case(f"satin/limit-stops/hint-into-freed-room/{name}",
+                 f"a contract writes its slot 1, whose original is 7, to 8, a record of {record} bytes, then sends hints "
+                 "that take the transaction exactly to its data-size limit; a DELEGATECALL frame on its storage writes the "
+                 f"slot back to 7, taking the record back, sends a hint of {record} bytes into the room that freed, and "
+                 f"{what}" + ("; the failure puts the record back while the hint stays counted, over the limit, and the "
+                              "caller returns the stop of the transaction's data-size limit before it runs another "
+                              "instruction, the transaction's result" if failed else ""),
+                 system=True, spec=spec, stops=True, gas=8_000_000, storage={1: 7},
+                 code=sstore(1, 8) + hints_leaving(0, record) + delegatecall(MAX_GAS, TAKER) + b"\x50" + STOP,
+                 accounts={TAKER: model.Account(nonce=1, code=sstore(1, 7) + hint + tail)}))
+
+    # State growth: a child stopped by its frame budget, its share of what its caller has left; the caller resumes
+    # with the child's slots discarded and is held to its own budget (SATIN-STOP-005 to -007, SATIN-LIM-003).
+    growth = model.TX_STATE_GROWTH_LIMIT
+    own = growth - 10
+    budget = (growth - own) * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
+    grower = b"".join(sstore(k, 1) for k in range(1, growth - own + 1)) + STOP
+    for crosses in (False, True):
+        more = growth - own + (1 if crosses else 0)
+        add(Case(f"satin/limit-stops/child-budget/caller-{'crosses' if crosses else 'fills'}-its-budget",
+                 f"the transaction's own frame, whose state-growth budget is {fmt(growth)}, writes {fmt(own)} fresh slots, "
+                 f"then calls a child whose budget is the share of the {growth - own} it has left, {budget}: the child's "
+                 f"{budget + 1}th fresh slot crosses it, and the child is stopped with MegaLimitExceeded(3, {budget}), its "
+                 f"slots discarded; the caller writes {more} more fresh slots, " +
+                 (f"the last taking it past its budget {fmt(growth)}: it is stopped in turn, the transaction's result"
+                  if crosses else f"exactly its budget {fmt(growth)}: kept, and it returns the child's stop"),
+                 boundary=f"the caller's state growth {'one over' if crosses else 'at'} its budget after the child's discard",
+                 spec=spec, stops=True, gas=150_000_000,
+                 code=b"".join(sstore(k, 1) for k in range(1, own + 1)) + call(MAX_GAS, STOPPED_CHILD, 0, 0) + b"\x50"
+                 + b"".join(sstore(k, 1) for k in range(own + 1, own + more + 1)) + RETURN_RETURNDATA,
+                 accounts={STOPPED_CHILD: model.Account(nonce=1, code=grower)}))
+
+    # Which endings are stops: a log one byte past the data-size limit is the stop once its regular charge is paid,
+    # and an out-of-gas, a halt and no stop, one gas short of it (SATIN-STOP-002, SATIN-HIST-013).
+    room, data = 100, 100 - log0 + 1
+    charge = model.LOG_COST + model.LOG_DATA_COST * data
+    for paid in (True, False):
+        add(Case(f"satin/limit-stops/log-over-limit/regular-charge-{'paid' if paid else 'short'}",
+                 f"hints leave the transaction {room} bytes of data size, and the frame holds "
+                 f"{fmt(charge if paid else charge - 1)} of regular gas at a LOG0 of {data} data bytes, one byte past it, "
+                 f"whose regular charge is {fmt(charge)}: " +
+                 ("it pays the charge, the log's bytes cross the limit, and the frame is stopped with "
+                  f"MegaLimitExceeded(0, {limit})" if paid else
+                  "it cannot pay the charge and runs out of gas before the log's bytes are counted: a halt, which is no "
+                  "limit stop, and the transaction reports none"),
+                 boundary=f"the regular gas at the LOG0 {'at' if paid else 'one below'} its regular charge",
+                 system=True, spec=spec, stops=True, gas=8_000_000, tune=("log", charge if paid else charge - 1),
+                 code=hints_leaving(room) + log(0, 0, data, []) + STOP))
+
+    # The stop applies only to a transaction that pays every charge before its first frame (SATIN-STOP-003).
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    over = words_within(cap) + 1
+    crossing = b"\x42\x50" + burn(over) + STOP
+    start_record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
+    short = (model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + model.TX_VALUE_COST
+             + model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE + start_record - 1)
+    add(Case("satin/limit-stops/pre-frame/start-record-unpaid", "a value call to a contract whose frame would read "
+             "TIMESTAMP and cross gas detention's limit, with a gas limit one gas short of the history of its start "
+             f"record, {fmt(start_record)}, the last charge before its first frame: it runs out of gas before that frame "
+             "and reports no stop", boundary="the gas limit one below the charges before the first frame", spec=spec,
+             stops=True, value=1, gas=short, code=crossing))
+    add(Case("satin/limit-stops/pre-frame/start-record-paid", "the same value call with the gas to run its frame: the "
+             "frame reads TIMESTAMP and one memory expansion crosses gas detention's limit, so it is stopped with "
+             "MegaLimitExceeded(2, limit), the value and its records reverted with it", spec=spec, stops=True, value=1,
+             gas=21_000_000, code=crossing))
+
+    # A stop's bytes do not make a stop: a contract reverting with them, of every kind, and a caller re-raising the stop
+    # it caught, are ordinary reverts, and the transaction reports no stop (SATIN-STOP-020, -021).
+    for kind in range(4):
+        data = model.limit_exceeded(kind, 10)
+        add(Case(f"satin/limit-stops/revert-with-stop-bytes/kind-{kind}", f"a contract reverts with the bytes of "
+                 f"MegaLimitExceeded({kind}, 10), which no limit produced: an ordinary revert, and the transaction "
+                 "reports no stop", spec=spec, stops=True, code=bytes_to_memory(data) + revert(0, len(data))))
+    room = 100
+    add(Case("satin/limit-stops/child-stopped/caller-re-raises", f"hints leave the transaction {room} bytes of data size; "
+             f"a child emits an empty LOG0 and then a LOG0 of {child_data} data bytes past what is left, and is stopped with "
+             f"MegaLimitExceeded(0, {limit}); its caller reverts with the stop's bytes as its own data: the transaction "
+             "reverts with them and reports no stop, its own frame having crossed nothing", system=True, spec=spec,
+             stops=True, gas=8_000_000, code=hints_leaving(room) + call(MAX_GAS, STOPPED_CHILD, 0, 0) + b"\x50"
+             + REVERT_RETURNDATA, accounts={STOPPED_CHILD: model.Account(nonce=1, code=child)}))
+    # A stop above the execution cap returns the reservoir with the unspent regular gas (SATIN-STOP-009).
+    body = model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE
+    add(Case("satin/limit-stops/reservoir/compute-stop-above-cap", "a gas limit above the execution cap gives the first "
+             "frame a reservoir, which pays the body's history first; the frame reads TIMESTAMP and one memory expansion "
+             "crosses gas detention's limit: the frame is stopped with MegaLimitExceeded(2, limit), and the reservoir it "
+             "kept returns to the sender with its unspent regular gas", spec=spec, stops=True,
+             gas=model.EXECUTION_CAP + body + 1_000_000, code=b"\x42\x50" + burn(words_within(model.BLOCK_ENV_ACCESS_COMPUTE_GAS) + 1)
+             + STOP))
+    # Budgets three calls deep: the first frame's 1,000, then 98% of each caller's remaining (SATIN-LIM-003).
+    deep = growth
+    for _ in range(3):
+        deep = deep * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
+    relay = lambda to: call(MAX_GAS, to, 0, 0) + b"\x50" + RETURN_RETURNDATA
+    add(Case("satin/limit-stops/child-budget/depth-three", f"the first frame relays to a frame three calls below it, "
+             f"each relay writing nothing: that frame's state-growth budget is {fmt(deep)}, the share of the share of the "
+             f"share of {fmt(growth)}, and its {fmt(deep + 1)}th fresh slot crosses it: it is stopped with "
+             f"MegaLimitExceeded(3, {fmt(deep)}), its slots discarded, and every relay returns the stop's bytes, the "
+             "transaction succeeding with them", spec=spec, stops=True, gas=150_000_000, code=relay(RELAY_B),
+             accounts={RELAY_B: model.Account(nonce=1, code=relay(RELAY_C)), RELAY_C: model.Account(nonce=1, code=relay(DEEP)),
+                       DEEP: model.Account(nonce=1, code=b"".join(sstore(k, 1) for k in range(1, deep + 2)) + STOP)}))
+
+    # State growth can cross before the first frame only on an authorization list, which is then skipped and the own
+    # frame stopped before it runs, naming the transaction limit (SATIN-STOP-017, SATIN-AUTH-010): one absent authority
+    # more than the state-growth limit.
+    entries = [(LIST_KEY + i, CHAIN_ID, DELEGATE, 0) for i in range(growth + 1)]
+    add(Case("satin/limit-stops/authorization-list/one-authority-over", f"an EIP-7702 list of {fmt(growth + 1)} entries, each "
+             "signed by an authority the state holds no account for: its state-growth total, one unit for each new "
+             f"authority, crosses the transaction's limit of {fmt(growth)}, so the list is skipped, none of it applied or "
+             "charged beyond the intrinsic gas and the body's history, and the transaction's own frame is stopped before "
+             f"it runs with MegaLimitExceeded(3, {fmt(growth)})", spec=spec, stops=True, ty=4, to=EOA, code=b"",
+             gas=20_000_000, authorizations=entries))
+
+    # A deposit whose own frame is stopped settles as a revert, not a failed deposit (SATIN-STOP-010); the same
+    # deposit one gas short of the crossing charge runs out of gas and is a failed deposit.
+    cost = model.memory_cost(over)
+    for stopped in (True, False):
+        add(Case(f"satin/limit-stops/deposit/{'stopped' if stopped else 'out-of-gas'}",
+                 "a deposit from a sender empty under EIP-161, whose caller account it creates, reads TIMESTAMP and "
+                 f"holds {'exactly' if stopped else 'one gas less than'} the {fmt(cost)} of one memory expansion past "
+                 "what gas detention's limit leaves it: " +
+                 ("the expansion is the crossing, the frame is stopped with MegaLimitExceeded(2, limit), and the deposit "
+                  "settles as a revert, keeping its mint, its nonce bump and its created caller" if stopped else
+                  "the expansion is beyond its whole regular gas, an out-of-gas, so its frame halts and it is a failed "
+                  "deposit"),
+                 boundary=f"the regular gas at the expansion {'at' if stopped else 'one below'} its charge",
+                 spec=spec, stops=True, deposit=(ETH, 21_000_000), absent_sender=True, code=crossing,
+                 tune=("expand", cost if stopped else cost - 1)))
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -1396,7 +1629,7 @@ def build(c: Case):
                       authorizations=[(cid, target, n, ex.address_of(k)) for k, cid, target, n in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
     run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
-                    destruction=c.destruction)
+                    destruction=c.destruction, stops=c.stops)
     result = run.run()
     result.probe = run.probe
 
@@ -1568,6 +1801,12 @@ def forward_cap(remaining: int) -> int:
     return remaining - remaining * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR
 
 
+# The limit-stop deposits the revm-based implementation fails: it charges a deposit no history gas (SATIN-HIST-016), so
+# a stopped deposit's gas used is below the rule's by its body's history, and the deposit one gas short of the crossing
+# charge holds that history more regular gas, which pays the charge: it stops where the rule runs out of gas (D-74).
+STOP_DEPOSITS = {"satin/limit-stops/deposit/stopped", "satin/limit-stops/deposit/out-of-gas"}
+
+
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -1612,6 +1851,30 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
                    "rule's")
         return {"adapter": adapter, "path": "/expected/gasLedgers/blockGas", "expected": q(block),
                 "actual": q(block + more), "verdict": verdict}
+    if c.case_id in STOP_DEPOSITS:
+        ledgers = fx["expected"]["gasLedgers"]
+        price, body = model.COST_PER_HISTORY_BYTE, model.TX_BODY_SIZE
+        history = body * price
+        if c.case_id.endswith("/stopped"):
+            used = int(ledgers["gasUsed"], 16)
+            verdict = ("SATIN-STOP-010 settles a deposit whose own frame is stopped as the revert of SATIN-STOP-009, which "
+                       "keeps the body's history, and SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any "
+                       f"transaction does; the revm-based implementation at {REVM_PIN} settles the stop as a revert but "
+                       f"charges the deposit no history gas, so its gas used is {fmt(history)} below the rule's: the body's "
+                       f"{body} bytes at {price} gas")
+            return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
+                    "actual": q(used - history), "verdict": verdict}
+        block = int(ledgers["blockGas"], 16)
+        ran = (model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + 2 * model.G_BASE + 2 * model.G_VERYLOW)
+        verdict = ("SATIN-DET-020 makes a regular charge beyond the frame's whole regular gas an out-of-gas, as without the "
+                   "read, and SATIN-DEP-004 and SATIN-STOP-010 make a deposit whose own frame halts a failed deposit, which "
+                   "reports its whole gas limit as regular gas (SATIN-DEP-005); the revm-based implementation at "
+                   f"{REVM_PIN} charges a deposit no history gas (SATIN-HIST-016), so the frame holds the body's "
+                   f"{fmt(history)} more regular gas, which pays the expansion: it stops the frame at the crossing "
+                   "(SATIN-DET-018) and settles the deposit as a revert, its regular ledger, which the block counts, the "
+                   f"intrinsic gas and the {2 * model.G_BASE + 2 * model.G_VERYLOW} of compute that ran, {fmt(ran)}")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/blockGas", "expected": q(block), "actual": q(ran),
+                "verdict": verdict}
     if c.case_id in TAKE_BACKS_DEPOSITS:
         kept = int(fx["expected"]["gasLedgers"]["historyBytes"], 16)
         verdict = ("SATIN-HIST-022 makes a deposit report the history bytes it keeps, and SATIN-DEP-006 and SATIN-TAKE-012 "
@@ -1756,10 +2019,13 @@ def tuned(c: Case) -> None:
     """Sets a tuned case's gas limit so its probe point holds the regular gas it names: below the execution
     cap every charge before that point is fixed, so the probe moves with the gas limit one for one."""
     point, want = c.tune
-    if c.gas > model.EXECUTION_CAP:
+    if (c.deposit[1] if c.deposit else c.gas) > model.EXECUTION_CAP:
         raise SystemExit(f"{c.case_id}: a tuned gas limit must be below the execution cap")
     _, result, _ = build(c)
-    c.gas += want - result.probe[point]
+    if c.deposit:  # a deposit's gas limit is its envelope's
+        c.deposit = (c.deposit[0], c.deposit[1] + want - result.probe[point])
+    else:
+        c.gas += want - result.probe[point]
     _, result, _ = build(c)
     if result.probe.get(point) != want:
         raise SystemExit(f"{c.case_id}: the gas limit {c.gas} gives {point} {result.probe.get(point)}, not {want}")
