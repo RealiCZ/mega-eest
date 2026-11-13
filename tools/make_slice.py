@@ -9,7 +9,8 @@ existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of 
 principles, gas detention, the Oracle's reads, the refused volatile read, the reads group, the
 stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64, and
 those for the take-back page's worked examples, the destruction page's own rules and gas detention's
-rules `specs/satin-cdded1e`, D-65, D-70 and D-67). No implementation is
+rules `specs/satin-cdded1e`, D-65, D-70 and D-67, and the two whose derivation takes `SATIN-DET-011`'s
+halting precompile `specs/satin-c130558`, D-78). No implementation is
 run: the filler's output is a candidate to compare with, never the source of these values
 (`tools/run-slice.sh` runs both implementations against them).
 
@@ -53,12 +54,15 @@ SPEC_DIR = os.path.join(ROOT, "specs", "satin-d34e626")
 SPEC_COMMITS = {"satin-d34e626": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
                 "satin-d334ef8": "d334ef8748a6fb09dfcf1162704539fe22373aef",
                 "satin-5fb2688": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
-                "satin-cdded1e": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558"}
+                "satin-cdded1e": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+                "satin-c130558": "c130558e2f38a913982dc17f0cd8eb8834967262"}
 DEFAULT_SPEC = "satin-d34e626"
 INTERCEPTION_SPEC = "satin-d334ef8"  # interception before the frame start, SATIN-ICPT-007
 ORDERING_SPEC = "satin-5fb2688"  # the charge-order principles, SATIN-HIST-023
 TAKE_BACK_SPEC = "satin-cdded1e"  # one home for each rule, and the take-back page's worked examples as cases
-PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC}  # the snapshots that state the principles the model cites
+CURRENT_SPEC = "satin-c130558"  # the snapshot new cases cite (D-78)
+# The snapshots that state the principles the model cites.
+PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC, CURRENT_SPEC}
 OUT = os.path.join(ROOT, "slice")
 
 KEY = ex.TEST_KEY
@@ -1042,15 +1046,19 @@ def detention_rule_cases() -> list[Case]:
     over_bound = model.MODEXP_MAX_INPUT_SIZE + 1
     modexp_input = word(over_bound) + word(0) + word(0)
     modexp_price = model.modexp_price(modexp_input)[0]
-    for name, room, tail, intent, edge in (
+    # A precompile that halts burns its whole forward and counts none of it as compute, its charged price included:
+    # `SATIN-DET-011` states it from `c130558` on, so the two cases whose precompile runs and halts cite that
+    # snapshot (D-78, superseding D-69's first reading).
+    for name, room, tail, intent, edge, snapshot in (
             ("modexp/over-bound-at-allowance", modexp_price, STOP, "the allowance exactly: it runs, charges its price, "
-             "fails EIP-7823's bound and consumes its forward, as without the read", "the price at the allowance"),
+             "fails EIP-7823's bound and consumes its forward, as without the read", "the price at the allowance",
+             CURRENT_SPEC),
             ("modexp/over-bound-past-allowance", modexp_price - 1, RETURN_RETURNDATA, "one past the allowance and within "
              "its forward: an input that would fail a check made after the gas charge is the crossing too",
-             "the price one past the allowance")):
+             "the price one past the allowance", spec)):
         add(Case(f"satin/detention/precompile/{name}", f"after TIMESTAMP, a ModExp call whose base length, "
                  f"{fmt(over_bound)}, is over EIP-7823's bound, priced by its formula all the same, {fmt(modexp_price)}: "
-                 + intent, spec=spec, detention=True, gas=21_000_000, boundary=edge,
+                 + intent, spec=snapshot, detention=True, gas=21_000_000, boundary=edge,
                  make=lambda words, pad, tail=tail: detained(words, pad) + bytes_to_memory(modexp_input)
                  + call(MAX_GAS, model.MODEXP, 0, len(modexp_input)) + tail,
                  params={"words": words_within(cap - 2 * modexp_price - 30_000), "pad": 0},
@@ -1059,7 +1067,7 @@ def detention_rule_cases() -> list[Case]:
     add(Case("satin/detention/precompile/bn254-pairing-over-size-limit", f"after TIMESTAMP, a BN254 pairing call of "
              f"{fmt(pairing)} bytes, one over its size limit, with an allowance of 100 and a forward past the pairing "
              "formula's price for that many bytes: priced at zero, it runs on its forward, fails before any gas check and "
-             "consumes the forward, as without the read", spec=spec, detention=True, gas=31_000_000,
+             "consumes the forward, as without the read", spec=CURRENT_SPEC, detention=True, gas=31_000_000,
              make=lambda words, pad: detained(words, pad) + call(MAX_GAS, model.BN254_PAIRING, 0, pairing) + STOP,
              params=dict(start), retune=[("precompile-room", 100, "pad", -1)]))
     # A user's deposit is detained as any transaction (SATIN-DET-026).
@@ -2389,7 +2397,7 @@ EVIDENCE = ("derived from the specification by tools/satin_model/, an executable
             "shares no code with either implementation; implementation runs are cross-checks only")
 
 
-def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str) -> tuple[dict, dict]:
+def fixture(c: Case, descriptor_digest: str, rule_texts: dict, retired: set, spec_commit: str) -> tuple[dict, dict]:
     """The case's fixture, without its rules (`derive` adds the pins), and its explanation: the derivation of every
     observation group, the rules it applied with their text digests, and the decoded transaction."""
     if c.retune:
@@ -2412,6 +2420,9 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str)
     unknown = [r for r in applied if r not in rule_texts]
     if unknown:
         raise SystemExit(f"{c.case_id}: cites rules the registry does not have: {unknown}")
+    gone = [r for r in applied if r in retired]
+    if gone:
+        raise SystemExit(f"{c.case_id}: applies rules its snapshot {c.spec} retires: {gone}")
     requires = ["group:gas-ledgers", "group:limit", "group:outcome", "group:receipts", "group:resources", "group:state",
                 "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else []) \
         + (["group:limit-stop"] if result.observations["limit"] else []) + (["group:gas-pools"] if c.pools else [])
@@ -2490,19 +2501,20 @@ def canonical(value) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
 
 
-def spec_of(name: str) -> tuple[str, dict]:
+def spec_of(name: str) -> tuple[str, dict, set]:
+    """A snapshot's descriptor digest, each rule's text digest, and the ids it retires."""
     d = os.path.join(ROOT, "specs", name)
     with open(os.path.join(d, "descriptor.json"), encoding="utf-8") as f:
         digest = "sha256:" + hashlib.sha256(canonical(json.load(f))).hexdigest()
     with open(os.path.join(d, "rules.json"), encoding="utf-8") as f:
-        texts = {k: v["textDigest"] for k, v in json.load(f)["rules"].items()}
-    return digest, texts
+        rules = json.load(f)["rules"]
+    return digest, {k: v["textDigest"] for k, v in rules.items()}, {k for k, v in rules.items() if v["status"] != "active"}
 
 
 def outputs(explained: dict | None = None) -> dict[str, str]:
     """Every file of slice/, by its path there. `explained`, when given, receives each case's explanation."""
     specs = {name: spec_of(name) for name in SPEC_COMMITS}
-    descriptor_digest, _ = specs[DEFAULT_SPEC]
+    descriptor_digest = specs[DEFAULT_SPEC][0]
     files: dict[str, str] = {}
     index = []
     by_id = {}

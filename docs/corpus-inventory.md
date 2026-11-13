@@ -42,9 +42,11 @@ scenario added after the pin); the inventory follows the pin and moves with it.
 
 ## 2. mega-evm state tests and transition tools
 
-Pinned at mega-evm commit `4e39cfd6`, the revm-based implementation's pin (`crates/mega-state-test`,
-`crates/state-test`, `bin/mega-evme`). Every count below is the same as at the previous pin; the
-deviation registry gained one entry, `slotnum-pushes-zero` (12 Amsterdam entries).
+Pinned at mega-evm commit `7110d87b`, the revm-based implementation's pin (`crates/mega-state-test`,
+`crates/state-test`, `bin/mega-evme`), and read again there (D-78). Every count below is the same as
+at the previous pin, `4e39cfd6`: the three integration test files, the replay fixtures and the
+deviation registry (three entries, `slotnum-pushes-zero` with its 12 Amsterdam entries among them)
+are byte-identical at the two revisions.
 
 | Asset | Disposition |
 | --- | --- |

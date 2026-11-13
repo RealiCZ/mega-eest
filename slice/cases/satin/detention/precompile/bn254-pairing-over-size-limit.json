@@ -130,7 +130,7 @@
     },
     "definition": "tools/make_slice.py::detention_rule_cases",
     "generator": "tools/make_slice.py",
-    "specCommit": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+    "specCommit": "c130558e2f38a913982dc17f0cd8eb8834967262",
     "status": "candidate"
   },
   "requires": [
@@ -159,7 +159,7 @@
   ],
   "schemaVersion": "2.0",
   "specRef": {
-    "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+    "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
     "name": "megaeth/Satin"
   }
 }

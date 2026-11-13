@@ -12,8 +12,9 @@ read-only consumer, a candidate filler, an exporter from the differential scenar
 reviewed `state-transition` cases whose expectations are derived from the specification.
 
 - Specification: the Satin section of `https://github.com/RealiCZ/mega-evm-satin-spec`, snapshots
-  at `cac999a`, `22a5f4b` and `d34e626` (the slice pins `d34e626`), and a registry of the frozen
-  Rex6 text ([spec identity](docs/spec-identity.md)).
+  at `cac999a`, `22a5f4b`, `d34e626`, `d334ef8`, `5fb2688`, `cdded1e` and `c130558` (each slice case
+  names its own; new cases cite `c130558`), and a registry of the frozen Rex6 text
+  ([spec identity](docs/spec-identity.md)).
 - Fixture format: `mega-execution-fixture` 2.0, five profiles: `state-transition`,
   `transaction-validation`, `block-import`, `block-build`, `stateless-block`
   ([format](docs/format.md), [profiles](docs/profiles.md)).
@@ -23,7 +24,7 @@ reviewed `state-transition` cases whose expectations are derived from the specif
 | Path | Content |
 | --- | --- |
 | [`schema/`](schema) | JSON Schemas: `fixture.json` (envelope), one file per profile, `common.json`, `manifest.json` |
-| [`specs/`](specs) | Spec bundles (descriptor, rule registry with text digests, source page digests): `satin-cac999a`, `satin-22a5f4b`, `satin-d34e626`, `rex6-d4c913c5` |
+| [`specs/`](specs) | Spec bundles (descriptor, rule registry with text digests, source page digests): `satin-cac999a`, `satin-22a5f4b`, `satin-d34e626`, `satin-d334ef8`, `satin-5fb2688`, `satin-cdded1e`, `satin-c130558`, `rex6-d4c913c5` |
 | [`crates/mega-fixture-format/`](crates/mega-fixture-format) | Rust format crate: strict decoding, validation, canonical JSON, digests, comparison, the consumer loop and the filler; a `mega-fixture` CLI. No engine dependency |
 | [`adapters/`](adapters) | One adapter per Satin implementation, each its own workspace, pinned by commit ([adapter protocol](docs/adapter-protocol.md)) |
 | [`exporter/`](exporter) | Dumps the differential gates' scenarios for `tools/export_scenarios.py` |

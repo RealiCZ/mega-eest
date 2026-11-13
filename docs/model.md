@@ -50,7 +50,8 @@ specification's text and constants:
   absence (`BLOBHASH`, a creation onto the beneficiary); a transaction detained from its start; an
   `SSTORE` in a detained frame; and a call to a precompile decided from its price: the identity
   precompile, ModExp's EIP-7883 price over and under EIP-7823's bound, and the BN254 pairing over its
-  size limit.
+  size limit. A precompile that halts burns its whole forward and counts none of it as compute, its
+  charged price included (`SATIN-DET-011` at `c130558`, D-78).
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists

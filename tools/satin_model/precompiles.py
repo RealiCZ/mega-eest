@@ -126,14 +126,18 @@ class PrecompilesMixin:
             d.add("gasLedgers", f"what the failed precompile burns, its forward of {fmt(child_gas)}, is not compute: the "
                   f"transaction's compute stays {fmt(self.compute)}", "SATIN-DET-011", "SATIN-DET-020")
             return False, b"", 0
-        self.compute += price
         if fails:
             d.add("outcome", f"the precompile at {h(target)} runs on its forward of {fmt(child_gas)}, charges its price "
                   f"{fmt(price)}, then fails its input's check and consumes the whole forward, as without the read",
                   "SATIN-PCMP-005", "SATIN-PCMP-007", "SATIN-DET-021")
-            d.add("gasLedgers", f"its charged price {fmt(price)} is compute, now {fmt(self.compute)}; the rest of the "
-                  "forward it burns is not", "SATIN-DET-009", "SATIN-DET-011", "SATIN-DET-019")
+            # A halting precompile counts none of what it burns as compute, its charged price included; only the
+            # crossing returns its forward (SATIN-DET-011 from c130558 on, D-78).
+            d.add("gasLedgers", f"a precompile that halts burns its whole forward, {fmt(child_gas)}, its charged price "
+                  f"{fmt(price)} included, and none of it is compute: the transaction's compute stays "
+                  f"{fmt(self.compute)}; only a precompile that is the crossing returns its forward", "SATIN-DET-009",
+                  "SATIN-DET-011", "SATIN-DET-021")
             return False, b"", 0
+        self.compute += price
         d.add("outcome", f"the precompile at {h(target)} runs on its forward of {fmt(child_gas)}, charges its price "
               f"{fmt(price)} and returns its {fmt(len(data))} input bytes", "SATIN-DET-021", "SATIN-OUT-001")
         d.add("gasLedgers", f"the precompile's price is compute, now {fmt(self.compute)}; it returns "
