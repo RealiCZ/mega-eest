@@ -33,6 +33,12 @@ specification's text and constants:
   in the transaction, with the destruction table; a value start without a frame held to the started
   frame's budget; an EIP-7702 list whose second entry for one authority clears the delegation; a
   deposit whose own frame halts.
+- **The destruction page's shapes** (D-70): a `SELFDESTRUCT` of an account the transaction did not
+  create, to another account, to the sender or to itself; a repeated one while the mark stands; the
+  marked account, kept until the transaction ends, its stores, a code deposit after its constructor
+  destroyed it, a value sent to it and its removal; a creation onto an address whose leaf the state
+  holds with storage, whose slots read zero; a mark a failed frame discards; and the read of a
+  destruction's beneficiary that is the block beneficiary, marked last.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -42,7 +48,7 @@ raises `Unmodelled` rather than guessing.
 
 | Not in the model | Where it is covered instead |
 | --- | --- |
-| A general EVM: arbitrary bytecode, the whole opcode set, precompiles; `CREATE2`, `CALLCODE` and `STATICCALL`; a creation that fails or collides, a `SELFDESTRUCT` of an account the transaction did not create or a repeated one; a limit crossed below the transaction's own frame other than at a start without a frame; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
+| A general EVM: arbitrary bytecode, the whole opcode set, precompiles; `CREATE2`, `CALLCODE` and `STATICCALL`; a creation that fails or collides, or lands on an address with a balance; a `SELFDESTRUCT` to itself of an account created in the transaction, or in a creation transaction's own frame; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a limit crossed below the transaction's own frame other than at a start without a frame; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | An expectation two engines agree on but the model does not derive | Nothing, today. Such a case would be a different kind of expectation, an agreement rather than a derivation from the specification, and would have to be labelled apart from the spec-derived cases (its own provenance status and evidence) if it were ever added |
@@ -68,10 +74,10 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use, the volatile reads and their refusal, the opcode charges of a call, a `DELEGATECALL`, a creation and a `SELFDESTRUCT` |
 | `calls.py` | A call decided in the order of `SATIN-ICPT-007`: interception, the frame start, the records a value start makes and takes back, the child and what it returns |
 | `frames.py` | A child frame's budgets and reservoir share, the snapshot its failure returns to, how it ends (`SATIN-POOL-012`, `-014`), a value start without a frame held to the started frame's budget, and `DELEGATECALL` |
-| `creation.py` | A `CREATE` from a frame, and the first `SELFDESTRUCT` of an account created in the transaction with the destruction table, in the order of `SATIN-SD-019` |
+| `creation.py` | A `CREATE` from a frame, onto an absent address or one whose storage then reads zero; a `SELFDESTRUCT` in the order of `SATIN-SD-019`: the first of an account created in the transaction with the destruction table and its mark, a repeated one, and one of an account the transaction did not create |
 | `interception.py` | The transaction's own `keylessDeploy` call: the decoder's conditions and the deployment's first steps |
 | `authorizations.py` | An EIP-7702 list before the first frame: its simulation's loads, each entry's charges and records, a further entry for one authority |
-| `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, and a creation's deposited code |
+| `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, and a creation's deposited code |
 | `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it |
 | `limits.py` | A write of the transaction's own frame held to its budget and then the transaction's limit |
 

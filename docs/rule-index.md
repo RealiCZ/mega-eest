@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-cdded1e], source commit `cdded1e1d131a1d16a2c4b1cd
 (committed `2026-11-12T16:34:44+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **152** (112 gating, 40 quarantined).
-Cited rule IDs: **175**. Uncited rule IDs in that registry: **235**
-(226 active, 9 retired).
+Cases: **180** (140 gating, 40 quarantined).
+Cited rule IDs: **189**. Uncited rule IDs in that registry: **221**
+(212 active, 9 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -39,6 +39,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/logs/log4-four-topics-two-words] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/two-logs-in-order] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-log] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
@@ -150,6 +151,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -235,6 +264,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -285,6 +339,25 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/log-reverted/allowance] | quarantined | unqualified | [satin-cdded1e] |
@@ -306,6 +379,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored-gas] | quarantined | unqualified | [satin-5fb2688] |
@@ -431,6 +505,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/delegate-not-loaded] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -481,6 +583,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
@@ -498,6 +618,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-deposit] | quarantined | unqualified | [satin-cdded1e] |
@@ -547,6 +685,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -764,6 +910,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-003
 
@@ -780,6 +927,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-009
 
@@ -819,6 +968,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-014
 
@@ -849,6 +999,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-019
 
@@ -912,6 +1063,30 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -969,6 +1144,30 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -1026,6 +1225,29 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -1146,6 +1368,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -1292,6 +1542,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -1438,6 +1716,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -1514,6 +1820,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/pre-frame/keyless-start-record-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/pre-frame/keyless-start-record-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/set-then-clear] | gating | unqualified | [satin-cdded1e] |
 | [satin/value-transfer/absent-recipient/bucket-x4] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/absent-recipient/minimum-bucket] | gating | unqualified | [satin-d34e626] |
@@ -1562,6 +1870,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-log] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -1595,6 +1919,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
@@ -1625,6 +1965,25 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/limit-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
@@ -1675,6 +2034,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -1695,6 +2076,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
@@ -1719,6 +2118,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/limit-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-then-restored] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
@@ -1741,6 +2162,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-HIST-014
@@ -1758,6 +2187,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/limit-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/log-reverted/allowance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
@@ -1788,6 +2218,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/log-reverted/allowance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
@@ -1814,6 +2245,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/log-reverted/allowance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/round-trip] | quarantined | unqualified | [satin-cdded1e] |
@@ -1936,6 +2370,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -2014,6 +2476,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/pre-frame/keyless-start-record-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -2102,6 +2586,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -2293,6 +2799,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/delegate-not-loaded] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -2363,6 +2897,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
@@ -2476,6 +3032,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -2521,6 +3105,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
@@ -2553,6 +3155,25 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
@@ -2582,6 +3203,32 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
@@ -2609,6 +3256,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/logs/two-logs-in-order] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-log] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
@@ -2642,6 +3290,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
 
+### SATIN-LOG-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+
 ### SATIN-LOG-006
 
 | Case | Status | Citation | Registry |
@@ -2652,6 +3307,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/log-reverted/allowance] | quarantined | unqualified | [satin-cdded1e] |
@@ -2852,6 +3532,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/balance-cold-paid] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/delegate-loaded] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -2918,6 +3626,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/pre-frame/keyless-start-record-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-child/halted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/signs-turned] | gating | unqualified | [satin-cdded1e] |
@@ -3038,6 +3749,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -3184,6 +3923,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -3308,6 +4075,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/delegate-loaded] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -3382,6 +4177,32 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -3452,6 +4273,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-child/halted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-child/reverted] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -3493,6 +4322,30 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -3552,6 +4405,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/pre-frame/keyless-start-record-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | quarantined | unqualified | [satin-cdded1e] |
@@ -3584,6 +4444,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/outcomes/revert/empty] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/with-data] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/keyless-start-record-exact] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/value-transfer/contract-revert] | gating | unqualified | [satin-d34e626] |
 
@@ -3634,6 +4496,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/balance-cold-unpaid] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/delegate-not-loaded] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -3755,6 +4619,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -3901,6 +4793,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -4046,6 +4966,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -4125,6 +5073,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/value-transfer/absent-recipient/minimum-bucket] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/empty-leaf-recipient] | gating | unqualified | [satin-d334ef8] |
 
+### SATIN-SCHED-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
+
 ### SATIN-SCHED-002
 
 | Case | Status | Citation | Registry |
@@ -4166,6 +5136,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -4243,6 +5241,30 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/delegate-not-loaded] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -4306,6 +5328,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -4436,6 +5468,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -4582,6 +5642,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -4703,14 +5791,105 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-003
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-SD-004
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -4718,6 +5897,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -4725,6 +5920,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -4732,6 +5943,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -4739,6 +5966,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -4746,21 +5989,146 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-011
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-012
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-013
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-014
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-015
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-016
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-SD-018
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-SD-019
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/no-balance] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-itself] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/to-sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-SD-020
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STATE-001
 
@@ -4797,6 +6165,25 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -4848,6 +6235,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -4880,6 +6275,25 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
@@ -4919,6 +6333,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -4945,6 +6367,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/set-then-clear] | gating | unqualified | [satin-cdded1e] |
 | [satin/value-transfer/empty-leaf-recipient] | gating | unqualified | [satin-d334ef8] |
 
@@ -4978,6 +6401,30 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -5004,6 +6451,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-004
 
@@ -5013,6 +6461,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-009
 
@@ -5022,6 +6471,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-011
 
@@ -5031,6 +6481,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-012
 
@@ -5052,6 +6503,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-020
@@ -5080,6 +6532,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-TAKE-002
 
@@ -5103,6 +6556,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
@@ -5140,6 +6615,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -5173,6 +6664,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | quarantined | unqualified | [satin-cdded1e] |
@@ -5421,7 +6915,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-LIM-016` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-017` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-018` | retired | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/resource-limits.md) |
-| `SATIN-LOG-005` | active | [evm/transfer-logs.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/transfer-logs.md) |
 | `SATIN-LOG-007` | active | [evm/transfer-logs.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/transfer-logs.md) |
 | `SATIN-MAC-006` | active | [system-contracts/mega-access-control.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/mega-access-control.md) |
 | `SATIN-MAC-007` | active | [system-contracts/mega-access-control.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/mega-access-control.md) |
@@ -5491,22 +6984,9 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-REG-007` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/sequencer-registry.md) |
 | `SATIN-REG-008` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/sequencer-registry.md) |
 | `SATIN-REG-009` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/sequencer-registry.md) |
-| `SATIN-SCHED-001` | active | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-schedule.md) |
 | `SATIN-SCHED-012` | active | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-schedule.md) |
 | `SATIN-SCHED-013` | retired | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-schedule.md) |
 | `SATIN-SCHED-014` | active | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-schedule.md) |
-| `SATIN-SD-001` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-002` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-003` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-010` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-011` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-012` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-013` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-014` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-015` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-016` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-017` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
-| `SATIN-SD-020` | active | [evm/selfdestruct.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/selfdestruct.md) |
 | `SATIN-SIZE-001` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/contract-limits.md) |
 | `SATIN-SIZE-002` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/contract-limits.md) |
 | `SATIN-SIZE-003` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/contract-limits.md) |
@@ -5652,6 +7132,34 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/reads/list-simulated-applied]: ../slice/quarantine/satin--reads--list-simulated-applied.json
 [satin/reads/list-simulated-out-of-gas]: ../slice/quarantine/satin--reads--list-simulated-out-of-gas.json
 [satin/reads/oracle-slot-before-charge]: ../slice/quarantine/satin--reads--oracle-slot-before-charge.json
+[satin/selfdestruct/beneficiary-read/halted-unmarked]: ../slice/cases/satin--selfdestruct--beneficiary-read--halted-unmarked.json
+[satin/selfdestruct/beneficiary-read/marked-after-charges]: ../slice/cases/satin--selfdestruct--beneficiary-read--marked-after-charges.json
+[satin/selfdestruct/created/fresh-slot]: ../slice/cases/satin--selfdestruct--created--fresh-slot.json
+[satin/selfdestruct/created/fresh-slot-on-little-gas]: ../slice/cases/satin--selfdestruct--created--fresh-slot-on-little-gas.json
+[satin/selfdestruct/discarded/halted]: ../slice/cases/satin--selfdestruct--discarded--halted.json
+[satin/selfdestruct/discarded/reverted]: ../slice/cases/satin--selfdestruct--discarded--reverted.json
+[satin/selfdestruct/discarded/reverted-then-kept]: ../slice/cases/satin--selfdestruct--discarded--reverted-then-kept.json
+[satin/selfdestruct/first-effective/absent-leaf]: ../slice/cases/satin--selfdestruct--first-effective--absent-leaf.json
+[satin/selfdestruct/first-effective/absent-leaf-bucket-x2]: ../slice/cases/satin--selfdestruct--first-effective--absent-leaf-bucket-x2.json
+[satin/selfdestruct/first-effective/empty-leaf-with-storage]: ../slice/cases/satin--selfdestruct--first-effective--empty-leaf-with-storage.json
+[satin/selfdestruct/first-effective/in-constructor]: ../slice/cases/satin--selfdestruct--first-effective--in-constructor.json
+[satin/selfdestruct/first-effective/slot-restored-before]: ../slice/cases/satin--selfdestruct--first-effective--slot-restored-before.json
+[satin/selfdestruct/marked/code-deposited]: ../slice/cases/satin--selfdestruct--marked--code-deposited.json
+[satin/selfdestruct/marked/code-deposited-destroyed-again]: ../slice/cases/satin--selfdestruct--marked--code-deposited-destroyed-again.json
+[satin/selfdestruct/marked/fresh-slot]: ../slice/cases/satin--selfdestruct--marked--fresh-slot.json
+[satin/selfdestruct/marked/fresh-slot-on-little-gas]: ../slice/cases/satin--selfdestruct--marked--fresh-slot-on-little-gas.json
+[satin/selfdestruct/marked/logs-stay]: ../slice/cases/satin--selfdestruct--marked--logs-stay.json
+[satin/selfdestruct/marked/value-burned]: ../slice/cases/satin--selfdestruct--marked--value-burned.json
+[satin/selfdestruct/not-created/changed-beneficiary]: ../slice/cases/satin--selfdestruct--not-created--changed-beneficiary.json
+[satin/selfdestruct/not-created/moves-balance]: ../slice/cases/satin--selfdestruct--not-created--moves-balance.json
+[satin/selfdestruct/not-created/new-beneficiary]: ../slice/cases/satin--selfdestruct--not-created--new-beneficiary.json
+[satin/selfdestruct/not-created/new-beneficiary-bucket-x2]: ../slice/cases/satin--selfdestruct--not-created--new-beneficiary-bucket-x2.json
+[satin/selfdestruct/not-created/new-beneficiary-caller-reverts]: ../slice/cases/satin--selfdestruct--not-created--new-beneficiary-caller-reverts.json
+[satin/selfdestruct/not-created/no-balance]: ../slice/cases/satin--selfdestruct--not-created--no-balance.json
+[satin/selfdestruct/not-created/to-itself]: ../slice/cases/satin--selfdestruct--not-created--to-itself.json
+[satin/selfdestruct/not-created/to-sender]: ../slice/cases/satin--selfdestruct--not-created--to-sender.json
+[satin/selfdestruct/repeated/funded-to-new-beneficiary]: ../slice/cases/satin--selfdestruct--repeated--funded-to-new-beneficiary.json
+[satin/selfdestruct/repeated/no-balance]: ../slice/cases/satin--selfdestruct--repeated--no-balance.json
 [satin/sstore/clear-then-reset]: ../slice/cases/satin--sstore--clear-then-reset.json
 [satin/sstore/clear/specification-example]: ../slice/cases/satin--sstore--clear--specification-example.json
 [satin/sstore/fresh-slot/bucket-x16]: ../slice/cases/satin--sstore--fresh-slot--bucket-x16.json

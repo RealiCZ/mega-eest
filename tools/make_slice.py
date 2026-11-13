@@ -8,7 +8,8 @@ envelope), the SALT capacities its state lands in — and its expected observati
 existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
 principles, gas detention, the Oracle's reads, the refused volatile read, the reads group, the
 stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64, and
-those for the take-back page's worked examples `specs/satin-cdded1e`, D-65). No implementation is
+those for the take-back page's worked examples and the destruction page's own rules
+`specs/satin-cdded1e`, D-65 and D-70). No implementation is
 run: the filler's output is a candidate to compare with, never the source of these values
 (`tools/run-slice.sh` runs both implementations against them).
 
@@ -217,7 +218,7 @@ class Case:
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
                  contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
-                 params=None, retune=None, reads=False, pools=False):
+                 params=None, retune=None, reads=False, pools=False, destruction=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -248,6 +249,7 @@ class Case:
         self.make, self.params, self.retune = make, dict(params or {}), list(retune or [])
         self.reads = reads  # the case carries the reads group (D-61)
         self.pools = pools  # the case carries the gasPools group (D-64)
+        self.destruction = destruction  # the case cites the destruction page's own rules (D-70)
         if make:
             self.code = make(**self.params)
 
@@ -401,6 +403,7 @@ def cases() -> list[Case]:
     out += limit_cases()
     out += gas_pools_cases()
     out += take_back_cases()
+    out += selfdestruct_cases()
     return out
 
 
@@ -1130,6 +1133,200 @@ def take_back_cases() -> list[Case]:
     return out
 
 
+# --- SELFDESTRUCT and the destruction table (SATIN-SD-001 to -020), the page's own rules ------------
+
+HEIR = bytes.fromhex("00000000000000000000000000000000000000e1")  # an existing beneficiary, holding 1 wei
+WRAPPER = bytes.fromhex("00000000000000000000000000000000000c0deb")  # a frame that calls the created account and fails
+LIBRARY = bytes.fromhex("00000000000000000000000000000000000c0dec")  # code a constructor runs by DELEGATECALL
+
+
+def selfdestruct_to(beneficiary: bytes) -> bytes:
+    """SELFDESTRUCT(beneficiary)."""
+    return push(int.from_bytes(beneficiary, "big")) + b"\xff"
+
+
+def returning(runtime: bytes, prefix: bytes = b"") -> bytes:
+    """Initcode that runs `prefix`, then lays `runtime` out in memory and returns it."""
+    return prefix + bytes_to_memory(runtime) + ret(0, len(runtime))
+
+
+def selfdestruct_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = TAKE_BACK_SPEC
+    record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
+    created = model.created_address(CONTRACT, 1)  # what CONTRACT, at nonce 1, creates first
+    heir = {HEIR: model.Account(balance=1)}
+
+    def case(name: str, intent: str, **kw) -> None:
+        add(Case(f"satin/selfdestruct/{name}", intent, spec=spec, destruction=True, **kw))
+
+    # An account the transaction did not create (SATIN-SD-012, -001): the balance moves, nothing of the table.
+    case("not-created/moves-balance", "the transaction's own frame, a contract the transaction did not create holding 10 "
+         "wei, destroys itself to a cold existing account: EIP-6780 moves the balance and does not delete the account; "
+         "no table applies, nothing is refilled or taken back, and the move writes both accounts, two records and a "
+         "transfer log", contract_balance=10, code=selfdestruct_to(HEIR), accounts=heir)
+    case("not-created/no-balance", "the same destruction of a contract holding no balance: nothing moves, so no account "
+         "is written and no transfer log is emitted, and the account stays", code=selfdestruct_to(HEIR), accounts=heir)
+    case("not-created/new-beneficiary", "a child frame, a contract the transaction did not create holding 10 wei, "
+         "destroys itself to an address the state holds no account for: the beneficiary is created and charged as a new "
+         "account, one unit of state growth, and the contract keeps its code with no balance",
+         code=call(MAX_GAS, PLAIN, 0, 0) + b"\x50" + STOP,
+         accounts={PLAIN: model.Account(nonce=1, balance=10, code=selfdestruct_to(ABSENT))})
+    case("not-created/new-beneficiary-bucket-x2", "the same, the beneficiary's bucket holding twice the minimum "
+         "capacity: its new-account state gas is priced at m = 2, its legacy share the same",
+         code=call(MAX_GAS, PLAIN, 0, 0) + b"\x50" + STOP, salt={(ABSENT, None): 2},
+         accounts={PLAIN: model.Account(nonce=1, balance=10, code=selfdestruct_to(ABSENT))})
+    case("not-created/new-beneficiary-caller-reverts", "the same destruction, and the transaction's own frame then "
+         "reverts: the beneficiary is never created, its state gas, legacy share included, comes back with the revert, "
+         "and nothing of the move is kept", code=call(MAX_GAS, PLAIN, 0, 0) + b"\x50" + revert(0, 0),
+         accounts={PLAIN: model.Account(nonce=1, balance=10, code=selfdestruct_to(ABSENT))})
+    case("not-created/to-itself", "the transaction's own frame, a contract the transaction did not create holding 10 "
+         "wei, destroys itself to itself: EIP-6780 moves nothing and deletes nothing, so no account is written, no "
+         "transfer log is emitted and nothing rises", contract_balance=10, code=selfdestruct_to(CONTRACT))
+    case("not-created/to-sender", "the same contract destroys itself to the transaction's sender: the balance moves with "
+         "its transfer log, and the cleared account's record is the only one it makes, the sender's account being "
+         "written by validation already", contract_balance=10, code=selfdestruct_to(SENDER))
+    case("not-created/changed-beneficiary", "the transaction's own frame, a contract holding 10 wei, first sends 1 wei to "
+         "an address the state holds no account for, which creates it and writes both accounts, then destroys itself to "
+         "it: the beneficiary exists, so it is no new account and no rise, and both records stand, so the destruction "
+         "makes none", contract_balance=10, code=call(0, ABSENT, 1, 0) + b"\x50" + selfdestruct_to(ABSENT))
+
+    # The first effective destruction (SATIN-SD-002, -003, -016, -017): P creates C at an address the state holds no
+    # account for, or holds a leaf for with nonce 0, no balance, no code and two slots; C's constructor writes slot 1
+    # to 5, the value the state holds there, and C is then called and destroys itself to a warm existing account.
+    init = sstore(1, 5) + returning(selfdestruct_to(HEIR))
+    destroy = create(0, init) + push(int.from_bytes(HEIR, "big")) + b"\x31\x50" + call(MAX_GAS, created, 0, 0) + b"\x50"
+    case("first-effective/absent-leaf", "P creates C at an address the state holds no account for; C's constructor writes "
+         "a fresh slot and deploys code that destroys C; P then calls C, which destroys itself to a warm existing "
+         "account: the first effective destruction gives back the leaf, the code and the slot, their state gas, the "
+         "records of the leaf and the slot and the code's data size and history, so the transaction keeps P's nonce "
+         "record alone", code=destroy + STOP, accounts=heir, gas=3_000_000)
+    case("first-effective/empty-leaf-with-storage", "the same, at an address whose leaf the state holds with nonce 0, no "
+         "balance, no code and two slots: the creation does not collide on storage alone, and charges and counts the "
+         "address, empty under EIP-161, as a new account; the slot the constructor writes, first accessed after the "
+         "creation, reads zero, so its write is a fresh slot that the destruction gives back; the slot never accessed "
+         "makes no record; the leaf, present at the transaction's start, keeps its charge, its rise and its record; "
+         "and the account is deleted", code=destroy + STOP, gas=3_000_000,
+         accounts={**heir, created: model.Account(storage={1: 5, 2: 9})})
+    case("first-effective/absent-leaf-bucket-x2", "the same as at an absent address, the created account's and the "
+         "slot's buckets holding twice the minimum capacity: each part comes back at the price it was charged, the leaf, "
+         "the code and the slot at m = 2", code=destroy + STOP, accounts=heir, gas=3_000_000,
+         salt={(created, None): 2, (created, 1): 2})
+    case("first-effective/in-constructor", "P creates C, whose constructor destroys C at once, before any code or slot: "
+         "the destruction gives back the leaf's state gas and its record, and the creation deploys no code",
+         code=create(0, selfdestruct_to(HEIR)) + STOP, accounts=heir, gas=3_000_000)
+    case("first-effective/slot-restored-before", "P creates C, whose constructor writes two fresh slots and writes the "
+         "first back to zero, then deploys code that destroys C; P calls C: the restored slot, zero at the start and "
+         "zero before the destruction, is already clear and is not given back twice, and the other slot is",
+         code=create(0, sstore(1, 1) + sstore(2, 1) + sstore(1, 0) + returning(selfdestruct_to(HEIR)))
+         + push(int.from_bytes(HEIR, "big")) + b"\x31\x50" + call(MAX_GAS, created, 0, 0) + b"\x50" + STOP,
+         accounts=heir, gas=3_000_000)
+
+    # The marked account (SATIN-SD-011, -013, -015): C's runtime stores its calldata word in slot 1, accepts value, or
+    # destroys C to a beneficiary.
+    def runtime(beneficiary: bytes) -> bytes:
+        """With calldata, SSTORE(1, CALLDATALOAD(0)); with value, STOP; else SELFDESTRUCT(beneficiary)."""
+        destroy = selfdestruct_to(beneficiary)
+        accept = 8 + len(destroy)  # CALLDATASIZE, PUSH1, JUMPI, CALLVALUE, PUSH1, JUMPI, then `destroy`
+        store = accept + 2  # JUMPDEST, STOP
+        return (b"\x36" + bytes([0x60, store]) + b"\x57" + b"\x34" + bytes([0x60, accept]) + b"\x57" + destroy
+                + b"\x5b" + STOP + b"\x5b" + push(0) + b"\x35" + push(1) + b"\x55" + STOP)
+
+    made = create(0, returning(runtime(HEIR)))
+    again = call(MAX_GAS, created, 0, 0) + b"\x50"
+    case("repeated/no-balance", "P creates C and calls it twice, and C destroys itself to an existing account each time, "
+         "holding no balance: the first destruction gives back the leaf and the code and their records; the second, "
+         "while the mark stands, applies the table for nothing, refilling and taking back nothing, and its regular gas "
+         "is its only charge", code=made + again + again + STOP, accounts=heir, gas=3_000_000)
+    made_absent = create(0, returning(runtime(ABSENT)))
+    case("repeated/funded-to-new-beneficiary", "P creates C, which destroys itself to an address the state holds no "
+         "account for while holding nothing, so no beneficiary is created; P then sends C 1 wei, which is no rise and "
+         "makes no record for the marked C, and calls C again: the second destruction applies the table for nothing, "
+         "but moves the 1 wei to the absent beneficiary, which it creates and is charged for, its record and its rise",
+         contract_balance=1, gas=3_000_000,
+         code=made_absent + again + call(MAX_GAS, created, 1, 0) + b"\x50" + again + STOP)
+    case("marked/value-burned", "P creates C, which destroys itself holding nothing; P then sends C 1 wei and stops: the "
+         "value is no rise and makes no record for C, its transfer log stays, and C is removed at the transaction's end "
+         "with the 1 wei, which no account receives and no log records", contract_balance=1, gas=3_000_000,
+         accounts=heir, code=made + again + call(MAX_GAS, created, 1, 0) + b"\x50" + STOP)
+    store = mstore(0, 7) + call(MAX_GAS, created, 0, 32) + b"\x50"
+    case("marked/fresh-slot", "P creates C, which destroys itself; P then calls C with a word of calldata, and C writes "
+         "it to a slot that was never written: while the mark stands the write pays its regular gas as any fresh "
+         "slot's, and charges no state gas, adds no state growth and makes no record", accounts=heir, gas=3_000_000,
+         code=made + again + store + STOP)
+    case("created/fresh-slot", "the control: P creates C and calls it with a word of calldata, and C writes it to a slot "
+         "that was never written, C not destroyed: the write is charged a fresh slot's state gas, its legacy share "
+         "first, and adds a unit of state growth and a record", accounts=heir, gas=3_000_000, code=made + store + STOP)
+    little = 60_000  # pays a fresh slot's regular gas and not its state gas, in a transaction without a reservoir
+    small_store = mstore(0, 7) + call(little, created, 0, 32) + b"\x50"
+    case("marked/fresh-slot-on-little-gas", f"P creates C, which destroys itself; P then calls C with {fmt(little)} of "
+         "regular gas and a word of calldata, which C writes to a slot that was never written: the write, charged no "
+         "state gas while the mark stands, completes on what pays its regular gas", accounts=heir, gas=3_000_000,
+         code=made + again + small_store + STOP)
+    case("created/fresh-slot-on-little-gas", f"the control: the same call of C with {fmt(little)} of regular gas, C not "
+         "destroyed: the write needs the fresh slot's state gas, which a transaction without a reservoir pays from "
+         "regular gas, and C runs out of gas in it", accounts=heir, gas=3_000_000, code=made + small_store + STOP)
+    case("marked/logs-stay", "P creates C with 1 wei; called without value, C's code emits a LOG0 and destroys C to an "
+         "existing account, moving the 1 wei; P then sends C 1 wei more, which C accepts: the LOG0 and the three "
+         "transfer logs stay counted, and the LOG0's history stays charged, while the leaf's and the code's charges and "
+         "records are given back, and C is removed with the 1 wei it holds at the end",
+         contract_balance=2, accounts=heir, gas=3_000_000,
+         code=create(1, returning(jump_if(b"\x34", STOP, log(0, 0, 0, []) + selfdestruct_to(HEIR)))) + again
+         + call(MAX_GAS, created, 1, 0)
+         + b"\x50" + STOP)
+
+    # Code deposited after its constructor destroyed its own account (SATIN-SD-014): the constructor runs, by
+    # DELEGATECALL, code that destroys the account, then returns C's runtime.
+    library = {LIBRARY: model.Account(nonce=1, code=selfdestruct_to(HEIR))}
+    deposited = create(0, returning(selfdestruct_to(HEIR), delegatecall(MAX_GAS, LIBRARY) + b"\x50"))
+    case("marked/code-deposited", "P creates C, whose constructor destroys C through a DELEGATECALL and then returns its "
+         "code: the destruction gives back the leaf and its record; the code, deposited after the mark, on the "
+         "absent-then-absent row, is charged no state gas, and its data size and history gas are charged as any "
+         "deposited code's", accounts={**heir, **library}, gas=3_000_000, code=deposited + STOP)
+    case("marked/code-deposited-destroyed-again", "the same, and P then calls C, whose code destroys it again: the "
+         "repeated destruction takes nothing back, the code's data size and history gas included",
+         accounts={**heir, **library}, gas=3_000_000, code=deposited + again + STOP)
+
+    # A destruction in a frame that fails (SATIN-SD-010): P creates C, whose constructor writes a fresh slot, and calls
+    # W, which calls C, which destroys itself, and then W reverts or halts.
+    init = sstore(1, 1) + returning(selfdestruct_to(HEIR))
+    for name, end, tail, what in (
+            ("reverted", revert(0, 0), b"", "reverts"),
+            ("halted", INVALID, b"", "halts"),
+            ("reverted-then-kept", revert(0, 0), again, "reverts, and P then calls C itself")):
+        wrapper = {WRAPPER: model.Account(nonce=1, code=call(MAX_GAS, created, 0, 0) + b"\x50" + end)}
+        kept = ("the later destruction, in a frame that is kept, is the first effective one: it gives back the leaf, "
+                "the code and the slot once" if tail else "C survives with its code and its slot: the leaf's, the "
+                "code's and the slot's charges stand, and the records the table took back stand again")
+        case(f"discarded/{name}", f"P creates C, whose constructor writes a fresh slot, and calls W, which calls C, which "
+             f"destroys itself; then W {what}: the mark and every effect of the table are discarded with W, and {kept}",
+             accounts={**heir, **wrapper}, gas=3_000_000,
+             code=create(0, init) + call(2_000_000, WRAPPER, 0, 0) + b"\x50" + tail + STOP)
+
+    # The volatile read of a destruction's beneficiary, the block beneficiary (SATIN-SD-020, SATIN-DET-001, -003): a
+    # contract holding 10 wei destroys itself to the block beneficiary, which the state holds no account for, and its
+    # caller then expands memory by more than the cap a read of the beneficiary sets. The read is marked once the
+    # destruction completed, at the compute its charges reached, and the expansion is stopped; a destruction whose
+    # child cannot pay the beneficiary's new-account state gas halts in its charges and marks nothing, and the same
+    # expansion is paid.
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    over = burn(words_within(cap) + 1)
+    to_coinbase = {PLAIN: model.Account(nonce=1, balance=10, code=selfdestruct_to(COINBASE))}
+    child = 100_000
+    case("beneficiary-read/marked-after-charges", "a child frame, a contract the transaction did not create holding 10 "
+         "wei, destroys itself to the block beneficiary, which it creates: the read of the beneficiary is marked once the "
+         "destruction completed, at the compute its regular charges reached, and the limit it sets stops its caller's "
+         "later memory expansion, which costs more than the cap", accounts=to_coinbase, gas=21_000_000,
+         code=call(MAX_GAS, PLAIN, 0, 0) + b"\x50" + over + STOP)
+    case("beneficiary-read/halted-unmarked", f"the same destruction in a child forwarded {fmt(child)} of regular gas, "
+         "which pays its regular charges and the beneficiary's legacy share and not the rest of the beneficiary's state "
+         "gas: the child halts in the destruction's charges, so the read is not marked, and its caller's same memory "
+         "expansion is paid", accounts=to_coinbase, gas=21_000_000,
+         code=call(child, PLAIN, 0, 0) + b"\x50" + over + STOP)
+    return out
+
+
 # --- Assembling a case --------------------------------------------------------------------------
 
 
@@ -1187,7 +1384,8 @@ def build(c: Case):
                       max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list,
                       authorizations=[(cid, target, n, ex.address_of(k)) for k, cid, target, n in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
-    run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools)
+    run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
+                    destruction=c.destruction)
     result = run.run()
     result.probe = run.probe
 
