@@ -4073,7 +4073,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/gates/chain-id-zero",
       "file": "cases/satin/authorizations/gates/chain-id-zero.json",
-      "fileDigest": "sha256:37eeb32315e357eb9678b9e47692b1ec39cd75499dc7b8abc03d33cb95c5bfbd",
+      "fileDigest": "sha256:3294e9b091c33c55c7d7d97afb0e11c0d176291b50cd8f41a5643bfcce953e21",
       "rules": [
         "SATIN-ACCT-015",
         "SATIN-AUTH-001",
@@ -4086,7 +4086,6 @@
         "SATIN-AUTH-010",
         "SATIN-AUTH-014",
         "SATIN-AUTH-015",
-        "SATIN-AUTH-016",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -4099,11 +4098,10 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/code/contract-authority",
       "file": "cases/satin/authorizations/code/contract-authority.json",
-      "fileDigest": "sha256:9a91a7e922e8c25faf7024a95e5fb9e2510c0ccb7119d32605549b3dadbf94bd",
+      "fileDigest": "sha256:473b4f5deb8b1775a1f835356aee2fa967f6364292cde5af00fc2eae585be70a",
       "rules": [
         "SATIN-AUTH-001",
         "SATIN-AUTH-003",
-        "SATIN-AUTH-004",
         "SATIN-AUTH-005",
         "SATIN-AUTH-007",
         "SATIN-AUTH-008",
@@ -4120,7 +4118,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/code/delegated-authority",
       "file": "cases/satin/authorizations/code/delegated-authority.json",
-      "fileDigest": "sha256:0595e922cef8277c9e831b1a52e9730828941e80236de8b50bd24c7d016c6f13",
+      "fileDigest": "sha256:a658903d5083a9dccc3e5f06b1efe980c183455e11ac57bac5d9270f73ca04d8",
       "rules": [
         "SATIN-ACCT-015",
         "SATIN-AUTH-001",
@@ -4133,7 +4131,6 @@
         "SATIN-AUTH-010",
         "SATIN-AUTH-014",
         "SATIN-AUTH-015",
-        "SATIN-AUTH-016",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -4237,7 +4234,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/start-record/reservoir-pays-it-whole",
       "file": "cases/satin/authorizations/start-record/reservoir-pays-it-whole.json",
-      "fileDigest": "sha256:612dacd193245888b3bd654785297e2f9e3ce114db3348e787aeac33dd5d2bf0",
+      "fileDigest": "sha256:b4bbc15f60cb39286e4aeaa3e767e4c2c26772e9c2e57111bad9e009691d5c05",
       "rules": [
         "SATIN-AUTH-001",
         "SATIN-AUTH-002",
@@ -4245,7 +4242,6 @@
         "SATIN-AUTH-008",
         "SATIN-AUTH-010",
         "SATIN-AUTH-014",
-        "SATIN-AUTH-016",
         "SATIN-HIST-005",
         "SATIN-SCHED-007"
       ],
@@ -4258,7 +4254,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/frame/origin-and-gas-price",
       "file": "cases/satin/authorizations/frame/origin-and-gas-price.json",
-      "fileDigest": "sha256:697699b703b5abfcb69c4a57f43c341ed6d4ead8c16990c8f4ba98e1ad774494",
+      "fileDigest": "sha256:afdce131846358e6e6d7654734d9fd52f920ca0f8aca8e8da90f45b450a48862",
       "rules": [
         "SATIN-ACCT-015",
         "SATIN-AUTH-001",
@@ -4270,7 +4266,7 @@
         "SATIN-AUTH-009",
         "SATIN-AUTH-010",
         "SATIN-AUTH-015",
-        "SATIN-AUTH-016",
+        "SATIN-BASE-001",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -4283,7 +4279,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/limit/at-growth-limit",
       "file": "cases/satin/authorizations/limit/at-growth-limit.json",
-      "fileDigest": "sha256:c5be78fa9287158ab9dfbeb309850ca79ee83526cfa4075b696a82a5fa2d5047",
+      "fileDigest": "sha256:7152b8b81d3cc3a622dd9cba386b6013aa786218ca53562135983b258603e596",
       "rules": [
         "SATIN-AUTH-001",
         "SATIN-AUTH-003",
@@ -4294,7 +4290,6 @@
         "SATIN-AUTH-009",
         "SATIN-AUTH-010",
         "SATIN-AUTH-015",
-        "SATIN-AUTH-016",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -4307,7 +4302,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/limit/at-limit-existing-authorities",
       "file": "cases/satin/authorizations/limit/at-limit-existing-authorities.json",
-      "fileDigest": "sha256:5491e64c875c21c11b8c802ab61f220e2ef0763057419a1320f76abf4bc99cb0",
+      "fileDigest": "sha256:7ac5ca3da32ad2a5c0482d6e795a1dadaa680357d55ef146ca43aebb2225ca93",
       "rules": [
         "SATIN-ACCT-015",
         "SATIN-AUTH-001",
@@ -4319,7 +4314,6 @@
         "SATIN-AUTH-009",
         "SATIN-AUTH-010",
         "SATIN-AUTH-015",
-        "SATIN-AUTH-016",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -4332,7 +4326,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/limit/at-limit-entries-adding-nothing",
       "file": "cases/satin/authorizations/limit/at-limit-entries-adding-nothing.json",
-      "fileDigest": "sha256:58e7c357de94887d82109b0cf22f32e700210fccffbe3cbf10dd733bb595bba6",
+      "fileDigest": "sha256:34716deb1a8839f6b63f82c617a0d008b815e6abcb2033e2786f1d5c57808651",
       "rules": [
         "SATIN-AUTH-001",
         "SATIN-AUTH-002",
@@ -4345,7 +4339,6 @@
         "SATIN-AUTH-010",
         "SATIN-AUTH-014",
         "SATIN-AUTH-015",
-        "SATIN-AUTH-016",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -4372,6 +4365,611 @@
         "SATIN-AUTH-013",
         "SATIN-AUTH-015",
         "SATIN-AUTH-018",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/rollback/sender-entry-delegate-access-short",
+      "file": "cases/satin/authorizations/rollback/sender-entry-delegate-access-short.json",
+      "fileDigest": "sha256:56c8a514bceb8d4e63699b0afbbd90347f8e82ef039a7586559538ee1689bb57",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/rollback/sender-entry-delegate-access-paid",
+      "file": "cases/satin/authorizations/rollback/sender-entry-delegate-access-paid.json",
+      "fileDigest": "sha256:d8af47c1d12f27a26ac25418099c83ca89ed1b989dd25fa97a2895268c03c35d",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/rollback/second-write-short",
+      "file": "cases/satin/authorizations/rollback/second-write-short.json",
+      "fileDigest": "sha256:967b4fe5978f0a05bc28c21b20f6ba138d7b1af6f8e245e39654bca285cbcc03",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/rollback/indicator-short",
+      "file": "cases/satin/authorizations/rollback/indicator-short.json",
+      "fileDigest": "sha256:6494ccc072d644fa97379ad0628613799fedd9f309a2ea01bb294604b150618a",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/rollback/records-history-short",
+      "file": "cases/satin/authorizations/rollback/records-history-short.json",
+      "fileDigest": "sha256:8e944b3b16170cd516c99c53fba395ba42abd6ea9a26365ff8e607e54862d9ec",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/overlap/value-to-existing-authority",
+      "file": "cases/satin/authorizations/overlap/value-to-existing-authority.json",
+      "fileDigest": "sha256:9d870ed09e3deb35fed438909314d3d170b59b3be52135dddf5913df18500b0e",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/overlap/value-to-absent-authority",
+      "file": "cases/satin/authorizations/overlap/value-to-absent-authority.json",
+      "fileDigest": "sha256:e2cb105e33be57df3bf7c7e915eaa26e8c39e39b60ce564876bd270288a1f9d6",
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/overlap/value-to-authority-frame-reverts",
+      "file": "cases/satin/authorizations/overlap/value-to-authority-frame-reverts.json",
+      "fileDigest": "sha256:200d59134615367dcca2d00f8fd037ed1f2baa8d4a89516fda2ad01afbc6da04",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-AUTH-016",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/indicator/held-clear-then-set",
+      "file": "cases/satin/authorizations/indicator/held-clear-then-set.json",
+      "fileDigest": "sha256:064479b6928ec932c7e528e2f5a962775d65311d7734ebd09dc64948d00a580d",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/indicator/absent-set-clear-set",
+      "file": "cases/satin/authorizations/indicator/absent-set-clear-set.json",
+      "fileDigest": "sha256:39de29b2c2f2c0b51433cc8614dd73968d51bd8786407876af9b895b33123d69",
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/indicator/absent-clear-then-set",
+      "file": "cases/satin/authorizations/indicator/absent-clear-then-set.json",
+      "fileDigest": "sha256:7ee30345c6d7c40f57a00c9c839398aea27539e1e36e340cb1cfca09e9cd1a43",
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/indicator/existing-set-then-set",
+      "file": "cases/satin/authorizations/indicator/existing-set-then-set.json",
+      "fileDigest": "sha256:e2858c6d1a56921d65fbc290a038495fd6b6ce149ae68cf745a9a54a5054cfcb",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/revert/sender-entry",
+      "file": "cases/satin/authorizations/revert/sender-entry.json",
+      "fileDigest": "sha256:b52af5fd5d4155f7d3e7a877d933652a337313eebbaab8ae121b36fdb964b178",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-AUTH-016",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/revert/absent-authority-with-slot",
+      "file": "cases/satin/authorizations/revert/absent-authority-with-slot.json",
+      "fileDigest": "sha256:af036821b49cda46c0e563a3e9adbe944eebbb07204c3e256b8d68e92d858161",
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-AUTH-016",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/nonce/early-and-stale-entries",
+      "file": "cases/satin/authorizations/nonce/early-and-stale-entries.json",
+      "fileDigest": "sha256:0d5cd28ecc42a0fb9062ecc96fb6771708d1bcd8e963c636b2efb193c753ab12",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/sender/own-entries-in-sequence",
+      "file": "cases/satin/authorizations/sender/own-entries-in-sequence.json",
+      "fileDigest": "sha256:2a69fec6bb206c1d5fd388d7ffbcbdb7617af5d81fde30db682774b6cfc376aa",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/nonce/last-valid",
+      "file": "cases/satin/authorizations/nonce/last-valid.json",
+      "fileDigest": "sha256:0f66438d3547ac1378d5a1311a03832e9c13fe49086840ff2fe9de832dfe1628",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-002",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/beneficiary/skipped-authority-not-detained",
+      "file": "cases/satin/authorizations/beneficiary/skipped-authority-not-detained.json",
+      "fileDigest": "sha256:ead95aac30bf91cc9bf4cf4a6ff68da9f7572c7445ab062820534fd3beabe718",
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
+        "SATIN-DET-008",
+        "SATIN-SCHED-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/beneficiary/gated-authority-not-detained",
+      "file": "cases/satin/authorizations/beneficiary/gated-authority-not-detained.json",
+      "fileDigest": "sha256:f87e6be947262fb8df4002ece60f97781909e96ff7af411f8714054df6e3b410",
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-002",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
+        "SATIN-DET-008",
+        "SATIN-SCHED-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/salt/authority-bucket-prices",
+      "file": "cases/satin/authorizations/salt/authority-bucket-prices.json",
+      "fileDigest": "sha256:ae62e9fecf984585c85d5b8db93802be9b65357050d4b8511d296f3c5a6ba07f",
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/start-record/reservoir-pays-one",
+      "file": "cases/satin/authorizations/start-record/reservoir-pays-one.json",
+      "fileDigest": "sha256:2b7f5bb147219ff54a93267fdddecda2a3039834dc31aa9c2607fece8bfeb4b8",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-AUTH-016",
+        "SATIN-HIST-005",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/warmth/target-not-warmed",
+      "file": "cases/satin/authorizations/warmth/target-not-warmed.json",
+      "fileDigest": "sha256:f8e18fecd9c3a2ae62768937b04b8fde80567fc2b4be1fab2c847675e3505163",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/limit/one-over-with-fees",
+      "file": "cases/satin/authorizations/limit/one-over-with-fees.json",
+      "fileDigest": "sha256:d267ff8c26ef075db5930263564909423905d5a423e620d53bcf3f70bc47f7cf",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-011",
+        "SATIN-AUTH-013",
+        "SATIN-AUTH-015",
+        "SATIN-AUTH-018",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/gates/y-parity-two",
+      "file": "cases/satin/authorizations/gates/y-parity-two.json",
+      "fileDigest": "sha256:83f63c46925c319013eb6aa816a89710bf1e683ebba99190735fc1d8a1abe60b",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-002",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
+        "SATIN-AUTH-015",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/gates/r-at-order",
+      "file": "cases/satin/authorizations/gates/r-at-order.json",
+      "fileDigest": "sha256:f56deaa2cf8e1cd33101c5f0d7618e9a75e61b8f01a9b6732cc11efcb35a973c",
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-002",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
+        "SATIN-AUTH-015",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -5523,7 +6121,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/reads/short-list-out-of-gas",
       "file": "quarantine/satin/authorizations/reads/short-list-out-of-gas.json",
-      "fileDigest": "sha256:652268098017a806985af614a980b2e49f750063a7f3aa25c655dba78db5c9c9",
+      "fileDigest": "sha256:43145fe9e7def302af96af9714b05db3b2b99384d38af3d9d0c00360ddec6cb2",
       "knownFail": {
         "actual": {
           "balance": "0x0",
@@ -5533,7 +6131,7 @@
         "adapter": "mega-eest-adapter-revm",
         "expected": null,
         "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
-        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference. Its simulation of the list is the rule's: the list, too short to cross a limit, is simulated all the same, its first and third authorities loaded and the second, skipped by its chain-id gate, not read (SATIN-AUTH-001, SATIN-AUTH-002, SATIN-AUTH-005)"
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference, and its slot 0. Its simulation of the list is the rule's: the list, too short to cross a limit, is simulated all the same, its first and third authorities loaded and the second, skipped by its chain-id gate, not read (SATIN-AUTH-001, SATIN-AUTH-002, SATIN-AUTH-005)"
       },
       "rules": [
         "SATIN-ACCT-015",
@@ -5546,6 +6144,7 @@
         "SATIN-AUTH-008",
         "SATIN-AUTH-010",
         "SATIN-AUTH-015",
+        "SATIN-REG-002",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -5571,6 +6170,78 @@
         "SATIN-AUTH-017",
         "SATIN-DEP-001",
         "SATIN-HIST-016",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/reads/simulation-past-crossing",
+      "file": "quarantine/satin/authorizations/reads/simulation-past-crossing.json",
+      "fileDigest": "sha256:daab164ce1cdc3a6d5e6ffd04bda5847f7ed843950a166eba89eec1c21dc5d39",
+      "knownFail": {
+        "actual": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "adapter": "mega-eest-adapter-revm",
+        "expected": null,
+        "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference, and its slot 0. Its simulation of the list is the rule's: the simulation walks on past the new authority that crosses the limit and loads the authority after it with its code (SATIN-AUTH-005)"
+      },
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-011",
+        "SATIN-AUTH-013",
+        "SATIN-AUTH-015",
+        "SATIN-AUTH-018",
+        "SATIN-REG-002",
+        "SATIN-SCHED-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/reads/short-list-gates-and-code",
+      "file": "quarantine/satin/authorizations/reads/short-list-gates-and-code.json",
+      "fileDigest": "sha256:fe9820d7c6916c23cd55864fc2db7c99e0b17e3719b348375b6bbecdff9c1343",
+      "knownFail": {
+        "actual": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "adapter": "mega-eest-adapter-revm",
+        "expected": null,
+        "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference, and its slot 0. Its simulation of the list is the rule's: the authority at nonce 2^64 - 1 and the entry whose signature recovers nothing read nothing, and the authority holding code is loaded with its code, though the application never reaches it (SATIN-AUTH-002, SATIN-AUTH-003, SATIN-AUTH-005)"
+      },
+      "rules": [
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-002",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
+        "SATIN-REG-002",
+        "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
       "spec": {

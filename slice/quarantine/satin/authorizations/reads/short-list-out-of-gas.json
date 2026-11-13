@@ -201,7 +201,7 @@
       "adapter": "mega-eest-adapter-revm",
       "expected": null,
       "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
-      "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference. Its simulation of the list is the rule's: the list, too short to cross a limit, is simulated all the same, its first and third authorities loaded and the second, skipped by its chain-id gate, not read (SATIN-AUTH-001, SATIN-AUTH-002, SATIN-AUTH-005)"
+      "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference, and its slot 0. Its simulation of the list is the rule's: the list, too short to cross a limit, is simulated all the same, its first and third authorities loaded and the second, skipped by its chain-id gate, not read (SATIN-AUTH-001, SATIN-AUTH-002, SATIN-AUTH-005)"
     },
     "specCommit": "c130558e2f38a913982dc17f0cd8eb8834967262",
     "status": "candidate"
@@ -227,6 +227,7 @@
     "SATIN-AUTH-008",
     "SATIN-AUTH-010",
     "SATIN-AUTH-015",
+    "SATIN-REG-002",
     "SATIN-SCHED-007",
     "SATIN-STATE-011"
   ],

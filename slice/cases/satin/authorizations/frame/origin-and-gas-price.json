@@ -150,7 +150,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "an applied list's transaction runs its frame with its sender as ORIGIN and its effective gas price, the base fee and the priority fee, as GASPRICE, which the frame returns"
+      "intent": "an applied list's transaction runs its frame with its sender as ORIGIN and its effective gas price, the base fee and the priority fee, as GASPRICE, which the frame returns, as the base layer has them (SATIN-BASE-001)"
     },
     "definition": "tools/make_slice.py::authorization_cases",
     "generator": "tools/make_slice.py",
@@ -177,7 +177,7 @@
     "SATIN-AUTH-009",
     "SATIN-AUTH-010",
     "SATIN-AUTH-015",
-    "SATIN-AUTH-016",
+    "SATIN-BASE-001",
     "SATIN-SCHED-007",
     "SATIN-STATE-011"
   ],

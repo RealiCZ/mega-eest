@@ -41,6 +41,7 @@ class AuthorizationsMixin:
         tx = self.tx
         sim: dict[bytes, list] = {}  # authority -> [simulated nonce, its code applies, absent]
         accepted: list[bytes] = []
+        self.nonce_compared = False  # whether an entry reached the nonce comparison of SATIN-AUTH-004
         for chain_id, _, nonce, authority in tx.authorizations:
             if self.entry_gate(chain_id, nonce, authority) is not None:
                 continue
@@ -49,7 +50,10 @@ class AuthorizationsMixin:
                 applies = acct is None or not acct.code or delegate_of(acct.code) is not None
                 sim[authority] = [acct.nonce if acct else 0, applies, acct is None]
             s = sim[authority]
-            if not s[1] or nonce != s[0]:
+            if not s[1]:
+                continue
+            self.nonce_compared = True
+            if nonce != s[0]:
                 continue
             s[0] += 1
             if authority not in accepted:
@@ -85,7 +89,8 @@ class AuthorizationsMixin:
                   + ("does not fit" if crossed else "fits"),
                   "SATIN-AUTH-001", "SATIN-AUTH-007", "SATIN-AUTH-008", "SATIN-AUTH-010",
                   *(("SATIN-AUTH-002",) if gated else ()),
-                  *(("SATIN-AUTH-003", "SATIN-AUTH-004", "SATIN-AUTH-005") if consulted else ()),
+                  *(("SATIN-AUTH-003", "SATIN-AUTH-005") if consulted else ()),
+                  *(("SATIN-AUTH-004",) if self.nonce_compared else ()),
                   *(("SATIN-STATE-011", "SATIN-ACCT-015") if len(accepted) > growth else ()))
         if crossed is None:
             return None
@@ -129,6 +134,7 @@ class AuthorizationsMixin:
         done: set = set()  # the authorities an accepted entry wrote
         indicated: set = set()  # the authorities a list entry set an indicator for (SATIN-AUTH-009)
         self.applied_authorities: set = set()
+        recorded: list = []  # the authorities whose write record step 3 charges, in list order
         self.probe.setdefault("list", regular)
         for index, (chain_id, target, nonce, authority) in enumerate(tx.authorizations):
             gate = self.entry_gate(chain_id, nonce, authority)
@@ -169,7 +175,31 @@ class AuthorizationsMixin:
             done.add(authority)
             self.applied_authorities.add(authority)
             self.warm_accounts.add(authority)
-            charges = []
+
+            def pay(kind: str, amount: int, what: str) -> None:
+                """One charge of SATIN-SCHED-008 step 2: state gas draws the reservoir first and the regular budget
+                for the rest (SATIN-POOL-024), ACCOUNT_WRITE the regular budget; one that cannot be paid takes the
+                out-of-gas path before the first frame (SATIN-SCHED-009)."""
+                nonlocal regular, reservoir
+                r = min(reservoir, amount) if kind == "state" else 0
+                if amount - r > regular:
+                    if r or (reservoir != self.reservoir_after_body):
+                        raise Unmodelled("a list that runs out of gas after the reservoir paid one of its charges")
+                    first = not self.applied_authorities - {authority} and kind == "regular" and index == 0
+                    d.add("gasLedgers", (f"the first entry's ACCOUNT_WRITE {fmt(amount)} for the authority {h(authority)} "
+                          f"is beyond the {fmt(regular)} of regular gas left: nothing of the list is applied") if first else
+                          (f"entry {index}'s {what}, {fmt(amount)}, is beyond the {fmt(regular)} of regular gas left: the "
+                           "transaction runs out of gas before its first frame, and the authorizations applied before it "
+                           "are taken back"), "SATIN-SCHED-008", "SATIN-SCHED-009", "SATIN-AUTH-015")
+                    raise OutOfGasBeforeFrame(f"{'the first authorization' if first else f'entry {index}'}'s {what}, "
+                                              f"{fmt(amount)}, with {fmt(regular)} regular gas left")
+                reservoir -= r
+                regular -= amount - r
+                if kind == "state":
+                    self.state_gas += amount
+                else:
+                    self.pre_frame_regular += amount
+
             if sender:
                 if not self.lists:
                     raise Unmodelled("the sender's own authorization")
@@ -186,11 +216,11 @@ class AuthorizationsMixin:
             elif acct is None:
                 m = self.multiplier(self.salt_bucket(authority, None))
                 new_state = ACCOUNT_STATE * m
-                charges.append(("state", new_state))
-                self.growth += 1
                 d.add("gasLedgers", f"the authority {h(authority)}: the state holds no account at its address, so it is new: "
                       f"new-account state gas {fmt(ACCOUNT_STATE)} x m={m} = {fmt(new_state)} before the first frame, no "
                       "legacy share", "SATIN-SCHED-008", "SATIN-STATE-011", "SATIN-AUTH-008", "SATIN-POOL-024")
+                pay("state", new_state, "new-account state gas")
+                self.growth += 1
                 d.add("resources", "the new authority is one unit of state growth", "SATIN-ACCT-014", "SATIN-AUTH-008")
             else:
                 d.add("gasLedgers", f"the authority {h(authority)}: the state holds its leaf (nonce {acct.nonce}, balance "
@@ -205,17 +235,13 @@ class AuthorizationsMixin:
             elif again:
                 d.add("gasLedgers", "no ACCOUNT_WRITE: the list's first entry for the authority paid its first write",
                       "SATIN-SCHED-008", "SATIN-AUTH-015", "SATIN-TAKE-008")
-            elif not (tx.to == authority and tx.value):
-                if ACCOUNT_WRITE > regular:
-                    if index or acct is None or (self.lists and self.applied_authorities - {authority}):
-                        raise Unmodelled("an authorization list that runs out of gas after charging")
-                    d.add("gasLedgers", f"the first entry's ACCOUNT_WRITE {fmt(ACCOUNT_WRITE)} for the authority "
-                          f"{h(authority)} is beyond the {fmt(regular)} of regular gas left: nothing of the list is applied",
-                          "SATIN-SCHED-008", "SATIN-SCHED-009", "SATIN-AUTH-015")
-                    raise OutOfGasBeforeFrame(f"the first authorization's ACCOUNT_WRITE, {fmt(ACCOUNT_WRITE)}, with "
-                                              f"{fmt(regular)} regular gas left")
-                self.pre_frame_regular += ACCOUNT_WRITE
-                regular -= ACCOUNT_WRITE
+            elif tx.to == authority and tx.value:
+                if self.lists:
+                    d.add("gasLedgers", "no ACCOUNT_WRITE: the authority is the recipient of the transaction's non-zero "
+                          "value, whose account write TX_VALUE_COST pays", "SATIN-AUTH-015", "SATIN-SCHED-008")
+            else:
+                self.probe.setdefault(f"write:{index}", regular)
+                pay("regular", ACCOUNT_WRITE, "ACCOUNT_WRITE")
                 d.add("gasLedgers", f"ACCOUNT_WRITE {fmt(ACCOUNT_WRITE)} regular gas for the authority's first write, which "
                       "the transaction has not paid already", "SATIN-SCHED-003", "SATIN-SCHED-008", "SATIN-TAKE-008",
                       "SATIN-AUTH-015")
@@ -234,42 +260,19 @@ class AuthorizationsMixin:
                 indicated.add(authority)
                 m = self.multiplier(self.salt_bucket(authority, None))
                 indicator = DELEGATION_STATE_BYTES * COST_PER_STATE_BYTE * m
-                charges.append(("state", indicator))
                 d.add("gasLedgers", f"the delegation indicator: DELEGATION_STATE_BYTES {DELEGATION_STATE_BYTES} x "
                       f"COST_PER_STATE_BYTE {fmt(COST_PER_STATE_BYTE)} x m={m} = {fmt(indicator)} state gas, once, no legacy "
                       "share; not a unit of state growth", "SATIN-AUTH-009", "SATIN-STATE-003", "SATIN-SCHED-008")
+                self.probe.setdefault(f"indicator:{index}", regular)
+                pay("state", indicator, "delegation-indicator state gas")
             elif self.lists and not again:
                 d.add("gasLedgers", "a zero delegation target: the entry bumps the nonce, and creates the account when the "
                       "state holds none, but writes no indicator and is charged no indicator state gas", "SATIN-AUTH-009")
-            record = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
-            if sender:
-                pass
-            elif again:
+            if again:
                 d.add("resources", "the authority keeps the one write record the list's first entry for it made: no "
                       "further record, KV update or history", "SATIN-AUTH-008", "SATIN-ACCT-004", "SATIN-TAKE-008")
-            else:
-                charges.append(("history", record))
-                self.kv.add(("a", authority))
-                self.data_size += WRITE_RECORD_SIZE
-                self.history_bytes += WRITE_RECORD_SIZE
-            if not again and not sender:
-                d.add("gasLedgers", f"the authority's one write record: {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = "
-                      f"{fmt(record)} history gas before the first frame, kept whatever the frame does", "SATIN-HIST-005",
-                      "SATIN-SCHED-008", "SATIN-AUTH-016")
-                d.add("resources", f"the authority's write record: one KV update, {WRITE_RECORD_SIZE} bytes of data size",
-                      "SATIN-AUTH-008", "SATIN-ACCT-005")
-            for kind, amount in charges:  # SATIN-POOL-024: the reservoir first, the regular budget for the rest
-                r = min(reservoir, amount)
-                reservoir -= r
-                if amount - r > regular:
-                    raise Unmodelled("an authorization whose charges cannot be paid")
-                regular -= amount - r
-                if kind == "state":
-                    self.state_gas += amount
-                else:
-                    self.history_gas += amount
-            if regular < 0:
-                raise Unmodelled("an authorization whose charges cannot be paid")
+            elif not sender:
+                recorded.append(authority)
             a = self.state.setdefault(authority, Account())
             a.nonce += 1
             a.code = (b"\xef\x01\x00" + target) if any(target) else b""
@@ -279,4 +282,30 @@ class AuthorizationsMixin:
             else:
                 d.add("state", f"the authority's nonce becomes {a.nonce} and its delegation is cleared: no code",
                       "SATIN-AUTH-004", "SATIN-TAKE-008")
+        # SATIN-SCHED-008 step 3: the history of the applied authorities' records, after every entry's step-2 charges,
+        # the reservoir first (SATIN-HIST-005, SATIN-POOL-024).
+        record = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
+        if recorded:
+            self.probe.setdefault("records", regular)
+        for authority in recorded:
+            d.add("gasLedgers", f"the authority's one write record: {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = "
+                  f"{fmt(record)} history gas before the first frame" + ("" if self.lists else
+                                                                         ", kept whatever the frame does"),
+                  "SATIN-HIST-005", "SATIN-SCHED-008", *(() if self.lists else ("SATIN-AUTH-016",)))
+            r = min(reservoir, record)
+            if record - r > regular:
+                if r or reservoir != self.reservoir_after_body:
+                    raise Unmodelled("a list that runs out of gas after the reservoir paid one of its charges")
+                d.add("gasLedgers", f"the history of the authorities' records, {fmt(record)} for {h(authority)}, is beyond the "
+                      f"{fmt(regular)} of regular gas left: the transaction runs out of gas before its first frame, and the "
+                      "authorizations are taken back", "SATIN-SCHED-008", "SATIN-SCHED-009", "SATIN-AUTH-015")
+                raise OutOfGasBeforeFrame(f"the history of the authorities' records, with {fmt(regular)} regular gas left")
+            reservoir -= r
+            regular -= record - r
+            self.history_gas += record
+            self.kv.add(("a", authority))
+            self.data_size += WRITE_RECORD_SIZE
+            self.history_bytes += WRITE_RECORD_SIZE
+            d.add("resources", f"the authority's write record: one KV update, {WRITE_RECORD_SIZE} bytes of data size",
+                  "SATIN-AUTH-008", "SATIN-ACCT-005")
         return regular, reservoir

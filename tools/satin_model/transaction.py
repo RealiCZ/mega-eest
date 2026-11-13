@@ -180,6 +180,8 @@ class TransactionMixin:
         if not create:
             sender_acct.nonce += 1
 
+        # What validation did is all a transaction that runs out of gas before its first frame keeps (SATIN-SCHED-010).
+        self.validated = self.snapshot()
         if tx.authorizations:
             self.load_authorities()
             skipped = self.list_crossing()
@@ -202,7 +204,12 @@ class TransactionMixin:
                 raise Unmodelled("a creation onto an occupied address")
             start_record = True
         elif transfer:
-            start_record = True
+            # An applied authority is changed by the list: the value to it adds no record (SATIN-ACCT-009).
+            start_record = ("a", recipient) not in self.kv
+            if not start_record:
+                d.add("gasLedgers", f"the value's recipient {h(recipient)} is an authority the list applied, whose write "
+                      "record the list already made: the value to it makes no record again, so no start record and no "
+                      "history for one", "SATIN-ACCT-009", "SATIN-AUTH-015", "SATIN-HIST-005")
         if start_record:
             pre_frame_history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
             d.add("gasLedgers", f"the first frame's start record ({'created account' if create else 'value recipient'}): "
@@ -230,7 +237,7 @@ class TransactionMixin:
                           "before the first frame and no earlier", "SATIN-SCHED-008", "SATIN-WIT-008")
             r = min(reservoir, amount)
             if amount - r > regular:
-                if tx.authorizations or r or reservoir != self.reservoir_after_body or create:
+                if (tx.authorizations and not self.lists) or r or reservoir != self.reservoir_after_body or create:
                     raise Unmodelled("a transaction that cannot pay a charge before its first frame")
                 return self.out_of_gas_before_frame(intrinsic, floor, price, reservoir,
                                                     f"{what}, {fmt(amount)}, with {fmt(regular)} regular gas left")
@@ -294,12 +301,16 @@ class TransactionMixin:
             rec = self.state.setdefault(recipient, Account())
             rec.balance += tx.value
             self.kv.add(("a", recipient))
-            self.data_size += WRITE_RECORD_SIZE + TRANSFER_LOG_SIZE
+            self.data_size += (WRITE_RECORD_SIZE if start_record else 0) + TRANSFER_LOG_SIZE
             self.logs.append((TRANSFER_LOG_ADDRESS, [TRANSFER_TOPIC, pad_address(tx.sender), pad_address(recipient)],
                               tx.value.to_bytes(32, "big")))
-            d.add("resources", f"the value moves: the recipient's write record ({WRITE_RECORD_SIZE} bytes, one KV update) "
-                  f"and its EIP-7708 transfer log ({TRANSFER_LOG_SIZE} bytes, no history gas)",
-                  "SATIN-ACCT-005", "SATIN-LOG-006")
+            if start_record:
+                d.add("resources", f"the value moves: the recipient's write record ({WRITE_RECORD_SIZE} bytes, one KV "
+                      f"update) and its EIP-7708 transfer log ({TRANSFER_LOG_SIZE} bytes, no history gas)",
+                      "SATIN-ACCT-005", "SATIN-LOG-006")
+            else:
+                d.add("resources", f"the value moves: its EIP-7708 transfer log ({TRANSFER_LOG_SIZE} bytes, no history gas); "
+                      "the recipient's write record is the list's", "SATIN-ACCT-009", "SATIN-LOG-006")
             d.add("receipt", "the transfer log of the transaction's value is the receipt's first log", "SATIN-LOG-001", "SATIN-LOG-002")
             if new_account:
                 self.growth += 1
@@ -338,10 +349,13 @@ class TransactionMixin:
             parties.append("applied EIP-7702 authority")
         if parties:
             self.detain_from_start(frame, parties)
-        elif self.lists and self.applied_authorities:
+        elif self.lists and tx.authorizations:
+            skipped = any(a == env.coinbase for *_, a in tx.authorizations)
             d.add("gasLedgers", "no applied authority is the block beneficiary" + (", the sender's own authorization "
-                  "among them" if tx.sender in self.applied_authorities else "") + ", nor is the sender or the recipient: "
-                  "the transaction is not detained from its start", "SATIN-DET-008")
+                  "among them" if tx.sender in self.applied_authorities else "") + (": the entry whose authority is the "
+                  "beneficiary was skipped, and an authority the list loaded or warmed and did not apply is no applied "
+                  "authority" if skipped else "") + "; nor is the sender or the recipient: the transaction is not "
+                  "detained from its start", "SATIN-DET-008")
         elif create and recipient == env.coinbase:
             d.add("gasLedgers", f"the created address {h(recipient)} is the block beneficiary: the creation transaction is "
                   "not detained from its start for it, its loads of the sender and the created address being the "
@@ -379,6 +393,12 @@ class TransactionMixin:
 
         if status == "success" and create:
             self.deposit_code(output, frame, recipient)
+        if self.lists and status != "success" and self.applied_authorities:
+            kept = sorted(self.applied_authorities)
+            d.add("state", f"the first frame {'halts' if status == 'halt' else 'is stopped' if self.stop else 'reverts'}, "
+                  f"and the authorizations the list applied before it are kept: {', '.join(h(a) for a in kept)} keep their "
+                  "nonce and delegation writes, their state gas, their write records and the history those cost",
+                  "SATIN-AUTH-016")
 
         if status == "halt":
             # SATIN-POOL-014: the halting frame's reservoir becomes what it received, its regular gas
@@ -399,7 +419,7 @@ class TransactionMixin:
             if drawn[1] or (keyless and drawn[0]):
                 raise Unmodelled("a halt after the reservoir paid the state gas of the first frame's start, or the start "
                                  "record of an intercepted call")
-            self.undo_start(moved, create, recipient, new_account, pre_frame_history, pre_frame_state)
+            self.undo_start(moved, create, recipient, new_account, pre_frame_history, pre_frame_state, start_record)
             if keyless and start_record:
                 self.history_gas -= pre_frame_history
                 self.history_bytes -= WRITE_RECORD_SIZE
@@ -411,7 +431,7 @@ class TransactionMixin:
                       "regular gas" + ("; the authorities' records and state gas are the transaction's own and are kept"
                                        if tx.authorizations else ""),
                       "SATIN-HIST-005", "SATIN-POOL-024", "SATIN-HIST-023",
-                      *(("SATIN-AUTH-016",) if tx.authorizations else ()))
+                      *(("SATIN-AUTH-016",) if (self.applied_authorities if self.lists else tx.authorizations) else ()))
             reservoir_left = frame["reservoir_at_start"] + (pre_frame_history + pre_frame_state if frame["reservoir_at_start"] else 0)
             if frame["reservoir_at_start"] and (pre_frame_history or pre_frame_state) and not start_from_reservoir:
                 raise Unmodelled("a halt after start charges the reservoir paid")
@@ -448,7 +468,7 @@ class TransactionMixin:
                 else:
                     d.add("resources", f"the admitted hints' {fmt(self.hint_bytes)} bytes stay counted as data size through "
                           "the stop", "SATIN-STOP-012", "SATIN-ORCL-009")
-            self.undo_start(moved, create, recipient, new_account, pre_frame_history, pre_frame_state)
+            self.undo_start(moved, create, recipient, new_account, pre_frame_history, pre_frame_state, start_record)
             if keyless and start_record:
                 self.history_gas -= pre_frame_history
                 self.history_bytes -= WRITE_RECORD_SIZE
@@ -511,11 +531,21 @@ class TransactionMixin:
 
     def out_of_gas_before_frame(self, intrinsic: int, floor: int, price: int, reservoir: int, what: str) -> Result:
         """SATIN-SCHED-009 and SATIN-SCHED-010: a transaction that cannot pay a charge before its first frame
-        runs out of gas without running a frame. The model reaches this path only when nothing but
-        validation's changes to the sender was applied before the charge it cannot pay."""
+        runs out of gas without running a frame: everything applied before the first frame is taken back to
+        what validation left (the snapshot `validated`), the authorizations the list applied among it, and the
+        accounts the transaction loaded stay loaded."""
         tx, d = self.tx, self.d
         d.add("outcome", f"the transaction cannot pay {what}: it runs out of gas before its first frame and runs no frame",
               "SATIN-SCHED-009")
+        if getattr(self, "applied_authorities", None):
+            if reservoir != self.reservoir_after_body:
+                raise Unmodelled("an out-of-gas before the first frame after the reservoir paid an authorization's charge")
+            d.add("state", "everything the list applied is taken back: "
+                  + ", ".join(h(a) for a in sorted(self.applied_authorities)) + " return to what validation left, with "
+                  "their nonce and delegation writes, their state gas, their write records and the history and state "
+                  "growth those counted; the accounts the list's simulation and application loaded stay loaded",
+                  "SATIN-SCHED-010", "SATIN-AUTH-015")
+        self.restore(self.validated)
         if self.stops:
             d.add("limit", "a transaction that cannot pay a charge made before its first frame reports no stop, whatever "
                   "its frame would have crossed: the stop applies only to a transaction that passes validation and pays "

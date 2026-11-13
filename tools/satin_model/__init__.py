@@ -42,8 +42,9 @@ narrow class of transactions the slice uses:
   an indicator at the start (`SATIN-AUTH-002` to `-004`); and a
   transaction to an account holding a delegation, its sender's own among them, which pays its
   delegate's access before the first frame;
-- a transaction that runs out of gas before its first frame with nothing applied but validation's
-  changes to its sender, an authorization list's first write among the charges it cannot pay;
+- a transaction that runs out of gas before its first frame, everything applied after validation's
+  changes to its sender taken back, an authorization list's charges, applied entries and all, and a
+  delegate's access among the charges it cannot pay;
 - for the cases that ask, the `reads` group: what the transaction loads, as the stateless witness
   needs it, and the `gasPools` group: the first frame's pools at its start and end;
 - a stop of the transaction's own frame, its result: gas detention's crossing, and an `SSTORE`'s

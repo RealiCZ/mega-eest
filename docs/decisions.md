@@ -1143,6 +1143,35 @@ funds. No committed case has such a pre-image, nor a code hash or address over o
 passes on both implementations; `make_examples.py` is left as it is, its inputs never reaching that
 length. The case now carries a priority fee of 1,000, and its payload is 134 bytes.
 
+An independent review of these cases listed fourteen edges they left open and two model errors, which a second
+set of 27 cases closes (25 gating, two quarantined, D-90):
+
+- **The out-of-gas path takes the list back.** The model kept an applied authorization when a later charge before
+  the first frame could not be paid: the path restored nothing. It now snapshots the run after validation and
+  restores it on that path, the authorities' nonces and code, their state gas, records, history and growth with
+  it; what the list loaded stays loaded (`SATIN-SCHED-010`). The list's charges follow `SATIN-SCHED-008`: every
+  entry's step-2 charges in list order (a new account's state gas, `ACCOUNT_WRITE`, the indicator), then step 3's
+  history of the authorities' records, each able to run out of gas. Cases: the sender's own authorization taken
+  back when the recipient's cold delegate access is one gas short, with its control at the access; and an
+  authorization taken back at a second entry's `ACCOUNT_WRITE`, at its indicator and at its record's history.
+- **The authority that is the value's recipient.** The model charged a second record for the value's start. An
+  applied authority's write is the list's, and the value to it makes no record again (`SATIN-ACCT-009`): the
+  example of `SATIN-AUTH-015` is a case, at 68,504 gas, with an absent authority the list creates and one whose
+  delegate reverts the frame, which keeps the authority's record.
+- **The other edges**: the indicator's charge across set, clear and set again, for an authority holding one at the
+  start, absent or existing (`SATIN-AUTH-009`); entries rejected before and after an acceptance, and the sender's own
+  entries in sequence (`SATIN-AUTH-004`); the last nonce an authorization can carry, `2^64 − 2`; the beneficiary's
+  entry skipped or gated, which does not detain (`SATIN-DET-008`); the authority's own bucket pricing both its
+  charges (`SATIN-STATE-003`); the reservoir paying 1 of the start record after the authority's; the target an
+  entry names, which the application does not warm (`SATIN-AUTH-014`); an explicit revert after the sender's own
+  authorization and after an absent authority's, which keep them (`SATIN-AUTH-016`); a skipped list at a non-zero
+  price; signatures with a y_parity of 2 and with r at secp256k1's order (`SATIN-AUTH-002`); and two lists whose
+  reads show the simulation's gates and code loads and its walk past the crossing entry (`SATIN-AUTH-005`).
+- **What each case pins.** `SATIN-AUTH-016` is cited where a first frame fails after the list applied an
+  authorization, and no longer at the record's charge; `SATIN-AUTH-004` where an entry reaches the nonce
+  comparison; the reads of the page's cases cite `SATIN-REG-002`, which their quarantine is about; the frame's
+  `ORIGIN` and `GASPRICE` cite `SATIN-BASE-001`, which the case names.
+
 **D-89. What the authorization cases cannot hold.**
 
 - **`SATIN-AUTH-006`**, a failed read of an authority, needs an injected fault (`input.faults`), which
@@ -1153,25 +1182,30 @@ length. The case now carries a priority fee of 1,000, and its payload is 134 byt
   made for a transaction whose list is skipped, before its frame is stopped, is not stated
   (`SATIN-AUTH-010` and `SATIN-STOP-009` name the frame's stop and its settlement, not those
   charges). The model keeps raising `Unmodelled` for a skip whose first frame starts with a charge,
-  and D-88's skipped case does not cite `SATIN-AUTH-012`.
+  and D-88's skipped case does not cite `SATIN-AUTH-012`. Both implementations load the recipient of a
+  skipped list's transaction, as step 4 would, before the frame is stopped; the model does not, so
+  the skipped case with `reads` is sent to its own sender, which validation loads.
 - **A KV total over its limit** (`SATIN-AUTH-010`'s kind 1, and the kind when both totals cross). A
   list keeps at most one record for each distinct authority, so it crosses the 500,000 KV updates
   only with more entries than validation lets a transaction carry: the execution cap of
-  `SATIN-VAL-003` step 4 holds a list to 25,586 entries at `PER_AUTH_BASE_COST`, and the data-size
-  limit of step 1 to 92,956. That clause is unreachable, and so is any difference in the
+  `SATIN-VAL-003` step 4 holds a list to at most 25,587 entries at `PER_AUTH_BASE_COST`, for a
+  zero-value transaction to its own sender, whose intrinsic gas is `TX_BASE_COST` alone (25,586 for
+  any other recipient), and the data-size limit of step 1 to 92,956. That clause is unreachable, and so is any difference in the
   simulation's record count alone.
 - **`SATIN-AUTH-018`** is pinned by the skipped case's outcome, an included transaction whose frame is
   stopped; no pool profile is part of the slice.
 
-**D-90. Two authorization cases are quarantined against the revm-based implementation.** At
-`7110d87b` it fails two of D-88's cases, each for a rule the quarantine already names, each case's
+**D-90. Four authorization cases are quarantined against the revm-based implementation.** At
+`7110d87b` it fails four of D-88's cases, each for a rule the quarantine already names, each case's
 own edge being the rule's there:
 
-- `satin/authorizations/reads/short-list-out-of-gas` carries `reads` (D-61): its first difference is
-  the registry's account, which that implementation reads in every transaction (`SATIN-REG-002`);
-  its simulation of the short list is the rule's, the gated entry's authority unread.
+- `satin/authorizations/reads/short-list-out-of-gas`, `.../reads/short-list-gates-and-code` and
+  `.../reads/simulation-past-crossing` carry `reads` (D-61): the first difference of each is the
+  registry's account, which that implementation reads in every transaction with its slot 0
+  (`SATIN-REG-002`); its simulation is the rule's, the gated entries' authorities unread, the
+  authority holding code loaded with it, and the authority after the crossing entry loaded.
 - `satin/authorizations/deposit-caller/empty-leaf` is a deposit: its gas used is short by its body's
   history, which that implementation does not charge a deposit (`SATIN-HIST-016`); its created
   caller is the rule's.
 
-The evm2-based implementation passes all eighteen cases.
+The evm2-based implementation passes all forty-five cases.

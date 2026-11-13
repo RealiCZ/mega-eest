@@ -50,7 +50,10 @@ specification's text and constants:
   skipped; the sender's own authorization; an authority holding an indicator at the transaction's
   start; a list at the state-growth limit and one past it, with entries that keep nothing; a first
   frame that halts after the reservoir paid its start record; and the frame's `ORIGIN` and
-  `GASPRICE`.
+  `GASPRICE`. The list's charges are made in the order of `SATIN-SCHED-008`, every entry's step-2
+  charges and then step 3's records, and an out-of-gas before the first frame takes back everything
+  after validation, the applied authorizations among it, keeping what was loaded; an authority that
+  is the value's recipient makes the one record the value does not make again.
 - **The edges of gas detention's rules** (D-67): the volatile reads of the block environment
   (`NUMBER`, `BLOCKHASH`, `COINBASE`, `PREVRANDAO`, `GASLIMIT`, `BASEFEE`, `BLOBBASEFEE`, `SLOTNUM`), of
   the beneficiary's account (`SELFBALANCE` of its own frame, `EXTCODESIZE`, `EXTCODEHASH`) and their

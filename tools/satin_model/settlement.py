@@ -102,7 +102,7 @@ class SettlementMixin:
         (self.state, self.kv, self.data_size, self.growth, self.logs, self.history_gas, self.history_bytes,
          self.state_gas) = snap
 
-    def undo_start(self, transfer, create, recipient, new_account, start_history, start_state) -> None:
+    def undo_start(self, transfer, create, recipient, new_account, start_history, start_state, record=True) -> None:
         """A failed first frame discards its start: the value, the records, the transfer log, the
         created account, and gives the start's history and state gas back (SATIN-HIST-005,
         SATIN-POOL-015)."""
@@ -110,8 +110,9 @@ class SettlementMixin:
         if transfer:
             self.state[tx.sender].balance += tx.value
             self.state[recipient].balance -= tx.value
-            self.kv.discard(("a", recipient))
-            self.data_size -= WRITE_RECORD_SIZE + TRANSFER_LOG_SIZE
+            if record:  # an applied authority's record is the list's, kept through the frame's failure (SATIN-AUTH-016)
+                self.kv.discard(("a", recipient))
+            self.data_size -= (WRITE_RECORD_SIZE if record else 0) + TRANSFER_LOG_SIZE
             self.logs = [l for l in self.logs if l[0] != TRANSFER_LOG_ADDRESS]
             if new_account:
                 self.growth -= 1
@@ -122,7 +123,7 @@ class SettlementMixin:
             self.growth -= 1
         if transfer or create:
             self.history_gas -= start_history
-            self.history_bytes -= WRITE_RECORD_SIZE
+            self.history_bytes -= WRITE_RECORD_SIZE if record else 0
             self.state_gas -= start_state
             if recipient in self.state and self.state[recipient].empty() and recipient not in self.pre:
                 del self.state[recipient]

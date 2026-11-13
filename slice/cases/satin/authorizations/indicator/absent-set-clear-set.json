@@ -1,0 +1,169 @@
+{
+  "caseId": "satin/authorizations/indicator/absent-set-clear-set",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xb958",
+      "floor": "0x3a98",
+      "gasUsed": "0x4f076",
+      "history": "0xe078",
+      "historyBytes": "0x28d",
+      "refund": "0x0",
+      "regular": "0xb958",
+      "state": "0x356a6",
+      "total": "0x4f076"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x4f076",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x4"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "653",
+        "reported": "0x28d"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "1",
+        "reported": "0x1"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x125940c60de364f680a70be9c6896c520e724770": {
+          "balance": "0x0",
+          "code": "0xef010000000000000000000000000000000000000c0de2",
+          "nonce": "0x3",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x000000000000000000000000000000000000beef": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0x04f9017a01808080830f424094000000000000000000000000000000000000beef8080c0f90114f85a019400000000000000000000000000000000000de1e98001a027c49554829e447d599a8f9a87400296ab844f330635446cd59157f9ac85b861a051bd1d7e0cf78236cc1ef2e997baa18311431821790a6848491f6ad5018165f6f85a019400000000000000000000000000000000000000000180a0f9a571616193b74e1b2cf20d5f3aaba03980b7c9b62fd7e32b18b41b656db464a0544f38df554d60f95972f86ee60deec05ab886bcf7b71613a9d59f4216fb432df85a019400000000000000000000000000000000000c0de20280a07182d856e4a0eefc8a98c8e22471dd4cdbbe67975b2c10a570e93815878eacc9a02d5ba9d43053a17e525f402dd98027d270e6212049d51de05a7101f1a6b42f8501a02de2355a02b83dfc5afd5241325991e0a285c6821864e6cada648567e84aab9ba05a100ee76c10be23b8b110d7a8e4cef16bb1f11a0fd3fb17e8e834fbcfcdb480"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "an absent authority set, cleared and set again: one new-account charge, one indicator charge of 35,190, the clear not erasing that the list paid for an indicator; one record, one unit of growth, nonce 3, delegating to the last target"
+    },
+    "definition": "tools/make_slice.py::authorization_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "c130558e2f38a913982dc17f0cd8eb8834967262",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-AUTH-001",
+    "SATIN-AUTH-003",
+    "SATIN-AUTH-004",
+    "SATIN-AUTH-005",
+    "SATIN-AUTH-007",
+    "SATIN-AUTH-008",
+    "SATIN-AUTH-009",
+    "SATIN-AUTH-010",
+    "SATIN-AUTH-015",
+    "SATIN-SCHED-007",
+    "SATIN-STATE-011"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+    "name": "megaeth/Satin"
+  }
+}
