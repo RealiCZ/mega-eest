@@ -63,7 +63,11 @@ def _f(a: list[list[int]]) -> None:
 
 def keccak256(data: bytes) -> bytes:
     rate = 136
-    msg = bytearray(data) + b"\x01" + b"\x00" * ((-len(data) - 2) % rate) + b"\x80"
+    # pad10*1: 0x01 after the data and 0x80 in the last byte of the block, the one byte 0x81 when
+    # the data leaves a single byte free.
+    msg = bytearray(data) + b"\x00" * (rate - len(data) % rate)
+    msg[len(data)] ^= 0x01
+    msg[-1] ^= 0x80
     if len(msg) % rate:
         raise AssertionError("padding")
     a = [[0] * 5 for _ in range(5)]
