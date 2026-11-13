@@ -144,7 +144,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "KeylessDeploy's address holding the undefined opcode 0x0c, called with another selector before arguments that would decode: not recognized, the code the state holds runs and halts"
+      "intent": "recognition whatever code the state holds (SATIN-ICPT-006), in engine isolation and not a state a chain reaches: KeylessDeploy's address holding the undefined opcode 0x0c, called with another selector before arguments that would decode: not recognized, the code the state holds runs and halts"
     },
     "definition": "tools/make_slice.py::keyless_cases",
     "generator": "tools/make_slice.py",

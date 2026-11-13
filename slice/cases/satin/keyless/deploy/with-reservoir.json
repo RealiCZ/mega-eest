@@ -156,7 +156,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "a deployment with a reservoir: steps 10 and 14 draw it after their legacy shares, and the creation receives its share of what the call has left"
+      "intent": "a deployment whose transaction has a reservoir, which steps 10 and 14 draw: an ordinary deployment above the execution cap; the creation's reservoir share and the legacy shares, which its outcome does not distinguish, are pinned by the reservoir cases"
     },
     "definition": "tools/make_slice.py::keyless_cases",
     "generator": "tools/make_slice.py",

@@ -162,7 +162,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "a constructor whose own CREATE returns empty code, then deploys one byte: the empty-code refusal concerns the deploy address alone"
+      "intent": "a constructor whose own CREATE returns empty code, then deploys 32 bytes: the empty-code refusal concerns the deploy address alone (SATIN-KEY-009)"
     },
     "definition": "tools/make_slice.py::keyless_cases",
     "generator": "tools/make_slice.py",
@@ -186,6 +186,7 @@
     "SATIN-KEY-004",
     "SATIN-KEY-005",
     "SATIN-KEY-007",
+    "SATIN-KEY-009",
     "SATIN-KEY-011",
     "SATIN-KEY-012",
     "SATIN-KEY-013",

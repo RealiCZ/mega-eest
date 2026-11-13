@@ -8,10 +8,10 @@ from __future__ import annotations
 
 from .constants import (
     ACCOUNT_STATE, BLOCK_ENV_ACCESS_COMPUTE_GAS, COST_PER_HISTORY_BYTE, CREATE_GAS, delegate_of, ex, INITCODE_WORD_COST,
-    KEYLESS_ERRORS, LEGACY_CREATE_SHARE, LEGACY_NEW_ACCOUNT_SHARE, MAX_INITCODE_SIZE, MAX_U64, SECP256K1_G,
+    KEYLESS_ERRORS, LEGACY_CREATE_SHARE, limit_exceeded, MALFORMED_ENCODING, LEGACY_NEW_ACCOUNT_SHARE, MAX_INITCODE_SIZE, MAX_U64, SECP256K1_G,
     SECP256K1_N, SECP256K1_P, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, WRITE_RECORD_SIZE,
 )
-from .records import Account, created_address, fmt, h, Halt, pad_address, Unmodelled
+from .records import Account, created_address, fmt, h, Halt, LimitStop, pad_address, Unmodelled
 
 RECORD_HISTORY = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
 MAX_U128 = 2**128 - 1
@@ -41,9 +41,13 @@ def keyless_answer(gas_used: int, deployed: bytes, error: bytes) -> bytes:
             + len(error).to_bytes(32, "big") + padded(error))
 
 
+class Malformed(Exception):
+    """A first argument that is one RLP list but no signed legacy transaction's encoding (SATIN-KEY-005 step 3)."""
+
+
 def rlp_strings(b: bytes) -> list[bytes]:
     """The items of an RLP list that holds byte strings alone, each canonically encoded: what a signed legacy
-    transaction's nine fields are. Anything else is not modelled: whether a decoder refuses it is not this model's."""
+    transaction's nine fields are. A list, a non-canonical string or an item past the list is no such encoding."""
     n = b[0] - 0xF7 if b[0] > 0xF7 else 0
     pos, out = 1 + n, []
     while pos < len(b):
@@ -55,30 +59,30 @@ def rlp_strings(b: bytes) -> list[bytes]:
             size = p - 0x80
             item = b[pos + 1:pos + 1 + size]
             if size == 1 and item[0] < 0x80:
-                raise Unmodelled("a carried transaction with a non-canonical RLP string")
+                raise Malformed("a one-byte string below 0x80 encoded with a length prefix, which RLP does not do")
             out.append(item)
             pos += 1 + size
         elif p <= 0xBF:
             k = p - 0xB7
             size = int.from_bytes(b[pos + 1:pos + 1 + k], "big")
             if size < 56 or b[pos + 1] == 0:
-                raise Unmodelled("a carried transaction with a non-canonical RLP string")
+                raise Malformed("a long string whose length is not canonically encoded")
             out.append(b[pos + 1 + k:pos + 1 + k + size])
             pos += 1 + k + size
         else:
-            raise Unmodelled("a carried transaction whose RLP list holds a list")
+            raise Malformed("a list among the fields, where a legacy transaction has byte strings alone")
     if pos != len(b):
-        raise Unmodelled("a carried transaction whose RLP items overrun the list")
+        raise Malformed("an item that runs past the list")
     return out
 
 
 def scalar(b: bytes, bound: int, what: str) -> int:
     """An RLP integer: big-endian, without a leading zero, within the field's type."""
     if b[:1] == b"\x00":
-        raise Unmodelled(f"a carried transaction whose {what} has a leading zero")
+        raise Malformed(f"its {what} encoded with a leading zero byte, which an RLP integer does not have")
     v = int.from_bytes(b, "big")
     if v > bound:
-        raise Unmodelled(f"a carried transaction whose {what} overflows its type")
+        raise Malformed(f"its {what} wider than its field")
     return v
 
 
@@ -87,10 +91,10 @@ def decode_carried(argument: bytes) -> dict:
     transaction's nine fields, `[nonce, gasPrice, gasLimit, to, value, data, v, r, s]`."""
     fields = rlp_strings(argument)
     if len(fields) != 9:
-        raise Unmodelled(f"a carried RLP list of {len(fields)} strings, not a legacy transaction's nine")
+        raise Malformed(f"a list of {len(fields)} fields, where a signed legacy transaction has nine")
     nonce, price, gas, to, value, data, v, r, s = fields
     if len(to) not in (0, 20):
-        raise Unmodelled("a carried transaction whose to is neither empty nor an address")
+        raise Malformed("a to that is neither empty nor an address")
     tx = {"nonce": scalar(nonce, MAX_U64, "nonce"), "gasPrice": scalar(price, MAX_U128, "gas price"),
           "gasLimit": scalar(gas, MAX_U64, "gas limit"), "to": to, "value": scalar(value, 2**256 - 1, "value"),
           "data": data, "v": scalar(v, MAX_U64, "v"), "r": scalar(r, 2**256 - 1, "r"), "s": scalar(s, 2**256 - 1, "s")}
@@ -214,7 +218,13 @@ class KeylessMixin:
         """Steps 3 to 15 of a recognized keylessDeploy call whose first argument is one RLP list, then the creation, the
         settlement and the answer. Returns the call's (status, output)."""
         d, tx, env = self.d, self.tx, self.env
-        carried = decode_carried(argument)
+        try:
+            carried = decode_carried(argument)
+        except Malformed as e:
+            d.add("outcome", f"step 3: the first argument's {len(argument)} bytes are one RLP list but no signed legacy "
+                  f"transaction's encoding, {e}: the call reverts with MalformedEncoding(), ABI-encoded as a custom error",
+                  "SATIN-KEY-001", "SATIN-KEY-004", "SATIN-KEY-005")
+            return "revert", MALFORMED_ENCODING
         signer = recover_signer(carried) if carried["chainId"] is None else None
         predicates = self.keyless_predicates(carried, signer, override)
         gas, value, init = carried["gasLimit"], carried["value"], carried["data"]
@@ -375,6 +385,7 @@ class KeylessMixin:
         d.add("gasLedgers", text, *rules, "SATIN-HIST-002")
         # Step 15.
         self.probe.setdefault("keyless-15", frame["regular"])
+        self.probe.setdefault("keyless-reservoir-15", frame["reservoir"])
         forward = min(read, frame["regular"])
         if forward < gas:
             return self.keyless_refusal(15, keyless_error("GasLimitTooLow(uint64,uint64)", gas, forward),
@@ -439,23 +450,45 @@ class KeylessMixin:
               *(("SATIN-LOG-001", "SATIN-LOG-006") if value else ()))
         d.add("gasLedgers", "from its start the creation is an ordinary creation frame; ORIGIN and GASPRICE in its initcode "
               "are the transaction's own", "SATIN-KEY-002", "SATIN-KEY-011")
-        if self.start_crossing(child):
-            raise Unmodelled("a keyless creation whose start crosses a limit")
+        crossing = self.start_crossing(child)
         ctx = {"address": deploy, "caller": signer, "value": value, "calldata": b"", "name": name, "keyless": True}
-        status, out = self.run_child(child, init, ctx, name, create=True)
-        destroyed = status == "success" and deploy in self.destroyed
-        before = frame["reservoir"]
-        left = self.end_child(frame, child, status, snap, name)
-        returned = frame["reservoir"] - before
+        if crossing:
+            kind, crossed, which, rises = crossing
+            d.add("outcome", f"the creation's start is held to what it kept once decided: the created account's record"
+                  + (" and its unit of state growth" if deploy_empty else "") + (" and the value's transfer log" if value
+                                                                               else "")
+                  + f", {fmt(rises[0])} bytes of data size, {rises[1]} KV update and {rises[2]} of state growth on the "
+                  f"creation, first to its budget, the child share of the call's, and then to the transaction's limit: it "
+                  f"crosses {which}, so the creation is stopped with MegaLimitExceeded({kind}, {fmt(crossed)}) before its "
+                  "initcode runs an instruction, and what its start moved is taken back with it; the signer's nonce bump "
+                  "is not the start's and stays", "SATIN-KEY-016", "SATIN-LIM-010", "SATIN-LIM-011", "SATIN-LIM-013",
+                  "SATIN-STOP-013", "SATIN-STOP-015", "SATIN-STOP-018", *self.kind_rules())
+            self.frame_restore(snap)
+            self.caught(frame)
+            status, out, destroyed = "stop", limit_exceeded(kind, crossed), False
+            frame["reservoir"] += share
+            left, returned = forward, share
+            d.add("gasLedgers", f"the stopped creation ran nothing: its {fmt(forward)} of regular gas and its reservoir "
+                  f"share {fmt(share)} return to the call untouched", "SATIN-POOL-012", "SATIN-STOP-005")
+        else:
+            self.keyless_active, self.keyless_signer = deploy, signer
+            status, out = self.run_child(child, init, ctx, name, create=True)
+            self.keyless_active = self.keyless_signer = None
+            destroyed = status == "success" and deploy in self.destroyed
+            before = frame["reservoir"]
+            left = self.end_child(frame, child, status, snap, name)
+            returned = frame["reservoir"] - before
         frame["regular"] += left
         self.regular_charges -= left
         self.split(frame)
         # gasUsed: both pools netted together, plus the give-backs of step 14's charges the creation received.
         added = 0
-        if destroyed:
-            if deploy in self.pre:
-                raise Unmodelled("a keyless constructor that destroys a deploy address the state held")
+        if destroyed and deploy not in self.pre:
             added = created_state + RECORD_HISTORY
+        elif destroyed:
+            d.add("gasLedgers", f"the destroyed deploy address held a leaf at the transaction's start: the destruction "
+                  "table gives nothing back for it, and step 14 charged no created-account state gas for an address that "
+                  "is not empty, so nothing is added back to gasUsed", "SATIN-KEY-015", "SATIN-SD-004")
         gas_used = (forward - left) + (share - returned) + added
         if gas_used < 0:
             raise Unmodelled("a keyless creation whose gasUsed is negative")
@@ -463,7 +496,7 @@ class KeylessMixin:
         d.add("outcome", f"gasUsed = (regular given {fmt(forward)} - regular returned {fmt(left)}) + (reservoir given "
               f"{fmt(share)} - reservoir returned {fmt(returned)})"
               + (f" + the give-backs of step 14's charges the creation received, the destruction table's for the account "
-                 f"it created, {fmt(created_state)} of state gas and {fmt(RECORD_HISTORY)} of history gas" if destroyed
+                 f"it created, {fmt(created_state)} of state gas and {fmt(RECORD_HISTORY)} of history gas" if added
                  else "") + f" = {fmt(gas_used)}; the call's own charges of steps 1 and 14 are no part of it",
               "SATIN-KEY-015")
         if status != "success":
@@ -548,9 +581,13 @@ class KeylessMixin:
         counted on the call (SATIN-KEY-012, -013, SATIN-LIM-008)."""
         d, tx = self.d, self.tx
         acct = self.state[signer]
-        if acct.nonce != n0 + 1:
-            raise Unmodelled("a signer whose own code spent a nonce during the keyless creation")
-        if n0 == 1:
+        if acct.nonce > n0 + 1:
+            d.add("state", f"the signer's own code spent {acct.nonce - n0 - 1} nonce{'s' if acct.nonce - n0 > 2 else ''} "
+                  "during the creation, changes that survive it: the creation's bump is not the last change of the "
+                  f"signer's nonce, and every bump is kept, the nonce {acct.nonce}", "SATIN-KEY-013")
+        elif acct.nonce != n0 + 1:
+            raise Unmodelled("a signer whose nonce the creation's bump does not explain")
+        elif n0 == 1:
             acct.nonce = 1
             d.add("state", "the deployment is from signer nonce 1 and the creation's bump is the last change of the "
                   "signer's nonce it made: the bump is taken back, the nonce set to 1", "SATIN-KEY-013")
@@ -571,7 +608,13 @@ class KeylessMixin:
                 d.add("resources", "the signer's account is as the transaction loaded it: no record", "SATIN-KEY-013",
                       "SATIN-ACCT-004")
                 return
-            self.hold_to_limits(WRITE_RECORD_SIZE, 1, rise, "the keyless signer's nonce record", frame)
+            try:
+                self.hold_to_limits(WRITE_RECORD_SIZE, 1, rise, "the keyless signer's nonce record", frame)
+            except LimitStop:
+                d.add("outcome", "the signer's record, counted on the call once the creation returned and the nonce rule "
+                      "applied, crosses a limit: the call itself is stopped, its stop the transaction's result, and the "
+                      "deployment, the signer's nonce included, is taken back", "SATIN-KEY-012", "SATIN-KEY-016")
+                raise
             self.kv.add(("a", signer))
             self.data_size += WRITE_RECORD_SIZE
             self.growth += rise

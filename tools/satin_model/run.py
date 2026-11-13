@@ -91,3 +91,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # The created accounts whose slots read zero from the creation on, the state having held storage there
         # (SATIN-SD-003, -016).
         self.zero_storage: set[bytes] = set()
+        # The deploy address of a keyless creation while its initcode runs, None otherwise (SATIN-KEY-009).
+        self.keyless_active: bytes | None = None
+        # Its signer while it runs: its account differs already, its record counted on the call (SATIN-KEY-012).
+        self.keyless_signer: bytes | None = None

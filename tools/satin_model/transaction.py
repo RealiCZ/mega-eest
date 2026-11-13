@@ -462,6 +462,10 @@ class TransactionMixin:
                     d.add("outcome", "the transaction's own CALL to KeylessDeploy does not carry keylessDeploy's selector: "
                           "not recognized, charged nothing, and the code the state holds at the address runs",
                           "SATIN-ICPT-006")
+                elif not create and data[:4] == KEYLESS_DEPLOY_CALL and keyless_arguments(data) is not None:
+                    d.add("outcome", f"the transaction's own CALL carries keylessDeploy's selector and arguments that "
+                          f"decode, but to {h(recipient)}, not KEYLESS_DEPLOY_ADDRESS: not recognized, charged nothing, and "
+                          "the code the state holds there runs", "SATIN-ICPT-006")
                 status, output = self.execute(code, frame, create)
                 if create and status == "success" and len(output) > MAX_CONTRACT_SIZE:
                     d.add("outcome", f"the initcode returns {fmt(len(output))} bytes of code to deposit, over "
@@ -628,6 +632,10 @@ class TransactionMixin:
             raise Unmodelled("a skipped list on a transaction whose first frame starts with a charge")
         kind, value = crossed
         self.stop = (kind, value)
+        if tx.to == KEYLESS_DEPLOY and tx.data[:4] == KEYLESS_DEPLOY_CALL:
+            d.add("outcome", "the transaction's own frame is a keylessDeploy call, which the list's stop reaches before "
+                  "anything is decided about the call: no keyless recognition, no overhead, no signer read",
+                  "SATIN-ICPT-007", "SATIN-AUTH-010")
         d.add("outcome", f"the transaction's own frame is stopped before it runs, with MegaLimitExceeded({kind}, "
               f"{fmt(value)}), the transaction's result: the list's total crosses before the first frame, where no frame "
               "budget exists yet, so the stop names the transaction limit; state growth, like KV updates, can cross "

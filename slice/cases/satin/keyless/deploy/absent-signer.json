@@ -156,7 +156,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "a deployment from an absent signer: step 10 charges its account, the creation deploys one byte, the nonce bump is kept, and the signer's record and unit of state growth are counted on the call"
+      "intent": "a deployment from an absent signer: step 10 charges its account, the creation deploys 32 bytes, the nonce bump is kept, and the signer's record and unit of state growth are counted on the call"
     },
     "definition": "tools/make_slice.py::keyless_cases",
     "generator": "tools/make_slice.py",

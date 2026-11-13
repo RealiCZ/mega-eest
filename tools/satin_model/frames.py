@@ -105,6 +105,16 @@ class FramesMixin:
                       "destroy: the empty deposit is refused, and the creation reverts as a creation that reverted, its "
                       "state, logs and records taken back, so that the address stays deployable", "SATIN-KEY-009")
             elif create and status == "success":
+                if out[:1] == b"\xef":
+                    d.add("outcome", f"{name} returns code that starts with 0xEF: an ordinary creation refuses it (EIP-3541, "
+                          "kept by the base layer) before any deposit charge, and halts", "SATIN-BASE-001", "SATIN-SCHED-011",
+                          *(("SATIN-KEY-011",) if ctx.get("keyless") else ()))
+                    raise Halt("deployed code that starts with 0xEF (EIP-3541)")
+                keyless = getattr(self, "keyless_active", None)
+                if not out and keyless is not None and ctx["address"] != keyless:
+                    d.add("outcome", f"{name}, inside the keyless creation of {h(keyless)}, returns empty code for "
+                          f"{h(ctx['address'])}, which is not the deploy address: the empty-code refusal concerns the deploy "
+                          "address alone, and this deposit is made", "SATIN-KEY-009")
                 self.deposit_code(out, child, ctx["address"])
         except Halt as e:
             status, out = "halt", b""
@@ -267,8 +277,13 @@ class FramesMixin:
         d = self.d
         if not value:
             raise Unmodelled("a call without value to an account without code")
-        if any(("a", a) in self.kv for a in (caller, target)):
-            raise Unmodelled("a value start without a frame whose accounts differ already")
+        moved = {caller: self.state.get(caller, Account()).balance - value,
+                 target: self.state.get(target, Account()).balance + value}
+        for a in (caller, target):
+            now, was = self.state.get(a, Account()), self.pre.get(a)
+            if ("a", a) in self.kv and was is not None and (now.nonce, moved[a], now.code) == (was.nonce, was.balance,
+                                                                                               was.code):
+                raise Unmodelled("a value start without a frame that returns an account to what the transaction loaded")
         budget = self.child_budget(frame)
         remaining = self.frame_remaining(frame)
         rises = (WRITE_RECORD_SIZE * len(records) + TRANSFER_LOG_SIZE, len(records), 1 if new_account else 0)

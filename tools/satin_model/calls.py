@@ -20,7 +20,7 @@ class CallsMixin:
     """A `CALL`, decided in the order of `SATIN-ICPT-007`: interception, then the frame start, the child frame and"""
 
     def call(self, frame, caller: bytes, target: bytes, value: int, data: bytes, child_gas: int,
-             records: list, history: int, new_account: int = 0, share: int = 0):
+             records: list, history: int, new_account: int = 0, share: int = 0, code: bytes | None = None):
         """A `CALL`, once the opcode's own charges, the forward, the history of the start's `records` and
         the child's reservoir `share` are made, decided in the order of SATIN-ICPT-007: interception, then
         the frame start. A start answered without a frame returns the share untouched (SATIN-POOL-012).
@@ -161,8 +161,8 @@ class CallsMixin:
             d.add("outcome", "a keylessDeploy call a contract makes is not recognized, the transaction's own frame alone "
                   "being: it runs KeylessDeploy's bytecode, which reverts with " + ("empty data, the method not being "
                   "payable" if value else "NotIntercepted()"), "SATIN-KEY-003", "SATIN-ICPT-006")
-        status, out = self.run_child(child, callee.code, {"address": target, "caller": caller, "value": value,
-                                                          "calldata": data}, name)
+        status, out = self.run_child(child, callee.code if code is None else code,
+                                     {"address": target, "caller": caller, "value": value, "calldata": data}, name)
         if keyless and (status, out) != ("revert", b"" if value else KEYLESS_ERRORS["NotIntercepted()"]):
             raise Unmodelled("KeylessDeploy's bytecode answering a contract's call otherwise than SATIN-KEY-003 states")
         if status == "success":
