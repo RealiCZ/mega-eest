@@ -9,11 +9,11 @@ rules at `cdded1e` (`specs/satin-cdded1e`), and for a precompile that halts at `
 (`specs/satin-c130558`), the arithmetic a `state-transition` case's observations follow, for the
 narrow class of transactions the slice uses:
 
-- the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`,
-  `ORIGIN`, `GASPRICE`, `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`,
-  `REVERT` and `INVALID`, and the stack, arithmetic, calldata, jump, return-data and `KECCAK256`
-  opcodes a system contract's dispatcher and decoder use, and the `DELEGATECALL`, `CREATE` and
-  `SELFDESTRUCT` of the take-back examples, below; of the volatile reads only those below;
+- the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`, `ORIGIN`,
+  `GASPRICE`, `CHAINID`, `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`,
+  `LOG0`..`LOG4`, `RETURN`, `REVERT` and `INVALID`, and the stack, arithmetic, calldata, jump, return-data
+  and `KECCAK256` opcodes a system contract's dispatcher and decoder use, and the `DELEGATECALL`, `CREATE`
+  and `SELFDESTRUCT` of the take-back examples, below; of the volatile reads only those below;
 - a `CALL` from that frame to a system contract, decided in the order of `SATIN-ICPT-007`: an
   interceptor's `NonZeroTransfer()`, the `sendHint` admission and its data-size stop, the frame
   start that refuses a value the caller cannot fund, and a child frame that reverts or halts; the
@@ -64,6 +64,11 @@ narrow class of transactions the slice uses:
   price (the identity precompile, ModExp's price, a BN254 pairing over its size limit);
 - calls, value transfers, creation transactions and deposits, with or without a reservoir, and a
   deposit whose own frame halts (`SATIN-DEP-004`);
+- for the outcomes page and validation's order (D-85): `CREATE`'s operand and initcode-size checks and
+  a creation's code over `MAX_CONTRACT_SIZE`, each a halt; a precompile call that fails where no limit
+  is set; a deposit that fails validation, cannot pay a charge before its first frame, carries a value
+  to an existing account, or whose own frame reverts; and a deposit from a live system address the
+  registry names (D-87);
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check

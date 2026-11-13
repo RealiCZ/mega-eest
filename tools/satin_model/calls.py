@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from .constants import (
     COST_PER_HISTORY_BYTE, DISABLE_VOLATILE_DATA_ACCESS, INTERCEPTED, limit_exceeded, MEGA_ACCESS_CONTROL,
-    NON_ZERO_TRANSFER, ORACLE, SEND_HINT, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
+    NON_ZERO_TRANSFER, ORACLE, SEND_HINT, SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     TX_DATA_LIMIT, WRITE_RECORD_SIZE,
 )
 from .records import Account, fmt, h, pad_address, Unmodelled
@@ -172,6 +172,10 @@ class CallsMixin:
                       f"{fmt(frame['reservoir'])}; the regular gas paid for those records stays spent", "SATIN-HIST-009",
                       "SATIN-HIST-007", "SATIN-HIST-012", "SATIN-TAKE-006")
             return True, out, left
+        if self.outcomes and status == "revert" and target in SYSTEM_CONTRACTS:
+            self.d.add("outcome", f"the system contract at {h(target)} refuses the call with its own error, "
+                       f"0x{out[:4].hex()}, a revert of its frame and neither a halt nor a limit stop: its caller catches "
+                       "it and the frame's unspent regular gas returns", "SATIN-OUT-009", "SATIN-POOL-012")
         left = self.end_child(frame, child, status, snap, name)
         if takes:
             if history:

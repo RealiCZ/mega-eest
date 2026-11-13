@@ -8,8 +8,8 @@ from .constants import (
     ACCESS_LIST_ADDRESS, ACCESS_LIST_ADDRESS_SIZE, ACCESS_LIST_KEY, ACCESS_LIST_SLOT_SIZE, ACCOUNT_STATE,
     AUTHORIZATION_SIZE, CALLDATA_NONZERO, CALLDATA_ZERO, COLD_ACCOUNT_ACCESS, COLD_ACCOUNT_SURCHARGE,
     COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, EXECUTION_CAP, FLOOR_PER_BYTE,
-    INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, limit_exceeded, PER_AUTH_BASE_COST,
-    STOP_DIMENSIONS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_BASE_COST, TX_BODY_SIZE,
+    INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, limit_exceeded, MAX_CONTRACT_SIZE, PER_AUTH_BASE_COST,
+    STOP_DIMENSIONS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT,
     TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
 )
 from .records import (
@@ -29,17 +29,26 @@ class TransactionMixin:
         sender = self.pre.get(tx.sender, Account())
         if tx.kind == "deposit":
             return None
+        if self.live_system_address() == tx.sender:
+            raise Unmodelled("a transaction from the live system address")
         if tx.chain_id is not None and tx.chain_id != env.chain_id:
             return ("validation", "chain-id-mismatch", "SATIN-VAL-006",
                     f"the transaction carries chain id {tx.chain_id}, the chain's is {env.chain_id}")
+        # A case that pins the order cites it (D-85): the first of Satin's own checks that fails names the refusal.
+        own = ("SATIN-VAL-002", "SATIN-VAL-003") if self.outcomes else "SATIN-VAL-002"
         if tx.gas_limit < intrinsic:
-            return ("validation", "intrinsic-gas-too-low", "SATIN-VAL-002",
-                    f"gas limit {fmt(tx.gas_limit)} < intrinsic regular gas {fmt(intrinsic)} (SATIN-VAL-003 step 2)")
+            return ("validation", "intrinsic-gas-too-low", own,
+                    f"gas limit {fmt(tx.gas_limit)} < intrinsic regular gas {fmt(intrinsic)} (SATIN-VAL-003 step 2)"
+                    + (f"; it is below the floor {fmt(floor)} too, which step 3 checks after it" if self.outcomes and
+                       floor > tx.gas_limit else ""))
         if floor > tx.gas_limit:
-            return ("validation", "floor-exceeds-gas-limit", "SATIN-VAL-002",
+            return ("validation", "floor-exceeds-gas-limit", own,
                     f"floor {fmt(floor)} > gas limit {fmt(tx.gas_limit)} (SATIN-VAL-003 step 3)")
+        if self.outcomes and floor == tx.gas_limit:
+            self.d.add("outcome", f"the gas limit {fmt(tx.gas_limit)} is the floor exactly: step 3 refuses a floor that "
+                       "exceeds the gas limit, and this one does not, so the check passes", "SATIN-VAL-002", "SATIN-VAL-003")
         if tx.gas_limit < intrinsic + body_history:
-            return ("validation", "intrinsic-gas-too-low", "SATIN-VAL-002",
+            return ("validation", "intrinsic-gas-too-low", own,
                     f"gas limit {fmt(tx.gas_limit)} < intrinsic regular gas {fmt(intrinsic)} + body history gas "
                     f"{fmt(body_history)} = {fmt(intrinsic + body_history)} (SATIN-VAL-003 step 5)")
         if tx.gas_limit > env.block_gas_limit:
@@ -120,7 +129,16 @@ class TransactionMixin:
             phase, reason, rule, why = refusal
             rules = rule if isinstance(rule, tuple) else (rule,)
             d.add("outcome", f"refused at {phase}: {why}", *rules)
+            if self.outcomes:
+                d.add("limit", "a transaction that fails validation is rejected, runs no frame and reports no stop",
+                      "SATIN-OUT-016", "SATIN-STOP-003")
             return Result(refused(phase, reason), d)
+        if self.outcomes and tx.authorizations:
+            counted = body_bytes + WRITE_RECORD_SIZE * len(tx.authorizations)
+            d.add("outcome", f"the body, {fmt(body_bytes)} bytes, with WRITE_RECORD_SIZE {WRITE_RECORD_SIZE} for each of its "
+                  f"{len(tx.authorizations)} authorization entries, whether or not it will apply, is {fmt(counted)} bytes, "
+                  f"within the data-size limit {fmt(TX_DATA_LIMIT)}: the first of Satin's own checks passes, before any gas "
+                  "is looked at", "SATIN-VAL-001", "SATIN-VAL-003")
 
         d.add("gasLedgers", f"intrinsic regular gas = {' + '.join(parts)} = {fmt(intrinsic)}",
               *(("SATIN-SCHED-006", "SATIN-SCHED-007") if tx.authorizations else ("SATIN-SCHED-006",)))
@@ -172,7 +190,7 @@ class TransactionMixin:
 
         sender_acct = self.state.setdefault(tx.sender, Account())
         if tx.kind == "deposit":
-            return self.run_deposit(intrinsic, floor, regular, reservoir)
+            return self.run_deposit(intrinsic, floor, regular, reservoir, body_history)
 
         # Validation's changes to the sender: nonce of a call, the fee (SATIN-ACCT-008).
         price = self.effective_price()
@@ -191,6 +209,12 @@ class TransactionMixin:
                 regular, reservoir = self.apply_authorizations(regular, reservoir)
             except OutOfGasBeforeFrame as e:
                 return self.out_of_gas_before_frame(intrinsic, floor, price, reservoir, str(e))
+
+        if self.outcomes and tx.authorizations:
+            applied = len([k for k in self.kv if k[0] == "a"])
+            d.add("resources", f"before the first frame the transaction counts the body's {fmt(body_bytes)} bytes and the "
+                  f"records of the {applied} authorities its list applied, {fmt(self.data_size)} bytes of data size in all, "
+                  "within what validation admitted: an entry skipped makes no record", "SATIN-VAL-004", "SATIN-AUTH-008")
 
         # Charges before the first frame, SATIN-SCHED-008 steps 3 and 4.
         pre_frame_state = 0
@@ -245,6 +269,10 @@ class TransactionMixin:
             regular -= amount - r
             drawn.append(r)
         start_from_reservoir = drawn[0]
+        if self.outcomes and (pre_frame_history or pre_frame_state):
+            d.add("outcome", f"the charges made before the first frame, {fmt(pre_frame_history + pre_frame_state)}, are "
+                  "paid: the transaction does not run out of gas before its first frame", "SATIN-OUT-006",
+                  "SATIN-SCHED-009")
         if self.principles and start_record and (tx.authorizations or self.reservoir_after_body):
             records = "the authorities' records" if tx.authorizations else "no authority's record"
             d.add("gasLedgers", f"of step 3's history the reservoir pays {records} first and the first frame's start record "
@@ -374,9 +402,20 @@ class TransactionMixin:
                           "arguments fail the decoder's conditions: not recognized, charged nothing, and KeylessDeploy's "
                           "bytecode runs, whose decoder refuses the same arguments", "SATIN-ICPT-006")
                 status, output = self.execute(code, frame, create)
+                if create and status == "success" and len(output) > MAX_CONTRACT_SIZE:
+                    d.add("outcome", f"the initcode returns {fmt(len(output))} bytes of code to deposit, over "
+                          f"MAX_CONTRACT_SIZE {fmt(MAX_CONTRACT_SIZE)}: the size check halts the creation before any of "
+                          "the deposit's charges, Ethereum's check at MegaETH's size and no limit stop", "SATIN-SIZE-001",
+                          "SATIN-SIZE-003", "SATIN-OUT-003")
+                    raise Halt(f"deployed code of {fmt(len(output))} bytes, over MAX_CONTRACT_SIZE")
         except Halt as e:
             status = "halt"
             d.add("outcome", f"the frame halts: {e}", "SATIN-OUT-007")
+            if self.outcomes:
+                d.add("outcome", "a halt of the transaction's own frame ends the transaction with a failed receipt, settled "
+                      "as SATIN-POOL-017 settles it; the specification names no halt reason, so the halt is identified "
+                      "as a halt alone, whatever label a node gives it", "SATIN-OUT-013", "SATIN-OUT-018",
+                      "SATIN-POOL-017")
         except Stopped as e:
             status, output = "revert", limit_exceeded(DETENTION_STOP, e.limit)
             self.stop = (DETENTION_STOP, e.limit)
@@ -487,6 +526,9 @@ class TransactionMixin:
                 if self.stops:
                     d.add("limit", "the transaction passed validation and paid every charge made before its first frame, so "
                           "the stop applies to it", "SATIN-STOP-003")
+            if self.outcomes and self.stop is None:
+                d.add("outcome", "a revert of the transaction's own frame ends the transaction with a failed receipt, "
+                      "settled as SATIN-POOL-017 settles it, its REVERT data the output", "SATIN-OUT-014", "SATIN-POOL-017")
             self.refund = 0
             execution = {"status": "revert", "output": h(output), "createdAddress": None}
         else:
@@ -537,6 +579,10 @@ class TransactionMixin:
         tx, d = self.tx, self.d
         d.add("outcome", f"the transaction cannot pay {what}: it runs out of gas before its first frame and runs no frame",
               "SATIN-SCHED-009")
+        if self.outcomes:
+            d.add("outcome", "a charge made before the first frame that the transaction cannot pay ends it out of gas "
+                  "without running a frame: a transaction other than a deposit is included out of gas, with a failed "
+                  "receipt, and reports no stop", "SATIN-OUT-006", "SATIN-SCHED-010", "SATIN-STOP-003")
         if getattr(self, "applied_authorities", None):
             if reservoir != self.reservoir_after_body:
                 raise Unmodelled("an out-of-gas before the first frame after the reservoir paid an authorization's charge")

@@ -1077,6 +1077,90 @@ expansion, the first fill batch's clarifications, and that refusal's follow-ups.
   at the revm-based pin, `7110d87b`. Its integration tests, replay fixtures and deviation registry are
   byte-identical to `4e39cfd6`'s, so every count stands.
 
+From the cases of the outcomes page and of validation's order:
+
+**D-85. The outcomes page and validation's order are pinned by cases that ask for them.** The outcomes
+page gathers rules whose detail lives elsewhere, and validation's order names which of Satin's own
+checks refuses a transaction; every derivation already ends in one class or another, but no case
+cited the class it ended in. A case may now ask for it (`outcomes` in `tools/make_slice.py`, as
+`stops` did for the limit-stop page, D-73): its derivation also cites the class each ending is in
+(`SATIN-OUT-002` to `-018`), the step of `SATIN-VAL-003` that names a refusal, and what a failed
+deposit and a refused transaction report. No other case's derivation changes, so no existing case
+pins more than it did. The cases, all at `c130558`, sit in the `outcomes` and `validation` areas:
+
+- **Stops, refusals and halts below the first frame**: a child that crosses gas detention's limit is
+  stopped and its caller catches the stop, against the same charge beyond the child's whole regular
+  gas, an out-of-gas (`SATIN-OUT-002`); a volatile read refused in a child, a revert its caller
+  catches (`SATIN-OUT-008`); MegaLimitControl called with a selector it has no method for, whose
+  bytecode reverts with `NotIntercepted()` (`SATIN-OUT-009`); a precompile that fails, the BN254
+  pairing over its size limit and the identity precompile one gas short of its price, against its
+  price exactly (`SATIN-OUT-004`, `-011`).
+- **The size checks and the halts of the transaction's own frame**: a `CREATE` of initcode one byte
+  over `MAX_INITCODE_SIZE`, against one at it, and a creation transaction whose code is one byte
+  over `MAX_CONTRACT_SIZE` (`SATIN-OUT-003`, `SATIN-SIZE-003`); a `CREATE` short of its operands and
+  a `DUP1` of an empty stack, each a halt with no reason the specification names (`SATIN-OUT-012`,
+  `-013`, `-018`).
+- **Reverts, and charges before the first frame**: a frame that reverts with `ORIGIN` and `CHAINID`,
+  a transaction's and a deposit's, which is no failed deposit (`SATIN-OUT-014`); a value transfer
+  whose gas limit pays its start record exactly (the other side of
+  `satin/limit-stops/pre-frame/start-record-unpaid`), one gas short of a new recipient's state gas
+  and at it, and a deposit one gas short of its start record and at it (`SATIN-OUT-006`); a deposit
+  whose own frame halts or cannot fund its value, a failed deposit (`SATIN-OUT-005`, `-013`).
+- **Validation's order**: a gas limit at the floor exactly, which step 3 passes and step 5 refuses,
+  and one below both the intrinsic regular gas and the floor, which step 2 refuses
+  (`SATIN-VAL-003`); a deposit one gas short of its intrinsic gas with its body's history, a failed
+  deposit, and at it (`SATIN-VAL-008`, `SATIN-OUT-016`); an authorization entry applied and one
+  skipped for its chain id, whose record step 1 counts either way and the data size before the first
+  frame counts only for the applied one (`SATIN-VAL-001`, `-004`).
+
+The model grows only as far as these cases need (docs/model.md): the opcode `CHAINID` (`ORIGIN` is
+D-88's); `CREATE`'s operands and its initcode size checked before its charges (`SATIN-SIZE-005`), and
+a creation's code over `MAX_CONTRACT_SIZE`; a precompile call that fails where no limit is set; a
+deposit that fails validation, cannot pay its empty caller or its start record, carries a value to an
+existing account, or whose own frame reverts; and a case's chain id, which `CHAINID` reads, so that a
+deposit's `CHAINID` is not 1 by default. The entry skipped for its chain id is D-88's gate
+(`SATIN-AUTH-002`).
+
+Three of the listed rules no transaction-level case holds:
+
+- **`SATIN-OUT-015` and `SATIN-VAL-010`**, the faults: a failed read is an injected fault
+  (`input.faults`), which neither adapter runs (`unsupported`).
+- **`SATIN-OUT-017`**: what a tracer is shown is no observation of the format.
+
+`SATIN-VAL-001` is held on its admitting side only: its refusal needs a body over the data-size
+limit, over 26 MB of hex in a case (D-75); for the same reason step 1 and step 4 of `SATIN-VAL-003`
+have no refusing case. `SATIN-VAL-005` is held on its deposit side only (D-87).
+
+**D-86. The deposits of the outcomes page and of validation are quarantined against the revm-based
+implementation.** Eight of the cases of D-85 are deposits, and the revm-based implementation at its
+pin, `7110d87b`, charges a deposit no history gas (`SATIN-HIST-016`, `SATIN-DEP-001`). Each fails
+there as its record says, made at `7110d87b`, and passes on the evm2-based implementation:
+
+- a deposit that runs, reverting or succeeding, uses its whole history less than the rule's
+  (`gasUsed`);
+- a failed deposit, its own frame halting, its value unfunded or its sender the live system
+  address, reports its kept body as no history bytes (`historyBytes`, `SATIN-HIST-022`,
+  `SATIN-DEP-006`);
+- a deposit one gas short of its intrinsic gas with its body's history, or of its start record, is
+  admitted and runs, counting its intrinsic regular gas alone, where the rule makes it a failed
+  deposit whose block gas is its whole gas limit (`blockGas`, `SATIN-VAL-008`, `SATIN-DEP-004`,
+  `-005`).
+
+The deposit side of `SATIN-OUT-005`, `-016`, `SATIN-VAL-005` and `-008` is pinned by these cases
+alone; the slice gates 281 cases, and quarantines fifty-four.
+
+**D-87. A case can name a live system address.** Every case's SequencerRegistry holds other code,
+so it resolves no live system address. `SATIN-VAL-005`'s deposit side needs one: a deposit from
+the live system address never has the system shape and is a failed deposit (`SATIN-MST-003`,
+`SATIN-DEP-008`). Its case holds the registry's version 2.0.0 runtime code, read from the revm-based
+implementation's versioned artifacts at its pin and refused unless its keccak256 is the
+specification's `SEQUENCER_REGISTRY_CODE_HASH`, with slot 0 naming the deposit's sender; the model
+resolves the address as `SATIN-REG-002` states. The code is held in `tools/make_slice.py`, not in
+`tools/system-contracts.json`, which lists the contracts a call can reach (D-55): no case calls the
+registry. The refusal of a transaction other than a deposit from that address has no case: the
+evm2-based adapter maps no refusal reason for it and reports an error, and the adapters are
+unchanged here.
+
 From the authorization page's uncited rules:
 
 **D-88. The authorization page's own rules are cases at `c130558`, and the model learns the list's

@@ -113,6 +113,9 @@ class FramesMixin:
             d.add("gasLedgers", f"what the frame spent before the crossing charge stays spent, and its whole regular gas, "
                   f"{fmt(child['regular'])}, the withheld part included, returns to its caller; the transaction's compute "
                   f"is {fmt(self.compute)}", "SATIN-DET-018", "SATIN-DET-019", "SATIN-POOL-012")
+            if self.outcomes:
+                d.add("outcome", f"gas detention's compute limit reverts only the frame that crosses it: {name} is stopped, "
+                      "not halted, and its caller catches the stop and runs on", "SATIN-OUT-002", "SATIN-STOP-005")
         except LimitStop as e:
             status, out = "stop", limit_exceeded(e.kind, e.limit)
             d.add("outcome", f"{name} crosses a limit at {e}: " + ("" if getattr(e, "resumed", False) else

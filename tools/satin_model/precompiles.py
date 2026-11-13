@@ -120,6 +120,27 @@ class PrecompilesMixin:
                               value.to_bytes(32, "big")))
             d.add("resources", f"the value moves to the precompile: the start's {len(records)} records and its transfer "
                   "log", "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-LOG-006")
+        if self.limit is None and self.outcomes:  # the outcome of a precompile call where no limit is set (D-85)
+            if value:
+                raise Unmodelled("a value call to a precompile in an outcomes case")
+            if fails:
+                d.add("outcome", f"the precompile at {h(target)} is given {fmt(len(data))} input bytes, over its size limit: "
+                      f"the call fails before any gas check and consumes all the gas forwarded to it, {fmt(child_gas)}, a "
+                      "halt of the call, not of its caller, which resumes on what it kept", "SATIN-OUT-004",
+                      "SATIN-OUT-011", "SATIN-PCMP-005")
+                return False, b"", 0
+            if price > child_gas:
+                d.add("outcome", f"the precompile at {h(target)} is priced {fmt(price)}, past the {fmt(child_gas)} it is "
+                      "forwarded: it fails out of gas and consumes all the gas forwarded to it, and its caller resumes on "
+                      "what it kept", "SATIN-OUT-011", "SATIN-OUT-007")
+                return False, b"", 0
+            if target != IDENTITY:
+                raise Unmodelled("the output of a precompile other than the identity")
+            d.add("outcome", f"the precompile at {h(target)} is priced {fmt(price)} and forwarded {fmt(child_gas)}, which "
+                  f"pays it: it succeeds, returns its {fmt(len(data))} input bytes and returns the "
+                  f"{fmt(child_gas - price)} it did not charge", "SATIN-OUT-011", "SATIN-POOL-012")
+            self.compute += price
+            return True, data, child_gas - price
         if price > child_gas:
             d.add("outcome", f"the precompile at {h(target)} is priced {fmt(price)}, past the {fmt(child_gas)} it is "
                   "forwarded: it fails out of gas and consumes its forward", "SATIN-OUT-007", "SATIN-DET-021")

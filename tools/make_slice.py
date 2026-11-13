@@ -275,7 +275,7 @@ class Case:
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
                  contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
                  params=None, retune=None, reads=False, pools=False, destruction=False, coinbase=COINBASE,
-                 detention=False, block_hashes=None, stops=False, lists=False):
+                 detention=False, block_hashes=None, stops=False, lists=False, outcomes=False, chain=CHAIN_ID):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -312,6 +312,8 @@ class Case:
         self.block_hashes = block_hashes or {}  # number -> the hash BLOCKHASH answers
         self.stops = stops  # the case pins the limit-stop page: its derivation cites which endings are stops (D-73)
         self.lists = lists  # a case of the authorization page's own rules: its derivation cites them (D-88)
+        self.outcomes = outcomes  # the case pins the outcomes page or validation's order (D-85)
+        self.chain = chain  # the chain's id, which CHAINID reads (D-85)
         self.definition = ""  # the function of this file that defines the case, set by cases()
         if make:
             self.code = make(**self.params)
@@ -462,7 +464,8 @@ def cases() -> list[Case]:
     for c in out:
         c.definition = "cases"
     for group in (interception_cases, ordering_cases, detention_cases, detention_rule_cases, reads_cases, limit_cases,
-                  gas_pools_cases, take_back_cases, selfdestruct_cases, limit_stop_cases, authorization_cases):
+                  gas_pools_cases, take_back_cases, selfdestruct_cases, limit_stop_cases, authorization_cases,
+                  outcome_cases):
         made = group()
         for c in made:
             c.definition = group.__name__
@@ -2234,6 +2237,308 @@ def authorization_gap_cases() -> list[Case]:
 # --- Assembling a case --------------------------------------------------------------------------
 
 
+# --- The outcomes page and the order of validation's refusals (D-85) ----------------------------------
+
+# The SequencerRegistry's runtime code at version 2.0.0, whose keccak256 is the specification's
+# SEQUENCER_REGISTRY_CODE_HASH (docs/spec/satin/system-contracts/overview.md), read from the revm-based
+# implementation's versioned artifacts at its pin (crates/system-contracts/artifacts/SequencerRegistry-2.0.0.json).
+# A case that resolves a live system address holds it at the registry's address (D-87).
+SEQUENCER_REGISTRY_CODE = bytes.fromhex(
+    "608060405234801561000f575f5ffd5b50600436106100e5575f3560e01c806354fd4d5011610088578063de7a36af11610063578063de7a"
+    "36af146101f7578063e3093f5014610214578063e812903014610227578063f851a44014610245575f5ffd5b806354fd4d501461019d5780"
+    "6375829def146101dc578063c7455c42146101ef575f5ffd5b80632b659fd8116100c35780632b659fd81461014e5780633411f3c3146101"
+    "6157806344d744591461017457806348a2cf6d1461017c575f5ffd5b80630e18b681146100e9578063129c8240146100f357806326782247"
+    "14610130575b5f5ffd5b6100f1610263565b005b610106610101366004611274565b610336565b60405173ffffffffffffffffffffffffff"
+    "ffffffffffffff90911681526020015b60405180910390f35b60035473ffffffffffffffffffffffffffffffffffffffff16610106565b61"
+    "00f161015c3660046112b3565b61045c565b6100f161016f366004611336565b6107e1565b6100f1610a91565b61018f61018a3660046113"
+    "36565b610aa3565b604051908152602001610127565b604080518082018252600581527f322e302e30000000000000000000000000000000"
+    "00000000000000000000000060208201529051610127919061135e565b6100f16101ea3660046113b1565b610c5b565b600d5461018f565b"
+    "5f5473ffffffffffffffffffffffffffffffffffffffff16610106565b610106610222366004611274565b610d0b565b60015473ffffffff"
+    "ffffffffffffffffffffffffffffffff16610106565b60025473ffffffffffffffffffffffffffffffffffffffff16610106565b60035473"
+    "ffffffffffffffffffffffffffffffffffffffff163381146102b5576040517f058d9a1b0000000000000000000000000000000000000000"
+    "0000000000000000815260040160405180910390fd5b6002805473ffffffffffffffffffffffffffffffffffffffff8381167fffffffffff"
+    "ffffffffffffff00000000000000000000000000000000000000008084168217909455600380549094169093556040519116919082907ff8"
+    "ccb027dfcd135e000e9d45e6cc2d662578a8825d4c45b5e32e0adf67e79ec6905f90a35050565b5f43821115610371576040517fdbe289ad"
+    "00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b6006548210156103ad576040517f"
+    "d2c461b000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600c54805b801561043b"
+    "575f600c6103c66001846113fe565b815481106103d6576103d6611411565b5f91825260209091200180549091506bffffffffffffffffff"
+    "ffffff16851061042857546c01000000000000000000000000900473ffffffffffffffffffffffffffffffffffffffff1694935050505056"
+    "5b50806104338161143e565b9150506103b2565b505060055473ffffffffffffffffffffffffffffffffffffffff1692915050565b610464"
+    "610e31565b43831161049d576040517fc2fdad04000000000000000000000000000000000000000000000000000000008152600401604051"
+    "80910390fd5b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff83036105cd5773ffffffffffffffffffff"
+    "ffffffffffffffffffff841615610512576040517fd92e233d00000000000000000000000000000000000000000000000000000000815260"
+    "040160405180910390fd5b600980547fffffffffffffffffffffffff00000000000000000000000000000000000000001690555f600a8190"
+    "5560015473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167f7ac0520c61d87c"
+    "77ffc308e23c801f5a351140175ec3f6356a3a890aa0cfdbf97fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    "ffff6040516105c091815260200190565b60405180910390a36107db565b6bffffffffffffffffffffffff831115610613576040517f9d73"
+    "78d300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b73ffffffffffffffffffffff"
+    "ffffffffffffffffff8416610660576040517fd92e233d000000000000000000000000000000000000000000000000000000008152600401"
+    "60405180910390fd5b600d5461066d9043611472565b8310156106a6576040517f11ede46e00000000000000000000000000000000000000"
+    "000000000000000000815260040160405180910390fd5b5f6106bb6106b48686610aa3565b8484610e82565b90508473ffffffffffffffff"
+    "ffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614610722576040517fe415bbae00000000000000"
+    "000000000000000000000000000000000000000000815260040160405180910390fd5b6009805473ffffffffffffffffffffffffffffffff"
+    "ffffffff87167fffffffffffffffffffffffff00000000000000000000000000000000000000009091168117909155600a85905561078a60"
+    "015473ffffffffffffffffffffffffffffffffffffffff1690565b73ffffffffffffffffffffffffffffffffffffffff167f7ac0520c61d8"
+    "7c77ffc308e23c801f5a351140175ec3f6356a3a890aa0cfdbf9866040516107d191815260200190565b60405180910390a3505b50505050"
+    "565b6107e9610e31565b438111610822576040517fc2fdad0400000000000000000000000000000000000000000000000000000000815260"
+    "040160405180910390fd5b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff81036109505773ffffffffff"
+    "ffffffffffffffffffffffffffffff821615610897576040517fd92e233d0000000000000000000000000000000000000000000000000000"
+    "0000815260040160405180910390fd5b600780547fffffffffffffffffffffffff0000000000000000000000000000000000000000169055"
+    "5f6008819055805473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff167fd839b7"
+    "efbcae2bd482a7aa1c098265fdb6b43c10e3e5138a8fa2b395a02eb9157fffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    "ffffffffffff60405161094491815260200190565b60405180910390a35050565b6bffffffffffffffffffffffff81111561099657604051"
+    "7f9d7378d300000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b73ffffffffffffffff"
+    "ffffffffffffffffffffffff82166109e3576040517fd92e233d000000000000000000000000000000000000000000000000000000008152"
+    "60040160405180910390fd5b6007805473ffffffffffffffffffffffffffffffffffffffff84167fffffffffffffffffffffffff00000000"
+    "0000000000000000000000000000000090911681179091556008829055610a4a5f5473ffffffffffffffffffffffffffffffffffffffff16"
+    "90565b73ffffffffffffffffffffffffffffffffffffffff167fd839b7efbcae2bd482a7aa1c098265fdb6b43c10e3e5138a8fa2b395a02e"
+    "b9158360405161094491815260200190565b610a9961108c565b610aa1611181565b565b604080518082018252601981527f4d6567614554"
+    "482053657175656e63657252656769737472790000000000000060209182015281518083018352600181527f310000000000000000000000"
+    "00000000000000000000000000000000000000009082015281517f8b73c3c69bb8fe3d512ecc4cf759cc79239f7b179b0ffacaa9a75d522b"
+    "39400f818301527f85da835bd1cf371efdb3f9056e5a3a6245af1400fa0ce2e878a198765a4eb9c2818401527fc89efdaa54c0f20c7adf61"
+    "2882df0950f5a951637e0307cdcb4c672f298b8bc660608201524660808201523060a0808301919091528351808303909101815260c08201"
+    "84528051908301207faebf84f20bcc14afc14200ed16cfb9314ef205d4d1d8fbcc0a256c39a3e79aa960e083015273ffffffffffffffffff"
+    "ffffffffffffffffffffff861661010083015261012080830186905284518084039091018152610140830185528051908401207f19010000"
+    "0000000000000000000000000000000000000000000000000000000061016084015261016283019190915261018280830191909152835180"
+    "830390910181526101a290910190925281519101205b92915050565b610c63610e31565b6003805473ffffffffffffffffffffffffffffff"
+    "ffffffffff83167fffffffffffffffffffffffff00000000000000000000000000000000000000009091168117909155610cc660025473ff"
+    "ffffffffffffffffffffffffffffffffffffff1690565b73ffffffffffffffffffffffffffffffffffffffff167fe5cd1c804f1c9cc6d700"
+    "9e4c0fb532f0e2d8863524c3323a6b3790c3f80bf25c60405160405180910390a350565b5f43821115610d46576040517fdbe289ad000000"
+    "00000000000000000000000000000000000000000000000000815260040160405180910390fd5b600654821015610d82576040517fd2c461"
+    "b000000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b600b54805b8015610e10575f60"
+    "0b610d9b6001846113fe565b81548110610dab57610dab611411565b5f91825260209091200180549091506bffffffffffffffffffffffff"
+    "168510610dfd57546c01000000000000000000000000900473ffffffffffffffffffffffffffffffffffffffff16949350505050565b5080"
+    "610e088161143e565b915050610d87565b505060045473ffffffffffffffffffffffffffffffffffffffff1692915050565b60025473ffff"
+    "ffffffffffffffffffffffffffffffffffff163314610aa1576040517f7bfa4b9f0000000000000000000000000000000000000000000000"
+    "0000000000815260040160405180910390fd5b5f60418214610ebd576040517fe415bbae0000000000000000000000000000000000000000"
+    "0000000000000000815260040160405180910390fd5b5f610ecb6020828587611485565b610ed4916114ac565b90505f610ee56040602086"
+    "88611485565b610eee916114ac565b90505f85856040818110610f0457610f04611411565b919091013560f81c9150507f7fffffffffffff"
+    "ffffffffffffffffff5d576e7357a4501ddfe92f46681b20a0821115610f69576040517fe415bbae00000000000000000000000000000000"
+    "000000000000000000000000815260040160405180910390fd5b8060ff16601b14158015610f8157508060ff16601c14155b15610fb85760"
+    "40517fe415bbae00000000000000000000000000000000000000000000000000000000815260040160405180910390fd5b604080515f8082"
+    "52602082018084528a905260ff841692820192909252606081018590526080810184905260019060a0016020604051602081039080840390"
+    "855afa158015611009573d5f5f3e3d5ffd5b50506040517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0"
+    "015191505073ffffffffffffffffffffffffffffffffffffffff8116611081576040517fe415bbae00000000000000000000000000000000"
+    "000000000000000000000000815260040160405180910390fd5b979650505050505050565b60075473ffffffffffffffffffffffffffffff"
+    "ffffffffff16806110ad5750565b600854438111156110bc575050565b5f805473ffffffffffffffffffffffffffffffffffffffff938416"
+    "7fffffffffffffffffffffffff000000000000000000000000000000000000000091821681178355604080518082019091526bffffffffff"
+    "ffffffffffffff948516815260208101918252600b8054600181018255908552905191519095166c01000000000000000000000000029316"
+    "929092177f0175b7a638427703f0dbe7bb9bbf987a2551717b34e79f33b5b1008d1fa01db990930192909255600780549091169055600855"
+    "565b60095473ffffffffffffffffffffffffffffffffffffffff16806111a25750565b600a54438111156111b1575050565b6001805473ff"
+    "ffffffffffffffffffffffffffffffffffffff9384167fffffffffffffffffffffffff000000000000000000000000000000000000000091"
+    "821681178355604080518082019091526bffffffffffffffffffffffff948516815260208101918252600c805494850181555f9081529051"
+    "91519095166c01000000000000000000000000029316929092177fdf6966c971051c3d54ec59162606531493a51404a002842f56009d7e5c"
+    "f4a8c790910155600980549091169055600a55565b5f60208284031215611284575f5ffd5b5035919050565b803573ffffffffffffffffff"
+    "ffffffffffffffffffffff811681146112ae575f5ffd5b919050565b5f5f5f5f606085870312156112c6575f5ffd5b6112cf8561128b565b"
+    "935060208501359250604085013567ffffffffffffffff8111156112f1575f5ffd5b8501601f81018713611301575f5ffd5b803567ffffff"
+    "ffffffffff811115611317575f5ffd5b876020828401011115611328575f5ffd5b949793965060200194505050565b5f5f60408385031215"
+    "611347575f5ffd5b6113508361128b565b946020939093013593505050565b602081525f82518060208401528060208501604085015e5f60"
+    "40828501015260407fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f83011684010191505092915050"
+    "565b5f602082840312156113c1575f5ffd5b6113ca8261128b565b9392505050565b7f4e487b710000000000000000000000000000000000"
+    "00000000000000000000005f52601160045260245ffd5b81810381811115610c5557610c556113d1565b7f4e487b71000000000000000000"
+    "000000000000000000000000000000000000005f52603260045260245ffd5b5f8161144c5761144c6113d1565b507fffffffffffffffffff"
+    "ffffffffffffffffffffffffffffffffffffffffffffff0190565b80820180821115610c5557610c556113d1565b5f5f8585111561149357"
+    "5f5ffd5b8386111561149f575f5ffd5b5050820193919092039150565b80356020831015610c55577fffffffffffffffffffffffffffffff"
+    "ffffffffffffffffffffffffffffffffff602084900360031b1b169291505056fea164736f6c634300081e000a")
+
+
+
+CAUGHT = bytes.fromhex("00000000000000000000000000000000000c0e07")  # a child whose ending its caller catches
+DUP1, CREATE = b"\x80", b"\xf0"
+# ORIGIN and CHAINID laid out as two words of memory, then a REVERT of both.
+ORIGIN_CHAIN_ID = b"\x32" + push(0) + b"\x52" + b"\x46" + push(32) + b"\x52"
+
+
+def outcome_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = CURRENT_SPEC
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    history = model.COST_PER_HISTORY_BYTE
+    record = model.WRITE_RECORD_SIZE * history
+    body = model.TX_BODY_SIZE * history
+    call_value = model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + model.TX_VALUE_COST
+    call_plain = model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS
+
+    # SATIN-OUT-002: gas detention's compute limit stops only the frame that crosses it, and its caller catches the
+    # stop; the same charge beyond the child's whole regular gas is an out-of-gas, a halt (SATIN-OUT-007).
+    child = log(0, 0, 0, []) + over_cap(cap) + STOP
+    for stopped in (True, False):
+        add(Case(f"satin/outcomes/stop/child-{'stopped-caught' if stopped else 'halted-control'}",
+                 "the transaction's own frame writes a fresh slot, reads TIMESTAMP and calls a child that emits an empty "
+                 f"LOG0 and then expands memory past the {fmt(cap)} the read's limit leaves the transaction; "
+                 + ("forwarded all it may, the child's whole regular gas pays the expansion, so the charge is gas "
+                    "detention's crossing: the child alone is stopped, its log discarded, and the caller catches the stop, "
+                    "keeps its slot and returns the stop's bytes (SATIN-OUT-002)" if stopped else
+                    f"forwarded {fmt(100_000)}, the child's whole regular gas cannot pay the expansion, so the charge is an "
+                    "out-of-gas: the child halts and burns its forward, and the caller keeps its slot and returns empty "
+                    "return data"),
+                 boundary=f"the expansion {'within' if stopped else 'beyond'} the child's whole regular gas",
+                 spec=spec, outcomes=True, gas=30_000_000,
+                 code=sstore(1, 1) + b"\x42\x50" + call(MAX_GAS if stopped else 100_000, CAUGHT, 0, 0) + b"\x50"
+                 + RETURN_RETURNDATA, accounts={CAUGHT: model.Account(nonce=1, code=child)}))
+
+    # SATIN-OUT-008: a refused volatile read reverts the frame that made it; its caller catches the revert.
+    disable = mstore(0, int.from_bytes(model.DISABLE_VOLATILE_DATA_ACCESS, "big") << 224)
+    add(Case("satin/outcomes/refused-read/child-reverts-caught", "the transaction's own frame switches its volatile-data "
+             "access off and calls a child that writes a fresh slot and reads TIMESTAMP: the read is refused, and the child "
+             "reverts with VolatileDataAccessDisabled(1), its slot taken back and its unspent gas returned; the caller "
+             "catches the revert and returns its bytes (SATIN-OUT-008)", spec=spec, outcomes=True, system=True,
+             code=disable + call(10_000, model.MEGA_ACCESS_CONTROL, 0, 4) + b"\x50" + call(MAX_GAS, CAUGHT, 0, 0) + b"\x50"
+             + RETURN_RETURNDATA, accounts={CAUGHT: model.Account(nonce=1, code=sstore(1, 1) + b"\x42" + STOP)}))
+
+    # SATIN-OUT-009: a system contract's own refusal reverts with its own error.
+    add(Case("satin/outcomes/system-refusal/not-intercepted", "a contract calls MegaLimitControl with a selector it has no "
+             "method for: no interceptor answers it, the bytecode's fallback reverts with its own error NotIntercepted(), "
+             "and the caller returns those bytes (SATIN-OUT-009)", spec=spec, outcomes=True, system=True,
+             code=mstore(0, 0x12345678 << 224) + call(100_000, model.MEGA_LIMIT_CONTROL, 0, 4) + b"\x50" + RETURN_RETURNDATA))
+
+    # SATIN-OUT-003, SATIN-SIZE-003: the size checks halt; neither is a limit stop.
+    for over in (True, False):
+        size = model.MAX_INITCODE_SIZE + (1 if over else 0)
+        add(Case(f"satin/outcomes/size/create-initcode-{'over' if over else 'at'}-limit",
+                 f"a CREATE of {fmt(size)} zero bytes of initcode, "
+                 + (f"one over MAX_INITCODE_SIZE: the size check halts the frame at the opcode, before any charge, and the "
+                    "transaction uses its whole gas limit (SATIN-OUT-003)" if over else
+                    "MAX_INITCODE_SIZE exactly: the creation runs its initcode, which stops at once, and creates an account "
+                    "with no code"),
+                 boundary=f"the initcode {'one byte over' if over else 'at'} MAX_INITCODE_SIZE", spec=spec, outcomes=True,
+                 gas=5_000_000, code=push(size) + push(0) + push(0) + CREATE + STOP))
+    size = model.MAX_CONTRACT_SIZE + 1
+    add(Case("satin/outcomes/size/deployed-code-over-limit", f"a creation transaction whose initcode returns {fmt(size)} zero "
+             "bytes, one over MAX_CONTRACT_SIZE: the size check halts the creation before its code-deposit charges, and the "
+             "transaction uses its whole gas limit (SATIN-OUT-003)", spec=spec, outcomes=True, to=None, gas=1_000_000,
+             data=push(size) + push(0) + b"\xf3"))
+
+    # SATIN-OUT-004, SATIN-OUT-011: a precompile that fails consumes its whole forward; its caller resumes.
+    pairing = model.BN254_PAIRING_MAX_INPUT_SIZE + 1
+    add(Case("satin/outcomes/precompile/bn254-pairing-over-size-limit", f"a contract calls the BN254 pairing with "
+             f"{fmt(pairing)} input bytes, one over its size limit, forwarding {fmt(100_000)}: the call fails before any gas "
+             "check and consumes the whole forward, and the caller stops on what it kept (SATIN-OUT-004, SATIN-OUT-011)",
+             spec=spec, outcomes=True, code=call(100_000, model.BN254_PAIRING, 0, pairing) + b"\x50" + STOP))
+    price = model.IDENTITY_BASE + model.IDENTITY_WORD
+    for short in (True, False):
+        forward = price - (1 if short else 0)
+        add(Case(f"satin/outcomes/precompile/identity-{'one-short-of' if short else 'at'}-price",
+                 f"a contract calls the identity precompile with one word, priced {price}, forwarding {forward}: "
+                 + ("one short, so the call fails out of gas and consumes the forward, and the caller returns empty return "
+                    "data (SATIN-OUT-011)" if short else "its price exactly, so the call succeeds and the caller returns "
+                    "the word it echoes"),
+                 boundary=f"the forward {'one below' if short else 'at'} the precompile's price", spec=spec, outcomes=True,
+                 code=mstore(0, 0xC0FFEE) + call(forward, model.IDENTITY, 0, 32) + b"\x50" + RETURN_RETURNDATA))
+
+    # SATIN-OUT-012, SATIN-OUT-018: a CREATE short of its operands and a DUP1 of an empty stack halt their frame; the
+    # halt has no reason the specification names.
+    add(Case("satin/outcomes/halt/create-short-of-operands", "CREATE with two of its three operands on the stack halts the "
+             "transaction's own frame before any charge, and the transaction uses its whole gas limit (SATIN-OUT-012)",
+             spec=spec, outcomes=True, gas=100_000, code=push(0) + push(0) + CREATE + STOP))
+    add(Case("satin/outcomes/halt/dup-of-empty-stack", "DUP1 on an empty stack halts the transaction's own frame: a halt "
+             "alone, whatever label a node gives it (SATIN-OUT-018), with a failed receipt and the whole gas limit used "
+             "(SATIN-OUT-013)", spec=spec, outcomes=True, gas=100_000, code=DUP1 + STOP))
+
+    # SATIN-OUT-014: a revert of the transaction's own frame, a deposit's included, which is no failed deposit.
+    reverting = sstore(1, 1) + ORIGIN_CHAIN_ID + revert(0, 64)
+    chain = 7  # a chain other than 1, so that CHAINID shows the chain's id
+    add(Case("satin/outcomes/revert/origin-and-chain-id", f"on chain {chain}, the transaction's own frame writes a fresh slot "
+             "and reverts with ORIGIN and CHAINID: a failed receipt, the slot's charges given back (SATIN-OUT-014)",
+             spec=spec, outcomes=True, code=reverting, chain=chain, chain_id=chain))
+    add(Case("satin/outcomes/deposit/reverted", f"on chain {chain}, a deposit's own frame writes a fresh slot and reverts "
+             "with ORIGIN and CHAINID, the deposit's sender and the chain's id: the deposit settles as a revert, not a "
+             "failed deposit, keeping its mint and nonce bump (SATIN-OUT-014)", spec=spec, outcomes=True,
+             deposit=(ETH, 1_000_000), sender_nonce=3, code=reverting, chain=chain))
+    add(Case("satin/outcomes/deposit/halted", "a deposit's own frame writes a fresh slot, logs and halts on DUP1 of an empty "
+             "stack: a failed deposit, which keeps its mint and nonce bump and nothing else, uses its whole gas limit and "
+             "reports no stop (SATIN-OUT-005, SATIN-OUT-013)", spec=spec, outcomes=True, deposit=(ETH, 1_000_000),
+             sender_nonce=3, code=sstore(1, 1) + log(0, 0, 0, []) + DUP1 + STOP))
+
+    # SATIN-OUT-006: a charge before the first frame that the transaction cannot pay: out of gas, no frame; a deposit
+    # becomes a failed deposit. The charge is the first frame's start record, of a value to an existing account.
+    least = call_value + body + record
+    # One gas short of the start record is satin/limit-stops/pre-frame/start-record-unpaid; this is its edge's other side.
+    add(Case("satin/outcomes/pre-frame/start-record-paid", f"a value transfer to an existing account with a gas limit of "
+             f"{fmt(least)}: the intrinsic gas {fmt(call_value)} and the body's history {fmt(body)} leave exactly the first "
+             f"frame's start record, {fmt(record)} of history gas, so the charges before the first frame are paid and the "
+             "frame starts with no regular gas and moves the value (SATIN-OUT-006)",
+             boundary="the gas limit at what the start record needs", spec=spec, outcomes=True, to=EOA, code=b"", value=1,
+             gas=least))
+    # The second charge, a new recipient's state gas at step 4 (SATIN-SCHED-008), once the record is paid.
+    for short in (True, False):
+        gas = least + model.ACCOUNT_STATE - (1 if short else 0)
+        add(Case(f"satin/outcomes/pre-frame/new-account-state-{'one-short' if short else 'paid'}",
+                 f"a value transfer to an absent account with a gas limit of {fmt(gas)}: once the intrinsic gas, the "
+                 f"body's history and the start record are paid, {fmt(gas - least)} is left for the new account's state "
+                 f"gas, {fmt(model.ACCOUNT_STATE)} " +
+                 ("one short: the transaction runs out of gas before its first frame and runs none (SATIN-OUT-006)" if short
+                  else "exactly: the frame starts with no regular gas and the value creates the account"),
+                 boundary=f"the gas limit {'one below' if short else 'at'} what the new account's state gas needs",
+                 spec=spec, outcomes=True, to=ABSENT, code=None, value=1, gas=gas))
+    for short in (True, False):
+        gas = least - (1 if short else 0)
+        add(Case(f"satin/outcomes/pre-frame/deposit-start-record-{'one-short' if short else 'paid'}",
+                 f"a deposit of 1 wei to an existing account with a gas limit of {fmt(gas)}: the intrinsic gas and the "
+                 f"body's history leave {fmt(gas - call_value - body)} for the first frame's start record, {fmt(record)} of "
+                 "history gas " + ("one short: the deposit becomes a failed deposit (SATIN-OUT-006)" if short else
+                                   "exactly: the value moves and the deposit succeeds"),
+                 boundary=f"the gas limit {'one below' if short else 'at'} what the start record needs", spec=spec,
+                 outcomes=True, deposit=(0, gas), sender_nonce=3, to=EOA, code=b"", value=1))
+    add(Case("satin/outcomes/deposit/value-unfunded", "a deposit of 2 wei from a sender holding 1 wei, minting nothing: its "
+             "first frame's start cannot fund the value and makes no record, so the deposit is a failed deposit "
+             "(SATIN-OUT-013)", spec=spec, outcomes=True, deposit=(0, 1_000_000), sender_nonce=3, sender_balance=1, to=EOA,
+             code=b"", value=2))
+
+    # SATIN-VAL-003: the order of Satin's own checks, each failing one named by the first that fails.
+    data = b"\x01" * 100
+    intrinsic = call_plain + model.CALLDATA_NONZERO * len(data)
+    floor = call_plain + model.FLOOR_PER_BYTE * len(data)
+    add(Case("satin/validation/order/gas-limit-at-floor", f"{len(data)} non-zero calldata bytes and a gas limit of "
+             f"{fmt(floor)}, the floor exactly, above the intrinsic regular gas {fmt(intrinsic)}: step 3 refuses a floor "
+             "above the gas limit and passes this one, so step 5, the intrinsic gas with the body's history, names the "
+             "refusal (SATIN-VAL-003)", boundary="the gas limit at the floor", spec=spec, outcomes=True, data=data,
+             gas=floor))
+    add(Case("satin/validation/order/below-intrinsic-and-floor", f"{len(data)} non-zero calldata bytes and a gas limit of "
+             f"{fmt(intrinsic - 1)}, one below the intrinsic regular gas and below the floor {fmt(floor)}: step 2 names "
+             "the refusal before step 3 (SATIN-VAL-003)", boundary="one below the intrinsic regular gas, below the floor",
+             spec=spec, outcomes=True, data=data, gas=intrinsic - 1))
+
+    # SATIN-VAL-008, SATIN-OUT-016: a deposit that fails validation is included as a failed deposit.
+    least = call_plain + body
+    for short in (True, False):
+        gas = least - (1 if short else 0)
+        add(Case(f"satin/validation/deposit/intrinsic-and-history-{'one-short' if short else 'paid'}",
+                 f"a deposit with a gas limit of {fmt(gas)}, against its intrinsic regular gas {fmt(call_plain)} and its "
+                 f"body's history gas {fmt(body)}: " + ("one short, it fails validation and is included as a failed "
+                                                        "deposit, reporting no stop (SATIN-VAL-008, SATIN-OUT-016)" if short
+                                                        else "exactly, it passes and its frame stops at once"),
+                 boundary=f"the gas limit {'one below' if short else 'at'} the intrinsic gas with the body's history",
+                 spec=spec, outcomes=True, deposit=(ETH, gas), sender_nonce=3))
+
+    # SATIN-VAL-005, SATIN-VAL-008: a deposit from the live system address never has the system shape and is a failed
+    # deposit; the registry holds version 2.0.0's code and names the deposit's sender in its slot 0.
+    registry = model.Account(code=SEQUENCER_REGISTRY_CODE,
+                             storage={model.CURRENT_SYSTEM_ADDRESS_SLOT: int.from_bytes(SENDER, "big")})
+    if ex.keccak256(SEQUENCER_REGISTRY_CODE) != model.SEQUENCER_REGISTRY_CODE_HASH:
+        raise SystemExit("SEQUENCER_REGISTRY_CODE is not SEQUENCER_REGISTRY_CODE_HASH's")
+    add(Case("satin/validation/system-address/deposit-from-live-system-address", "a deposit whose sender the registry names "
+             "as the live system address: a deposit never has the system shape, so it is invalid and, a deposit, included "
+             "as a failed deposit that runs no call, keeping its mint and nonce bump (SATIN-VAL-005, SATIN-VAL-008)",
+             spec=spec, outcomes=True, deposit=(ETH, 1_000_000), sender_nonce=3, code=sstore(1, 1) + STOP,
+             accounts={REGISTRY: registry}))
+
+    # SATIN-VAL-001, SATIN-VAL-004: the body counts a record for every authorization entry; the data size before the first
+    # frame holds the records of the authorities applied, none for an entry skipped.
+    for chain_id in (2, 0):
+        skipped = chain_id != 0
+        add(Case(f"satin/validation/authorization-records/entry-{'skipped' if skipped else 'applied'}",
+                 f"one authorization entry for chain id {chain_id}: the body's {model.AUTHORIZATION_SIZE} bytes of it and "
+                 f"its {model.WRITE_RECORD_SIZE}-byte record are counted against the data-size limit (SATIN-VAL-001); "
+                 + ("skipped for its chain id, it applies no authority, so the data size before the first frame is the "
+                    "body's alone (SATIN-VAL-004)" if skipped else "applied, its authority's record is counted before the "
+                    "first frame with the body (SATIN-VAL-004)"),
+                 boundary=f"an entry {'skipped' if skipped else 'applied'}", spec=spec, outcomes=True, ty=4, to=EOA,
+                 code=b"", gas=500_000, authorizations=[(AUTH_KEY, chain_id, CONTRACT, 0)]))
+    return out
+
+
 def account(nonce=0, balance=0, code=b"", storage=None) -> dict:
     return {"nonce": q(nonce), "balance": q(balance), "code": h(code),
             "storage": {"0x" + k.to_bytes(32, "big").hex(): q(v) for k, v in sorted((storage or {}).items())}}
@@ -2267,7 +2572,7 @@ def build(c: Case):
         address = {"created": created, "sender": sender}.get(who, who)
         capacity = int(m * salt_mapping.MIN_BUCKET_SIZE)
         buckets[salt_bucket(address, slot)] = capacity
-    env = model.Env(CHAIN_ID, c.coinbase, c.base_fee, BLOCK_GAS_LIMIT, buckets, timestamp=BLOCK_TIMESTAMP,
+    env = model.Env(c.chain, c.coinbase, c.base_fee, BLOCK_GAS_LIMIT, buckets, timestamp=BLOCK_TIMESTAMP,
                     number=BLOCK_NUMBER, block_hashes=dict(c.block_hashes))
 
     if c.deposit:
@@ -2290,12 +2595,13 @@ def build(c: Case):
                       authorizations=[(e[1], e[2], e[3], authority_of(e)) for e in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
     run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
-                    destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists)
+                    destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists,
+                    outcomes=c.outcomes)
     result = run.run()
     result.probe = run.probe
 
     inp = {
-        "chain": {"chainId": q(CHAIN_ID)},
+        "chain": {"chainId": q(c.chain)},
         "block": {
             "number": q(BLOCK_NUMBER), "timestamp": q(BLOCK_TIMESTAMP), "coinbase": h(c.coinbase), "gasLimit": q(BLOCK_GAS_LIMIT),
             "baseFee": q(c.base_fee), "prevRandao": ZERO32, "parentHash": "0x" + (0xA11CE).to_bytes(32, "big").hex(),
@@ -2537,6 +2843,54 @@ def authorization_quarantine(c: Case, fx: dict) -> dict:
             "verdict": verdict}
 
 
+# The outcome and validation deposits the revm-based implementation fails at its pin (D-86): it charges a deposit no
+# history gas (SATIN-HIST-016), so a deposit that runs reports a gas used short by its whole history, a failed deposit
+# reports its kept body as no history bytes, and a deposit whose gas limit pays its intrinsic regular gas but not its
+# history, or not its start record's, is admitted and runs where the rule makes it a failed deposit. Each records which.
+OUTCOME_DEPOSITS = {
+    "satin/outcomes/deposit/halted": "history-bytes",
+    "satin/outcomes/deposit/value-unfunded": "history-bytes",
+    "satin/validation/system-address/deposit-from-live-system-address": "history-bytes",
+    "satin/outcomes/deposit/reverted": "gas-used",
+    "satin/outcomes/pre-frame/deposit-start-record-paid": "gas-used",
+    "satin/validation/deposit/intrinsic-and-history-paid": "gas-used",
+    "satin/outcomes/pre-frame/deposit-start-record-one-short": "admitted",
+    "satin/validation/deposit/intrinsic-and-history-one-short": "admitted",
+}
+
+
+def outcome_deposit_quarantine(c: Case, fx: dict) -> dict:
+    adapter, ledgers, kind = "mega-eest-adapter-revm", fx["expected"]["gasLedgers"], OUTCOME_DEPOSITS[c.case_id]
+    rev, price = REVM_REMADE, model.COST_PER_HISTORY_BYTE
+    if kind == "history-bytes":
+        kept = int(ledgers["historyBytes"], 16)
+        verdict = ("SATIN-HIST-022 makes a deposit report the history bytes it keeps, and SATIN-DEP-006 has a failed deposit "
+                   f"keep its body, {kept} bytes, which it reports as its history bytes though it pays no history gas "
+                   f"(SATIN-DEP-005); the revm-based implementation at {rev} charges a deposit no history gas and reports a "
+                   "failed deposit's history bytes as 0")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/historyBytes", "expected": q(kept), "actual": q(0),
+                "verdict": verdict}
+    if kind == "gas-used":
+        used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
+        history_bytes = int(ledgers["historyBytes"], 16)
+        verdict = ("SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body "
+                   "and its first frame's start record among the rest; the revm-based implementation at "
+                   f"{rev} charges a deposit no history gas, so its gas used is the deposit's {history_bytes} history bytes "
+                   f"at {price} gas, {fmt(history)}, below the rule's")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
+                "actual": q(used - history), "verdict": verdict}
+    block = int(ledgers["blockGas"], 16)
+    intrinsic = c.probe["deposit-intrinsic"]
+    verdict = ("SATIN-DEP-001 holds a deposit's gas limit to its intrinsic regular gas and its body's history gas, SATIN-HIST-016 "
+               "charges a deposit its first frame's start record as any transaction, and a deposit that fails validation "
+               "or cannot pay a charge made before its first frame is a failed deposit (SATIN-VAL-008, SATIN-DEP-004), "
+               f"whose block gas is its whole gas limit, {fmt(block)} (SATIN-DEP-005); the revm-based implementation at "
+               f"{rev} charges a deposit no history gas, so it admits the deposit, runs its frame and counts its intrinsic "
+               f"regular gas alone, {fmt(intrinsic)}")
+    return {"adapter": adapter, "path": "/expected/gasLedgers/blockGas", "expected": q(block), "actual": q(intrinsic),
+            "verdict": verdict}
+
+
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -2544,6 +2898,8 @@ def storage_path(address: bytes, slot: int) -> str:
 def edge_quarantine(c: Case, fx: dict) -> dict | None:
     """The quarantine record of an edge case the revm-based implementation fails, or None."""
     adapter = "mega-eest-adapter-revm"
+    if c.case_id in OUTCOME_DEPOSITS:
+        return outcome_deposit_quarantine(c, fx)
     if c.case_id in DETENTION_QUARANTINE:
         return detention_quarantine(c, fx)
     if c.case_id in GIVE_BACKS:

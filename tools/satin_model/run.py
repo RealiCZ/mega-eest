@@ -26,7 +26,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
-                 stops: bool = False, lists: bool = False):
+                 stops: bool = False, lists: bool = False, outcomes: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
         # A case of the authorization page's own rules (decision D-88): its derivation cites the list's simulation,
         # each entry's gates and checks, and the warmth the application leaves (SATIN-AUTH-001 to -018).
@@ -43,6 +43,10 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # A case that pins the limit-stop page (decision D-73): the derivation also cites the rules that give a
         # stop its kind and say which endings are stops (SATIN-STOP-002, -003, -019).
         self.stops = stops
+        # A case that pins the outcomes page or the order of validation's refusals (decision D-85): the derivation also
+        # cites the class each ending is in, the rule that makes a refusal the first failing step, and what a failed
+        # deposit and a refused transaction report (SATIN-OUT-002 to -018, SATIN-VAL-003, -004, -008).
+        self.outcomes = outcomes
         self.caught_stop = False  # a frame below the transaction's own was stopped and its caller ran on
         # The `gasPools` group (decision D-64): the first frame's pools at its start and end, and the
         # regular gas it and its children paid for state and history charges.

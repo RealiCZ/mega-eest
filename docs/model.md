@@ -62,6 +62,15 @@ specification's text and constants:
   precompile, ModExp's EIP-7883 price over and under EIP-7823's bound, and the BN254 pairing over its
   size limit. A precompile that halts burns its whole forward and counts none of it as compute, its
   charged price included (`SATIN-DET-011` at `c130558`, D-78).
+- **The outcomes page's classes and validation's order** (D-85): a child stopped by gas detention's
+  limit or halting beyond its whole gas, a refused read in a child, a system contract's
+  `NotIntercepted()`, a precompile that fails where no limit is set (the identity's price, the BN254
+  pairing over its size limit); `CREATE`'s operands and its initcode size checked before its charges,
+  and a creation's code over `MAX_CONTRACT_SIZE`, each a halt; `CHAINID`, on the case's chain; a
+  deposit that fails validation, cannot pay its empty caller or its start record, carries a value to
+  an existing account or its minted balance cannot fund, or whose own frame reverts; and a live
+  system address resolved from a registry holding version 2.0.0's code, from which a deposit is a
+  failed deposit (D-87).
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -90,8 +99,8 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `constants.py` | The specification's constants and prices with the rules that state them, the system contracts' addresses and selectors, and the encodings built from them; `tools/check_derived_text.py` changes these in turn |
 | `records.py` | The model's exceptions, the derivation record, the inputs (accounts, the transaction, the block environment), the result, and the observations' value formats |
 | `run.py` | `Run`: the run state, composed of the mixins below |
-| `transaction.py` | Validation's refusals, intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, the out-of-gas path before it |
-| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; a deposit's run, a stopped deposit, and a failed deposit |
+| `transaction.py` | Validation's refusals in the order of `SATIN-VAL-003`, intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, a creation's code over `MAX_CONTRACT_SIZE`, the out-of-gas path before it |
+| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; the live system address; a deposit's run, its validation, its value and its start record, a reverted deposit, a stopped deposit, and a failed deposit |
 | `precompiles.py` | A call to a precompile: the funds check, the price read before it runs, and under gas detention the decision from it (`SATIN-DET-021` to `-024`) |
 | `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, the give-back into the reservoir |
 | `detention.py` | The limit a volatile read sets, the caps it is set from, a frame's spendable and withheld parts, and a transaction detained from its start |
