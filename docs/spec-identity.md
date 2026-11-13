@@ -113,6 +113,7 @@ the same script, beside the earlier ones (decision D-35):
 | `specs/satin-d334ef8` | `d334ef8748a6fb09dfcf1162704539fe22373aef` | 409 (400 active) | `SATIN-ICPT-007` added (interception before the frame start, the funds check included); `SATIN-ICPT-003`, `-006`, `SATIN-KEY-005`, `-018`, `SATIN-LIM-015`, `SATIN-ORCL-006`, `-010`, `SATIN-OUT-010` and `SATIN-STOP-020` reworded (the keyless decoder's conditions among them) |
 | `specs/satin-5fb2688` | `5fb26884b5ed1d02bb622073dfdf1d7ea814f1be` | 410 (401 active) | `SATIN-HIST-023` added (the order of charges and decisions around a frame start, as a principle); `SATIN-DET-018`, `SATIN-HIST-005`, `-009`, `-015`, `SATIN-ICPT-002`, `-004`, `-007`, `SATIN-POOL-012`, `SATIN-SCHED-008`, `-009`, `SATIN-STOP-014`, `SATIN-TAKE-006` and `-010` reworded (the delegate's access before the first frame, the reservoir paying the authorities' records first, one charge under gas detention among them) |
 | `specs/satin-cdded1e` | `cdded1e1d131a1d16a2c4b1cd873557f16a6a558` | 410 (401 active) | 52 rules reworded and no id added or retired: each rule has one home that the others cite (the give-back rule in `SATIN-HIST-012`, the frame it credits in `SATIN-HIST-007`, the `SSTORE` transitions in `SATIN-STATE-008`, a start that does not happen in `SATIN-HIST-023`), worked examples move into conformance cases once their cases exist, and a statement no execution reaches is marked once in its home |
+| `specs/satin-c130558` | `c130558e2f38a913982dc17f0cd8eb8834967262` | 410 (400 active) | `SATIN-STOP-016` retired (no transaction reaches it) and 25 rules reworded: a call refused at its target's EIP-7702 delegate pays its target's access and its memory expansion, and stops with `MegaLimitExceeded(2, limit)` when its cold surcharge is gas detention's crossing (`SATIN-MAC-003`, `-004`, `-007`, `SATIN-DET-018`, `SATIN-OUT-008`, `SATIN-PCMP-008`, `SATIN-STOP-020`, `SATIN-WIT-012`); a precompile that halts burns its whole forward and counts none of it as compute, and a value call to a precompile's absent or empty account pays its new-account state gas (`SATIN-DET-011`, `-021`, `-022`); the first fill batch's clarifications (`SATIN-SCHED-003`, `-004`, `SATIN-SD-013`, `SATIN-STOP-017`); the take-back page's worked examples, and the conformance cases the text named, removed (`SATIN-TAKE-005` to `-012`, `SATIN-ICPT-006`, `SATIN-POOL-019`) |
 
 The vertical slice's first 63 cases and its quarantine pin `d34e626`; the cases added for
 interception, the keyless decoder and EIP-7702 existence pin `d334ef8` (decision D-54); the cases
@@ -127,7 +128,21 @@ Digests (SHA-256 of canonical bytes):
 | `satin-d334ef8` | `sha256:6fa989a0bb4e83353b71c6c30f75a5e77c27a07f73b97f786514b975429aeea2` | `sha256:c930551351f5986fbdfef9d905c61ec5f3b8b35a9c9dd5b516ce6bd417254ce5` | `sha256:4a413161486c0b7006dba4253cfd8f2083539d57a3087f93fd3d161d9cf35571` |
 | `satin-5fb2688` | `sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6` | `sha256:74e3c428ff05249dc89572db23a7ba8aa4b89208e31b57a5244c3bf17daaeac9` | `sha256:49891ca547f3cca748ec3900e378ae4b7d5eeddeac44b3817d96072d61148234` |
 | `satin-cdded1e` | `sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658` | `sha256:e175134bd65d0cef4f81de55b68ea1d9f62e5c3f92c0f11ae69f9d260af69bf9` | `sha256:cb21a9c3129bbda223c253346dbd326a5c78cc13d5bf3d0c686ae8f9fd03c3e1` |
+| `satin-c130558` | `sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da` | `sha256:9abb2cfa2d022251bc7415704bfc49a4d43057c8cd690791840bdf836bcec07f` | `sha256:f430f5f5ed753ba075ed89a070d8d02707531b8331d1d54d03e62e73b252f12c` |
 | `rex6-d4c913c5` | `sha256:93186256dad9ae5c4b7bdde48243732cdeb6b1cdc5127823cbcf1dd4c4782a57` | `sha256:38a3669c27ae74755aae16efbbbba822ec00e147ae52ae814c9a4d85e030d00a` | `sha256:36445afc3cc90eaffefe3484c81088c47db4adc116731576436dd25b2dcc9d5d` |
+
+The same files' bytes as committed, which `shasum -a 256` prints (the generator writes them indented, so
+these differ from the canonical digests above, which are what a descriptor binds):
+
+| Bundle | descriptor.json | rules.json | sources.json |
+| --- | --- | --- | --- |
+| `satin-22a5f4b` | `sha256:44c3bf7d17576560c7c37238f94b5df5ea4dbbe3b523e36594553561bb2ce36d` | `sha256:29c0c64ddafa456db17cc740c27fe9330f00c2cb1563c8dcb4f10fbca50f2075` | `sha256:0b7268888e49f18078e47441760f1f99cb742ccbf55784b40922c2ee8abc9814` |
+| `satin-d34e626` | `sha256:66fa7a63c2f2c15085621ab56f0c13a0e6371ae47638750075ef40de33236fde` | `sha256:e90acaedc0598f3259028b90eb0b549f45aa90bf602232c278df94f573de2647` | `sha256:78bb9c661eadd99d5e8154258a179793e83e1f2710ca8033a0759ebfab7a788c` |
+| `satin-d334ef8` | `sha256:aabb2499105ce4f35ce30633940a88a3cf3347fb4be051eb94ce0849dfc10316` | `sha256:9b85c722af6f0d70f3864cfa881a5dc2a7c0a81c01047b81ba4fde05d6e86ae8` | `sha256:04b1738fe14891fdd7e468c0b48d78b9efe01dbea613fc85379fe952819cdc0b` |
+| `satin-5fb2688` | `sha256:09324c0dcfbf4a639786c063ca19d0db8eb49b003d003a295982a24c4865aaa5` | `sha256:1ed7ed85696074148a843234d853579c4c76d96a861663c6c6f8635ec7dc59b7` | `sha256:70c22156ad1eee866eb87ef1eba295beb85d263bfa464bd490b8fbbdb7603de6` |
+| `satin-cdded1e` | `sha256:b054985e28671b3f2f2ef32403a5155a2acf2e8d7e1f8fb1278e38f0f0a5892c` | `sha256:3214fcacb2f2bbf6fe0b3b7d397950edde796055a7cde036c85b6d60ceaeb8f6` | `sha256:526b77be0a6520edc2d4908e0dd483633b02b6e3388dd7c5a0df89ae1fe94969` |
+| `satin-c130558` | `sha256:4c7f6b9f55ff712dd1111ea04015aa6bb38f644e6d927642aef1a812b9e1b779` | `sha256:ae6ba522fec39968efd036fb18bbafef3d04ae7ee0e8e22061c4e6e8b96ebc35` | `sha256:6c8951d1d9650cff104748f30b618293d8e74d431483ee7a1aa71be124d04651` |
+| `rex6-d4c913c5` | `sha256:c956666034af309dc1e1db9896c2f7934ae1d8e714e0d894cf2069f217d27d9e` | `sha256:de097f03a1b6a138e33760e671bd70eff8054b510d1e612e407d165a07f3e39c` | `sha256:0e2de0c86d2cd07d139c639125fdb0ec2588920608aab224e7535e316c782e8d` |
 
 ```bash
 python3 -I tools/gen_registry.py <spec-checkout> 22a5f4b specs/satin-22a5f4b --members tools/descriptor-members/satin.json --check
@@ -135,6 +150,7 @@ python3 -I tools/gen_registry.py <spec-checkout> d34e626 specs/satin-d34e626 --m
 python3 -I tools/gen_registry.py <spec-checkout> d334ef8 specs/satin-d334ef8 --members tools/descriptor-members/satin.json --check
 python3 -I tools/gen_registry.py <spec-checkout> 5fb2688 specs/satin-5fb2688 --members tools/descriptor-members/satin.json --check
 python3 -I tools/gen_registry.py <spec-checkout> cdded1e specs/satin-cdded1e --members tools/descriptor-members/satin.json --check
+python3 -I tools/gen_registry.py <spec-checkout> c130558 specs/satin-c130558 --members tools/descriptor-members/satin.json --check
 ```
 
 ## Descriptor members: codecs and the SALT mapping

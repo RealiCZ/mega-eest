@@ -53,12 +53,15 @@ SPEC_DIR = os.path.join(ROOT, "specs", "satin-d34e626")
 SPEC_COMMITS = {"satin-d34e626": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
                 "satin-d334ef8": "d334ef8748a6fb09dfcf1162704539fe22373aef",
                 "satin-5fb2688": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
-                "satin-cdded1e": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558"}
+                "satin-cdded1e": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+                "satin-c130558": "c130558e2f38a913982dc17f0cd8eb8834967262"}
 DEFAULT_SPEC = "satin-d34e626"
 INTERCEPTION_SPEC = "satin-d334ef8"  # interception before the frame start, SATIN-ICPT-007
 ORDERING_SPEC = "satin-5fb2688"  # the charge-order principles, SATIN-HIST-023
 TAKE_BACK_SPEC = "satin-cdded1e"  # one home for each rule, and the take-back page's worked examples as cases
-PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC}  # the snapshots that state the principles the model cites
+CURRENT_SPEC = "satin-c130558"  # the snapshot new cases cite
+# The snapshots that state the principles the model cites.
+PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC, CURRENT_SPEC}
 OUT = os.path.join(ROOT, "slice")
 
 KEY = ex.TEST_KEY
