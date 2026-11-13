@@ -695,3 +695,73 @@ and no history gas. No settlement applies a floor or a refund to it, so the form
 consensus figure depends on the choice: it is a reporting convention of the format, of D-40's kind,
 not a rule of the specification. Both implementations already report it so. D-40's `floor`, "the
 EIP-7623 floor", now reads: the EIP-7623 floor the settlement applies, and 0 for a failed deposit.
+
+**D-70. The destruction page's own rules are cases, and the model learns the destruction's other
+shapes.** The rules of SELFDESTRUCT and the Destruction Table that no case cited (`SATIN-SD-001`,
+`-002`, `-003`, `-010` to `-017` and `-020`) are now derived at `cdded1e` (`specs/satin-cdded1e`;
+the page is the same bytes at the specification's later main, so no snapshot is added), in the area
+`selfdestruct`: 29 cases, each pinning a rule where its outcome changes, with a control beside it
+where one is cheap. The scenarios come from the existing tests of both implementations; every
+expected value comes from the specification through the model.
+
+- **Citations.** A case of the area runs the model with `destruction` set, and the steps that apply
+  the page's own rules cite them: the first effective destruction and its mark (`SATIN-SD-002`), a
+  destruction of an account the transaction did not create (`SATIN-SD-012`), one while the mark
+  stands (`SATIN-SD-011`), a store or a code deposit of the marked account (`SATIN-SD-013`, `-014`),
+  value sent to it and its removal at the transaction's end (`SATIN-SD-015`), a mark a failed frame
+  discards (`SATIN-SD-010`), the slots of an address created onto that read zero (`SATIN-SD-003`,
+  `-016`), its present leaf (`SATIN-SD-017`) and a read of the block beneficiary marked last
+  (`SATIN-SD-020`). The take-back examples (D-65) run without it, so their derivations, and every
+  existing slice file, are unchanged.
+- **The model's scope grows** (D-63 amended, `docs/model.md`): a `SELFDESTRUCT` of an account the
+  transaction did not create, in the transaction's own frame or below it, to another account, to the
+  sender or to itself; a repeated `SELFDESTRUCT` while the mark stands; the marked account, kept until
+  the transaction ends with its code, which still runs, and then removed with the balance it holds;
+  an `SSTORE` of its slots that leaves the refund counter as it is; code deposited after a
+  constructor destroyed its own account by `DELEGATECALL`; a creation onto an address whose leaf the
+  state holds with nonce zero, no balance, no code and storage; a destruction in a frame that fails;
+  and a destruction whose beneficiary is the block beneficiary, a volatile read. No opcode is added to
+  the interpreter: the `SELFDESTRUCT`, `CREATE` and `DELEGATECALL` of D-65 take these shapes. Anything
+  else stays `Unmodelled`.
+- **The marked account is deleted at the end, not at the opcode.** The model removed a destroyed
+  account at its `SELFDESTRUCT`; it now keeps it in the run's state, marked, so that a later call runs
+  its code and a later value reaches it (`SATIN-SD-015`), and the state diff deletes it. The take-back
+  examples' figures do not move.
+- **One quarantine.** The 28 gating cases pass on both implementations; none observes the pools.
+  A 29th shows where the table's give-back lands without them: once it is back in its creator's
+  reservoir (`SATIN-SD-005`, `SATIN-SD-010`), the creator calls a child that halts, which burns the
+  regular gas it was forwarded and returns its reservoir share (`SATIN-POOL-014`). The revm-based
+  implementation credits the give-back to regular gas (its departure from `SATIN-HIST-012`, D-65),
+  so the creator forwards most of it and the child burns it; its gas used is above the rule's by
+  what the forward grows by, a figure the generator derives from the run. The case is quarantined
+  with that verdict and passes on the evm2-based implementation.
+
+**D-71. A `SELFDESTRUCT` to a cold beneficiary pays the whole cold account access.**
+`SATIN-SCHED-003` lists the cold account access as an addition to the warm read, which is how an
+opcode whose static gas is the warm read pays it. `SELFDESTRUCT` pays no warm read: EIP-2929
+charges its cold beneficiary the whole cold account access, which EIP-8038 prices at
+`COLD_ACCOUNT_ACCESS`, and `SATIN-SCHED-001` keeps every entry the table does not restate at
+Amsterdam's. The model charged the addition alone, on a path no gating case had reached (the
+take-back examples warm their beneficiary first); both implementations charge `COLD_ACCOUNT_ACCESS`.
+The model now charges it and cites `SATIN-SCHED-001` with it. The table of `SATIN-SCHED-003` could
+state the entry; until it does, this decision reads the inherited one.
+
+**D-72. What the destruction cases do not pin.** Each of these is outside what a transaction-level
+case expresses, or what the text states:
+
+- **A slot of the created address that the transaction accessed before the creation**
+  (`SATIN-SD-003`'s second clause, `SATIN-SD-016`'s last). No instruction reads or writes another
+  account's storage, the address has no code to run before it is created, and an access list only
+  warms a slot: only a tool's load reaches it. The cases pin the other clauses: a slot first accessed
+  after the creation reads zero, and a slot never accessed makes no record.
+- **A store after the mark that clears or restores a slot.** `SATIN-SD-013` fixes its regular gas and
+  that nothing rises, falls, charges or refills, and does not say whether it moves the EIP-3529 refund
+  counter. The model raises `Unmodelled` there; the cases pin a fresh slot written after the mark,
+  which moves no counter.
+- **Block level and configuration.** Whether a leaf an earlier transaction of the block destroyed or
+  funded is absent or present at the next one's start, and a destruction under a reconfigured
+  state-growth, KV-update or compute limit: the block profiles and the next phases.
+- **Outside the model** (D-63): a limit crossed below the transaction's own frame by a destruction's
+  positive effects, a creation transaction whose own frame destroys the account it creates, a
+  `SELFDESTRUCT` to itself of an account created in the transaction, a creation onto an address with
+  a balance, and a destruction in a static frame.

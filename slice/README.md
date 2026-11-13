@@ -1,12 +1,13 @@
 # The vertical slice
 
-112 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+140 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 63 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 20 for the
 edges of the charge-order principles, 5 for gas detention, 5 for the stops of a transaction's own
 frame and 2 that observe the gas pools at `5fb2688` (`specs/satin-5fb2688`), and 2 for the
-take-back page's worked examples at `cdded1e` (`specs/satin-cdded1e`), each case naming its own
-spec (decisions D-54, D-59, D-60, D-62, D-64, D-65, D-66). The cases whose expected `limit` is a stop are schema 1.1; every other case is
+take-back page's worked examples and 28 for the destruction page's own rules at `cdded1e`
+(`specs/satin-cdded1e`), each case naming its own spec (decisions D-54, D-59, D-60, D-62, D-64,
+D-65, D-66, D-70). The cases whose expected `limit` is a stop are schema 1.1; every other case is
 1.0. They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
@@ -48,6 +49,7 @@ derivation, and the two implementations run against it.
 | `limit-stops` | 5 | a stop of the transaction's own frame, its result (`SATIN-STOP-009`, `-021`), settled as a revert: gas detention's crossing at one memory expansion and at `BALANCE`'s static cost (kind 2); the fresh slot that takes the frame's state growth past its budget (kind 3, `SATIN-LIM-002`, `-010`); and, after hints used what the transaction had left, a log one byte past the transaction's data-size limit while the frame's budget holds it (kind 0, `SATIN-LIM-011`, `-012`), with the log that lands exactly on the limit |
 | `gas-pools` | 2 | the first frame's pools observed directly (`gasPools`, D-64): a plain transfer as the control, and a fresh slot whose state gas a small reservoir pays in part, regular gas paying the legacy share, the rest and the record (`SATIN-POOL-008`) |
 | `take-backs` | 2 | the worked examples of the take-back page (`SATIN-TAKE-005` to `-012`), one case each, of which these two gate: a list whose two entries for one absent authority delegate and then clear (`SATIN-TAKE-008`, `SATIN-AUTH-009`), and a value round trip whose earlier transfer turns the signs, the second start's records charged to a caller left too little regular gas, which runs out of gas (`SATIN-TAKE-006`, `SATIN-HIST-009`); the other fifteen are quarantined below |
+| `selfdestruct` | 28 | the destruction page's own rules (D-70): a destruction of an account the transaction did not create moves the balance, writes the account it clears and its beneficiary, and applies no table (`SATIN-SD-001`, `-012`), to an existing, a new, a changed or the sending account, to itself, with no balance, at a bucket multiplier of 2 and under a reverting caller; the first effective destruction of an account created in the transaction (`SATIN-SD-002`), at an absent address and at one whose leaf the state holds with storage, which does not collide, keeps its leaf's charge and reads its slots as zero (`SATIN-SD-003`, `-016`, `-017`), in its constructor and after a slot restored to zero; a repeated destruction that applies the table for nothing (`SATIN-SD-011`); the marked account, whose stores pay their regular gas and no state gas (`SATIN-SD-013`, on little gas against the unmarked control), whose code deposited after the mark keeps no state gas (`SATIN-SD-014`), and which keeps its logs and is removed with a value sent to it (`SATIN-SD-015`); a mark discarded by a frame that reverts or halts (`SATIN-SD-010`); and the read of a destruction's beneficiary, the block beneficiary, marked once the destruction completed and not when it halts in its charges (`SATIN-SD-020`); one more, the give-back kept as reservoir through a halting child, is quarantined below |
 | `pre-frame` | 3 | the reservoir pays the authorities' records first (`SATIN-HIST-005`), shown by a first frame that halts; the transaction's own start record charged before interception answers its `keylessDeploy` call, one gas below step 1's overhead and at it |
 
 The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
@@ -55,11 +57,11 @@ empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and 
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-121 rules in 19 areas are cited. `index.json` lists each case with its area, rules and file digest.
+149 rules in 20 areas are cited. `index.json` lists each case with its area, rules and file digest.
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: forty cases the revm-based implementation fails against a decided rule it
+- `quarantine/`: forty-one cases the revm-based implementation fails against a decided rule it
   has not made yet, each passing on the evm2-based implementation:
   - four deposit cases. `SATIN-HIST-016` and `SATIN-DEP-001` make a deposit pay history gas for its
     body, its logs and its write records; the revm-based implementation charges none. The
@@ -104,6 +106,11 @@ system contracts a call can reach (D-55).
     drops what the halted frame paid. The failed deposit's ledgers are `SATIN-DEP-005`'s, with floor
     and refund 0 (D-66); the revm-based implementation reports its history bytes, the body and
     calldata it keeps (`SATIN-HIST-022`), as 0.
+  - one destruction case (D-70): a creation destroyed, whose give-back returns to its creator as
+    reservoir (`SATIN-SD-005`, `SATIN-SD-010`), before the creator calls a child that halts. The
+    revm-based implementation credits the give-back to regular gas, so the creator forwards most of
+    it to the child, which burns it: its gas used is above the rule's, a difference no pool
+    observation is needed to see.
 
   The expectation is the rule's; the cases stay out of the gating slice until that implementation
   is fixed, and `tools/run-slice.sh` checks that each still fails exactly as `index.json` records
@@ -117,8 +124,10 @@ A stop's diagnostics (scope, call path, operation, phase and commit flags, which
 implementation's result carries, D-62), a stop of the KV-update limit (half a million write
 records cost more gas than a transaction holds; for the same reason the answer-stopped example's KV
 budget of 3 is pinned on the state-growth budget instead, D-65), gas detention beyond `TIMESTAMP`, a
-deposit's Oracle read and `BALANCE`, frames and creations beyond the shapes the take-back examples
-build (D-65), EIP-7702 lists beyond one accepted entry, two applied ones or one authority's
+deposit's Oracle read, `BALANCE` and a destruction's read of the block beneficiary, frames and
+creations beyond the shapes the take-back examples and the destruction page's cases build (D-65,
+D-70), a slot of an address the transaction accessed before creating onto it and a store after a
+destruction's mark that moves the refund counter (D-72), EIP-7702 lists beyond one accepted entry, two applied ones or one authority's
 delegation and clear, an Oracle read that asks the oracle service (the evm2-based adapter runs no
 oracle transcript), a gating case with `reads` (the revm-based implementation reads the
 SequencerRegistry in every transaction, D-61), and every block, building and witness profile: they
@@ -134,7 +143,7 @@ builds the format CLI and both adapters (fetching the evm2-based implementation 
 consumes `cases/` with each adapter plain and instrumented, and prints
 
 ```text
-SLICE cases=112 adapters=2 pass=224 fail=0 unsupported=0 error=0 digests=identical
-PARITY adapters=2 cases=112 mismatches=0
+SLICE cases=140 adapters=2 pass=280 fail=0 unsupported=0 error=0 digests=identical
+PARITY adapters=2 cases=140 mismatches=0
 NEGATIVE wrong-expected verdict=fail rewritten=no
 ```

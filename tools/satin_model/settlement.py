@@ -237,9 +237,14 @@ class SettlementMixin:
 
     def diff(self) -> dict:
         out = {}
+        for a in sorted(self.destroyed):
+            if self.destruction and self.state[a].balance:
+                self.d.add("state", f"{h(a)}, marked, is removed at the transaction's end with the {self.state[a].balance} "
+                           "wei it holds, which no account receives and no log records; the removal takes no record and "
+                           "nothing of the code back again", "SATIN-SD-015", "SATIN-LOG-005")
         for a, acct in sorted(self.state.items()):
             before = self.pre.get(a)
-            exists = not acct.empty()
+            exists = not acct.empty() and a not in self.destroyed  # a marked account is deleted at the end (EIP-6780)
             if not exists:
                 if before is not None:
                     out[h(a)] = None

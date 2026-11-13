@@ -1,0 +1,345 @@
+{
+  "assertions": [
+    {
+      "path": "/expected/gasLedgers",
+      "rules": [
+        "SATIN-HIST-002",
+        "SATIN-HIST-003",
+        "SATIN-HIST-004",
+        "SATIN-HIST-022",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-SCHED-001",
+        "SATIN-SCHED-002",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-SD-001",
+        "SATIN-SD-012",
+        "SATIN-SD-019"
+      ]
+    },
+    {
+      "path": "/expected/outcome",
+      "rules": [
+        "SATIN-OUT-001"
+      ]
+    },
+    {
+      "path": "/expected/receipt",
+      "rules": [
+        "SATIN-POOL-018"
+      ]
+    },
+    {
+      "path": "/expected/resources",
+      "rules": [
+        "SATIN-ACCT-002",
+        "SATIN-ACCT-012",
+        "SATIN-HIST-003",
+        "SATIN-LIM-001",
+        "SATIN-LIM-007",
+        "SATIN-SD-001",
+        "SATIN-SD-012",
+        "SATIN-SD-018",
+        "SATIN-SD-019"
+      ]
+    }
+  ],
+  "caseId": "satin/selfdestruct/not-created/no-balance",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x59db",
+      "floor": "0x3a98",
+      "gasUsed": "0xc46b",
+      "history": "0x6a90",
+      "historyBytes": "0x136",
+      "refund": "0x0",
+      "regular": "0x59db",
+      "state": "0x0",
+      "total": "0xc46b"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xc46b",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000000e1": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x60e1ff",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1808026a037abd59b2ae917db9ae6528f8e6a7e588b445bd1372ea295b330cecfdb76351da00af281f0a2f8216a03102560bc82b936a2cb1e51b7b5052600045195e427b885"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "the same destruction of a contract holding no balance: nothing moves, so no account is written and no transfer log is emitted, and the account stays"
+    },
+    "derivation": [
+      {
+        "path": "/expected/gasLedgers",
+        "rules": [
+          "SATIN-HIST-002",
+          "SATIN-HIST-003",
+          "SATIN-HIST-004",
+          "SATIN-HIST-022",
+          "SATIN-POOL-005",
+          "SATIN-POOL-006",
+          "SATIN-POOL-007",
+          "SATIN-POOL-018",
+          "SATIN-POOL-019",
+          "SATIN-POOL-020",
+          "SATIN-SCHED-001",
+          "SATIN-SCHED-002",
+          "SATIN-SCHED-005",
+          "SATIN-SCHED-006",
+          "SATIN-SD-001",
+          "SATIN-SD-012",
+          "SATIN-SD-019"
+        ],
+        "steps": [
+          "intrinsic regular gas = TX_BASE_COST 12,000 + COLD_ACCOUNT_ACCESS 3,000 = 15,000",
+          "floor = base 15,000 + 64 x 0 calldata and access-list bytes = 15,000",
+          "body = TX_BODY_SIZE 310 + 0 calldata bytes + 0 access-list bytes = 310 bytes; its history gas 310 x 88 = 27,280",
+          "pools: regular budget min(1,000,000, 200,000,000) - 15,000 = 985,000, reservoir 0",
+          "body history 27,280: 0 from the reservoir, 27,280 from the regular budget",
+          "SELFDESTRUCT of 0x00000000000000000000000000000000000c0de1 to 0x00000000000000000000000000000000000000e1, holding 0 wei, step 1, its charges: regular 5,000 + cold access COLD_ACCOUNT_ACCESS 3,000, no beneficiary created",
+          "step 2: 0x00000000000000000000000000000000000c0de1 was not created in the transaction: the destruction table does not apply and the account is not marked, so nothing is refilled or taken back, and EIP-6780 does not delete it",
+          "frame opcodes: PUSH1 3, SELFDESTRUCT; regular charges of the frame 8,003",
+          "ledgers: state 0, history 27,280 (310 bytes), regular = total 50,283 - state - history = 23,003",
+          "gas used max(50,283 - 0, floor 15,000) = 50,283; the block counts max(regular 23,003, floor 15,000) = 23,003"
+        ]
+      },
+      {
+        "path": "/expected/outcome",
+        "rules": [
+          "SATIN-OUT-001"
+        ],
+        "steps": [
+          "admitted; the frame succeeds"
+        ]
+      },
+      {
+        "path": "/expected/receipt",
+        "rules": [
+          "SATIN-POOL-018"
+        ],
+        "steps": [
+          "status 0x1, gas used 50,283, 0 logs in execution order"
+        ]
+      },
+      {
+        "path": "/expected/resources",
+        "rules": [
+          "SATIN-ACCT-002",
+          "SATIN-ACCT-012",
+          "SATIN-HIST-003",
+          "SATIN-LIM-001",
+          "SATIN-LIM-007",
+          "SATIN-SD-001",
+          "SATIN-SD-012",
+          "SATIN-SD-018",
+          "SATIN-SD-019"
+        ],
+        "steps": [
+          "data size starts at the body's 310 bytes; its five fixed records are not KV updates",
+          "the destruction of an account the transaction did not create subtracts nothing",
+          "step 3: no balance moves, so no account is written, no beneficiary created and no transfer log emitted",
+          "kept: data size 310 bytes, 0 KV updates, state growth 0; the limits are the protocol's 13,107,200, 500,000 and 1,000"
+        ]
+      }
+    ],
+    "evidence": "derived from the specification by tools/satin_model.py, an executable restatement of the cited rules that shares no code with either implementation; implementation runs are cross-checks only",
+    "generator": "tools/make_slice.py",
+    "review": {
+      "decision": "pending: approval is the owner's",
+      "ruleTexts": {
+        "SATIN-ACCT-002": "sha256:15a57f42e12a7c6edb72a991fef190eaa0672b3193e8745a64ec5f631fc370ba",
+        "SATIN-ACCT-012": "sha256:d5b25ab3bab59b0e29a130178677245e965255d13a4374addfc07db8c3ea3d90",
+        "SATIN-HIST-002": "sha256:25b81f15f444a2b56d289e489301321d295bec49cc486f3356d4826da584fb22",
+        "SATIN-HIST-003": "sha256:5c278d629bff537ddefd0d3b1192dfd67dab5ea126eeaeda86d21e7f72a867b1",
+        "SATIN-HIST-004": "sha256:ed165b75e64fdae2ff1c9f97dd815ea124b28818647c873db13e217eac046d90",
+        "SATIN-HIST-022": "sha256:297c3750e19b202dea5b7e729c925d236e8b6180328cd13373e17ed70079f84a",
+        "SATIN-LIM-001": "sha256:3373ca5b61edec132530b7106ded735fb8430ffabeaa013ce4fe7e8bda446b62",
+        "SATIN-LIM-007": "sha256:5a1c7ff7c36129b99db578bfd7913d56aa93ad57cd18b1530c6fcbe09490a4f6",
+        "SATIN-OUT-001": "sha256:46f617445fce43654529b3eb3b0509ebccef494605755e6ae683334594d0fc97",
+        "SATIN-POOL-005": "sha256:3fb2a1aee19ce0ce816e028227a038b092eff061a3711fe323382d439bc69ded",
+        "SATIN-POOL-006": "sha256:a3ef2a7daef0ac743b5581692a8aad5d7c508be2cc0fa8bbc93e6bccb29c60b7",
+        "SATIN-POOL-007": "sha256:0727d784afe6cf7658f76fede2b54204435850b4cc343eb9f685ce6e6bee73c1",
+        "SATIN-POOL-018": "sha256:9929e1b284b53eb5dd9b3c870e652f11c100b50a1c6acff271d50ba638518478",
+        "SATIN-POOL-019": "sha256:a6ac430192e0db3481ba472d854857fd1f085ae38d786de7c0cca641f86ab7c2",
+        "SATIN-POOL-020": "sha256:21f6377838f6381cc57d4daa30eded2538857412c73e493ed0ab47fc528e40a8",
+        "SATIN-SCHED-001": "sha256:2dca4f5cd044413bf5284a99b7eb4a716bf00a8e50b540e55445c9b4a1031160",
+        "SATIN-SCHED-002": "sha256:1c2b3f8de03bf18e2aeee6021a522e9d6f843ec8e8929e580d4992c651b54c6d",
+        "SATIN-SCHED-005": "sha256:9c958ad26a39a4bb6413a53e299363ad184444ec66b99ab6cb95ababc23209dd",
+        "SATIN-SCHED-006": "sha256:1cde42c8c0e514cf680d32dfc4864612338ee9675f296b388c1f5068cd823d6d",
+        "SATIN-SD-001": "sha256:c642d72e303a0ea3963ef8a2692c44b983ec079d56f62a21161d77ce46aee8a4",
+        "SATIN-SD-012": "sha256:36facbb3bcc044eccaf35debb30004df00d973035e306d3bc96c18fb8c2e720e",
+        "SATIN-SD-018": "sha256:ff8591f1b4eaae2e6ca37f836989c4ea058761b3ecaadfe64f845266208ed8de",
+        "SATIN-SD-019": "sha256:ca74e9a248f586d9a4221ba935923566a1996b546505e595a77a7248625a2ef4"
+      },
+      "spec": {
+        "commit": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+        "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658"
+      }
+    },
+    "status": "candidate",
+    "transaction": {
+      "data": "0x",
+      "gasLimit": "0xf4240",
+      "nonce": "0x0",
+      "sender": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+      "to": "0x00000000000000000000000000000000000c0de1",
+      "type": "0x0",
+      "value": "0x0"
+    }
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-002",
+    "SATIN-ACCT-012",
+    "SATIN-HIST-002",
+    "SATIN-HIST-003",
+    "SATIN-HIST-004",
+    "SATIN-HIST-022",
+    "SATIN-LIM-001",
+    "SATIN-LIM-007",
+    "SATIN-OUT-001",
+    "SATIN-POOL-005",
+    "SATIN-POOL-006",
+    "SATIN-POOL-007",
+    "SATIN-POOL-018",
+    "SATIN-POOL-019",
+    "SATIN-POOL-020",
+    "SATIN-SCHED-001",
+    "SATIN-SCHED-002",
+    "SATIN-SCHED-005",
+    "SATIN-SCHED-006",
+    "SATIN-SD-001",
+    "SATIN-SD-012",
+    "SATIN-SD-018",
+    "SATIN-SD-019"
+  ],
+  "schemaVersion": "1.0",
+  "specRef": {
+    "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+    "name": "megaeth/Satin"
+  }
+}

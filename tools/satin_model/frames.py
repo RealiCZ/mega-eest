@@ -127,6 +127,11 @@ class FramesMixin:
         d = self.d
         shown = child["received"] or child["net_charged"] or child["drawn"] or child["reservoir"]
         if status == "success":
+            if self.destruction and child.get("give_back"):
+                frame["give_back"] = frame.get("give_back", 0) + child["give_back"]
+                d.add("gasLedgers", f"{name} succeeds with the destruction table's give-back, {fmt(child['give_back'])}, "
+                      "in its reservoir: it returns up the chain with that reservoir, to its caller's reservoir and not "
+                      "its regular gas", "SATIN-SD-010", "SATIN-POOL-012")
             frame["reservoir"] += child["reservoir"]
             frame["net_charged"] = frame.get("net_charged", 0) + child["net_charged"]
             frame["drawn"] = frame.get("drawn", 0) + child["drawn"]
@@ -142,7 +147,14 @@ class FramesMixin:
             return child["regular"]
         kept_logs = len(snap[0][4])
         dropped = [log for log in self.logs[kept_logs:] if log[0] != TRANSFER_LOG_ADDRESS]
+        unmarked = sorted(self.destroyed - snap[5])
         self.frame_restore(snap)
+        if unmarked and self.destruction:
+            d.add("gasLedgers", f"{name}'s failure discards the mark of {', '.join(h(a) for a in unmarked)} and every effect "
+                  "of the table: the charges the table refilled stand again, the records it took back stand again, and "
+                  "the discarded give-back is no further one", "SATIN-SD-010", "SATIN-POOL-014")
+            d.add("resources", f"the falls and the records the table took back are discarded with {name}: the "
+                  "account's growth and records stand again", "SATIN-SD-010")
         if dropped:
             size = sum(LOG_BASE_SIZE + LOG_TOPIC_SIZE * len(topics) + len(data) for _, topics, data in dropped)
             d.add("resources", f"{name}'s failure discards the {len(dropped)} log{'s' if len(dropped) > 1 else ''} it and "

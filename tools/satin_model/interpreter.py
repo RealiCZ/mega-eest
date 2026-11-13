@@ -391,6 +391,8 @@ class InterpreterMixin:
                           "SATIN-HIST-010", "SATIN-STATE-001", "SATIN-STATE-003", "SATIN-STATE-012", "SATIN-POOL-008")
                 remaining = frame["regular"]
                 self.probe.setdefault("forward", remaining)
+                self.probe.setdefault("forward:" + target.hex(), remaining)  # each target's first CALL
+                self.probe.setdefault("reservoir:" + target.hex(), frame["reservoir"])
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
                 self.draw_regular(frame, forward)
@@ -415,7 +417,11 @@ class InterpreterMixin:
                 balance = self.state.get(address, Account()).balance
                 fundable = value <= balance
                 records = [a for a in (address, target)
-                           if value and fundable and target != address and ("a", a) not in self.kv and a != tx.sender]
+                           if value and fundable and target != address and ("a", a) not in self.kv and a != tx.sender
+                           and a not in self.destroyed]
+                if value and fundable and target in self.destroyed:
+                    d.add("resources", f"the value sent to {h(target)}, which a destruction marked, is no rise and makes "
+                          "no record for it", "SATIN-SD-015")
                 history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE * len(records)
                 if value and not fundable:
                     d.add("gasLedgers", f"the caller's balance {balance} cannot fund the value {value}: as the state stands, "
@@ -509,7 +515,7 @@ class InterpreterMixin:
                 steps.append(f"CREATE {fmt(opcode_charges)} + the creation")
             elif op == 0xFF:  # SELFDESTRUCT
                 beneficiary = (pop() % 2**160).to_bytes(20, "big")
-                if not ctx:
+                if not ctx and (create or address in self.created or not self.destruction):
                     raise Unmodelled("a SELFDESTRUCT of the transaction's own frame")
                 self.selfdestruct(frame, address, beneficiary)
                 steps.append("SELFDESTRUCT")
