@@ -139,6 +139,8 @@ def selector(signature: str) -> bytes:
 
 SEND_HINT = selector("sendHint(bytes32,bytes)")
 KEYLESS_DEPLOY_CALL = selector("keylessDeploy(bytes,uint256)")
+# KeylessDeploy's KEYLESS_DEPLOY_CODE_HASH (SATIN-KEY-001), version 1.0.0.
+KEYLESS_DEPLOY_CODE_HASH = bytes.fromhex("55020d41649acf7a84add6e628b887f802218d9ac86f142ef0994da43ea5eeb6")
 # SATIN-ICPT-001: the intercepted methods of the two contracts whose answer is the node's.
 INTERCEPTED = {
     MEGA_ACCESS_CONTROL: {selector("disableVolatileDataAccess()"), selector("enableVolatileDataAccess()"),
@@ -148,6 +150,19 @@ INTERCEPTED = {
 NON_ZERO_TRANSFER = selector("NonZeroTransfer()")  # SATIN-ICPT-003
 NO_ETHER_TRANSFER = selector("NoEtherTransfer()")  # SATIN-KEY-005 step 2
 MALFORMED_ENCODING = selector("MalformedEncoding()")  # SATIN-KEY-005 step 3
+# A keyless deployment past step 3 (the specification at `c130558`, KeylessDeploy's page): its constants, and the
+# custom errors of SATIN-KEY-001's interface, each the four-byte selector of its signature.
+# SATIN-KEY-005 step 5 holds the initcode to MAX_INITCODE_SIZE, SATIN-SIZE-002's, defined above.
+CREATE_GAS = CREATE_ACCESS  # SATIN-KEY-005 step 14: KeylessDeploy's CREATE_GAS, SATIN-SCHED-003's CREATE, 12,000
+SECP256K1_P = 2**256 - 2**32 - 977  # the secp256k1 curve of a legacy transaction's signature (step 7)
+SECP256K1_N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
+SECP256K1_G = (0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798,
+               0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8)
+KEYLESS_ERRORS = {name: selector(name) for name in (
+    "NotContractCreation()", "NotPreEIP155()", "NonZeroTxNonce(uint64)", "InvalidSignature()", "InsufficientBalance()",
+    "ContractAlreadyExists()", "SignerNonceTooHigh(uint64)", "ExecutionReverted(uint64,bytes)",
+    "ExecutionHalted(uint64)", "EmptyCodeDeployed(uint64)", "GasLimitTooLow(uint64,uint64)",
+    "InitCodeTooLarge(uint64,uint64)", "SignerHasCode()", "NotIntercepted()")}
 DISABLE_VOLATILE_DATA_ACCESS = selector("disableVolatileDataAccess()")  # SATIN-MAC-001
 VOLATILE_DATA_ACCESS_DISABLED = selector("VolatileDataAccessDisabled(uint8)")  # SATIN-MAC-004
 ACCESS_TYPE_TIMESTAMP, ACCESS_TYPE_BENEFICIARY, ACCESS_TYPE_ORACLE = 1, 10, 11  # SATIN-MAC-005

@@ -4,7 +4,7 @@ deployment's first steps (`SATIN-KEY-005`)."""
 from __future__ import annotations
 
 from .constants import KEYLESS_DEPLOY_OVERHEAD_GAS, MALFORMED_ENCODING, MAX_U64, NO_ETHER_TRANSFER
-from .records import fmt, Unmodelled
+from .records import fmt
 
 
 def keyless_arguments(data: bytes):
@@ -59,7 +59,7 @@ class InterceptionMixin:
                   "moves and before any frame is built", "SATIN-KEY-005", "SATIN-KEY-018")
             return "revert", NO_ETHER_TRANSFER
         if rlp_decodes_as_list(argument):
-            raise Unmodelled("a keyless deployment past step 3's encoding check")
+            return self.keyless_deploy(frame, argument, int.from_bytes(tx.data[36:68], "big"))
         d.add("outcome", f"step 3: the first argument's {len(argument)} bytes are not the RLP encoding of a transaction: "
               "MalformedEncoding()", "SATIN-KEY-005")
         return "revert", MALFORMED_ENCODING

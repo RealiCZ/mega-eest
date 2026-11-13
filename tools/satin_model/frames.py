@@ -96,7 +96,15 @@ class FramesMixin:
         charges = self.regular_charges
         try:
             status, out = self.execute(code, child, create, ctx=ctx)
-            if create and status == "success":
+            if create and status == "success" and ctx.get("keyless") and not out and ctx["address"] not in self.destroyed:
+                # SATIN-KEY-009: a keyless creation's empty code at the deploy address is refused its deposit, and the
+                # creation reverts, with empty revert data, as a creation that reverted.
+                ctx["empty_refused"] = True
+                status = "revert"
+                d.add("outcome", f"{name}'s constructor returns empty code for the deploy address, which it did not "
+                      "destroy: the empty deposit is refused, and the creation reverts as a creation that reverted, its "
+                      "state, logs and records taken back, so that the address stays deployable", "SATIN-KEY-009")
+            elif create and status == "success":
                 self.deposit_code(out, child, ctx["address"])
         except Halt as e:
             status, out = "halt", b""

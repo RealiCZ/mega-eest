@@ -150,6 +150,9 @@ class InterpreterMixin:
                 steps.append(f"GASPRICE {G_BASE}")
                 d.add("outcome", f"GASPRICE pushes the transaction's effective gas price, {fmt(self.effective_price())}",
                       "SATIN-BASE-001")
+            elif 0x0C <= op <= 0x0F:  # undefined in Osaka, which Satin's base keeps: an exceptional halt
+                steps.append(f"undefined {op:#04x}")
+                raise Halt(f"the undefined opcode {op:#04x}")
             elif op == 0x34:  # CALLVALUE
                 self.charge_regular(frame, G_BASE, "CALLVALUE")
                 stack.append(value_in)

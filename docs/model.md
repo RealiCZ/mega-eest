@@ -79,6 +79,23 @@ specification's text and constants:
   have made (`SATIN-SCHED-010`); and a live system address resolved from a registry holding version
   2.0.0's code, from which a deposit is a failed deposit and a Mega System Transaction is refused for
   its own checks or promoted to a deposit that fails validation (D-87).
+- **A keyless deployment** (D-79): the transaction's own `keylessDeploy` call past step 3's
+  encoding check, its carried transaction decoded as a legacy transaction's nine RLP strings and its
+  signer recovered from the signature, high `s` included (`SATIN-KEY-005` step 7); steps 3 to 15 in
+  the table's order, the first refusal answering and the steps that would also refuse named
+  (`SATIN-KEY-006`); the warm reads of the signer and the deploy address (`SATIN-KEY-007`) and a
+  signer that is the block beneficiary read as the beneficiary's account (`SATIN-KEY-010`); the
+  charges of steps 10 and 14 with their legacy shares and a halt at either; the creation forwarded
+  `min(gasLimitOverride, the call's regular gas)` with the reservoir share and the child budgets
+  (`SATIN-KEY-011`), its constructor reverting, halting, refused its empty deposit
+  (`SATIN-KEY-009`), destroying the deploy address, stopped by gas detention (`SATIN-KEY-016`),
+  landing on an address that holds only a balance or colliding with one that holds a nonce
+  (`SATIN-KEY-008`), and a failed creation's step-14 charges given back (`SATIN-POOL-015`);
+  `gasUsed` (`SATIN-KEY-015`), the nonce rule and the signer's record and rise on the call
+  (`SATIN-KEY-012`, `-013`), and the answer (`SATIN-KEY-014`). A contract's `keylessDeploy` call
+  runs the bytecode (`SATIN-KEY-003`). The interpreter gained `ORIGIN` (`0x32`), `GASPRICE` (`0x3a`),
+  both the transaction's own in every frame, and the opcodes Osaka leaves undefined at `0x0c` to
+  `0x0f`, each an exceptional halt.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -88,7 +105,7 @@ raises `Unmodelled` rather than guessing.
 
 | Not in the model | Where it is covered instead |
 | --- | --- |
-| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's run and the prices of ModExp and of an over-size BN254 pairing; `CREATE2`, `CALLCODE` and `STATICCALL`; a creation that fails or collides other than at its start, or lands on an address with a balance; a `SELFDESTRUCT` to itself of an account created in the transaction, or in a creation transaction's own frame; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
+| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's run and the prices of ModExp and of an over-size BN254 pairing; `CREATE2`, `CALLCODE` and `STATICCALL`; a creation that fails or collides other than at its start, or lands on an address with a balance, other than a keyless deployment's (D-79); a keyless creation whose start crosses a limit, one stopped in data size, KV updates or state growth, a signer's nonce record crossing the call's budget, a signer whose own code spends a nonce during the creation, a deploy address the transaction changed or that holds storage, and a node configuration that disables EIP-3607; a `SELFDESTRUCT` to itself of an account created in the transaction, or in a creation transaction's own frame; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | An expectation two engines agree on but the model does not derive | Nothing, today. Such a case would be a different kind of expectation, an agreement rather than a derivation from the specification, and would have to be labelled apart from the spec-derived cases (its own provenance status and evidence) if it were ever added |
@@ -117,6 +134,7 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `frames.py` | A child frame's budgets and reservoir share, the snapshot its failure returns to, how it ends (`SATIN-POOL-012`, `-014`), a stop it catches, a start held to the started frame's budget, a failed frame's hints and the data-size stop of the frame it returns into, and `DELEGATECALL` |
 | `creation.py` | A `CREATE` from a frame, onto an absent address or one whose storage then reads zero, or stopped at its start with its creator's nonce record; a `SELFDESTRUCT` in the order of `SATIN-SD-019`: the first of an account created in the transaction with the destruction table and its mark, a repeated one, and one of an account the transaction did not create |
 | `interception.py` | The transaction's own `keylessDeploy` call: the decoder's conditions and the deployment's first steps |
+| `keyless.py` | A keyless deployment past step 3's encoding check: the carried transaction and its signer, steps 3 to 15, the creation, its collision, the signer's nonce and records, `gasUsed` and the answer (D-79) |
 | `authorizations.py` | An EIP-7702 list before the first frame: its simulation, each entry's gates and the checks of its authority's code and nonce, a list that does not fit and is skipped, each entry's charges and records, the sender's own entry, a further entry for one authority |
 | `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, in a detained frame its static cost apart and its state and history drawn from the withheld part first, and a creation's deposited code |
 | `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it |

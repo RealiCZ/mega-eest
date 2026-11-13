@@ -7,9 +7,9 @@ from __future__ import annotations
 from .constants import (
     ACCESS_LIST_ADDRESS, ACCESS_LIST_ADDRESS_SIZE, ACCESS_LIST_KEY, ACCESS_LIST_SLOT_SIZE, ACCOUNT_STATE,
     AUTHORIZATION_SIZE, CALLDATA_NONZERO, CALLDATA_ZERO, COLD_ACCOUNT_ACCESS, COLD_ACCOUNT_SURCHARGE,
-    COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, EXECUTION_CAP, FLOOR_PER_BYTE,
-    INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, limit_exceeded, MAX_CONTRACT_SIZE, MAX_U64, ORACLE,
-    PER_AUTH_BASE_COST,
+    COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, ex, EXECUTION_CAP, FLOOR_PER_BYTE,
+    INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_DEPLOY_CODE_HASH, limit_exceeded, MAX_CONTRACT_SIZE,
+    MAX_U64, ORACLE, PER_AUTH_BASE_COST,
     STOP_DIMENSIONS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT,
     TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
 )
@@ -452,9 +452,16 @@ class TransactionMixin:
                 status, output = self.keyless_call(frame)
             else:
                 if not create and recipient == KEYLESS_DEPLOY and data[:4] == KEYLESS_DEPLOY_CALL:
+                    held = ("KeylessDeploy's bytecode runs, whose decoder refuses the same arguments"
+                            if ex.keccak256(code) == KEYLESS_DEPLOY_CODE_HASH else
+                            "the code the state holds at the address runs, which is not KeylessDeploy's")
                     d.add("outcome", "the transaction's own CALL to KeylessDeploy carries keylessDeploy's selector, but its "
-                          "arguments fail the decoder's conditions: not recognized, charged nothing, and KeylessDeploy's "
-                          "bytecode runs, whose decoder refuses the same arguments", "SATIN-ICPT-006")
+                          f"arguments fail the decoder's conditions: not recognized, charged nothing, and {held}",
+                          "SATIN-ICPT-006")
+                elif not create and recipient == KEYLESS_DEPLOY:
+                    d.add("outcome", "the transaction's own CALL to KeylessDeploy does not carry keylessDeploy's selector: "
+                          "not recognized, charged nothing, and the code the state holds at the address runs",
+                          "SATIN-ICPT-006")
                 status, output = self.execute(code, frame, create)
                 if create and status == "success" and len(output) > MAX_CONTRACT_SIZE:
                     d.add("outcome", f"the initcode returns {fmt(len(output))} bytes of code to deposit, over "

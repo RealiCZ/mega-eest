@@ -279,7 +279,7 @@ class Case:
                  contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
                  params=None, retune=None, reads=False, pools=False, destruction=False, coinbase=COINBASE,
                  detention=False, block_hashes=None, stops=False, lists=False, outcomes=False, chain=CHAIN_ID,
-                 system_flag=False):
+                 system_flag=False, gas_used_check=None):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -299,6 +299,7 @@ class Case:
         self.authorizations = authorizations or []  # (key, chain id, delegation target, nonce)
         self.system = system  # the system contracts' code in the pre-state
         self.check = check or {}  # gasLedgers figures the derivation must reproduce
+        self.gas_used_check = gas_used_check  # a keyless answer's gasUsed the derivation must reproduce (a worked example)
         # (probe, regular gas): the gas limit is set so the model's probe point (satin_model's Run.probe)
         # holds exactly that regular gas; `gas` is the limit the model is first run with to find it.
         self.tune = tune
@@ -470,7 +471,7 @@ def cases() -> list[Case]:
         c.definition = "cases"
     for group in (interception_cases, ordering_cases, detention_cases, detention_rule_cases, reads_cases, limit_cases,
                   gas_pools_cases, take_back_cases, selfdestruct_cases, limit_stop_cases, authorization_cases,
-                  outcome_cases, outcome_edge_cases):
+                  outcome_cases, outcome_edge_cases, keyless_cases):
         made = group()
         for c in made:
             c.definition = group.__name__
@@ -2776,6 +2777,178 @@ def outcome_edge_cases() -> list[Case]:
     return out
 
 
+# --- A keyless deployment past step 3: steps 3 to 15, the creation, the signer's nonce and the answer -----------
+
+SIGNER_KEY = 0x4E1C4A7D2B9F3E8A6C5D0F1B2A3948576E8D9C0B1A2F3E4D5C6B7A8998A7B6C5  # the carried transactions' signer
+SIGNER = ex.address_of(SIGNER_KEY)
+DEPLOY = model.created_address(SIGNER, 0)  # the deploy address, keccak256(rlp([signer, 0]))[12:]
+CARRIED_GAS_PRICE = 100 * 10**9  # what the carried transactions are signed at: no fee is paid at it
+NO_POINT_R = 5  # an r that is the x of no secp256k1 point: 5^3 + 7 is no square modulo p
+
+
+def carried(init: bytes, gas: int = 90_000, value: int = 0, nonce: int = 0, to: bytes | None = None,
+            chain_id: int | None = None, key: int = SIGNER_KEY, high_s: bool = False, r: int | None = None,
+            gas_price: int = CARRIED_GAS_PRICE) -> bytes:
+    """A signed legacy creation for a keyless deployment: pre-EIP-155 (v 27 or 28) unless `chain_id` is given; with
+    `high_s` its s is replaced by n - s and its parity flipped, a signature of the same key; with `r` the signature's r
+    is replaced, leaving one that recovers no key."""
+    fields = [nonce, gas_price, gas, to if to is not None else b"", value, init]
+    recid, sig_r, sig_s = ex.sign(key, ex.keccak256(ex.rlp(fields + ([] if chain_id is None else [chain_id, 0, 0]))))
+    if high_s:
+        recid, sig_s = recid ^ 1, ex.N - sig_s
+    v = 27 + recid if chain_id is None else 35 + 2 * chain_id + recid
+    return ex.rlp(fields + [v, sig_r if r is None else r, sig_s])
+
+
+def keyless_data(raw: bytes, override: int, padded: bool = True) -> bytes:
+    """keylessDeploy(raw, override), canonically ABI-encoded, or with the bytes' tail padding cut (SATIN-ICPT-006)."""
+    return model.KEYLESS_DEPLOY_CALL + word(0x40) + word(override) + word(len(raw)) + (
+        raw.ljust((len(raw) + 31) // 32 * 32, b"\x00") if padded else raw)
+
+
+def keyless_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = CURRENT_SPEC
+    every = 2**256 - 1  # a gasLimitOverride above MAX_UINT64, which the deployment reads as MAX_UINT64
+    code = init_returning(bytes(range(1, 33)))  # initcode that deploys 32 bytes of code
+    pad = b"\x5b" * 16  # JUMPDESTs before a constructor whose own cost the case leaves free
+    signer = lambda **kw: {SIGNER: model.Account(**kw)}
+
+    def case(name: str, intent: str, raw: bytes, override: int = every, gas: int = 1_000_000, padded: bool = True,
+             **kw) -> None:
+        add(Case(f"satin/keyless/{name}", intent, system=True, spec=spec, to=model.KEYLESS_DEPLOY, code=None,
+                 data=keyless_data(raw, override, padded), gas=gas, **kw))
+
+    # Step 3's own order, and the table's order of steps 3 to 13 (SATIN-KEY-006).
+    case("refusal/to-and-chain-id", "a carried transaction with to set and a chain id: step 3 refuses it for both, with "
+         "the first error in its own order, NotContractCreation()", carried(code, to=EOA, chain_id=CHAIN_ID))
+    case("refusal/chain-id", "a carried creation signed with a chain id: step 3 refuses it with NotPreEIP155()",
+         carried(code, chain_id=CHAIN_ID))
+    signed = 90_000
+    case("refusal/nonce-and-override", "a carried nonce of 1 and a gasLimitOverride below the signed gas limit: step 4 "
+         "answers before step 6", carried(code, nonce=1), override=signed - 1)
+    case("refusal/override-and-signer-nonce", "a gasLimitOverride one below the signed gas limit and a signer at nonce "
+         "2: step 6 answers before step 8", carried(code), override=signed - 1, accounts=signer(nonce=2))
+    case("refusal/signer-nonce-two", "a signer at nonce 2: step 8 refuses it, the signer's account read and the "
+         "deploy address not", carried(code), accounts=signer(nonce=2), reads=True)
+    case("refusal/signer-nonce-and-code", "a signer at nonce 2 that holds code: step 8 answers before step 9",
+         carried(code), accounts=signer(nonce=2, code=b"\x60\x00"))
+    case("refusal/signer-has-code", "a signer that holds code other than a delegation indicator: SignerHasCode()",
+         carried(code), accounts=signer(nonce=1, code=b"\x60\x00"))
+    case("refusal/invalid-signature", "a carried signature whose r is the x of no curve point: no signer is recovered, "
+         "InvalidSignature()", carried(pad + code, r=NO_POINT_R))
+    case("refusal/taken-and-unfunded", "a deploy address that holds code and a carried value the signer cannot fund: "
+         "step 12 answers before step 13, both accounts read", carried(code, value=1),
+         accounts={**signer(nonce=1), DEPLOY: model.Account(nonce=1, code=b"\x00")}, reads=True)
+    case("refusal/insufficient-balance", "a carried value the empty signer cannot fund: step 10 charges the signer's "
+         "account, then step 13 refuses, and that state gas comes back", carried(code, value=1))
+    # The forward's checks, steps 11 and 15, at their edges: the call's regular gas one short of the signed gas limit.
+    case("refusal/step-11-one-short", "the call holds one gas less than the signed gas limit after step 10: step 11 "
+         "refuses with GasLimitTooLow", carried(code, gas=signed), tune=("keyless-11", signed - 1))
+    case("refusal/step-15-one-short", "the call holds one gas less than the signed gas limit after step 14's charges: "
+         "step 15 refuses with GasLimitTooLow, and the state and history gas of steps 10 and 14 come back",
+         carried(code, gas=signed), tune=("keyless-15", signed - 1))
+    case("deploy/forward-at-signed-gas", "the call holds exactly the signed gas limit after step 14: the creation is "
+         "forwarded all of it and deploys", carried(code, gas=signed), tune=("keyless-15", signed))
+    # Deployments: the creation as a child of the call, the signer's nonce, the records, gasUsed and the answer.
+    case("deploy/absent-signer", "a deployment from an absent signer: step 10 charges its account, the creation deploys "
+         "one byte, the nonce bump is kept, and the signer's record and unit of state growth are counted on the call",
+         carried(code))
+    case("deploy/signer-nonce-one", "a deployment from signer nonce 1: the bump is taken back, and with it the signer's "
+         "record, whose history comes back", carried(code), accounts=signer(nonce=1, balance=ETH))
+    case("deploy/signer-nonce-one-reverts", "a deployment from signer nonce 1 whose initcode reverts: the bump is taken "
+         "back all the same", carried(pad + revert(0, 0)), accounts=signer(nonce=1, balance=ETH))
+    case("deploy/reverts-with-data", "initcode that reverts with one word: ExecutionReverted(gasUsed, the word)",
+         carried(pad + mstore(0, 0xBAD) + revert(0, 32)))
+    fresh = model.G_VERYLOW + model.G_BASE + model.COLD_SSTORE_ACCESS + model.SSTORE_SET + 2 * model.G_BASE
+    case("deploy/fresh-slot-reverts", f"a constructor that writes a fresh slot at m = 1 from regular gas alone and "
+         f"reverts: gasUsed is its regular charges, {fmt(fresh)}, the slot's state and history returning as reservoir",
+         carried(bytes([0x60, 0x01]) + b"\x5f\x55\x5f\x5f\xfd", gas_price=2**128 - 1), gas_used_check=fresh)
+    case("deploy/halts", "initcode that halts: ExecutionHalted with the creation's whole forward", carried(pad + INVALID),
+         override=signed)
+    case("deploy/empty-code", "a constructor that returns empty code: the deposit is refused, the creation reverts and "
+         "the address stays deployable; EmptyCodeDeployed", carried(pad + STOP))
+    destroyed = model.G_BASE + model.SELFDESTRUCT_COST
+    case("deploy/destroyed-in-constructor", f"a constructor ORIGIN; SELFDESTRUCT at m = 1, given 500,000 of regular gas "
+         f"and no reservoir: gasUsed {fmt(destroyed)}, step 14's created account and record coming back within the "
+         "creation; EmptyCodeDeployed; the bytes argument unpadded", carried(b"\x32\xff", gas=500_000), override=500_000,
+         gas=1_500_000, padded=False, gas_used_check=destroyed)
+    case("deploy/inner-empty-creation", "a constructor whose own CREATE returns empty code, then deploys one byte: the "
+         "empty-code refusal concerns the deploy address alone", carried(create(0, b"") + code))
+    case("deploy/origin-gasprice-caller-gas", "initcode that stores GAS, ORIGIN, GASPRICE and CALLER: the forward "
+         "without the 98/100 cap, the transaction's own origin and gas price, and the signer as caller",
+         carried(b"\x5a" + push(4) + b"\x55" + b"\x32" + push(5) + b"\x55" + b"\x3a" + push(6) + b"\x55" + b"\x33"
+                 + push(7) + b"\x55" + code), gas_price=7, gas=2_000_000)
+    case("deploy/balance-only-address", "a deploy address that holds one wei alone: step 12 passes, step 14 charges no "
+         "created-account state gas, the creation counts no rise and keeps the wei", carried(code),
+         accounts={DEPLOY: model.Account(balance=1)})
+    case("deploy/with-reservoir", "a deployment with a reservoir: steps 10 and 14 draw it after their legacy shares, and "
+         "the creation receives its share of what the call has left", carried(code),
+         gas=model.EXECUTION_CAP + 1_000_000)
+    case("deploy/high-s", "a carried signature with its s above half the curve order: the same signer is recovered and "
+         "the deployment lands at the same address", carried(code, high_s=True))
+    case("deploy/delegated-signer", "a signer the transaction's own EIP-7702 list delegated: step 9 admits the "
+         "indicator, step 14 charges no nonce record, the bump from nonce 1 is taken back and the record the list made "
+         "stands", carried(code), ty=4, authorizations=[(SIGNER_KEY, CHAIN_ID, PLAIN, 0)])
+    case("deploy/carried-value", "a carried value the signer holds exactly: it moves to the created account at the "
+         "creation's start, with its transfer log, and the signer, not empty, is charged no account",
+         carried(code, value=5), accounts=signer(balance=5))
+    case("deploy/signer-nonce-one-with-value", "a deployment from signer nonce 1 that moves a carried value out of the "
+         "signer: the bump is taken back, and the record stays, the balance having changed", carried(code, value=5),
+         accounts=signer(nonce=1, balance=ETH))
+    case("deploy/constructor-log", "a constructor that emits an empty LOG0 before it deploys: the log is the "
+         "transaction's, emitted by the deploy address", carried(log(0, 0, 0, []) + code))
+    case("deploy/buckets", "the signer's account and the created account priced at their own buckets, of twice and "
+         "four times the minimum capacity", carried(code), salt={(SIGNER, None): 2, (DEPLOY, None): 4}, gas=2_000_000)
+    case("deploy/signer-is-sender", "a deployment the signer sends itself: validation bumped its nonce to 1, the "
+         "creation's bump is taken back, and the sender's account makes no record of its own",
+         carried(code, key=KEY))
+    case("deploy/collision", "a deploy address that holds a nonce and no code: step 12 passes, and the creation "
+         "collides there, ExecutionHalted with its whole forward", carried(code), override=signed,
+         accounts={DEPLOY: model.Account(nonce=1)})
+    case("halt/step-10-one-short", "the call cannot pay the signer's new account at step 10 by one gas: it halts out of "
+         "gas, and nothing of the deployment happens", carried(code),
+         tune=("keyless-10", model.ACCOUNT_STATE - 1))
+    step14 = (model.CREATE_GAS + model.INITCODE_WORD_COST * ((len(code) + 31) // 32) + model.ACCOUNT_STATE
+              + 2 * model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE)
+    case("halt/step-14-one-short", "the call cannot pay step 14's charges by one gas, the last of them its records' "
+         "history: it halts out of gas before the creation starts", carried(code), accounts=signer(balance=1),
+         tune=("keyless-14", step14 - 1))
+    # The signer as the block beneficiary (SATIN-KEY-010), and the stop of the creation it leads to (SATIN-KEY-016).
+    words = words_within(model.BLOCK_ENV_ACCESS_COMPUTE_GAS + 500_000)
+    case("detention/signer-is-beneficiary", "a signer that is the block beneficiary detains the deployment at its read, "
+         "at step 1's compute: the constructor's burn past the cap is the crossing, which stops the creation, and the "
+         "call answers ExecutionReverted with the stop", carried(burn(words) + code), coinbase=SIGNER, gas=25_000_000)
+    case("detention/signer-not-beneficiary", "the same burn without the signer being the beneficiary: no read, the "
+         "constructor pays it and deploys", carried(burn(words) + code), gas=25_000_000)
+    # A keylessDeploy call a contract makes runs the bytecode (SATIN-KEY-003).
+    raw = keyless_data(carried(code), every)
+    for value in (0, 1):
+        add(Case(f"satin/keyless/contract-call/{'with-value' if value else 'no-value'}",
+                 "a contract's keylessDeploy call " + ("carrying value: the bytecode reverts with empty data, the method "
+                                                       "not being payable" if value else
+                                                       "without value: the bytecode reverts with NotIntercepted()"),
+                 system=True, spec=spec, code=bytes_to_memory(raw) + call(500_000, model.KEYLESS_DEPLOY, value, len(raw))
+                 + record_result() + STOP, contract_balance=10, gas=2_000_000))
+    # Recognition whatever code the state holds at the address (SATIN-ICPT-006).
+    held = {model.KEYLESS_DEPLOY: model.Account(code=b"\x0c")}
+    add(Case("satin/keyless/recognition/held-code-unrecognized", "KeylessDeploy's address holding the undefined opcode "
+             "0x0c, called with arguments one byte short of their declared length: not recognized, the code the state "
+             "holds runs and halts", system=True, spec=spec, to=model.KEYLESS_DEPLOY, code=None, accounts=held,
+             data=model.KEYLESS_DEPLOY_CALL + word(0x40) + word(every) + word(5) + bytes.fromhex("01020304"),
+             gas=300_000))
+    other = b"\x00\x00\x00\x00" + keyless_data(carried(code), every)[4:]
+    add(Case("satin/keyless/recognition/held-code-other-selector", "KeylessDeploy's address holding the undefined opcode "
+             "0x0c, called with another selector before arguments that would decode: not recognized, the code the state "
+             "holds runs and halts", system=True, spec=spec, to=model.KEYLESS_DEPLOY, code=None, accounts=held,
+             data=other, gas=1_000_000))
+    case("recognition/held-code-recognized", "KeylessDeploy's address holding the undefined opcode 0x0c, called with "
+         "arguments that decode: recognized whatever code the state holds, and the deployment runs", carried(code),
+         accounts=held)
+    return out
+
+
 def account(nonce=0, balance=0, code=b"", storage=None) -> dict:
     return {"nonce": q(nonce), "balance": q(balance), "code": h(code),
             "storage": {"0x" + k.to_bytes(32, "big").hex(): q(v) for k, v in sorted((storage or {}).items())}}
@@ -2959,6 +3132,17 @@ READS_QUARANTINE = {
     "satin/reads/oracle-slot-before-charge": None,
 }
 READS_REMADE = {"satin/reads/list-simulated-out-of-gas", "satin/reads/oracle-slot-before-charge"}
+# The keyless cases that carry the reads group (SATIN-KEY-007) fail on that implementation for the registry's read
+# alone; their keyless reads, the signer's account and the deploy address's, are the rule's (D-79).
+KEYLESS_READS = {
+    "satin/keyless/refusal/signer-nonce-two": "; its keyless reads are the rule's: the signer's account, read with its "
+        "code once step 7 recovered the signer, and not the deploy address, which step 8's refusal leaves unread "
+        "(SATIN-KEY-007, SATIN-WIT-008)",
+    "satin/keyless/refusal/taken-and-unfunded": "; its keyless reads are the rule's: the signer's account, read with its "
+        "code, and the deploy address's, read at step 12, before its refusal (SATIN-KEY-007, SATIN-WIT-008)",
+}
+READS_QUARANTINE.update(KEYLESS_READS)
+READS_REMADE |= set(KEYLESS_READS)
 
 
 # The gas-pools cases the revm-based implementation fails: it credits a give-back to the frame's regular gas,
@@ -3449,6 +3633,9 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, retired: set, spe
         got = int(result.observations["gasLedgers"][key], 16)
         if got != want:
             raise SystemExit(f"{c.case_id}: the derivation gives {key} {got}, the worked example {want}")
+    if c.gas_used_check is not None and result.probe.get("keyless-gas-used") != c.gas_used_check:
+        raise SystemExit(f"{c.case_id}: the derivation gives gasUsed {result.probe.get('keyless-gas-used')}, the worked "
+                         f"example {c.gas_used_check}")
     d = result.derivation
     derivation = []
     for group, path in sorted(GROUP_PATHS.items(), key=lambda x: x[1]):
