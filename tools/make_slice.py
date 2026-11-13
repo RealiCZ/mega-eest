@@ -2392,7 +2392,7 @@ EVIDENCE = ("derived from the specification by tools/satin_model/, an executable
             "shares no code with either implementation; implementation runs are cross-checks only")
 
 
-def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str) -> tuple[dict, dict]:
+def fixture(c: Case, descriptor_digest: str, rule_texts: dict, retired: set, spec_commit: str) -> tuple[dict, dict]:
     """The case's fixture, without its rules (`derive` adds the pins), and its explanation: the derivation of every
     observation group, the rules it applied with their text digests, and the decoded transaction."""
     if c.retune:
@@ -2415,6 +2415,9 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str)
     unknown = [r for r in applied if r not in rule_texts]
     if unknown:
         raise SystemExit(f"{c.case_id}: cites rules the registry does not have: {unknown}")
+    gone = [r for r in applied if r in retired]
+    if gone:
+        raise SystemExit(f"{c.case_id}: applies rules its snapshot {c.spec} retires: {gone}")
     requires = ["group:gas-ledgers", "group:limit", "group:outcome", "group:receipts", "group:resources", "group:state",
                 "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else []) \
         + (["group:limit-stop"] if result.observations["limit"] else []) + (["group:gas-pools"] if c.pools else [])
@@ -2493,19 +2496,20 @@ def canonical(value) -> bytes:
     return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
 
 
-def spec_of(name: str) -> tuple[str, dict]:
+def spec_of(name: str) -> tuple[str, dict, set]:
+    """A snapshot's descriptor digest, each rule's text digest, and the ids it retires."""
     d = os.path.join(ROOT, "specs", name)
     with open(os.path.join(d, "descriptor.json"), encoding="utf-8") as f:
         digest = "sha256:" + hashlib.sha256(canonical(json.load(f))).hexdigest()
     with open(os.path.join(d, "rules.json"), encoding="utf-8") as f:
-        texts = {k: v["textDigest"] for k, v in json.load(f)["rules"].items()}
-    return digest, texts
+        rules = json.load(f)["rules"]
+    return digest, {k: v["textDigest"] for k, v in rules.items()}, {k for k, v in rules.items() if v["status"] != "active"}
 
 
 def outputs(explained: dict | None = None) -> dict[str, str]:
     """Every file of slice/, by its path there. `explained`, when given, receives each case's explanation."""
     specs = {name: spec_of(name) for name in SPEC_COMMITS}
-    descriptor_digest, _ = specs[DEFAULT_SPEC]
+    descriptor_digest = specs[DEFAULT_SPEC][0]
     files: dict[str, str] = {}
     index = []
     by_id = {}
