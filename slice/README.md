@@ -1,15 +1,16 @@
 # The vertical slice
 
-220 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+261 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 63 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 20 for the
 edges of the charge-order principles, 5 for gas detention, 2 for the refused volatile read, 5 for
 the stops of a transaction's own frame and 2 that observe the gas pools at `5fb2688`
 (`specs/satin-5fb2688`), 2 for the take-back page's worked examples, 28 for the destruction
 page's own rules, 52 for gas detention's rules and 24 for the limit-stop page's rules at `cdded1e`
-(`specs/satin-cdded1e`), and 2 for gas detention's rules whose precompile halts at `c130558`
-(`specs/satin-c130558`, the snapshot new cases cite), each case naming its own spec (decisions
-D-54, D-59, D-60, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78). Every
+(`specs/satin-cdded1e`), and 2 for gas detention's rules whose precompile halts and 41 for the
+authorization page's rules at `c130558` (`specs/satin-c130558`, the snapshot new cases cite), each
+case naming its own spec (decisions D-54, D-59, D-60, D-62, D-64, D-65, D-66, D-67, D-70, D-73,
+D-74, D-77, D-78, D-88). Every
 case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
@@ -56,7 +57,7 @@ to the exact rule text, the decoded transaction, and the case's pins and its are
 | `validation` | 11 | refusals in the order of `SATIN-VAL-003` (intrinsic gas, floor, the body's history), chain id (`SATIN-VAL-006`), the base layer's checks (`SATIN-VAL-007`) and a gas limit above the block's (`SATIN-BLK-009`, `-013`: a refusal at inclusion, D-50) |
 | `interception` | 10 | interception before the frame start, the funds check included (`SATIN-ICPT-007`): a contract's value `sendHint` its caller can and cannot fund (`SATIN-ORCL-006`, `-009`, `SATIN-OUT-010`, `SATIN-LIM-015`), a hint over the data-size limit, and a hint landing exactly on it against one byte over (`SATIN-ORCL-010`), MegaAccessControl's and MegaLimitControl's `NonZeroTransfer()` funded or not (`SATIN-ICPT-003`), and the transaction's own value `keylessDeploy` (`SATIN-KEY-018`) |
 | `keyless` | 4 | the decoder set of `SATIN-ICPT-006`: unpadded bytes, an offset into the head and offset zero are recognized and refused at step 3; one byte short is not recognized, and KeylessDeploy's bytecode reverts without the overhead |
-| `authorizations` | 2 | an EIP-7702 authority present as an empty leaf exists (`SATIN-STATE-011`, `SATIN-AUTH-008`, `SATIN-ACCT-015`): the indicator's state gas alone; an absent one is new |
+| `authorizations` | 43 | an EIP-7702 authority present as an empty leaf exists (`SATIN-STATE-011`, `SATIN-AUTH-008`, `SATIN-ACCT-015`): the indicator's state gas alone; an absent one is new. And the page's own rules at `c130558` (D-88): an entry skipped by its gates — a chain id that is neither zero nor the chain's, a nonce of `2^64 − 1`, a signature that recovers no authority — reads, warms and is charged nothing beyond its intrinsic cost, against chain id zero, which applies (`SATIN-AUTH-002`, `-007`, `-014`, `SATIN-SCHED-007`); an authority holding code other than a delegation, loaded, warm and skipped, against one holding a delegation, applied with no indicator charge (`SATIN-AUTH-003`, `-009`); a nonce that does not match, skipped and warm; the sender's own authorization, at its bumped nonce and before the bump, and not detaining the transaction (`SATIN-AUTH-004`, `-008`, `-015`, `SATIN-DET-008`); a list that keeps no authority record, whose first frame's start record the reservoir pays whole and a halt returns (`SATIN-HIST-005`); the sender and price a frame of a list's transaction reads (`ORIGIN`, `GASPRICE`); and the state-growth total at the limit, which fits — 1,000 new authorities alone, with three existing ones, and with five entries that keep nothing — and one past it, skipped whole with the authorities that would have fitted, the transaction included and stopped, at a zero and a non-zero price (`SATIN-AUTH-001`, `-008`, `-010`, `-011`, `-013`, `-018`); an out-of-gas before the first frame that takes back an authorization already applied, at a later entry's `ACCOUNT_WRITE`, at an indicator, at the records' history and at a delegate's access, against the access paid (`SATIN-SCHED-009`, `-010`); the authority that is the value's recipient, its one record and the example of `SATIN-AUTH-015`, and a frame that reverts after it (`SATIN-ACCT-009`); the indicator across set, clear and set (`SATIN-AUTH-009`); entries rejected before and after an acceptance, the sender's entries in sequence and the last valid nonce (`SATIN-AUTH-004`); a beneficiary's entry skipped or gated, which does not detain; the authority's own bucket pricing its charges; the reservoir paying part of the start record; the target an entry names left cold; an explicit revert after an applied list (`SATIN-AUTH-016`); and signatures with a y_parity of 2 or r at the curve's order |
 | `call-order` | 9 | the order around a frame start (`SATIN-HIST-023`): a caller that cannot pay a funded value call's records halts in the opcode, before any interceptor answers or hint is admitted, one gas below the threshold and at it, forwarding all it may or nothing (`SATIN-HIST-009`, `SATIN-ICPT-007`); a value its caller cannot fund makes no record (`SATIN-HIST-015`), and the refused or answered start returns the child's whole regular gas, the stipend included (`SATIN-POOL-012`), which `GAS` shows (`SATIN-POOL-009`) |
 | `delegated-recipient` | 6 | the delegate's access before the first frame (`SATIN-SCHED-008` step 5): warm, cold, against the same account without its delegation, one gas short of the cold access (out of gas before the first frame, `SATIN-SCHED-009`, `-010`) and exactly at it, and a transaction to its own delegated sender |
 | `detention` | 59 | one charge under gas detention (`SATIN-DET-018`): a detained child frame whose spendable part cannot pay `BALANCE`'s static cost is stopped with `MegaLimitExceeded(2, limit)` when its whole regular gas can pay it and runs out of gas when it cannot (`SATIN-DET-020`); the spendable part one below the static cost and at it, the static cost staying spent once paid; a value `CALL` stopped at its value transfer after its static cost. And gas detention's rules at `cdded1e` (D-67), each at its edge: what is volatile — `BLOCKHASH` whatever its operand (`SATIN-DET-004`), the other reads of the block environment and of the beneficiary's account (`SATIN-DET-001`), a call to the EIP-2935 history contract only where its code completes `NUMBER` (`SATIN-DET-005`), the beneficiary's own `SELFBALANCE` (`SATIN-DET-007`) — and what is not: `BLOBHASH` (`SATIN-DET-002`), other accounts, a creation onto the beneficiary (`SATIN-DET-006`); a transaction detained from its start by its sender, recipient or authority (`SATIN-DET-008`); the limit at the cap exactly, after a larger spend, under a second read, after a spill and after a give-back (`SATIN-DET-009`, `-012`, `-013`), and with a stipend's work (`SATIN-DET-010`); the readers of the whole regular gas, the settlement and the withheld part drawn first (`SATIN-DET-015` to `-017`); a precompile decided from its price, at and one past the allowance and the forward, with value, unfunded, ModExp over EIP-7823's bound and a BN254 pairing over its size limit (`SATIN-DET-021` to `-024`); a user's deposit (`SATIN-DET-026`) |
@@ -72,12 +73,12 @@ empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and 
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-The gating cases pin 156 rules in 19 areas of the specification. `index.json` lists each case with
+The gating cases pin 167 rules in 19 areas of the specification. `index.json` lists each case with
 its area, the rules it pins, its file and its file digest.
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: forty-two cases the revm-based implementation fails against a decided rule it
+- `quarantine/`: forty-six cases the revm-based implementation fails against a decided rule it
   has not made yet, each passing on the evm2-based implementation. Each fails as recorded at the
   pin, `7110d87b`. A record names the revision it was made at: `4e39cfd6`, or `7110d87b` for the
   five the pin's move changed (D-77), and the first three deposits' `5e3f30ad` (D-53):
@@ -136,6 +137,16 @@ its area, the rules it pins, its file and its file digest.
     charged no history gas for its body (`SATIN-HIST-016`). The ModExp input over EIP-7823's bound
     priced one past the allowance, which `SATIN-DET-023` and `-024` make the crossing, gates since
     the pin moved to `7110d87b` (D-77).
+  - four of the authorization page's cases (D-90), recorded at `7110d87b`: three lists whose reads
+    show the simulation — a three-entry list that runs out of gas at its first entry, simulated all
+    the same, whose reads hold the first and third authorities and not the second, skipped by its
+    chain-id gate (`SATIN-AUTH-001`, `-002`); a list whose gated entries read nothing and whose
+    authority holding code is loaded though the application never reaches it (`SATIN-AUTH-003`); and
+    a skipped list whose simulation walks past the crossing entry (`SATIN-AUTH-005`) — where that
+    implementation's reads hold the registry's account too (`SATIN-REG-002`, D-61); and a
+    deposit whose caller's leaf is empty under EIP-161, new by emptiness and no authorization
+    (`SATIN-AUTH-017`), whose history that implementation does not charge (`SATIN-HIST-016`). Each
+    case's own edge is the rule's there.
 
   The expectation is the rule's; the cases stay out of the gating slice until that implementation
   is fixed, and `tools/run-slice.sh` checks that each still fails exactly as `index.json` records
@@ -155,8 +166,10 @@ address), the precompiles beyond the identity's run and the prices of ModExp and
 pairing (D-67) and a destruction's read of the block beneficiary, frames and
 creations beyond the shapes the take-back examples and the destruction page's cases build (D-65,
 D-70), a slot of an address the transaction accessed before creating onto it and a store after a
-destruction's mark that moves the refund counter (D-72), EIP-7702 lists beyond one accepted entry, two applied ones or one authority's
-delegation and clear, an Oracle read that asks the oracle service (the evm2-based adapter runs no
+destruction's mark that moves the refund counter (D-72), EIP-7702 lists beyond the shapes the
+authorization cases build — a KV total over its limit, which validation's caps keep any list from
+reaching, a list's read faults, and what a skipped list leaves warm, which no frame runs to show
+(D-89) — an Oracle read that asks the oracle service (the evm2-based adapter runs no
 oracle transcript), a gating case with `reads` (the revm-based implementation reads the
 SequencerRegistry in every transaction, D-61), and every block, building and witness profile: they
 need observations or consumers the next phases add.
@@ -171,7 +184,7 @@ builds the format CLI and both adapters (fetching the evm2-based implementation 
 consumes `cases/` with each adapter plain and instrumented, and prints
 
 ```text
-SLICE cases=220 adapters=2 pass=440 fail=0 unsupported=0 error=0 digests=identical
-PARITY adapters=2 cases=220 mismatches=0
+SLICE cases=261 adapters=2 pass=522 fail=0 unsupported=0 error=0 digests=identical
+PARITY adapters=2 cases=261 mismatches=0
 NEGATIVE wrong-expected verdict=fail rewritten=no
 ```

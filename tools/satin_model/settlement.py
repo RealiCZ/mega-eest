@@ -102,7 +102,7 @@ class SettlementMixin:
         (self.state, self.kv, self.data_size, self.growth, self.logs, self.history_gas, self.history_bytes,
          self.state_gas) = snap
 
-    def undo_start(self, transfer, create, recipient, new_account, start_history, start_state) -> None:
+    def undo_start(self, transfer, create, recipient, new_account, start_history, start_state, record=True) -> None:
         """A failed first frame discards its start: the value, the records, the transfer log, the
         created account, and gives the start's history and state gas back (SATIN-HIST-005,
         SATIN-POOL-015)."""
@@ -110,8 +110,9 @@ class SettlementMixin:
         if transfer:
             self.state[tx.sender].balance += tx.value
             self.state[recipient].balance -= tx.value
-            self.kv.discard(("a", recipient))
-            self.data_size -= WRITE_RECORD_SIZE + TRANSFER_LOG_SIZE
+            if record:  # an applied authority's record is the list's, kept through the frame's failure (SATIN-AUTH-016)
+                self.kv.discard(("a", recipient))
+            self.data_size -= (WRITE_RECORD_SIZE if record else 0) + TRANSFER_LOG_SIZE
             self.logs = [l for l in self.logs if l[0] != TRANSFER_LOG_ADDRESS]
             if new_account:
                 self.growth -= 1
@@ -122,7 +123,7 @@ class SettlementMixin:
             self.growth -= 1
         if transfer or create:
             self.history_gas -= start_history
-            self.history_bytes -= WRITE_RECORD_SIZE
+            self.history_bytes -= WRITE_RECORD_SIZE if record else 0
             self.state_gas -= start_state
             if recipient in self.state and self.state[recipient].empty() and recipient not in self.pre:
                 del self.state[recipient]
@@ -149,6 +150,12 @@ class SettlementMixin:
             d.add("gasLedgers", f"the caller is empty under EIP-161: its new-account state gas {fmt(ACCOUNT_STATE)} x m={m} = "
                   f"{fmt(caller_state)}, the first charge before the frame", "SATIN-DEP-003", "SATIN-SCHED-008")
             d.add("resources", "the created caller is one unit of state growth", "SATIN-DEP-003", "SATIN-ACCT-014")
+            if self.lists:
+                d.add("gasLedgers", "the caller the deposit creates is no authorization and is not held to the list rule: "
+                      "it is decided by EIP-161 emptiness, not by an authority's existence, so " +
+                      ("its leaf, which the state holds empty, " if tx.sender in self.pre else "it ") +
+                      "is new; it is charged no ACCOUNT_WRITE and makes no write record, its account being a fixed record "
+                      "of the body", "SATIN-AUTH-017", "SATIN-STATE-011", "SATIN-ACCT-015", "SATIN-ACCT-008")
         self.state_gas += caller_state
         d.add("state", f"the mint {fmt(tx.mint)} is credited to the sender, its nonce bumped", "SATIN-DEP-004")
         if tx.value:

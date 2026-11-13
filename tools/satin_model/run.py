@@ -26,8 +26,13 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
-                 stops: bool = False):
+                 stops: bool = False, lists: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
+        # A case of the authorization page's own rules (decision D-88): its derivation cites the list's simulation,
+        # each entry's gates and checks, and the warmth the application leaves (SATIN-AUTH-001 to -018).
+        self.lists = lists
+        self.applied_authorities: set = set()  # the authorities an accepted entry of the list wrote
+        self.authority_warmth: dict = {}  # an authority -> (what the list left of its warmth, the rules)
         # The cases of the destruction page's own rules (decision D-70) cite them where their steps apply them:
         # the first effective destruction and its mark, a destruction without the table, the marked account and
         # its removal at the transaction's end (SATIN-SD-001 to -003, -010 to -017, -020).

@@ -61,6 +61,10 @@ class ReadsMixin:
         for (a, k), v in sorted(self.loaded_slots.items()):
             storage.setdefault(h(a), {})[word(k)] = q(v)
         codes = sorted({h(ex.keccak256(x.code)) for x in self.loaded_accounts.values() if x is not None and x.code})
+        if getattr(self, "lists", False):
+            self.d.add("reads", "no transaction reads the SequencerRegistry to be classified: the block resolves the live "
+                       "system address once, before its transactions, so neither the registry's account nor its slot 0 "
+                       "is in the reads", "SATIN-REG-002")
         self.d.add("reads", f"reads: accounts {len(accounts)}, slots {len(self.loaded_slots)}, codes {len(codes)}, SALT "
                    f"capacities {len(self.served_buckets)}; no block hash, oracle answer or hint",
                    "SATIN-WIT-001", "SATIN-WIT-005", "SATIN-WIT-013")

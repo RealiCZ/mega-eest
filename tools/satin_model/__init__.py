@@ -10,7 +10,7 @@ rules at `cdded1e` (`specs/satin-cdded1e`), and for a precompile that halts at `
 narrow class of transactions the slice uses:
 
 - the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`,
-  `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`,
+  `ORIGIN`, `GASPRICE`, `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`,
   `REVERT` and `INVALID`, and the stack, arithmetic, calldata, jump, return-data and `KECCAK256`
   opcodes a system contract's dispatcher and decoder use, and the `DELEGATECALL`, `CREATE` and
   `SELFDESTRUCT` of the take-back examples, below; of the volatile reads only those below;
@@ -37,11 +37,14 @@ narrow class of transactions the slice uses:
 - a transaction's own `keylessDeploy` call, recognized or not (`SATIN-ICPT-006`), as far as the
   refusals of steps 2 and 3 or a halt at step 1;
 - EIP-7702 lists whose entries are accepted, the authority present or absent, a second entry for
-  one authority clearing the delegation the first set (`SATIN-AUTH-009`), and a
+  one authority clearing the delegation the first set (`SATIN-AUTH-009`); entries skipped by their
+  gates, by their authority's code or by their nonce, the sender's own entry, an authority holding
+  an indicator at the start (`SATIN-AUTH-002` to `-004`); and a
   transaction to an account holding a delegation, its sender's own among them, which pays its
   delegate's access before the first frame;
-- a transaction that runs out of gas before its first frame with nothing applied but validation's
-  changes to its sender, an authorization list's first write among the charges it cannot pay;
+- a transaction that runs out of gas before its first frame, everything applied after validation's
+  changes to its sender taken back, an authorization list's charges, applied entries and all, and a
+  delegate's access among the charges it cannot pay;
 - for the cases that ask, the `reads` group: what the transaction loads, as the stateless witness
   needs it, and the `gasPools` group: the first frame's pools at its start and end;
 - a stop of the transaction's own frame, its result: gas detention's crossing, and an `SSTORE`'s

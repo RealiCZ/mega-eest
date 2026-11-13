@@ -1,0 +1,171 @@
+{
+  "caseId": "satin/authorizations/rollback/sender-entry-delegate-access-short",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xee4d",
+      "floor": "0x3a98",
+      "gasUsed": "0x17b95",
+      "history": "0x8d48",
+      "historyBytes": "0x19b",
+      "refund": "0x0",
+      "regular": "0xee4d",
+      "state": "0x0",
+      "total": "0x17b95"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "halt"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x17b95",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x4"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "411",
+        "reported": "0x19b"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x000000000000000000000000000000000000beef": {
+          "balance": "0x0",
+          "code": "0xef010000000000000000000000000000000000000de1e9",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000de1e9": {
+          "balance": "0x0",
+          "code": "0x00",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0x04f8c10180808083017b9594000000000000000000000000000000000000beef8080c0f85cf85a019400000000000000000000000000000000000de1e90180a0bdc8c5174ddb821d2085ce39ef6648058094d80876844192a7a3e3237d9385e0a062fb8448ed1137d25c8a77d40db548ecf4c91eb80ff9b4d3fa686c602393349901a00250742f878a8d763c7fb933a218a306bb6ce6413794dceaca19b8166f593ad0a06d725d067066ddc8e58d685c33905c7add61e4ec64d9a3143e3f2272aeabe3eb"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the regular gas at the delegate's access one below 3,000",
+      "intent": "the sender's own authorization is applied, with its indicator's state gas, and the transaction's recipient delegates to an account that is not warm, whose access, 3,000, the regular gas left cannot pay by one: the transaction runs out of gas before its first frame, and the sender's authorization is taken back with its state gas, the sender left at validation's nonce and with no code"
+    },
+    "definition": "tools/make_slice.py::authorization_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "c130558e2f38a913982dc17f0cd8eb8834967262",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-015",
+    "SATIN-AUTH-001",
+    "SATIN-AUTH-003",
+    "SATIN-AUTH-004",
+    "SATIN-AUTH-005",
+    "SATIN-AUTH-007",
+    "SATIN-AUTH-008",
+    "SATIN-AUTH-009",
+    "SATIN-AUTH-010",
+    "SATIN-AUTH-015",
+    "SATIN-SCHED-007",
+    "SATIN-STATE-011"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+    "name": "megaeth/Satin"
+  }
+}
