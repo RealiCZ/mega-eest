@@ -118,7 +118,8 @@ the same script, beside the earlier ones (decision D-35):
 The vertical slice's first 63 cases and its quarantine pin `d34e626`; the cases added for
 interception, the keyless decoder and EIP-7702 existence pin `d334ef8` (decision D-54); the cases
 added for the edges of the charge-order principles pin `5fb2688` (decision D-59); the cases for the
-take-back page's worked examples pin `cdded1e`, the newest (decision D-65).
+take-back page's worked examples pin `cdded1e` (decision D-65); the two cases whose derivation takes
+`SATIN-DET-011`'s halting precompile pin `c130558`, the newest, which new cases cite (decision D-78).
 Digests (SHA-256 of canonical bytes):
 
 | Bundle | descriptor.json | rules.json | sources.json |

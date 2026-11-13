@@ -758,7 +758,7 @@ figure a case asserts; each is stated in the derivation that uses it.
 - A precompile priced within the allowance that then fails a check made after its gas charge (ModExp
   over EIP-7823's bound) counts its charged price as compute and the rest of the forward it consumes
   as none: paid work before the halt counts and what a halting frame burns does not
-  (`SATIN-DET-011`, `-019`). The case that runs it ends with no further charge.
+  (`SATIN-DET-011`, `-019`). The case that runs it ends with no further charge. Superseded by D-78.
 - A value call's forward, against which a precompile's price is held, is the child's whole regular
   gas, the stipend included, as `SATIN-DET-011` and `SATIN-STOP-014` count it; the value cases sit far
   from that edge.
@@ -1031,3 +1031,45 @@ Every gating case passes on it, plain and instrumented. Of the forty-five quaran
 
 No case's `input` or `expected` changes, and no case's pinned rules: the rule-to-case index cites
 the same 193 rules, and only the three cases' group moves in it.
+
+From the specification at `c130558`:
+
+**D-78. The specification at `c130558` is bundled, and a precompile that halts counts none of its
+forward as compute; D-69's first reading is superseded.** `specs/satin-c130558` is the
+specification's main after four merged changes: the take-back page's worked examples removed, a
+call refused at its target's EIP-7702 delegate paying its target's access and its memory
+expansion, the first fill batch's clarifications, and that refusal's follow-ups. It holds 410 ids,
+400 active: `SATIN-STOP-016` is retired, 25 rules are reworded and none is added
+([spec identity](spec-identity.md)). It is the snapshot new cases cite (`CURRENT_SPEC` in
+`tools/make_slice.py`).
+
+- **The reading.** D-69 counted the charged price of a precompile that halts on a check made after
+  its gas charge (ModExp over EIP-7823's bound) as compute, where the page at `cdded1e` left that
+  figure open. `SATIN-DET-011` at `c130558` decides it the other way: a precompile that halts, out
+  of gas or on a check made after its gas charge, burns its whole forward, its charged price and a
+  value call's stipend included, and counts none of it as compute; only a precompile that is the
+  crossing (`SATIN-DET-021`) returns its forward. The model takes that reading
+  (`tools/satin_model/precompiles.py`), and the step cites `SATIN-DET-009`, `-011` and `-021`.
+- **The cases that move.** Two derivations take it, and both cases now cite `specs/satin-c130558`:
+  `satin/detention/precompile/modexp/over-bound-at-allowance` and
+  `satin/detention/precompile/bn254-pairing-over-size-limit`. In the first, the transaction's
+  compute after the call no longer includes ModExp's price, so the caller resumes with all of its
+  regular gas spendable rather than none. The caller makes no regular charge after the call, so no
+  figure moves. The second is priced at zero, so its compute is the same under both readings. Their
+  `input`, `expected` and pinned rules are unchanged, and every rule they pin is active at
+  `c130558`; only their `specRef` and `specCommit` move. D-69 was right that no asserted figure
+  depends on the reading.
+- **What `c130558` now states that the model already read.** The forward a precompile's price is
+  held against is the child's whole regular gas, a value call's stipend included (`SATIN-DET-021`,
+  D-69's second reading). A value call to a precompile whose account is absent or empty pays its
+  new-account state gas (`SATIN-DET-022`); the value cases' identity precompile holds a balance, so
+  none of them reaches it (D-69's third reading). A cold `SELFDESTRUCT` beneficiary costs the whole
+  `COLD_ACCOUNT_ACCESS`, now a row of `SATIN-SCHED-003`'s table (D-71). A detained `SSTORE`'s static
+  cost is a charge of its own, and the rest of its access is charged with the write
+  (`SATIN-SCHED-004`, D-67). Each of these cases keeps the snapshot it names.
+- **Every other case keeps its snapshot.** Each rule reworded or retired between `cdded1e` and
+  `c130558` was held against the cases that pin it, through the model. Every expected value still
+  holds under the new text. The value crossing to the identity precompile applies
+  `SATIN-STOP-016`, which `c130558` retires: that case stays at `cdded1e`, and to move it, its
+  derivation would have to cite `SATIN-DET-022` and `SATIN-STOP-014` instead. `tools/make_slice.py`
+  now refuses a case that applies a rule its own snapshot retires.

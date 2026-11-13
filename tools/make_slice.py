@@ -9,7 +9,8 @@ existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of 
 principles, gas detention, the Oracle's reads, the refused volatile read, the reads group, the
 stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64, and
 those for the take-back page's worked examples, the destruction page's own rules and gas detention's
-rules `specs/satin-cdded1e`, D-65, D-70 and D-67). No implementation is
+rules `specs/satin-cdded1e`, D-65, D-70 and D-67, and the two whose derivation takes `SATIN-DET-011`'s
+halting precompile `specs/satin-c130558`, D-78). No implementation is
 run: the filler's output is a candidate to compare with, never the source of these values
 (`tools/run-slice.sh` runs both implementations against them).
 
@@ -59,7 +60,7 @@ DEFAULT_SPEC = "satin-d34e626"
 INTERCEPTION_SPEC = "satin-d334ef8"  # interception before the frame start, SATIN-ICPT-007
 ORDERING_SPEC = "satin-5fb2688"  # the charge-order principles, SATIN-HIST-023
 TAKE_BACK_SPEC = "satin-cdded1e"  # one home for each rule, and the take-back page's worked examples as cases
-CURRENT_SPEC = "satin-c130558"  # the snapshot new cases cite
+CURRENT_SPEC = "satin-c130558"  # the snapshot new cases cite (D-78)
 # The snapshots that state the principles the model cites.
 PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC, CURRENT_SPEC}
 OUT = os.path.join(ROOT, "slice")
@@ -1045,15 +1046,19 @@ def detention_rule_cases() -> list[Case]:
     over_bound = model.MODEXP_MAX_INPUT_SIZE + 1
     modexp_input = word(over_bound) + word(0) + word(0)
     modexp_price = model.modexp_price(modexp_input)[0]
-    for name, room, tail, intent, edge in (
+    # A precompile that halts burns its whole forward and counts none of it as compute, its charged price included:
+    # `SATIN-DET-011` states it from `c130558` on, so the two cases whose precompile runs and halts cite that
+    # snapshot (D-78, superseding D-69's first reading).
+    for name, room, tail, intent, edge, snapshot in (
             ("modexp/over-bound-at-allowance", modexp_price, STOP, "the allowance exactly: it runs, charges its price, "
-             "fails EIP-7823's bound and consumes its forward, as without the read", "the price at the allowance"),
+             "fails EIP-7823's bound and consumes its forward, as without the read", "the price at the allowance",
+             CURRENT_SPEC),
             ("modexp/over-bound-past-allowance", modexp_price - 1, RETURN_RETURNDATA, "one past the allowance and within "
              "its forward: an input that would fail a check made after the gas charge is the crossing too",
-             "the price one past the allowance")):
+             "the price one past the allowance", spec)):
         add(Case(f"satin/detention/precompile/{name}", f"after TIMESTAMP, a ModExp call whose base length, "
                  f"{fmt(over_bound)}, is over EIP-7823's bound, priced by its formula all the same, {fmt(modexp_price)}: "
-                 + intent, spec=spec, detention=True, gas=21_000_000, boundary=edge,
+                 + intent, spec=snapshot, detention=True, gas=21_000_000, boundary=edge,
                  make=lambda words, pad, tail=tail: detained(words, pad) + bytes_to_memory(modexp_input)
                  + call(MAX_GAS, model.MODEXP, 0, len(modexp_input)) + tail,
                  params={"words": words_within(cap - 2 * modexp_price - 30_000), "pad": 0},
@@ -1062,7 +1067,7 @@ def detention_rule_cases() -> list[Case]:
     add(Case("satin/detention/precompile/bn254-pairing-over-size-limit", f"after TIMESTAMP, a BN254 pairing call of "
              f"{fmt(pairing)} bytes, one over its size limit, with an allowance of 100 and a forward past the pairing "
              "formula's price for that many bytes: priced at zero, it runs on its forward, fails before any gas check and "
-             "consumes the forward, as without the read", spec=spec, detention=True, gas=31_000_000,
+             "consumes the forward, as without the read", spec=CURRENT_SPEC, detention=True, gas=31_000_000,
              make=lambda words, pad: detained(words, pad) + call(MAX_GAS, model.BN254_PAIRING, 0, pairing) + STOP,
              params=dict(start), retune=[("precompile-room", 100, "pad", -1)]))
     # A user's deposit is detained as any transaction (SATIN-DET-026).

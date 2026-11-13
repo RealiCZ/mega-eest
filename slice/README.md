@@ -5,10 +5,11 @@
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 20 for the
 edges of the charge-order principles, 5 for gas detention, 2 for the refused volatile read, 5 for
 the stops of a transaction's own frame and 2 that observe the gas pools at `5fb2688`
-(`specs/satin-5fb2688`), and 2 for the take-back page's worked examples, 28 for the destruction
-page's own rules, 54 for gas detention's rules and 24 for the limit-stop page's rules at `cdded1e`
-(`specs/satin-cdded1e`), each case naming its own spec (decisions D-54, D-59, D-60, D-62, D-64,
-D-65, D-66, D-67, D-70, D-73, D-74, D-77). Every
+(`specs/satin-5fb2688`), 2 for the take-back page's worked examples, 28 for the destruction
+page's own rules, 52 for gas detention's rules and 24 for the limit-stop page's rules at `cdded1e`
+(`specs/satin-cdded1e`), and 2 for gas detention's rules whose precompile halts at `c130558`
+(`specs/satin-c130558`, the snapshot new cases cite), each case naming its own spec (decisions
+D-54, D-59, D-60, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78). Every
 case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 

@@ -4,8 +4,9 @@
 This is the independent evidence behind the vertical slice's expectations: it restates, from the
 specification at `d34e626` (`specs/satin-d34e626`), for calls, interception and EIP-7702 at
 `d334ef8` (`specs/satin-d334ef8`), for the charge-order principles at `5fb2688`
-(`specs/satin-5fb2688`), and for the take-back page's worked examples and the destruction page's own
-rules at `cdded1e` (`specs/satin-cdded1e`), the arithmetic a `state-transition` case's observations follow, for the
+(`specs/satin-5fb2688`), for the take-back page's worked examples and the destruction page's own
+rules at `cdded1e` (`specs/satin-cdded1e`), and for a precompile that halts at `c130558`
+(`specs/satin-c130558`), the arithmetic a `state-transition` case's observations follow, for the
 narrow class of transactions the slice uses:
 
 - the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`,
