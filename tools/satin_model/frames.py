@@ -127,6 +127,11 @@ class FramesMixin:
         d = self.d
         shown = child["received"] or child["net_charged"] or child["drawn"] or child["reservoir"]
         if status == "success":
+            if self.destruction and child.get("give_back"):
+                frame["give_back"] = frame.get("give_back", 0) + child["give_back"]
+                d.add("gasLedgers", f"{name} succeeds with the destruction table's give-back, {fmt(child['give_back'])}, "
+                      "in its reservoir: it returns up the chain with that reservoir, to its caller's reservoir and not "
+                      "its regular gas", "SATIN-SD-010", "SATIN-POOL-012")
             frame["reservoir"] += child["reservoir"]
             frame["net_charged"] = frame.get("net_charged", 0) + child["net_charged"]
             frame["drawn"] = frame.get("drawn", 0) + child["drawn"]

@@ -327,6 +327,7 @@
           "step 2, the destruction table: refills of the absent leaf 183,600, the code's 3 bytes 4,590, slot 1 97,920, 286,110 of state gas, and 7,304 of history gas, 2 records x 3,520 and the code's 3 bytes x 88, given back: 293,414 into the destroying frame's reservoir, now 293,414, whichever frame and pool paid them",
           "the child frame of 0x93da612d2a72aa99d5ba73757f2e644fb4d6a934 runs its code: PUSH1 3, SELFDESTRUCT; it spends 8,003 of its 1,959,887 regular gas and ends in success",
           "the child frame of 0x93da612d2a72aa99d5ba73757f2e644fb4d6a934 returns 0 bytes and 1,951,884 of regular gas to its caller",
+          "the child frame of 0x93da612d2a72aa99d5ba73757f2e644fb4d6a934 succeeds with the destruction table's give-back, 293,414, in its reservoir: it returns up the chain with that reservoir, to its caller's reservoir and not its regular gas",
           "the child frame of 0x93da612d2a72aa99d5ba73757f2e644fb4d6a934 succeeds: its reservoir 293,414 joins the 0 its caller kept, now 293,414, and its counts and its state and history charges, net -293,414, merge into the caller's",
           "the call returns 1,951,884 regular gas to its caller; success 1, 0 bytes of return data",
           "the child frame of 0x00000000000000000000000000000000000c0deb runs its code: PUSH0 2, PUSH0 2, PUSH0 2, PUSH0 2, PUSH0 2, PUSH20 3, PUSH32 3, CALL 8,103 net, POP 2, PUSH0 2, PUSH0 2, REVERT 0 bytes; it spends 8,125 of its 2,000,000 regular gas and ends in revert",

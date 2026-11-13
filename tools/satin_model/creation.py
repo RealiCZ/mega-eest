@@ -252,6 +252,7 @@ class CreationMixin:
         for record in takes:
             self.kv.discard(record)
         self.give_back(frame, refill + history)
+        frame["give_back"] = frame.get("give_back", 0) + refill + history  # what returns up the chain (SATIN-SD-010)
         self.state_gas -= refill
         self.history_gas -= history
         self.history_bytes -= data

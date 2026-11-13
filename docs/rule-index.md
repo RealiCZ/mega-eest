@@ -6070,6 +6070,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-SD-011
 
