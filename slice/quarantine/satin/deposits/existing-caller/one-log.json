@@ -1,0 +1,173 @@
+{
+  "caseId": "satin/deposits/existing-caller/one-log",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x3c13",
+      "floor": "0x3a98",
+      "gasUsed": "0xb1a3",
+      "history": "0x7590",
+      "historyBytes": "0x156",
+      "refund": "0x0",
+      "regular": "0x3c13",
+      "state": "0x0",
+      "total": "0xb1a3"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": "0x3",
+      "depositReceiptVersion": "0x1",
+      "gasUsed": "0xb1a3",
+      "logs": [
+        {
+          "address": "0x00000000000000000000000000000000000c0de1",
+          "data": "0x",
+          "topics": []
+        }
+      ],
+      "status": "0x1",
+      "type": "0x7e"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "342",
+        "reported": "0x156"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x4",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x5f5fa000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x3",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "deposit",
+      "raw": "0x7ef853a0000000000000000000000000000000000000000000000000000000000000005d94a94f5374fce5edbc8e2a8697c15331677e6ebf0b9400000000000000000000000000000000000c0de18080830f42408080"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a deposit from an existing account that emits one empty LOG0: the deposit pays the log's history"
+    },
+    "definition": "tools/make_slice.py::ordering_cases",
+    "generator": "tools/make_slice.py",
+    "quarantine": {
+      "actual": "0x3c13",
+      "adapter": "mega-eest-adapter-revm",
+      "expected": "0xb1a3",
+      "path": "/expected/gasLedgers/gasUsed",
+      "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body and its logs among the rest; the revm-based implementation at 4e39cfd6 charges a deposit no history gas, so its gas used is 30,096 below the rule's: the body's 310 bytes and the log's 32 at 88 gas, (310 + 32) x 88 = 30,096"
+    },
+    "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:deposit",
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-003",
+    "SATIN-DEP-001",
+    "SATIN-DEP-004",
+    "SATIN-DEP-007",
+    "SATIN-DEP-009",
+    "SATIN-HIST-016",
+    "SATIN-LOG-004"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
+    "name": "megaeth/Satin"
+  }
+}

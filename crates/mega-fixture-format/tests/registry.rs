@@ -68,17 +68,14 @@ fn a_rex6_case_validates_against_the_rex6_registry_only() {
     use mega_fixture_format::{json, Case, Value};
     let store = common::store();
     let rex6 = store.specs().find(|s| s.name == "megaeth/Rex6").unwrap();
-    let mut case = json::parse(&common::read("slice/cases/satin--intrinsic--call--contract-stop.json")).unwrap();
+    let mut case = json::parse(&common::read("slice/cases/satin/intrinsic/call/contract-stop.json")).unwrap();
     common::set(&mut case, "/specRef/name", Value::String("megaeth/Rex6".into()));
     common::set(&mut case, "/specRef/descriptor", Value::String(rex6.descriptor_digest.clone()));
     let rules = Value::Array(vec![Value::String("REX6-LIM-002".into())]);
-    common::set(&mut case, "/rules", rules.clone());
-    let assertion = Value::Object([("path".to_string(), Value::String("/expected/outcome".into())), ("rules".to_string(), rules)].into());
-    common::set(&mut case, "/assertions", Value::Array(vec![assertion]));
+    common::set(&mut case, "/rules", rules);
     Case::from_value(case.clone(), &store).expect("a Rex6 citation resolves");
     let satin_id = Value::Array(vec![Value::String("SATIN-POOL-019".into())]);
-    common::set(&mut case, "/rules", satin_id.clone());
-    common::set(&mut case, "/assertions/0/rules", satin_id);
+    common::set(&mut case, "/rules", satin_id);
     let err = Case::from_value(case, &store).unwrap_err();
     assert_eq!(err.code.as_str(), "unknown-rule", "{err}");
 }

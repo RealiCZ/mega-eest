@@ -1,0 +1,200 @@
+{
+  "caseId": "satin/selfdestruct/repeated/funded-to-new-beneficiary",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xe48e",
+      "floor": "0x3a98",
+      "gasUsed": "0x437ce",
+      "history": "0x8610",
+      "historyBytes": "0x186",
+      "refund": "0x0",
+      "regular": "0xe48e",
+      "state": "0x2cd30",
+      "total": "0x437ce"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x437ce",
+      "logs": [
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de1",
+            "0x00000000000000000000000093da612d2a72aa99d5ba73757f2e644fb4d6a934"
+          ]
+        },
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000093da612d2a72aa99d5ba73757f2e644fb4d6a934",
+            "0x000000000000000000000000000000000000000000000000000000000000dead"
+          ]
+        }
+      ],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "710",
+        "reported": "0x2c6"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "2",
+        "reported": "0x2"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x000000000000000000000000000000000000dead": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f7f36600e5734600c5761deadff5b005b5f3560015500000000000000000000005f527e5f5260155ff30000000000000000000000000000000000000000000000000060205260275f5ff0505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1505f5f5f5f60017393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff15000",
+          "nonce": "0x2",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x1",
+          "code": "0x7f7f36600e5734600c5761deadff5b005b5f3560015500000000000000000000005f527e5f5260155ff30000000000000000000000000000000000000000000000000060205260275f5ff0505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1505f5f5f5f60017393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff15000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080832dc6c09400000000000000000000000000000000000c0de1808025a039b3c08939a9e690f3883fa6ac1f3ece53b9c274b20cf3a90377bad1a893db2ba05ab87e52694708729f3dd9fae579fa2d23a7c99c550c093385505cd27f604ac4"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "P creates C, which destroys itself to an address the state holds no account for while holding nothing, so no beneficiary is created; P then sends C 1 wei, which is no rise and makes no record for the marked C, and calls C again: the second destruction applies the table for nothing, but moves the 1 wei to the absent beneficiary, which it creates and is charged for, its record and its rise"
+    },
+    "definition": "tools/make_slice.py::selfdestruct_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-SD-001",
+    "SATIN-SD-002",
+    "SATIN-SD-004",
+    "SATIN-SD-005",
+    "SATIN-SD-006",
+    "SATIN-SD-007",
+    "SATIN-SD-008",
+    "SATIN-SD-009",
+    "SATIN-SD-010",
+    "SATIN-SD-011",
+    "SATIN-SD-013",
+    "SATIN-SD-015",
+    "SATIN-SD-018",
+    "SATIN-SD-019",
+    "SATIN-STATE-001",
+    "SATIN-STATE-003",
+    "SATIN-STATE-012"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+    "name": "megaeth/Satin"
+  }
+}

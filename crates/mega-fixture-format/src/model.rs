@@ -251,13 +251,6 @@ fn spec_ref(v: &Value, p: &str) -> Result<SpecRef> {
     Ok(SpecRef { name: spec_name(n, &np)?, descriptor: digest(d, &dp)? })
 }
 
-/// An assertion: a pointer into `expected` and the rules it distinguishes.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Assertion {
-    pub path: String,
-    pub rules: Vec<RuleRef>,
-}
-
 /// Provenance status (the rest of provenance is open, non-normative metadata).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ProvenanceStatus {
@@ -270,13 +263,14 @@ pub enum ProvenanceStatus {
 /// A decoded fixture.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Fixture {
+    /// The minor of schema version 2.
     pub schema_minor: u32,
     pub case_id: String,
     pub spec_ref: SpecRef,
     pub profile: Profile,
     pub requires: Vec<Requirement>,
+    /// The rules the case pins.
     pub rules: Vec<RuleRef>,
-    pub assertions: Vec<Assertion>,
     pub body: Body,
     pub provenance_status: ProvenanceStatus,
 }
@@ -293,8 +287,7 @@ pub enum Body {
     StatelessBlock { input: StatelessInput, expected: StatelessExpected },
 }
 
-pub(crate) const ENVELOPE: [&str; 11] =
-    ["format", "schemaVersion", "caseId", "specRef", "profile", "requires", "rules", "assertions", "input", "expected", "provenance"];
+pub(crate) const ENVELOPE: [&str; 10] = ["format", "schemaVersion", "caseId", "specRef", "profile", "requires", "rules", "input", "expected", "provenance"];
 
 impl Fixture {
     /// Decodes a fixture from a parsed value (the schema check; no semantic checks).
@@ -306,10 +299,10 @@ impl Fixture {
         let (v, p) = o.req("schemaVersion");
         let version = string(v, &p)?;
         let schema_minor = version
-            .strip_prefix("1.")
+            .strip_prefix("2.")
             .filter(|m| !m.is_empty() && m.bytes().all(|b| b.is_ascii_digit()) && (*m == "0" || !m.starts_with('0')))
             .and_then(|m| m.parse::<u32>().ok())
-            .ok_or_else(|| Error::new(ErrorCode::UnsupportedSchemaVersion, &p, format!("{version:?} is not schema version 1.x")))?;
+            .ok_or_else(|| Error::new(ErrorCode::UnsupportedSchemaVersion, &p, format!("{version:?} is not schema version 2.x")))?;
         let (v, p) = o.req("caseId");
         let case_id = patterned(v, &p, ErrorCode::InvalidCaseId, case_id_ok)?.to_string();
         let (v, p) = o.req("specRef");
@@ -320,8 +313,6 @@ impl Fixture {
         let requires = array(v, &p, 1, None, |v, p| one_of(v, p, &REQUIREMENTS, ErrorCode::UnknownRequirement))?;
         let (v, p) = o.req("rules");
         let rules = array(v, &p, 1, None, rule_ref)?;
-        let (v, p) = o.req("assertions");
-        let assertions = array(v, &p, 1, None, assertion)?;
         let (input, ip) = o.req("input");
         let (expected, ep) = o.req("expected");
         let body = match profile {
@@ -360,17 +351,8 @@ impl Fixture {
             ],
             ErrorCode::InvalidValue,
         )?;
-        Ok(Fixture { schema_minor, case_id, spec_ref, profile, requires, rules, assertions, body, provenance_status: status })
+        Ok(Fixture { schema_minor, case_id, spec_ref, profile, requires, rules, body, provenance_status: status })
     }
-}
-
-fn assertion(v: &Value, p: &str) -> Result<Assertion> {
-    let mut o = Obj::new(v, p)?;
-    o.shape(&["path", "rules"], &[])?;
-    let (pv, pp) = o.req("path");
-    let path = patterned(pv, &pp, ErrorCode::UnboundAssertion, |s| s == "/expected" || s.starts_with("/expected/"))?.to_string();
-    let (rv, rp) = o.req("rules");
-    Ok(Assertion { path, rules: array(rv, &rp, 1, None, rule_ref)? })
 }
 
 // ---------------------------------------------------------------------------------------------

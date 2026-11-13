@@ -91,8 +91,8 @@ fn a_wrong_value_fails_with_its_path_and_rules() {
             assert_eq!(path, "/expected/resources/stateGrowth/reported");
             assert_eq!(expected, Some(Value::String("0x1".into())));
             assert_eq!(actual, Some(Value::String("0x2".into())));
-            // No assertion of the example covers resources.
-            assert!(rules.is_empty(), "{rules:?}");
+            // A mismatch cites the rules the case pins.
+            assert_eq!(rules, ["SATIN-POOL-019", "SATIN-STATE-008", "SATIN-WIT-009"]);
         }
         other => panic!("{other:?}"),
     }
@@ -342,12 +342,13 @@ mod process {
         common::set(&mut caps, "/modes", strings(&["plain", "instrumented"]));
         fs::write(scratch.0.join("caps.json"), json::to_canonical(&caps)).unwrap();
         fs::write(scratch.0.join("expected.json"), json::to_canonical(&expected)).unwrap();
-        fs::create_dir(scratch.0.join("cases")).unwrap();
+        // The cases sit at <caseId>.json under cases/, as the slice's do: consume walks the tree.
+        fs::create_dir_all(scratch.0.join("cases/satin/consume/jobs")).unwrap();
         fs::create_dir(scratch.0.join("authoring")).unwrap();
         for n in 0..8 {
             let mut case = json::parse(&bytes).unwrap();
             common::set(&mut case, "/caseId", Value::String(format!("satin/consume/jobs/case-{n}")));
-            fs::write(scratch.0.join(format!("cases/{n}.json")), json::to_canonical(&case)).unwrap();
+            fs::write(scratch.0.join(format!("cases/satin/consume/jobs/case-{n}.json")), json::to_canonical(&case)).unwrap();
             let Value::Object(mut authoring) = case else { panic!("fixture object") };
             authoring.remove("expected");
             authoring.remove("requires");

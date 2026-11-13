@@ -56,8 +56,7 @@ cases. A count that differs from the subset's expected count fails the run.
 
 A `fail` reports the release, manifest digest, `caseId`, the case's file and semantic digests, the
 digests of the actual document's canonical bytes, the implementation and adapter versions, the
-first differing pointer with both values, and the rules whose assertions cover that pointer (the
-assertions whose path is a prefix of it). The process exits nonzero.
+first differing pointer with both values, and the rules the case pins. The process exits nonzero.
 
 ## Mapping notes
 
@@ -80,8 +79,9 @@ An adapter is a program the consumer runs; the format crate never links an imple
   supports) and `modes` (`plain`, `instrumented`).
 - `<adapter> run [--instrumented]` reads one run request on standard input and prints one
   response. The run request is `{format: "mega-fixture-run", schemaVersion, caseId, specRef,
-  profile, requires, input}`: the case without `rules`, `assertions`, `expected` and
-  `provenance`, so an adapter cannot read what it is held to.
+  profile, requires, input}`: the case without `rules`, `expected` and `provenance`, so an
+  adapter cannot read what it is held to. Its `schemaVersion` is the run request's own, 1.0, not
+  the fixture's.
 - The response is `{status: "ok", mode, inputDigest, observations, diagnostics}`, or
   `{status: "unsupported", reason}`, or `{status: "error", error}`. `inputDigest` is the SHA-256
   of the canonical bytes of the `input` the adapter ran; the consumer reports `error` when it is
@@ -93,7 +93,9 @@ An adapter is a program the consumer runs; the format crate never links an imple
 `mega-fixture consume --adapter <program> [--instrumented] [--jobs <N>] [--report <file>] <paths>` is the
 consumer loop above: read-only, one line per case, a `CONSUME` summary line, and a JSON report
 with each case's file, semantic, input and observation digests and its status (with the first
-differing path, both values and the covering rules for a `fail`). `mega-fixture fill` is the
+differing path, both values and the case's pinned rules for a `fail`). Each path is a fixture file
+or a directory, searched for `*.json` at any depth in path order, so `slice/cases`, whose cases
+sit at `slice/cases/<caseId>.json`, is one argument. `mega-fixture fill` is the
 candidate filler: it runs an adapter on authoring documents (fixtures without `requires` and
 `expected`) and writes each filled fixture, `provenance.status` `candidate` with the filler's
 identity, into a directory that is neither `examples/` nor a `release` directory.

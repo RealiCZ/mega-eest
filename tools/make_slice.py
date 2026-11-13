@@ -13,19 +13,23 @@ rules `specs/satin-cdded1e`, D-65, D-70 and D-67). No implementation is
 run: the filler's output is a candidate to compare with, never the source of these values
 (`tools/run-slice.sh` runs both implementations against them).
 
-Each case's provenance carries the derivation of every assertion — the steps, their arithmetic and
-the rules each applies — and the text digest of every cited rule, so a reviewer can hold each
-number to the exact rule text it was derived from.
+A case file holds what a consumer compares and a pointer to where it came from (D-76): its `rules`
+are the rules it pins (`AREA_SCOPE`, `pinned`), and its provenance names the generator, the function
+that defines the case and the specification commit. The derivation of every observation group — the
+steps, their arithmetic and the rules each applies — the text digest of every rule applied, and the
+decoded transaction are not stored; `--explain` derives them again for any case, so a reviewer can
+hold each number to the exact rule text it was derived from.
 
 Output: `slice/cases/<case-id>.json`, `slice/quarantine/<case-id>.json` (cases an implementation
 fails against a clear rule: the expectation stands, the case stays out of the gating slice, and
 `QUARANTINE` records the implementation, the exact difference and the specification's verdict),
-`slice/negative/*.json` (deliberately wrong expectations that a consumer must fail without any
-fixture being rewritten) and `slice/index.json`.
+`slice/negative/<case-id>.json` (deliberately wrong expectations that a consumer must fail without
+any fixture being rewritten) and `slice/index.json`.
 
 Usage:
-    tools/make_slice.py            write the slice
-    tools/make_slice.py --check    fail when a committed file differs from what this writes
+    tools/make_slice.py                       write the slice
+    tools/make_slice.py --check               fail when a committed file differs from what this writes
+    tools/make_slice.py --explain CASE-ID...  print each case's derivation, as JSON
 
 Standard library only.
 """
@@ -35,6 +39,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -263,6 +268,7 @@ class Case:
         self.detention = detention  # a case of gas detention's rules at cdded1e (D-67)
         self.block_hashes = block_hashes or {}  # number -> the hash BLOCKHASH answers
         self.stops = stops  # the case pins the limit-stop page: its derivation cites which endings are stops (D-73)
+        self.definition = ""  # the function of this file that defines the case, set by cases()
         if make:
             self.code = make(**self.params)
 
@@ -409,16 +415,14 @@ def cases() -> list[Case]:
              "capacity", deposit=(ETH, 1_000_000), absent_sender=True, salt={("sender", None): 2}))
     add(Case("satin/deposits/existing-caller/fresh-slot", "a deposit from an existing account that writes a fresh slot",
              deposit=(0, 1_000_000), sender_nonce=3, code=sstore(1, 1) + STOP))
-    out += interception_cases()
-    out += ordering_cases()
-    out += detention_cases()
-    out += detention_rule_cases()
-    out += reads_cases()
-    out += limit_cases()
-    out += gas_pools_cases()
-    out += take_back_cases()
-    out += selfdestruct_cases()
-    out += limit_stop_cases()
+    for c in out:
+        c.definition = "cases"
+    for group in (interception_cases, ordering_cases, detention_cases, detention_rule_cases, reads_cases, limit_cases,
+                  gas_pools_cases, take_back_cases, selfdestruct_cases, limit_stop_cases):
+        made = group()
+        for c in made:
+            c.definition = group.__name__
+        out += made
     return out
 
 
@@ -2349,7 +2353,76 @@ def tuned(c: Case) -> None:
     c.tune = None
 
 
-def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str = SPEC_COMMITS[DEFAULT_SPEC]) -> dict:
+# --- What a case pins (D-76) --------------------------------------------------------------------
+#
+# A case pins the rules its derivation applied that are in its area's scope or that its definition names.
+# The area is the second segment of the case id. Its scope names whole pages of the specification, by rule
+# family, where the area tests that page, and single rules of the pages every transaction passes through
+# (the gas schedule, history gas, the gas model, resource accounting, resource limits, outcomes), whose other
+# rules every derivation applies and no case of the area tests. The definition names a rule by its full id
+# in the case's intent or boundary, or, for a quarantined case, in its known failure's verdict. A rule the
+# derivation did not apply is never pinned, and a case pins at least one rule.
+AREA_SCOPE = {
+    "intrinsic": ("SATIN-SCHED-005", "SATIN-SCHED-006", "SATIN-HIST-002", "SATIN-HIST-003", "SATIN-HIST-004",
+                  "SATIN-POOL-020", "SATIN-LOG-003"),
+    "value-transfer": ("SATIN-LOG", "SATIN-STATE", "SATIN-HIST-005", "SATIN-SCHED-008", "SATIN-POOL-024",
+                       "SATIN-ACCT-005", "SATIN-ACCT-014", "SATIN-ACCT-015"),
+    "sstore": ("SATIN-STATE", "SATIN-SCHED-003", "SATIN-SCHED-004", "SATIN-POOL-008", "SATIN-POOL-019",
+               "SATIN-ACCT-004", "SATIN-ACCT-006", "SATIN-ACCT-016", "SATIN-HIST-006", "SATIN-HIST-012"),
+    "logs": ("SATIN-LOG", "SATIN-HIST-002", "SATIN-HIST-006", "SATIN-ACCT-001"),
+    "outcomes": ("SATIN-OUT", "SATIN-POOL-014", "SATIN-POOL-017", "SATIN-HIST-012"),
+    "creation": ("SATIN-STATE", "SATIN-SCHED-011", "SATIN-HIST-005", "SATIN-POOL-024", "SATIN-ACCT-005",
+                 "SATIN-ACCT-013", "SATIN-ACCT-014"),
+    "validation": ("SATIN-VAL", "SATIN-BLK"),
+    "interception": ("SATIN-ICPT", "SATIN-ORCL", "SATIN-KEY", "SATIN-OUT-010", "SATIN-LIM-015"),
+    "keyless": ("SATIN-KEY", "SATIN-ICPT"),
+    "authorizations": ("SATIN-AUTH", "SATIN-STATE-011", "SATIN-ACCT-015", "SATIN-SCHED-007"),
+    "call-order": ("SATIN-HIST-009", "SATIN-HIST-015", "SATIN-HIST-023", "SATIN-ICPT-007", "SATIN-POOL-009",
+                   "SATIN-POOL-012"),
+    "delegated-recipient": ("SATIN-SCHED-006", "SATIN-SCHED-008", "SATIN-SCHED-009", "SATIN-SCHED-010"),
+    "pre-frame": ("SATIN-HIST-005", "SATIN-POOL-024", "SATIN-ICPT-007"),
+    "detention": ("SATIN-DET",),
+    "limit-stops": ("SATIN-STOP", "SATIN-LIM"),
+    "gas-pools": ("SATIN-POOL",),
+    "take-backs": ("SATIN-TAKE", "SATIN-AUTH-009", "SATIN-HIST-009"),
+    "selfdestruct": ("SATIN-SD", "SATIN-STATE"),
+    "deposits": ("SATIN-DEP", "SATIN-HIST-016", "SATIN-ACCT-003", "SATIN-LOG-004"),
+    "oracle": ("SATIN-ORCL",),
+    "access-control": ("SATIN-MAC",),
+    "reads": ("SATIN-WIT",),
+}
+RULE_ID = re.compile(r"SATIN-[A-Z]+-[0-9]{3}")
+
+
+def area_of(case_id: str) -> str:
+    return case_id.split("/")[1]
+
+
+def in_scope(rule: str, area: str) -> bool:
+    family = rule.rsplit("-", 1)[0]
+    return any(entry in (rule, family) for entry in AREA_SCOPE[area])
+
+
+def pinned(c: Case, applied: list[str], quarantine: dict | None) -> list[str]:
+    """The rules a case pins: those its derivation applied that its area's scope holds or its definition names."""
+    if area_of(c.case_id) not in AREA_SCOPE:
+        raise SystemExit(f"{c.case_id}: the area {area_of(c.case_id)} has no scope in AREA_SCOPE")
+    named = set(RULE_ID.findall(" ".join([c.intent, c.boundary, (quarantine or {}).get("verdict", "")])))
+    pins = [r for r in applied if in_scope(r, area_of(c.case_id)) or r in named]
+    if not pins:
+        raise SystemExit(f"{c.case_id}: pins no rule: none of {applied} is in its area's scope or named by its definition")
+    return pins
+
+
+# --- The case files -----------------------------------------------------------------------------
+
+EVIDENCE = ("derived from the specification by tools/satin_model/, an executable restatement of the cited rules that "
+            "shares no code with either implementation; implementation runs are cross-checks only")
+
+
+def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str) -> tuple[dict, dict]:
+    """The case's fixture, without its rules (`derive` adds the pins), and its explanation: the derivation of every
+    observation group, the rules it applied with their text digests, and the decoded transaction."""
     if c.retune:
         remade(c)
     if c.tune:
@@ -2361,47 +2434,67 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, spec_commit: str 
         if got != want:
             raise SystemExit(f"{c.case_id}: the derivation gives {key} {got}, the worked example {want}")
     d = result.derivation
-    assertions, derivation = [], []
+    derivation = []
     for group, path in sorted(GROUP_PATHS.items(), key=lambda x: x[1]):
         rules = d.rules(group)
-        if not rules:
-            continue
-        assertions.append({"path": path, "rules": rules})
-        derivation.append({"path": path, "rules": rules, "steps": d.texts(group)})
-    rules = sorted({r for a in assertions for r in a["rules"]})
-    unknown = [r for r in rules if r not in rule_texts]
+        if rules:
+            derivation.append({"path": path, "rules": rules, "steps": d.texts(group)})
+    applied = sorted({r for step in derivation for r in step["rules"]})
+    unknown = [r for r in applied if r not in rule_texts]
     if unknown:
         raise SystemExit(f"{c.case_id}: cites rules the registry does not have: {unknown}")
     requires = ["group:gas-ledgers", "group:limit", "group:outcome", "group:receipts", "group:resources", "group:state",
                 "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else []) \
         + (["group:limit-stop"] if result.observations["limit"] else []) + (["group:gas-pools"] if c.pools else [])
-    return {
+    authoring = {"intent": c.intent, **({"boundary": c.boundary} if c.boundary else {})}
+    fx = {
         "format": "mega-execution-fixture",
-        # A stop of the transaction's own frame is a schema 1.1 construct (D-62); every other case stays 1.0.
-        "schemaVersion": "1.1" if result.observations["limit"] else "1.0",
+        "schemaVersion": "2.0",
         "caseId": c.case_id,
         "specRef": {"name": "megaeth/Satin", "descriptor": descriptor_digest},
         "profile": "state-transition",
         "requires": sorted(requires),
-        "rules": rules,
-        "assertions": assertions,
         "input": inp,
         "expected": result.observations,
         "provenance": {
             "status": "candidate",
             "generator": "tools/make_slice.py",
-            "authoring": {"intent": c.intent, **({"boundary": c.boundary} if c.boundary else {})},
-            "evidence": "derived from the specification by tools/satin_model.py, an executable restatement of the cited "
-                        "rules that shares no code with either implementation; implementation runs are cross-checks only",
-            "review": {
-                "spec": {"commit": spec_commit, "descriptor": descriptor_digest},
-                "ruleTexts": {r: rule_texts[r] for r in rules},
-                "decision": "pending: approval is the owner's",
-            },
-            "derivation": derivation,
-            "transaction": decoded,
+            "definition": f"tools/make_slice.py::{c.definition}",
+            "specCommit": spec_commit,
+            "authoring": authoring,
         },
     }
+    explanation = {
+        "caseId": c.case_id,
+        "definition": f"tools/make_slice.py::{c.definition}",
+        "authoring": authoring,
+        "spec": {"commit": spec_commit, "descriptor": descriptor_digest},
+        "evidence": EVIDENCE,
+        "transaction": decoded,
+        "applied": applied,
+        "ruleTexts": {r: rule_texts[r] for r in applied},
+        "derivation": derivation,
+    }
+    return fx, explanation
+
+
+def derive(c: Case, specs: dict) -> tuple[str, dict, dict | None, dict]:
+    """One case: its file under slice/, its fixture, its quarantine record (None when it gates) and its explanation."""
+    fx, explanation = fixture(c, *specs[c.spec], SPEC_COMMITS[c.spec])
+    q_entry = QUARANTINE.get(c.case_id)
+    if q_entry:
+        q_entry = {**q_entry, "verdict": deposit_history_verdict(fx["expected"]["gasLedgers"],
+                                                                 QUARANTINE_RECORDS.get(c.case_id, ""))}
+    else:
+        q_entry = edge_quarantine(c, fx)
+    fx["rules"] = pinned(c, explanation["applied"], q_entry)
+    if q_entry:
+        fx["provenance"]["quarantine"] = q_entry
+    rel = f"{'quarantine' if q_entry else 'cases'}/{c.case_id}.json"
+    explanation = {"caseId": c.case_id, "file": rel, "fileDigest": "sha256:" + hashlib.sha256(canonical(fx)).hexdigest(),
+                   "pins": fx["rules"], "scope": list(AREA_SCOPE[area_of(c.case_id)]),
+                   **{k: v for k, v in explanation.items() if k != "caseId"}}
+    return rel, fx, q_entry, explanation
 
 
 def negative(base: dict) -> dict:
@@ -2437,28 +2530,22 @@ def spec_of(name: str) -> tuple[str, dict]:
     return digest, texts
 
 
-def outputs() -> dict[str, str]:
+def outputs(explained: dict | None = None) -> dict[str, str]:
+    """Every file of slice/, by its path there. `explained`, when given, receives each case's explanation."""
     specs = {name: spec_of(name) for name in SPEC_COMMITS}
-    descriptor_digest, rule_texts = specs[DEFAULT_SPEC]
+    descriptor_digest, _ = specs[DEFAULT_SPEC]
     files: dict[str, str] = {}
     index = []
     by_id = {}
     quarantine = []
     for c in cases():
-        fx = fixture(c, *specs[c.spec], SPEC_COMMITS[c.spec])
-        q_entry = QUARANTINE.get(c.case_id)
-        if q_entry:
-            q_entry = {**q_entry, "verdict": deposit_history_verdict(fx["expected"]["gasLedgers"],
-                                                                     QUARANTINE_RECORDS.get(c.case_id, ""))}
-        else:
-            q_entry = edge_quarantine(c, fx)
-        rel = f"{'quarantine' if q_entry else 'cases'}/{c.case_id.replace('/', '--')}.json"
-        if q_entry:
-            fx["provenance"]["quarantine"] = q_entry
+        rel, fx, q_entry, explanation = derive(c, specs)
+        if explained is not None:
+            explained[c.case_id] = explanation
         files[rel] = pretty(fx)
         by_id[c.case_id] = fx
-        entry = {"caseId": c.case_id, "file": rel, "area": c.case_id.split("/")[1], "rules": fx["rules"],
-                 "fileDigest": "sha256:" + hashlib.sha256(canonical(fx)).hexdigest()}
+        entry = {"caseId": c.case_id, "file": rel, "area": area_of(c.case_id), "rules": fx["rules"],
+                 "fileDigest": explanation["fileDigest"]}
         if c.spec != DEFAULT_SPEC:  # the index's spec is the default; a case citing another names its own
             entry["spec"] = {"name": "megaeth/Satin", "descriptor": fx["specRef"]["descriptor"]}
         if q_entry:
@@ -2466,20 +2553,54 @@ def outputs() -> dict[str, str]:
         else:
             index.append(entry)
     neg = negative(by_id["satin/sstore/fresh-slot/minimum-bucket"])
-    files["negative/wrong-expected--state-gas-off-by-one.json"] = pretty(neg)
+    neg_rel = f"negative/{neg['caseId']}.json"
+    files[neg_rel] = pretty(neg)
     files["index.json"] = pretty({
         "format": "mega-fixture-slice-index",
         "spec": {"name": "megaeth/Satin", "descriptor": descriptor_digest},
         "profile": "state-transition",
         "cases": index,
         "quarantine": quarantine,
-        "negative": [{"caseId": neg["caseId"], "file": "negative/wrong-expected--state-gas-off-by-one.json",
-                      "wrongAt": "/expected/gasLedgers/state"}],
+        "negative": [{"caseId": neg["caseId"], "file": neg_rel, "wrongAt": "/expected/gasLedgers/state"}],
     })
     return files
 
 
+def explain(case_ids: list[str]) -> int:
+    """Prints the explanation of each named case, derived again: what a case file no longer stores."""
+    specs = {name: spec_of(name) for name in SPEC_COMMITS}
+    wanted = set(case_ids)
+    found = {}
+    for c in cases():
+        if c.case_id in wanted:
+            _, _, _, found[c.case_id] = derive(c, specs)
+    missing = sorted(wanted - set(found))
+    if missing:
+        print(f"make_slice: no case {', '.join(missing)}", file=sys.stderr)
+        return 1
+    for case_id in case_ids:
+        sys.stdout.write(pretty(found[case_id]))
+    return 0
+
+
+SUBDIRS = ("cases", "quarantine", "negative")
+
+
+def present() -> list[str]:
+    """Every file under the slice's case directories, by its path under slice/."""
+    out = []
+    for sub in SUBDIRS:
+        for base, _, names in os.walk(os.path.join(OUT, sub)):
+            out += [os.path.relpath(os.path.join(base, n), OUT).replace(os.sep, "/") for n in names]
+    return sorted(out)
+
+
 def main(argv: list[str]) -> int:
+    if argv[1:2] == ["--explain"]:
+        if len(argv) < 3:
+            print("usage: tools/make_slice.py --explain CASE-ID...", file=sys.stderr)
+            return 2
+        return explain(argv[2:])
     files = outputs()
     if "--check" in argv[1:]:
         stale = []
@@ -2490,22 +2611,19 @@ def main(argv: list[str]) -> int:
                         stale.append(rel)
             except FileNotFoundError:
                 stale.append(rel)
-        present = set()
-        for sub in ("cases", "quarantine", "negative"):
-            d = os.path.join(OUT, sub)
-            if os.path.isdir(d):
-                present |= {f"{sub}/{n}" for n in os.listdir(d)}
-        extra = sorted(present - set(files))
+        extra = sorted(set(present()) - set(files))
         if stale or extra:
             print(f"make_slice: out of date: {stale + extra}", file=sys.stderr)
             return 1
         print(f"make_slice: {len(files)} files up to date")
         return 0
-    for sub in ("cases", "quarantine", "negative"):
-        d = os.path.join(OUT, sub)
-        if os.path.isdir(d):
-            for n in os.listdir(d):
-                os.remove(os.path.join(d, n))
+    for rel in present():
+        os.remove(os.path.join(OUT, rel))
+    for sub in SUBDIRS:  # the directories the removed files leave empty
+        top = os.path.join(OUT, sub)
+        for base, _, _ in os.walk(top, topdown=False):
+            if base != top and not os.listdir(base):
+                os.rmdir(base)
     for rel, text in files.items():
         path = os.path.join(OUT, rel)
         os.makedirs(os.path.dirname(path), exist_ok=True)

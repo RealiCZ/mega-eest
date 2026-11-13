@@ -385,15 +385,9 @@ LIMIT_DIAGNOSTICS = ("scope", "callPath", "operation", "phase", "operationCommit
 LIMIT_KINDS = {"data-size": 0, "kv-updates": 1, "compute": 2, "state-growth": 3}
 
 
-def _limit_requirements(stop, path, minor, out):
-    """From schema 1.1 on a stop requires group:limit-stop, and one that carries a diagnostic
-    group:limit-diagnostics; a 1.0 stop carries every member and implies neither."""
+def _limit_requirements(stop, out):
+    """A stop requires group:limit-stop, and one that carries a diagnostic group:limit-diagnostics."""
     if not isinstance(stop, dict):
-        return
-    if minor == 0:
-        for k in LIMIT_DIAGNOSTICS:
-            if k not in stop:
-                raise Reject("missing-field", path + "/" + k, "a schema 1.0 limit stop carries every member")
         return
     out.add("group:limit-stop")
     if any(k in stop for k in LIMIT_DIAGNOSTICS):
@@ -411,14 +405,14 @@ def _limit_stop(execution, stop, path):
         raise Reject("inconsistent-outcome", path, "the return data is MegaLimitExceeded(kind, limit)")
 
 
-def derive_requirements(profile, inp, exp, minor=1) -> set:
+def derive_requirements(profile, inp, exp) -> set:
     out = set()
     if profile == "state-transition":
         out |= {"group:outcome", "group:state", "group:receipts", "group:gas-ledgers", "group:resources", "group:limit"}
         for key, group in (("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("checkpoints", "group:checkpoints")):
             if key in exp:
                 out.add(group)
-        _limit_requirements(exp.get("limit"), "/expected/limit", minor, out)
+        _limit_requirements(exp.get("limit"), out)
         tx = inp["transaction"]
         if tx["kind"] == "synthetic":
             out.add("feature:synthetic-transaction")
@@ -455,7 +449,7 @@ def derive_requirements(profile, inp, exp, minor=1) -> set:
             if carried:
                 out.add(group)
         for t in txs:
-            _limit_requirements(t.get("limit"), "/expected", minor, out)
+            _limit_requirements(t.get("limit"), out)
     for key, feature in (("salt", "feature:salt"), ("oracle", "feature:oracle-transcript"), ("faults", "feature:injected-faults")):
         if key in inp:
             out.add(feature)
@@ -528,9 +522,6 @@ def semantic_checks(case, specs: Specs):
     # 2. Sorted sets of the envelope.
     _sorted_set(case["requires"], "/requires")
     _sorted_set(case["rules"], "/rules")
-    _sorted_set([a["path"] for a in case["assertions"]], "/assertions")
-    for i, a in enumerate(case["assertions"]):
-        _sorted_set(a["rules"], f"/assertions/{i}/rules")
     # 3. Rules resolve.
     for i, ref in enumerate(case["rules"]):
         rid, row = _rule_parts(ref)
@@ -541,19 +532,7 @@ def semantic_checks(case, specs: Specs):
             raise Reject("unknown-rule-row", f"/rules/{i}", ref)
         if not active:
             raise Reject("retired-rule", f"/rules/{i}", rid)
-    # 4. Assertions.
-    cited, covered = set(case["rules"]), set()
-    for i, a in enumerate(case["assertions"]):
-        if not pointer(case, a["path"])[0]:
-            raise Reject("unbound-assertion", f"/assertions/{i}/path", a["path"])
-        for j, r in enumerate(a["rules"]):
-            if r not in cited:
-                raise Reject("assertion-rule-not-cited", f"/assertions/{i}/rules/{j}", r)
-            covered.add(r)
-    for i, r in enumerate(case["rules"]):
-        if r not in covered:
-            raise Reject("uncovered-rule", f"/rules/{i}", r)
-    # 5. Transaction sources.
+    # 4. Transaction sources.
     sources = []
     if profile == "state-transition":
         sources = [("/input/transaction", inp["transaction"])]
@@ -564,11 +543,10 @@ def semantic_checks(case, specs: Specs):
             _synthetic(tx, path)
         elif (tx["kind"] == "deposit") != _deposit(tx["raw"]):
             raise Reject("inconsistent-transaction", path + "/raw", "kind and bytes disagree")
-    # 6. Requirements.
-    minor = int(case["schemaVersion"].split(".")[1])
-    if derive_requirements(profile, inp, exp, minor) != set(case["requires"]):
+    # 5. Requirements.
+    if derive_requirements(profile, inp, exp) != set(case["requires"]):
         raise Reject("requirement-mismatch", "/requires", "requires differs from the content")
-    # 7. Consistency.
+    # 6. Consistency.
     if profile == "state-transition":
         executed = _outcome(exp["outcome"], "/expected/outcome")
         groups = ["receipt", "gasLedgers", "resources"]
@@ -603,7 +581,7 @@ def semantic_checks(case, specs: Specs):
     elif profile == "block-build":
         for j, tx in enumerate(exp["transactions"]):
             _block_tx(tx, f"/expected/transactions/{j}")
-    # 8. State.
+    # 7. State.
     pre = inp.get("pre")
     completeness = pre.get("completeness") if isinstance(pre, dict) else None
     if completeness == "complete":
@@ -621,7 +599,7 @@ def semantic_checks(case, specs: Specs):
         for path, commitments in roots:
             if "mpt-state-root" in commitments:
                 raise Reject("root-over-sparse-state", path + "/mpt-state-root", "sparse")
-    # 9. Observation sets.
+    # 8. Observation sets.
     def tx_sets(tx, path):
         reasons = tx["outcome"]["admission"].get("reasons")
         if reasons is not None:
@@ -642,7 +620,7 @@ def semantic_checks(case, specs: Specs):
             _sorted_set(d["reasons"], f"/expected/decisions/{i}/reasons")
         for j, tx in enumerate(exp["transactions"]):
             tx_sets(tx, f"/expected/transactions/{j}")
-    # 10. References.
+    # 9. References.
     if profile in ("block-import", "stateless-block"):
         inputs, results = inp["blocks"], exp["blocks"] or []
         if results:
@@ -818,22 +796,21 @@ def main(argv: list[str]) -> int:
         with open(os.path.join(slice_dir, "index.json"), "rb") as f:
             slice_index = parse_strict(f.read())
         recorded = {e["file"]: e["fileDigest"] for e in slice_index["cases"] + slice_index["quarantine"]}
+        files = []  # each case sits at <group>/<caseId>.json, so the walk goes down the tree
         for sub in ("cases", "quarantine", "negative"):
-            d = os.path.join(slice_dir, sub)
-            for name in sorted(os.listdir(d)) if os.path.isdir(d) else []:
-                if not name.endswith(".json"):
+            for base, _, names in os.walk(os.path.join(slice_dir, sub)):
+                files += [os.path.relpath(os.path.join(base, n), slice_dir).replace(os.sep, "/") for n in names if n.endswith(".json")]
+        for rel in sorted(files):
+            with open(os.path.join(slice_dir, rel), "rb") as f:
+                try:
+                    _, file_digest, _ = check_case(f.read(), schemas, specs)
+                except Reject as r:
+                    failures.append(f"slice/{rel}: rejected: {r}")
                     continue
-                rel = f"{sub}/{name}"
-                with open(os.path.join(d, name), "rb") as f:
-                    try:
-                        _, file_digest, _ = check_case(f.read(), schemas, specs)
-                    except Reject as r:
-                        failures.append(f"slice/{rel}: rejected: {r}")
-                        continue
-                if rel in recorded and recorded[rel] != file_digest:
-                    failures.append(f"slice/{rel}: file digest differs from slice/index.json")
-                    continue
-                slice_cases += 1
+            if rel in recorded and recorded[rel] != file_digest:
+                failures.append(f"slice/{rel}: file digest differs from slice/index.json")
+                continue
+            slice_cases += 1
     for failure in failures:
         print("FAIL " + failure)
     total = len(index["vectors"])

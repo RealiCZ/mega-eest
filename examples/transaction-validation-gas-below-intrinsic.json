@@ -1,6 +1,6 @@
 {
   "format": "mega-execution-fixture",
-  "schemaVersion": "1.0",
+  "schemaVersion": "2.0",
   "caseId": "satin/transaction-validation/gas-limit-below-intrinsic-regular",
   "specRef": {
     "name": "megaeth/Satin",
@@ -13,15 +13,6 @@
   "rules": [
     "SATIN-VAL-002",
     "SATIN-VAL-003"
-  ],
-  "assertions": [
-    {
-      "path": "/expected/validation",
-      "rules": [
-        "SATIN-VAL-002",
-        "SATIN-VAL-003"
-      ]
-    }
   ],
   "input": {
     "chain": {

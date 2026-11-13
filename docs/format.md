@@ -1,8 +1,7 @@
-# The fixture format: `mega-execution-fixture` 1.1
+# The fixture format: `mega-execution-fixture` 2.0
 
 A fixture is one filled case: a concrete input, the spec it runs under, the observations a
-conforming implementation must produce, the rules those observations cover, and non-normative
-provenance. The JSON Schemas under [`schema/`](../schema) are the normative shape; this page states
+conforming implementation must produce, the rules the case pins, and non-normative provenance. The JSON Schemas under [`schema/`](../schema) are the normative shape; this page states
 the meaning. [canonical-json.md](canonical-json.md) states the encoding and the error codes.
 
 The format reuses Ethereum execution-spec-tests vocabulary for state and transactions, but it is
@@ -13,16 +12,15 @@ not an EEST fixture and unmodified EEST consumers do not accept it.
 | Member | Meaning |
 | --- | --- |
 | `format` | Always `mega-execution-fixture` |
-| `schemaVersion` | `1.<minor>`. A reader of 1.0 reads every 1.x file whose features it knows: a minor version adds constructs inside `input` and `expected` only behind a new `feature:` or `group:` requirement, so an older reader stops at `unknown-requirement` instead of misreading; a new profile stops it at `unknown-profile`. A new envelope member is a major change. A different major is rejected. 1.1 adds the limit stop's requirements (`group:limit-stop`, `group:limit-diagnostics`, below); a 1.0 file means what it meant |
+| `schemaVersion` | `2.<minor>`. A reader of 2.0 reads every 2.x file whose features it knows: a minor version adds constructs inside `input` and `expected` only behind a new `feature:` or `group:` requirement, so an older reader stops at `unknown-requirement` instead of misreading; a new profile stops it at `unknown-profile`. A new or removed envelope member is a major change. A different major is rejected. 2.0 removed schema 1's `assertions` (decision D-76); its limit stops are those of 1.1, behind `group:limit-stop` and `group:limit-diagnostics` (below) |
 | `caseId` | The logical name ([case-identity.md](case-identity.md)) |
 | `specRef` | `{name, descriptor}`: the spec name and the SHA-256 of its bundled descriptor ([spec-identity.md](spec-identity.md)). Never an unqualified "latest" |
 | `profile` | One of `state-transition`, `transaction-validation`, `block-import`, `block-build`, `stateless-block` ([profiles.md](profiles.md)) |
 | `requires` | Sorted set of every observation group the expected result carries and every input feature the case uses ([Requirements](#requirements)) |
-| `rules` | Sorted set of rule citations the case covers: exactly the union of its assertions' rules |
-| `assertions` | `{path, rules}`, strictly ordered by path (one assertion per path): a JSON Pointer into `expected` and the sorted rule citations whose distinguishing observation is the value there ([rule-mapping.md](rule-mapping.md)) |
+| `rules` | Sorted set of the rule citations the case pins, at least one: the rules it was written to distinguish, not every rule its derivation passes through ([rule-mapping.md](rule-mapping.md)). The rules say why the case exists; they do not select what is compared, which is the whole `expected` |
 | `input` | The profile's input |
 | `expected` | The profile's expected observations |
-| `provenance` | Non-normative and open: `status` (`example`, `candidate`, `approved`, `superseded`) and anything else (authoring intent, generator, seeds, aliases, review record, observations). Excluded from the semantic digest, bound by the file digest |
+| `provenance` | Non-normative and open: `status` (`example`, `candidate`, `approved`, `superseded`) and a pointer to where the case came from, in the spirit of an EEST fixture's `_info`: the generator, the definition the case was generated from, the specification commit, the authoring intent, and for an imported or filled case its source or filler. A derivation or review record is reproduced on demand by the generator, not stored (D-76). Excluded from the semantic digest, bound by the file digest |
 
 Unknown members are errors everywhere except inside `provenance`.
 
@@ -44,8 +42,8 @@ Observation groups:
 | `group:gas-ledgers` | `gasLedgers` |
 | `group:resources` | `resources` |
 | `group:limit` | `limit` |
-| `group:limit-stop` | a stop in `limit` (schema 1.1): its `dimension`, `limit` and `returnData` |
-| `group:limit-diagnostics` | a stop's diagnostic members in `limit` (schema 1.1): `scope`, `callPath`, `operation`, `phase`, `operationCommitted`, `enclosingCommitted` |
+| `group:limit-stop` | a stop in `limit`: its `dimension`, `limit` and `returnData` |
+| `group:limit-diagnostics` | a stop's diagnostic members in `limit`: `scope`, `callPath`, `operation`, `phase`, `operationCommitted`, `enclosingCommitted` |
 | `group:detention` | `detention` |
 | `group:reads` | `reads` |
 | `group:checkpoints` | `checkpoints` (state-transition) |
@@ -196,19 +194,15 @@ rejection.
    (`unknown-spec`) under the stated name (`spec-name-mismatch`); schedule timestamps strictly
    increase (`unsorted-set`); a schedule names each spec once (`invalid-reference`); every non-null
    `activeSpec` of a block result is a spec of the schedule (`spec-name-mismatch`).
-2. **Envelope sets**: `requires`, `rules`, the assertions' paths and each assertion's `rules` are
-   strictly ascending (`unsorted-set`).
+2. **Envelope sets**: `requires` and `rules` are strictly ascending (`unsorted-set`).
 3. **Rules**: each cited id is in the case's registry (`unknown-rule`), its row qualifier is a
    citable row (`unknown-rule-row`), and it is active at the case's spec (`retired-rule`).
-4. **Assertions**: each path resolves to a value, `null` included (`unbound-assertion`); each
-   assertion rule is in `rules` (`assertion-rule-not-cited`); each cited rule is used by an
-   assertion (`uncovered-rule`).
-5. **Transaction sources**: in state-transition and block-build, each source's kind agrees with
+4. **Transaction sources**: in state-transition and block-build, each source's kind agrees with
    its bytes and each synthetic message's fields fit its type, checked in the order chain id,
    recipient, gas price, max fee, max priority fee, access list, authorization list
    (`inconsistent-transaction`).
-6. **Requirements**: `requires` equals the derived set (`requirement-mismatch`).
-7. **Outcomes**: a refused transaction has no execution and is not committed; a faulted one has no
+5. **Requirements**: `requires` equals the derived set (`requirement-mismatch`).
+6. **Outcomes**: a refused transaction has no execution and is not committed; a faulted one has no
    execution; an admitted one executes and commits unless a fault stops it; a failed deposit is
    committed and has no execution or a halted one; a transaction without an outcome has no receipt, ledgers, resources, limit, pools or
    detention, and an executed one has a receipt, ledgers and resources; the receipt status is
@@ -216,11 +210,11 @@ rejection.
    failed deposit; a stateless case has block results exactly when its witness verified, and a
    verified proof exactly when one is attached; an invalid block's spec and flags are `null` only
    when it failed to decode (`inconsistent-outcome`).
-8. **State**: no zero slot in complete state (`zero-slot-in-complete-state`); no MPT state root
+7. **State**: no zero slot in complete state (`zero-slot-in-complete-state`); no MPT state root
    over sparse or witness state (`root-over-sparse-state`).
-9. **Observation sets**: refusal and decision `reasons` and `reads.codes` are strictly ascending
+8. **Observation sets**: refusal and decision `reasons` and `reads.codes` are strictly ascending
    (`unsorted-set`).
-10. **References**: block results stop at the first invalid block and otherwise match the input
+9. **References**: block results stop at the first invalid block and otherwise match the input
     blocks one to one, with one transaction result per transaction; the head is the anchor when no
     block was accepted (with an empty state diff) and otherwise has the number of the last accepted
     `fields`-encoded block. Block-build actions name existing candidates and follow the action

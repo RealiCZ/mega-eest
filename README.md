@@ -14,7 +14,7 @@ reviewed `state-transition` cases whose expectations are derived from the specif
 - Specification: the Satin section of `https://github.com/RealiCZ/mega-evm-satin-spec`, snapshots
   at `cac999a`, `22a5f4b` and `d34e626` (the slice pins `d34e626`), and a registry of the frozen
   Rex6 text ([spec identity](docs/spec-identity.md)).
-- Fixture format: `mega-execution-fixture` 1.0, five profiles: `state-transition`,
+- Fixture format: `mega-execution-fixture` 2.0, five profiles: `state-transition`,
   `transaction-validation`, `block-import`, `block-build`, `stateless-block`
   ([format](docs/format.md), [profiles](docs/profiles.md)).
 
@@ -27,7 +27,7 @@ reviewed `state-transition` cases whose expectations are derived from the specif
 | [`crates/mega-fixture-format/`](crates/mega-fixture-format) | Rust format crate: strict decoding, validation, canonical JSON, digests, comparison, the consumer loop and the filler; a `mega-fixture` CLI. No engine dependency |
 | [`adapters/`](adapters) | One adapter per Satin implementation, each its own workspace, pinned by commit ([adapter protocol](docs/adapter-protocol.md)) |
 | [`exporter/`](exporter) | Dumps the differential gates' scenarios for `tools/export_scenarios.py` |
-| [`slice/`](slice/README.md) | The vertical slice: cases, quarantine, a deliberately wrong expectation, index |
+| [`slice/`](slice/README.md) | The vertical slice: cases at `slice/cases/<caseId>.json`, quarantine, a deliberately wrong expectation, index |
 | [`tools/`](tools) | Registry generators, the SALT mapping, the spec-derived model and slice generator, the exporter, `run-slice.sh`, the readers' checks |
 | [`vectors/`](vectors/README.md) | Canonicalization and digest vectors, accepted and rejected |
 | [`examples/`](examples) | One illustrative example per profile and negative examples under `examples/negative/` |
@@ -49,7 +49,7 @@ reviewed `state-transition` cases whose expectations are derived from the specif
 | [profiles.md](docs/profiles.md) | The profile and capability matrix |
 | [adapter-protocol.md](docs/adapter-protocol.md) | What an adapter provides and reports, its process interface, the mapping definitions and this repository's two adapters |
 | [corpus-archive.md](docs/corpus-archive.md) | The verified differential-corpus archive and the old-member-to-new-case rule |
-| [rule-mapping.md](docs/rule-mapping.md) | How rule citations and assertions resolve against the registry |
+| [rule-mapping.md](docs/rule-mapping.md) | What a case's rules are and how they resolve against the registry |
 | [rule-index.md](docs/rule-index.md) | Generated rule-to-case lookup, with gating and quarantined cases and uncited rules |
 | [versioning.md](docs/versioning.md) | Spec, schema, suite and content identities; manifests |
 | [decisions.md](docs/decisions.md) | Choices made where the design was open |
@@ -61,6 +61,7 @@ cargo test --locked                                      # the Rust reader: vect
 python3 -I tools/check_vectors.py vectors                # the independent reader: vectors, examples, the slice
 python3 -I tools/make_examples.py --check                # examples are what their generator writes
 python3 -I tools/make_slice.py --check                   # the slice is what its generator derives
+python3 -I tools/make_slice.py --explain <caseId>         # one case's derivation, which no case file stores
 python3 -I tools/rule_index.py --check                   # the rule-to-case index matches the slice
 python3 -I tools/salt_mapping.py --check                 # the salt-v1 port reproduces its reference vectors
 python3 -I tools/gen_registry.py <spec-checkout> d34e626 specs/satin-d34e626 --members tools/descriptor-members/satin.json --check

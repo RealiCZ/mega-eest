@@ -7,9 +7,8 @@ edges of the charge-order principles, 5 for gas detention, 5 for the stops of a 
 frame and 2 that observe the gas pools at `5fb2688` (`specs/satin-5fb2688`), and 2 for the
 take-back page's worked examples, 28 for the destruction page's own rules, 53 for gas detention's
 rules and 24 for the limit-stop page's rules at `cdded1e` (`specs/satin-cdded1e`), each case naming
-its own spec (decisions D-54, D-59, D-60, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74). The cases
-whose expected `limit` is a stop are schema 1.1; every other case is
-1.0. They are reviewed candidates: `provenance.status` is `candidate` until
+its own spec (decisions D-54, D-59, D-60, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74). Every
+case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
 Every file here is written by `tools/make_slice.py` (`--check` verifies it), and every figure in a
@@ -23,12 +22,24 @@ derivation, and the two implementations run against it.
 
 ## What a case records
 
-- `rules` and `assertions`: one assertion per observation group the derivation reached, citing
-  the rules its steps applied.
-- `provenance.derivation`: for each assertion path, the steps in order, with their arithmetic.
-- `provenance.review.ruleTexts`: the text digest of every cited rule, so a review is tied to the
-  exact rule text; `provenance.authoring.intent` and `boundary`: what the case tests.
-- `provenance.transaction`: a decoded view of the transaction bytes, a review aid only.
+Each case is the file `<group>/<caseId>.json`: `cases/satin/<area>/.../<case>.json` for a gating
+case, `quarantine/satin/<area>/.../<case>.json` for a quarantined one and
+`negative/satin/negative/...` for the wrong expectation (D-76). A case holds:
+
+- `input` and `expected`, what a consumer runs and compares, and `requires`;
+- `rules`: the rules the case pins, the rules its derivation applied that are in its area's scope
+  or that its definition names (`AREA_SCOPE` in `tools/make_slice.py`, D-76). The rules every
+  transaction's derivation applies — the intrinsic cost, the body's history, the pools, the
+  ledgers, the receipt, the limits — are pinned only by the areas that test them;
+- `provenance`: `status`, the `generator`, the `definition` the case comes from (the function of
+  `tools/make_slice.py` that defines it), the `specCommit` it was derived at, its
+  `authoring.intent` and `boundary`, what the case tests, and, for a quarantined case, its
+  `quarantine` record.
+
+A case's derivation is not stored. `python3 -I tools/make_slice.py --explain <caseId>` derives it
+again and prints, as JSON, the steps of every observation group in order with their arithmetic and
+the rules each applies, every rule the derivation applied with its text digest, so a review is tied
+to the exact rule text, the decoded transaction, and the case's pins and its area's scope.
 
 ## The cases
 
@@ -58,7 +69,8 @@ empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and 
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-193 rules in 22 areas are cited. `index.json` lists each case with its area, rules and file digest.
+The gating cases pin 151 rules in 18 areas of the specification. `index.json` lists each case with
+its area, the rules it pins, its file and its file digest.
 
 ## Quarantine and the wrong expectation
 

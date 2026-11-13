@@ -79,13 +79,12 @@ may report any of them. Pointers of JSON-layer errors are informative only.
 | `wrong-type` | A value of the wrong JSON type, `null` where the schema allows none included |
 | `invalid-value` | A value outside an enumeration, constant or pattern without a more specific code |
 | `unsupported-format` | `format` is not this format |
-| `unsupported-schema-version` | `schemaVersion` is not `1.<minor>` |
+| `unsupported-schema-version` | `schemaVersion` is not `2.<minor>` (a schema 1 file included) |
 | `unknown-profile` | `profile` is not one of the five profiles |
 | `unknown-requirement` | An entry of `requires` is unknown to the reader |
 | `unknown-commitment` | A commitment kind is unknown |
 | `invalid-case-id`, `invalid-rule-ref`, `invalid-signed-integer` | Malformed identifiers and signed integers |
 | `too-few-items`, `too-many-items` | Array length bounds |
-| `unbound-assertion` | An assertion path outside `/expected` (or, semantically, resolving to nothing) |
 | hex codes | See below |
 
 A malformed hex string is classified by the first failing check, in this order:
@@ -107,8 +106,7 @@ and still reject the same inputs, with less specific errors.
 
 The checks of [format.md](format.md#semantic-checks), in their order, with codes
 `unknown-spec`, `spec-name-mismatch`, `unsorted-set`, `unknown-rule`, `unknown-rule-row`,
-`retired-rule`, `unbound-assertion`, `assertion-rule-not-cited`, `uncovered-rule`,
-`inconsistent-transaction`, `requirement-mismatch`, `inconsistent-outcome`, `zero-slot-in-complete-state`,
+`retired-rule`, `inconsistent-transaction`, `requirement-mismatch`, `inconsistent-outcome`, `zero-slot-in-complete-state`,
 `root-over-sparse-state` and `invalid-reference`.
 
 ## Digests

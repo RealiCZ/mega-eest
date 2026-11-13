@@ -1,6 +1,6 @@
 {
   "format": "mega-execution-fixture",
-  "schemaVersion": "1.0",
+  "schemaVersion": "2.0",
   "caseId": "satin/deposits/empty-caller/new-account-charged-once",
   "specRef": {
     "name": "megaeth/Satin",
@@ -19,26 +19,6 @@
   "rules": [
     "SATIN-DEP-003",
     "SATIN-DEP-009"
-  ],
-  "assertions": [
-    {
-      "path": "/expected/receipt",
-      "rules": [
-        "SATIN-DEP-009"
-      ]
-    },
-    {
-      "path": "/expected/resources/stateGrowth",
-      "rules": [
-        "SATIN-DEP-003"
-      ]
-    },
-    {
-      "path": "/expected/state/accounts/0x00000000000000000000000000000000000de905",
-      "rules": [
-        "SATIN-DEP-003"
-      ]
-    }
   ],
   "input": {
     "chain": {

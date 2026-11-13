@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "MegaETH execution fixture: shared definitions",
-  "description": "Scalars and objects shared by the envelope and the profiles of mega-execution-fixture 1.x. Keywords starting with x- are annotations for the error codes of docs/canonical-json.md; a standard validator ignores them.",
+  "description": "Scalars and objects shared by the envelope and the profiles of mega-execution-fixture 2.x. Keywords starting with x- are annotations for the error codes of docs/canonical-json.md; a standard validator ignores them.",
   "$defs": {
     "U64": {
       "description": "Nonnegative integer below 2^64: minimal lowercase hex, 0x0 for zero.",
@@ -590,7 +590,7 @@
       "items": {"$ref": "#/$defs/U64"}
     },
     "LimitStop": {
-      "description": "A limit stop: its dimension, its limit and its return data, MegaLimitExceeded(kind, limit). The other members are diagnostics: a schema 1.0 stop carries all of them, and from 1.1 on each is optional, carried behind group:limit-diagnostics.",
+      "description": "A limit stop: its dimension, its limit and its return data, MegaLimitExceeded(kind, limit). The other members are diagnostics, each optional, carried behind group:limit-diagnostics.",
       "type": "object",
       "additionalProperties": false,
       "required": ["dimension", "limit", "returnData"],

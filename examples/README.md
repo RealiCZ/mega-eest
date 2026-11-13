@@ -1,6 +1,6 @@
 # Examples
 
-One fixture per profile, written by `tools/make_examples.py`:
+One fixture per profile, schema 2.0, written by `tools/make_examples.py`:
 
 | File | Profile | Shows |
 | --- | --- | --- |
@@ -18,4 +18,5 @@ they show the shape of the format and have not been executed by an implementatio
 against the specification; each example's provenance says so.
 
 `negative/` holds fixtures with exactly one defect each. The part of the file name before `--` is
-the error code both readers must report.
+the error code both readers must report. `unknown-field--assertions-member.json` carries schema 1's
+per-path rule lists, which schema 2 no longer has (D-76).

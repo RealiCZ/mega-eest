@@ -1,6 +1,6 @@
 {
  "format": "mega-execution-fixture",
- "schemaVersion": "1.0",
+ "schemaVersion": "2.0",
  "caseId": "satin/state-gas/sstore-fresh-slot/minimum-bucket",
  "specRef": {
   "name": "megaeth/Satin",
@@ -22,27 +22,6 @@
   "SATIN-POOL-019",
   "SATIN-STATE-008",
   "SATIN-WIT-009"
- ],
- "assertions": [
-  {
-   "path": "/expected/gasLedgers",
-   "rules": [
-    "SATIN-POOL-019",
-    "SATIN-STATE-008"
-   ]
-  },
-  {
-   "path": "/expected/reads/buckets",
-   "rules": [
-    "SATIN-WIT-009"
-   ]
-  },
-  {
-   "path": "/expected/state",
-   "rules": [
-    "SATIN-STATE-008"
-   ]
-  }
  ],
  "input": {
   "chain": {

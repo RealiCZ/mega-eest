@@ -1,6 +1,6 @@
 {
   "format": "mega-execution-fixture",
-  "schemaVersion": "1.0",
+  "schemaVersion": "2.0",
   "caseId": "satin/stateless-witness/parent-anchor/wrong-parent-hash",
   "specRef": {
     "name": "megaeth/Satin",
@@ -16,14 +16,6 @@
   ],
   "rules": [
     "SATIN-WIT-010"
-  ],
-  "assertions": [
-    {
-      "path": "/expected/witness",
-      "rules": [
-        "SATIN-WIT-010"
-      ]
-    }
   ],
   "input": {
     "chain": {

@@ -5,7 +5,7 @@ Four identities are kept apart:
 | Identity | Form | Changes when |
 | --- | --- | --- |
 | Protocol spec | `specRef`: name and descriptor digest | the specification text or registry changes (a new commit is a new digest) |
-| Fixture schema | `format` and `schemaVersion` (`mega-execution-fixture` 1.x) | major: incompatible meaning or shape; minor: additions behind a new `feature:` requirement |
+| Fixture schema | `format` and `schemaVersion` (`mega-execution-fixture` 2.x; 2.0 removed schema 1's `assertions`, D-76) | major: incompatible meaning or shape; minor: additions behind a new `feature:` requirement |
 | Suite release | `suite.name` and a semantic `suite.version` in the manifest, under a spec line | minor: reviewed cases added; patch: fixture corrections with a visible diff; major: an incompatible suite contract |
 | Content | SHA-256 of canonical case bytes, blobs and the manifest | any byte |
 

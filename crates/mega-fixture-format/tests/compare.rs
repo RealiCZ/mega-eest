@@ -93,20 +93,12 @@ fn a_refusal_matches_any_one_listed_reason() {
     assert!(matches!(compare(&c, &actual, &all()), Verdict::Fail { ref path, .. } if path == "/expected/validation/reasons"));
 }
 
-#[test]
-fn a_mismatch_cites_the_rules_whose_assertions_cover_its_path() {
-    let c = case();
-    let cited: Vec<String> = mega_fixture_format::compare::rules_at(&c, "/expected/gasLedgers/state").iter().map(|r| r.to_string()).collect();
-    assert_eq!(cited, ["SATIN-POOL-019", "SATIN-STATE-008"]);
-    assert!(mega_fixture_format::compare::rules_at(&c, "/expected/gasLedgersX").is_empty());
-}
-
-// A stop of the transaction's own frame (schema 1.1, decision D-62): its dimension, limit and return
-// data are mandatory behind `group:limit-stop`; its diagnostics are optional behind
-// `group:limit-diagnostics`, and compared only where the case carries them.
+// A stop of the transaction's own frame (decision D-62): its dimension, limit and return data are
+// mandatory behind `group:limit-stop`; its diagnostics are optional behind `group:limit-diagnostics`,
+// and compared only where the case carries them.
 
 fn stop_case() -> Case {
-    Case::from_bytes(&common::read("slice/cases/satin--limit-stops--compute-at-one-charge.json"), &common::store()).unwrap()
+    Case::from_bytes(&common::read("slice/cases/satin/limit-stops/compute-at-one-charge.json"), &common::store()).unwrap()
 }
 
 fn with_value(case: &Case, pointer: &str, value: Value) -> Result<Case, mega_fixture_format::Error> {
@@ -127,9 +119,9 @@ fn requires_of(case: &Case) -> Vec<String> {
 }
 
 #[test]
-fn a_stop_requires_group_limit_stop_from_schema_1_1() {
+fn a_stop_requires_group_limit_stop() {
     let c = stop_case();
-    assert_eq!(c.value.get("schemaVersion").and_then(Value::as_str), Some("1.1"));
+    assert_eq!(c.value.get("schemaVersion").and_then(Value::as_str), Some("2.0"));
     let requires = requires_of(&c);
     assert!(requires.iter().any(|r| r == "group:limit-stop"), "{requires:?}");
     let without: Vec<&str> = requires.iter().map(String::as_str).filter(|r| *r != "group:limit-stop").collect();
@@ -137,12 +129,25 @@ fn a_stop_requires_group_limit_stop_from_schema_1_1() {
     assert_eq!(e.code, mega_fixture_format::ErrorCode::RequirementMismatch);
 }
 
+// Schema 2 (decision D-76) dropped the envelope's `assertions`: a file of another major, or one that
+// still carries per-path rule lists, is rejected rather than misread.
+
 #[test]
-fn a_schema_1_0_stop_carries_every_member() {
+fn another_major_is_rejected() {
     let c = stop_case();
-    let e = with_value(&c, "/schemaVersion", Value::String("1.0".into())).expect_err("a 1.0 stop without diagnostics");
-    assert_eq!(e.code, mega_fixture_format::ErrorCode::MissingField);
-    assert_eq!(e.path, "/expected/limit/scope");
+    for version in ["1.0", "1.1", "3.0"] {
+        let e = with_value(&c, "/schemaVersion", Value::String(version.into())).expect_err(version);
+        assert_eq!(e.code, mega_fixture_format::ErrorCode::UnsupportedSchemaVersion, "{version}");
+    }
+}
+
+#[test]
+fn an_assertions_member_is_an_unknown_field() {
+    let c = stop_case();
+    let assertion = json::parse(br#"[{"path":"/expected/limit","rules":["SATIN-STOP-009"]}]"#).unwrap();
+    let e = with_value(&c, "/assertions", assertion).expect_err("schema 2 has no assertions");
+    assert_eq!(e.code, mega_fixture_format::ErrorCode::UnknownField);
+    assert_eq!(e.path, "/assertions");
 }
 
 #[test]

@@ -1,4 +1,4 @@
-# How rules and assertions map to the registry
+# How a case's rules map to the registry
 
 ## Citations
 
@@ -20,26 +20,24 @@ descriptor → its `registry` digest → `rules.json` ([spec-identity.md](spec-i
 The registry also gives the citation's text digest, so a review record can name the exact text an
 expectation was approved against, and a consumer can detect that a new spec reworded it.
 
-## Assertions
+## What a case pins
 
-`assertions` says which observation distinguishes which rule. Each entry is a JSON Pointer into
-`expected` and the rules for which the value at that pointer is the discriminating evidence:
+`rules` lists the rules a case pins: the rules it was written to distinguish, at least one. It is
+not every rule the expected values pass through: the intrinsic cost, the body's history, the two
+pools, the ledgers, the receipt and the resource limits enter every transaction's expectation, and a
+case pins them only when it was written to test them. Schema 1 also listed, per JSON Pointer into
+`expected`, the rules whose evidence the value there was; schema 2 has no such lists (D-76), as an
+Ethereum EEST fixture has none.
 
-```json
-{"path": "/expected/gasLedgers", "rules": ["SATIN-POOL-019", "SATIN-STATE-008"]}
-```
-
-- The pointer must resolve (a `null` value resolves) (`unbound-assertion`); it may name a whole
-  group, one block, one transaction or a single field.
-- Every rule of an assertion must be in the case's `rules` (`assertion-rule-not-cited`), and every
-  rule of `rules` must be used by some assertion (`uncovered-rule`). `rules` is therefore exactly
-  the set of rules the case claims to cover, and citing a rule without saying which observation
-  shows it is rejected.
-- Assertions do not restrict comparison: every required group is compared in full. An assertion
-  states what a failure at or below its pointer means for coverage.
-
-Authoring intent (setup, triggering operation, boundary, arithmetic) belongs in `provenance`;
-reviewers check it against the pinned rule text.
+- The rules do not restrict comparison: every required group is compared in full, and a consumer
+  reports a mismatch at its first differing path with the rules the case pins.
+- Which rules a case pins is decided by its generator, by one rule applied to every case alike.
+  The slice's is `tools/make_slice.py`'s `AREA_SCOPE`: a case pins the rules its derivation applied
+  that are in its area's scope or that its definition names (D-76).
+- Authoring intent (setup, triggering operation, boundary) belongs in `provenance`; the arithmetic
+  and every rule a derivation applied are reproduced by the generator on demand
+  (`tools/make_slice.py --explain <caseId>`), and reviewers check them against the pinned rule
+  text.
 
 ## Coverage
 
@@ -47,10 +45,7 @@ From a manifest's cases and their registries:
 
 - **Referenced-rule coverage**: active rules cited by at least one approved case, over all active
   in-scope rules.
-- **Asserted-rule coverage**: rules with a reviewed assertion in an approved case, over the same.
-  In this format the two coincide case by case, since a citation requires an assertion; they
-  differ once review status is tracked per assertion.
-- **Executed-rule coverage** of a consumer: asserted rules of the cases that consumer ran and
+- **Executed-rule coverage** of a consumer: the pinned rules of the cases that consumer ran and
   passed. A failure, `known-fail`, `unsupported` or `error` case contributes nothing, and a subset
   cannot claim coverage from cases outside it.
 

@@ -48,16 +48,17 @@ Rules for releases:
 
 The semantic digest is the SHA-256 of the canonical bytes of the fixture with its `caseId` and
 `provenance` members removed. It therefore binds `format`, `schemaVersion`, `specRef` (and through
-it the rule registry), `profile`, `requires`, `rules`, `assertions`, `input` and `expected`.
+it the rule registry), `profile`, `requires`, `rules`, `input` and `expected`.
 
 - Renaming a case, moving its file, re-hosting the release or rewriting its provenance does not
-  change it.
+  change it. A file's path is a locator: the slice stores each case at `<group>/<caseId>.json`
+  (D-76), and a release may store it by its file digest ([versioning.md](versioning.md)).
 - Changing any input byte, any expected value, the set of required groups, a cited rule or the
   spec does.
 - Two cases with the same semantic digest are duplicates under different names; a release keeps
-  one. Every set-like array of the format, assertions included, has one required order, so the
-  same content cannot be written two ways; a semantic duplicate with different wording (for
-  example an assertion split across two paths) is still possible and is a review matter.
+  one. Every set-like array of the format has one required order, so the same content cannot be
+  written two ways; a semantic duplicate with different wording (for example the same input under
+  two different sets of pinned rules) is still possible and is a review matter.
 
 Provenance is still bound: the file digest covers the whole fixture, and the manifest binds every
 file digest and the provenance and coverage reports.

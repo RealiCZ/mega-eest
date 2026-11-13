@@ -54,7 +54,6 @@ codes! {
     InvalidCaseId => "invalid-case-id",
     TooFewItems => "too-few-items",
     TooManyItems => "too-many-items",
-    UnboundAssertion => "unbound-assertion",
     // Semantic layer.
     UnsortedSet => "unsorted-set",
     RequirementMismatch => "requirement-mismatch",
@@ -63,8 +62,6 @@ codes! {
     UnknownRule => "unknown-rule",
     UnknownRuleRow => "unknown-rule-row",
     RetiredRule => "retired-rule",
-    AssertionRuleNotCited => "assertion-rule-not-cited",
-    UncoveredRule => "uncovered-rule",
     InconsistentOutcome => "inconsistent-outcome",
     InconsistentTransaction => "inconsistent-transaction",
     ZeroSlotInCompleteState => "zero-slot-in-complete-state",

@@ -1,0 +1,229 @@
+{
+  "caseId": "satin/reads/list-simulated-out-of-gas",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x9acf",
+      "floor": "0x3a98",
+      "gasUsed": "0x14acf",
+      "history": "0xb000",
+      "historyBytes": "0x200",
+      "refund": "0x0",
+      "regular": "0x9acf",
+      "state": "0x0",
+      "total": "0x14acf"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "halt"
+      }
+    },
+    "reads": {
+      "accounts": {
+        "0x125940c60de364f680a70be9c6896c520e724770": {
+          "balance": "0x1",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000011": null,
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": null,
+        "0x420000000000000000000000000000000000001a": null,
+        "0x420000000000000000000000000000000000001b": null,
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xe9e98d74b441fae0bbf7d8e3dcd9804268356244": {
+          "balance": "0x1",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        }
+      },
+      "blockHashes": {},
+      "buckets": {},
+      "codes": [
+        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b"
+      ],
+      "hints": [],
+      "oracle": [],
+      "storage": {
+        "0x4200000000000000000000000000000000000015": {
+          "0x0000000000000000000000000000000000000000000000000000000000000001": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000003": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000005": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000007": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000008": "0x0"
+        }
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x14acf",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x4"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "512",
+        "reported": "0x200"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x000000000000000000000000000000000000beef": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x125940c60de364f680a70be9c6896c520e724770": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xe9e98d74b441fae0bbf7d8e3dcd9804268356244": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0x04f9011d0180808083014acf94000000000000000000000000000000000000beef8080c0f8b8f85a019400000000000000000000000000000000000de1e98001a027c49554829e447d599a8f9a87400296ab844f330635446cd59157f9ac85b861a051bd1d7e0cf78236cc1ef2e997baa18311431821790a6848491f6ad5018165f6f85a019400000000000000000000000000000000000de1e98080a031dda26fed110d81c65cae7a040796a3ee828c9eca3f38bf301226ae6f2db38aa05d18879cdac76cb19566f3b03482c147fb6ba4572f6a302a93b8a6e6711c178d01a020631498e2bf4a58180179d9fd8863f7b65cfde2cf3ce493fd9d9c511346b834a0118f5221433e835d7375bca40e13f97d054302cedffe219106fd9990df901f28"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a two-entry EIP-7702 list whose first entry's ACCOUNT_WRITE, 9,000, is one gas beyond the regular gas left: the transaction runs out of gas before its first frame with nothing of the list applied, and both authorities are in the reads, the list's simulation having loaded them; the recipient, whose load is at step 4, is not"
+    },
+    "definition": "tools/make_slice.py::reads_cases",
+    "generator": "tools/make_slice.py",
+    "quarantine": {
+      "actual": {
+        "balance": "0x0",
+        "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+        "nonce": "0x0"
+      },
+      "adapter": "mega-eest-adapter-revm",
+      "expected": null,
+      "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+      "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 4e39cfd6 reads both in every transaction's validation, so its reads hold the registry's account, the first difference; it also skips the simulation of a list too short to cross a limit (SATIN-AUTH-005, SATIN-WIT-004), so the list that runs out of gas at its first entry leaves the second authority unloaded and out of its reads"
+    },
+    "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:reads",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-AUTH-005",
+    "SATIN-WIT-001",
+    "SATIN-WIT-002",
+    "SATIN-WIT-003",
+    "SATIN-WIT-004",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008",
+    "SATIN-WIT-011",
+    "SATIN-WIT-013"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
+    "name": "megaeth/Satin"
+  }
+}
