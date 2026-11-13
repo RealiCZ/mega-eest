@@ -94,15 +94,16 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it |
 | `limits.py` | A write held to its frame's budget, the transaction's own or a child's, and then the transaction's limit, and the rules a case that pins the limit-stop page cites (D-73) |
 
-The cases' provenance names the model by the module it was before this split,
-`tools/satin_model.py`; that text is part of every case's bytes, which this split keeps, and is
-updated when the cases are next regenerated with a reason to change. The take-back cases carry the
-same text, so that one string names the model in every case until then.
+A case's explanation, which `tools/make_slice.py --explain <caseId>` prints, names the model by its
+package, `tools/satin_model/`. Until schema 2 (D-76) that sentence was part of every case's bytes
+and named the module the model was before this split, `tools/satin_model.py`; no case file carries
+it now.
 
 ## Relation to the specification
 
 The model reads the specification; it does not replace it. Each derivation step cites the rule it
-applies and each case carries the text digest of every rule it cites, so a reviewer holds a figure to
-the rule text, not to the model's code. Where the text leaves an order or a reading open, the model
+applies, and a case's explanation (`--explain`) carries the text digest of every rule its derivation
+applied, so a reviewer holds a figure to the rule text, not to the model's code. A case file stores
+neither: it lists the rules it pins (D-76). Where the text leaves an order or a reading open, the model
 follows a recorded decision (`docs/decisions.md`) and says so in the step, and the decision is
 withdrawn once the specification states it (as D-58 was by `SATIN-HIST-023`).

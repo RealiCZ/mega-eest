@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Check that every figure in the slice's text follows the model's constants.
 
-The slice's human-readable text — each case's intent and boundary, its derivation steps, the
-quarantine verdicts, the negative case's note, and `slice/README.md` — must write every figure that
+The slice's human-readable text — each case's intent and boundary, its derivation steps (which
+`tools/make_slice.py --explain` prints and no case file stores), the quarantine verdicts, the
+negative case's note, and `slice/README.md` — must write every figure that
 depends on a constant of the specification from that constant (`tools/satin_model/constants.py`), never as a
 typed number. This check changes one constant at a time, regenerates the slice from a copy of the
 tools into a temporary directory, and fails if any text there still shows a figure computed from
@@ -77,8 +78,9 @@ MUTATIONS = {
 NUMBER = re.compile(r"(?<![\w.\-])(\d{1,3}(?:,\d{3})+|\d+)(?![\w])")
 
 
-def generate(out: str, constant: str | None = None, value: int | None = None) -> dict[str, str]:
-    """The slice `tools/make_slice.py` writes, from a copy of the tools with `constant` set to `value`."""
+def generate(out: str, constant: str | None = None, value: int | None = None) -> tuple[dict[str, str], dict]:
+    """The slice `tools/make_slice.py` writes, and each case's explanation, from a copy of the tools with
+    `constant` set to `value`."""
     tools = os.path.join(out, "tools")
     os.makedirs(tools)
     for name in TOOLS:
@@ -97,15 +99,19 @@ def generate(out: str, constant: str | None = None, value: int | None = None) ->
         with open(path, "w", encoding="utf-8") as f:
             f.write(text)
     slice_dir = os.path.join(out, "slice")
+    explained = os.path.join(out, "explained.json")
     program = (
-        "import os, sys\n"
+        "import json, os, sys\n"
         f"sys.path.insert(0, {tools!r})\n"
         "import make_slice\n"
-        "for rel, text in make_slice.outputs().items():\n"
+        "explained = {}\n"
+        "for rel, text in make_slice.outputs(explained).items():\n"
         f"    path = os.path.join({slice_dir!r}, rel)\n"
         "    os.makedirs(os.path.dirname(path), exist_ok=True)\n"
         "    with open(path, 'w', encoding='utf-8') as f:\n"
         "        f.write(text)\n"
+        f"with open({explained!r}, 'w', encoding='utf-8') as f:\n"
+        "    json.dump(explained, f)\n"
     )
     subprocess.run([sys.executable, "-I", "-B", "-c", program], check=True)
     files = {}
@@ -113,8 +119,9 @@ def generate(out: str, constant: str | None = None, value: int | None = None) ->
         for name in names:
             path = os.path.join(base, name)
             with open(path, encoding="utf-8") as f:
-                files[os.path.relpath(path, slice_dir)] = f.read()
-    return files
+                files[os.path.relpath(path, slice_dir).replace(os.sep, "/")] = f.read()
+    with open(explained, encoding="utf-8") as f:
+        return files, json.load(f)
 
 
 def pushes(code: bytes) -> set[int]:
@@ -128,10 +135,10 @@ def pushes(code: bytes) -> set[int]:
     return out
 
 
-def inputs(doc: dict) -> set[int]:
+def inputs(doc: dict, explanation: dict | None) -> set[int]:
     """The figures a case takes as inputs: its gas limit and value, and what its own code pushes."""
     out = set()
-    tx = doc.get("provenance", {}).get("transaction", {})
+    tx = (explanation or {}).get("transaction", {})
     for key in ("gasLimit", "value"):
         if key in tx:
             out.add(int(tx[key], 16))
@@ -141,21 +148,23 @@ def inputs(doc: dict) -> set[int]:
     return out
 
 
-def texts(files: dict[str, str]):
-    """(where, text, the case's input figures) for every human-readable string of the slice."""
+def texts(files: dict[str, str], explained: dict):
+    """(where, text, the case's input figures) for every human-readable string of the slice and of the
+    explanations of its cases."""
     for rel, raw in sorted(files.items()):
         doc = json.loads(raw)
         if rel == "index.json":
             for q in doc.get("quarantine", []):
                 yield f"{rel} {q['caseId']} knownFail.verdict", q["knownFail"]["verdict"], set()
             continue
-        own = inputs(doc)
+        explanation = explained.get(doc["caseId"])
+        own = inputs(doc, explanation)
         prov = doc.get("provenance", {})
         for key, value in sorted(prov.get("authoring", {}).items()):
             yield f"{rel} authoring.{key}", value, own
-        for d in prov.get("derivation", []):
+        for d in (explanation or {}).get("derivation", []):
             for i, step in enumerate(d["steps"]):
-                yield f"{rel} derivation {d['path']} step {i}", step, own
+                yield f"{rel} --explain derivation {d['path']} step {i}", step, own
         if "quarantine" in prov:
             yield f"{rel} quarantine.verdict", prov["quarantine"]["verdict"], own
         if "note" in prov:
@@ -187,17 +196,17 @@ def main() -> int:
 
     failures = 0
     with tempfile.TemporaryDirectory(prefix="check-derived-text-") as tmp:
-        baseline = generate(os.path.join(tmp, "baseline"))
+        baseline, _ = generate(os.path.join(tmp, "baseline"))
         base_figures = figures(baseline)
         for constant, (value, fed) in MUTATIONS.items():
             old = getattr(model, constant)
-            mutated = generate(os.path.join(tmp, constant.lower()), constant, value)
+            mutated, explained = generate(os.path.join(tmp, constant.lower()), constant, value)
             now = figures(mutated)
             moved = {v for k, v in base_figures.items() if k in now and now[k] != v}
             stale = set(fed(model)) | moved
             found = []
             scanned = 0
-            for where, text, own in texts(mutated):
+            for where, text, own in texts(mutated, explained):
                 scanned += 1
                 for m in NUMBER.finditer(text):
                     figure = int(m.group(1).replace(",", ""))

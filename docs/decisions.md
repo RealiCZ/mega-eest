@@ -920,3 +920,67 @@ Both are quarantined with that verdict; the evm2-based implementation passes eve
   growth.
 - **The list that fits**, 1,000 absent authorities applied, is the skipped list's control; it is not
   cheap (over 200,000,000 of state gas and a thousand accounts in the state diff) and is left out.
+
+**D-76. Schema 2: a case lists the rules it pins, stores no derivation, and sits at its id's path.**
+The cases were mostly metadata. The 28 gating destruction cases held 13,942 lines, 44% of them one
+rule id each (alone, or with its text digest), and a case held 499 lines on average, about a third
+of them `input` and `expected`; the rest was a rule list per observation group (the gas ledgers alone about 38 rules, most of them the same rules of
+the schedule, the pools and history gas in every case), their union again as `rules`, and in
+provenance the derivation, a review block and a decoded transaction. An Ethereum EEST fixture keeps
+one `_info` per fixture (the EIP's reference and version, a link to the test source, a description
+and a hash) and neither per-assertion rule lists nor a stored derivation. The format follows it:
+
+- **The envelope.** `assertions` is removed and `rules` is the sorted set of the rules the case
+  pins, at least one. Removing a required member is a major change: the format is
+  `mega-execution-fixture` 2.0, a reader of 2.x rejects a schema 1 file (`unsupported-schema-version`)
+  and an `assertions` member (`unknown-field`), and 2.0's limit stops are 1.1's, behind
+  `group:limit-stop` and `group:limit-diagnostics`. The codes `unbound-assertion`,
+  `assertion-rule-not-cited` and `uncovered-rule` are retired with the check that raised them. No
+  consumer read the per-path lists to decide what to compare: the comparison was and is the whole
+  `expected`, and `requires` says which groups it holds. A `fail` now reports the case's pinned
+  rules where it reported the rules whose assertion paths covered the first difference.
+- **What a case pins** (`tools/make_slice.py`, `AREA_SCOPE` and `pinned`), one rule for every case:
+  a case pins the rules its derivation applied that are in its area's scope or that its definition
+  names. The area is the second segment of the case id. Its scope names whole pages of the
+  specification, by rule family, where the area tests that page (`detention` the gas-detention
+  page, `selfdestruct` the destruction page and state gas, `limit-stops` the limit-stop and
+  resource-limit pages, `gas-pools` the gas model, `outcomes` the outcomes page), and single rules
+  of the six pages every transaction passes through — the gas schedule, history gas, the gas
+  model, resource accounting, resource limits, outcomes — where an area tests those rules and not
+  the page (`intrinsic` the intrinsic cost, the floor, the body's bytes and history and the block's
+  figure; `sstore` `SSTORE`'s prices, records and refunds; `deposits` the deposit rules of other
+  pages). The definition names a rule by its full id in the case's intent or boundary, or, for a
+  quarantined case, in its known failure's verdict, so a quarantined case pins the rule its
+  quarantine is about. The derivation bounds the pins: no case pins a rule its derivation did not
+  apply. The rules every derivation applies (the intrinsic cost, the body's history, the pools'
+  split, the ledgers, the receipt, the resource limits, the success class) are thereby pinned by
+  the areas that test them and by no other. The scopes were read from what each area's row of
+  `slice/README.md` says it distinguishes; the rule is applied by the generator, never by hand.
+- **Provenance** keeps a pointer: `status`, the `generator`, the `definition` (the function of
+  `tools/make_slice.py` that defines the case), the `specCommit` it was derived at, its
+  `authoring` intent and boundary, and a quarantined case's `quarantine` record. The derivation of
+  every group, every rule it applied with its text digest, the decoded transaction and the evidence
+  sentence are derived again on demand by `tools/make_slice.py --explain <caseId>`, which prints
+  them as JSON with the case's file digest, pins and scope; `tools/check_derived_text.py` scans that
+  derivation as it scanned the stored one (the same 21,948 texts). No content hash is stored in a
+  case: `slice/index.json` binds each file by its digest, and a release manifest binds file and
+  semantic digests.
+- **The layout** is EEST's in spirit: a case is the file `slice/<group>/<caseId>.json`, so
+  `slice/cases/satin/<area>/.../<case>.json`; quarantined cases sit at
+  `slice/quarantine/<caseId>.json` and the wrong expectation at `slice/negative/<caseId>.json`, one
+  rule for the three groups. `slice/index.json` keeps every case's `caseId`, its group (`cases` or
+  `quarantine`), its `file`, `area`, pinned `rules` and `fileDigest`, and each quarantined case's
+  `knownFail`. `mega-fixture consume` already walked directories at any depth, in path order.
+- **What a consumer compares is unchanged**: every case keeps its `caseId`, its group, its `input`,
+  its `expected` and its `knownFail`; `requires` is unchanged too, since every case whose `limit`
+  is a stop was already schema 1.1.
+
+The case files shrink from 130,754 lines to 47,468 (36%), and the rule citations of the 262 cases
+from 9,119 to 1,942. The rule-to-case index now cites 193 rules where it cited 228, and 217 of the
+latest registry's 410 rules are uncited where 182 were (208 active, 9 retired, where 173 and 9
+were): the 35 rules no longer cited were reached by derivations without being what any case was
+written to distinguish — among them the forwarding rules (`SATIN-FWD-001` to `-003`, 111 cases),
+the opcodes' static gas (`SATIN-SCHED-002`, 127), a value call's charge order (`SATIN-HIST-010`, 109),
+data size's counting points and the KV count (`SATIN-ACCT-002`, `-012`, 251 and 241) and the base
+layer (`SATIN-BASE-001`, 17). That is the index's truthful picture, not a loss of coverage: the
+expectations are the same values.

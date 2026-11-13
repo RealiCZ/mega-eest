@@ -21,8 +21,8 @@ The vectors cover member ordering by code point, string escapes, array order, em
 values; duplicate members (also after unescaping), every kind of JSON number, `NaN`, byte-order
 marks, invalid UTF-8, unpaired surrogates and syntax errors; non-minimal and overflowing quantities,
 uppercase hex, odd-length bytes, wrong widths, missing prefixes, malformed digests and signed
-integers; unknown required features and groups, unknown fields, formats, profiles, schema majors
-and specs; unsorted sets; and manifests with unsorted cases, wrong counts, missing shard members
+integers; unknown required features and groups, unknown fields (schema 1's `assertions` among
+them), formats, profiles, schema majors (schema 1 among them) and specs; unsorted sets; and manifests with unsorted cases, wrong counts, missing shard members
 and unsafe paths. `case-same-semantics-other-name` shares its semantic digest with
 `case-state-transition-sstore-fresh-slot` and differs in file digest.
 

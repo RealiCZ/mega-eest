@@ -63,13 +63,14 @@ mkdir -p "$work/authoring"
 python3 -I - "$root/slice/cases" "$work/authoring" <<'EOF'
 import json, os, sys
 src, dst = sys.argv[1], sys.argv[2]
-for name in sorted(os.listdir(src)):
-    with open(os.path.join(src, name), encoding="utf-8") as f:
+paths = sorted(os.path.join(base, n) for base, _, names in os.walk(src) for n in names if n.endswith(".json"))
+for path in paths:  # slice/cases/<caseId>.json; the authoring documents sit flat, one per case
+    with open(path, encoding="utf-8") as f:
         case = json.load(f)
     for key in ("requires", "expected"):
         case.pop(key)
     case["provenance"] = {"authoring": case["provenance"].get("authoring"), "generator": "tools/run-slice.sh"}
-    with open(os.path.join(dst, name), "w", encoding="utf-8") as f:
+    with open(os.path.join(dst, case["caseId"].replace("/", "--") + ".json"), "w", encoding="utf-8") as f:
         json.dump(case, f, indent=2, sort_keys=True)
 EOF
 for a in revm evm2; do
