@@ -131,8 +131,30 @@ class CallsMixin:
                       "SATIN-ACCT-004", "SATIN-ACCT-005")
                 d.add("resources", f"the start's {len(records)} records ({WRITE_RECORD_SIZE} bytes each) and its transfer log "
                       f"({TRANSFER_LOG_SIZE} bytes)", "SATIN-LIM-013", "SATIN-ACCT-002", "SATIN-LOG-006")
-        if any(r > b for r, b in zip((n - c for n, c in zip(self.counts(), child["counts"])), child["budget"])):
-            raise Unmodelled("a start with code that crosses its frame's budget")
+        child["name"] = name
+        crossing = self.start_crossing(child)
+        if crossing:
+            if takes or not value:
+                raise Unmodelled("a start with code that crosses a limit and takes records back")
+            kind, crossed, which, rises = crossing
+            d.add("outcome", f"the start of the value CALL to {h(target)} is decided once its value moved, and is held to "
+                  f"what it kept, {records_of(len(records))} and a transfer log, {fmt(rises[0])} bytes of data size, "
+                  f"{rises[1]} KV updates and {rises[2]} of state growth on the started frame, first to that frame's budget "
+                  f"and then to the transaction's limit: it crosses {which}, so the frame is stopped with "
+                  f"MegaLimitExceeded({kind}, {fmt(crossed)}) before it runs an instruction, and what its start moved is "
+                  "reverted with it: the value, the records and the transfer log", "SATIN-LIM-010", "SATIN-LIM-011",
+                  "SATIN-LIM-013", "SATIN-STOP-013", "SATIN-STOP-018", *self.kind_rules())
+            self.frame_restore(snap)
+            self.caught(frame)
+            frame["reservoir"] += share
+            self.give_back(frame, history)
+            self.history_gas -= history
+            self.history_bytes -= WRITE_RECORD_SIZE * len(records)
+            d.add("gasLedgers", f"the stopped frame ran nothing: its {fmt(child_gas)} of regular gas, the forward and the "
+                  f"stipend, returns to the caller untouched, with its reservoir share; the {fmt(history)} of history the "
+                  "opcode charged for the start's records is given back into the caller's reservoir when the stopped "
+                  "frame returns", "SATIN-POOL-012", "SATIN-HIST-014", "SATIN-HIST-012", "SATIN-STOP-005")
+            return False, limit_exceeded(kind, crossed), child_gas
         status, out = self.run_child(child, callee.code, {"address": target, "caller": caller, "value": value,
                                                           "calldata": data}, name)
         if status == "success":

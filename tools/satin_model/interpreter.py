@@ -59,6 +59,7 @@ class InterpreterMixin:
             words = (offset + size + 31) // 32
             if words > mem_words:
                 cost = memory_cost(words) - memory_cost(mem_words)
+                self.probe.setdefault("expand", frame["regular"])  # the regular gas before the first expansion
                 self.charge_regular(frame, cost, f"{what} memory")
                 mem_words = words
                 memory.extend(b"\x00" * (words * 32 - len(memory)))
@@ -177,12 +178,13 @@ class InterpreterMixin:
                 offset, size = pop(), pop()
                 topics = [pop() for _ in range(n)]
                 cost = LOG_COST + LOG_TOPIC_COST * n + LOG_DATA_COST * size
+                self.probe.setdefault("log", frame["regular"])  # the regular gas before the first LOG's charge
                 self.charge_regular(frame, cost, f"LOG{n}")
                 expand(offset, size, f"LOG{n}")
                 payload = bytes(memory[offset:offset + size])
                 log_bytes = LOG_BASE_SIZE + LOG_TOPIC_SIZE * n + size
                 # The log's bytes pass the limits before its history is charged (SATIN-TAKE-009).
-                self.hold_to_limits(log_bytes, 0, 0, f"LOG{n} of {fmt(size)} data bytes")
+                self.hold_to_limits(log_bytes, 0, 0, f"LOG{n} of {fmt(size)} data bytes", frame)
                 history = log_bytes * COST_PER_HISTORY_BYTE
                 # SATIN-HIST-019, -020: a value call's frame draws its history allowance first, which is no gas
                 # and on no gas ledger; its bytes still count.
@@ -454,6 +456,7 @@ class InterpreterMixin:
                                           records, history, new_account, share)
                 frame["regular"] += left
                 self.regular_charges -= left
+                self.resume(frame, f"the CALL to {h(target)}")
                 self.split(frame)  # the caller resumes (SATIN-DET-014, SATIN-DET-019)
                 returndata = out
                 if r_size:
@@ -490,6 +493,7 @@ class InterpreterMixin:
                                                   bytes(memory[a_off:a_off + a_size]), forward, share)
                 frame["regular"] += left
                 self.regular_charges -= left
+                self.resume(frame, f"the DELEGATECALL running {h(target)}'s code")
                 self.split(frame)
                 returndata = out
                 if r_size:
@@ -507,10 +511,9 @@ class InterpreterMixin:
                 d.add("gasLedgers", f"CREATE with {c_size} bytes of init code and {value} wei: regular CREATE_ACCESS "
                       f"{fmt(CREATE_ACCESS)} + {words} words x {INITCODE_WORD_COST} + memory = {fmt(opcode_charges)}",
                       "SATIN-SCHED-002", "SATIN-SCHED-003")
-                created, left = self.create(frame, address, value, bytes(memory[c_off:c_off + c_size]))
+                created, left, returndata = self.create(frame, address, value, bytes(memory[c_off:c_off + c_size]))
                 frame["regular"] += left
                 self.regular_charges -= left
-                returndata = b""
                 stack.append(int.from_bytes(created, "big"))
                 steps.append(f"CREATE {fmt(opcode_charges)} + the creation")
             elif op == 0xFF:  # SELFDESTRUCT

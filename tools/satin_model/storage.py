@@ -91,7 +91,7 @@ class StorageMixin:
         if (now and not was) or grew:
             self.growth -= grew  # the rise is held to the limits before it is counted
             self.hold_to_limits(WRITE_RECORD_SIZE if now and not was else 0, int(now and not was), grew,
-                                f"the SSTORE of slot {key}")
+                                f"the SSTORE of slot {key}", frame)
             self.growth += grew
         # The write record and its history, SATIN-ACCT-004 and SATIN-HIST-006.
         if now and not was:

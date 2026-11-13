@@ -76,7 +76,7 @@ class FramesMixin:
         history allowance, which is not gas (SATIN-HIST-018, SATIN-HIST-020)."""
         child = {"regular": regular, "reservoir": share, "regular_at_start": regular, "reservoir_at_start": share,
                  "received": share, "net_charged": 0, "drawn": 0, "budget": self.child_budget(frame),
-                 "counts": self.counts(), "access_off": frame.get("access_off", False)}
+                 "counts": self.counts(), "access_off": frame.get("access_off", False), "hints": self.hint_bytes}
         if allowance:
             child["allowance"] = HISTORY_ALLOWANCE_BYTES * COST_PER_HISTORY_BYTE
         return child
@@ -113,8 +113,12 @@ class FramesMixin:
             d.add("gasLedgers", f"what the frame spent before the crossing charge stays spent, and its whole regular gas, "
                   f"{fmt(child['regular'])}, the withheld part included, returns to its caller; the transaction's compute "
                   f"is {fmt(self.compute)}", "SATIN-DET-018", "SATIN-DET-019", "SATIN-POOL-012")
-        except LimitStop:
-            raise Unmodelled("a resource limit crossed below the transaction's own frame")
+        except LimitStop as e:
+            status, out = "stop", limit_exceeded(e.kind, e.limit)
+            d.add("outcome", f"{name} crosses a limit at {e}: " + ("" if getattr(e, "resumed", False) else
+                                                                     "the write is not kept, and ") + "the frame is stopped with "
+                  f"MegaLimitExceeded({e.kind}, {fmt(e.limit)}), a revert its caller can catch", "SATIN-STOP-001",
+                  "SATIN-STOP-004", "SATIN-STOP-018", *self.kind_rules())
         self.regular_charges = charges
         return status, out
 
@@ -147,6 +151,7 @@ class FramesMixin:
             return child["regular"]
         kept_logs = len(snap[0][4])
         dropped = [log for log in self.logs[kept_logs:] if log[0] != TRANSFER_LOG_ADDRESS]
+        discarded = tuple(n - c for n, c in zip(self.counts(), child["counts"]))
         unmarked = sorted(self.destroyed - snap[5])
         self.frame_restore(snap)
         if unmarked and self.destruction:
@@ -155,6 +160,21 @@ class FramesMixin:
                   "the discarded give-back is no further one", "SATIN-SD-010", "SATIN-POOL-014")
             d.add("resources", f"the falls and the records the table took back are discarded with {name}: the "
                   "account's growth and records stand again", "SATIN-SD-010")
+        hints = self.hint_bytes - child.get("hints", self.hint_bytes)
+        if hints:
+            # An admitted hint is the transaction's, on no frame: it stays counted through the failure (SATIN-STOP-012).
+            self.data_size += hints
+            d.add("resources", f"{name}'s failure discards what it counted, a record of its callers' it took back standing "
+                  f"again, but the {fmt(hints)} bytes of the hints it admitted stay counted: the transaction's data size "
+                  f"is {fmt(self.data_size)}", "SATIN-STOP-006", "SATIN-STOP-012", "SATIN-ORCL-009", "SATIN-LIM-006")
+        if status == "stop":
+            self.caught(frame)
+        if status == "stop" and self.stops:
+            d.add("outcome", f"{name} is stopped: its caller resumes as after any revert, the call failing with the stop's "
+                  "revert data as its return data, and the frame's regular gas returns to it with its reservoir after its "
+                  f"rollback; what the frame counted, {fmt(discarded[0])} bytes of data size, {fmt(discarded[1])} KV updates "
+                  f"and {fmt(discarded[2])} of state growth net, is discarded with it", "SATIN-STOP-005", "SATIN-STOP-006",
+                  "SATIN-LIM-006", "SATIN-POOL-012", "SATIN-POOL-014")
         if dropped:
             size = sum(LOG_BASE_SIZE + LOG_TOPIC_SIZE * len(topics) + len(data) for _, topics, data in dropped)
             d.add("resources", f"{name}'s failure discards the {len(dropped)} log{'s' if len(dropped) > 1 else ''} it and "
@@ -186,6 +206,42 @@ class FramesMixin:
                       "SATIN-TAKE-004", "SATIN-TAKE-011", "SATIN-HIST-012")
         frame["reservoir"] += returned
         return left
+
+    def caught(self, frame) -> None:
+        """A frame a stop below it returned into: it runs on as after any failed call (SATIN-STOP-005, -008)."""
+        frame["caught"] = True
+        self.caught_stop = True
+
+    def start_crossing(self, child):
+        """SATIN-LIM-013: what a decided start kept, on the started frame, held first to that frame's budget and then to
+        the transaction's limit, in the order of SATIN-LIM-010 and -011. Returns (kind, the limit the stop names, which
+        it is, the start's rises), or None when the start fits."""
+        rises = tuple(n - c for n, c in zip(self.counts(), child["counts"]))
+        for kind, rise, budget, used, limit in zip(KINDS, rises, child["budget"], (self.data_size, len(self.kv), self.growth),
+                                                   LIMITS):
+            if rise <= 0:
+                continue
+            if rise > budget:
+                return kind, budget, f"the started frame's budget, {fmt(budget)}", rises
+            if used > limit:
+                return kind, limit, f"the transaction's limit, {fmt(limit)}", rises
+        return None
+
+    def resume(self, frame, what: str) -> None:
+        """SATIN-STOP-006: a failed child's discard puts back what the frames above it kept, a record of theirs it took
+        back included, while a hint it admitted stays counted; when that leaves the transaction over its data-size
+        limit, the frame it returns into returns the stop of that limit before it runs another instruction."""
+        if self.data_size <= TX_DATA_LIMIT:
+            return
+        self.d.add("outcome", f"{what} returns, and the transaction's data size is {fmt(self.data_size)}, over TX_DATA_LIMIT "
+                   f"{fmt(TX_DATA_LIMIT)}: the failed frame's discard put back the record it took back and kept the hint it "
+                   "sent into the room that freed, so the frame it returns into returns the stop of the transaction's "
+                   f"data-size limit, MegaLimitExceeded({DATA_SIZE_STOP}, {fmt(TX_DATA_LIMIT)}), before it runs another "
+                   "instruction", "SATIN-STOP-006", "SATIN-STOP-012", "SATIN-STOP-018", "SATIN-LIM-011", *self.kind_rules())
+        stop = LimitStop(DATA_SIZE_STOP, TX_DATA_LIMIT, f"the return of {what}, which left the transaction over its data-size "
+                         "limit")
+        stop.resumed = True
+        raise stop
 
     # --- a value start answered without a frame -----------------------------------------------------
 
@@ -262,6 +318,7 @@ class FramesMixin:
             raise Unmodelled("a DELEGATECALL to a system contract, an account without code or a delegated account")
         name = f"the DELEGATECALL frame of {h(target)}'s code on {h(address)}"
         child = self.new_child(frame, child_gas, share)
+        child["name"] = name
         snap = self.frame_snapshot()
         status, out = self.run_child(child, callee.code, {"address": address, "caller": caller, "value": value,
                                                           "calldata": data, "name": name}, name)

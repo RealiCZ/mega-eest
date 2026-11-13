@@ -4,8 +4,8 @@
 from __future__ import annotations
 
 from .constants import (
-    ACCOUNT_STATE, ACCOUNT_WRITE, COST_PER_HISTORY_BYTE, COST_PER_STATE_BYTE, delegate_of, DELEGATION_STATE_BYTES, MAX_U64,
-    WRITE_RECORD_SIZE,
+    ACCOUNT_STATE, ACCOUNT_WRITE, COST_PER_HISTORY_BYTE, COST_PER_STATE_BYTE, delegate_of, DELEGATION_STATE_BYTES,
+    KV_UPDATE_STOP, MAX_U64, STATE_GROWTH_STOP, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT, WRITE_RECORD_SIZE,
 )
 from .records import Account, fmt, h, OutOfGasBeforeFrame, Unmodelled
 
@@ -13,15 +13,47 @@ from .records import Account, fmt, h, OutOfGasBeforeFrame, Unmodelled
 class AuthorizationsMixin:
     """An EIP-7702 list before the first frame: its simulation's loads, each entry's charges and records"""
 
+    def list_crossing(self):
+        """SATIN-AUTH-010: the list's KV and state-growth totals, from its simulation of the whole list (SATIN-AUTH-005),
+        against what the body and the counts before it left; (kind, the transaction limit) when the list does not fit,
+        the KV-update limit first, else None. The simulation charges no gas (SATIN-AUTH-007)."""
+        tx, env, d = self.tx, self.env, self.d
+        seen: dict[bytes, int] = {}
+        for chain_id, target, nonce, authority in tx.authorizations:
+            if chain_id not in (0, env.chain_id) or nonce == MAX_U64 or authority == tx.sender:
+                raise Unmodelled("a simulated list with an entry the gates skip")
+            acct = self.state.get(authority)
+            if acct is not None and acct.code:
+                raise Unmodelled("an authority that holds code")
+            if nonce != (seen[authority] if authority in seen else (acct.nonce if acct else 0)):
+                raise Unmodelled("an authorization whose nonce does not match")
+            seen[authority] = nonce + 1
+        kv = len(seen)
+        growth = sum(1 for a in seen if self.state.get(a) is None)
+        kv_left, growth_left = TX_KV_UPDATE_LIMIT - len(self.kv), TX_STATE_GROWTH_LIMIT - self.growth
+        crossed = ((KV_UPDATE_STOP, TX_KV_UPDATE_LIMIT) if kv > kv_left else
+                   (STATE_GROWTH_STOP, TX_STATE_GROWTH_LIMIT) if growth > growth_left else None)
+        if crossed is None:
+            return None
+        if not self.stops:
+            raise Unmodelled("a list that does not fit outside the limit-stop cases")
+        d.add("limit", f"the list's simulation walks its {fmt(len(tx.authorizations))} entries, charging nothing: "
+              f"{fmt(kv)} distinct authorities, {fmt(growth)} of them absent, so the list would make {fmt(kv)} write "
+              f"records and {fmt(growth)} of state growth, against the {fmt(kv_left)} KV updates and {fmt(growth_left)} "
+              "of state growth the body and the counts before it leave the transaction: its "
+              + ("KV" if crossed[0] == KV_UPDATE_STOP else "state-growth") + " total crosses the transaction limit, "
+              "so none of the list is applied: no authority's state gas, ACCOUNT_WRITE or record history is charged, no "
+              "authority's account, nonce, delegation or record is kept, and no authority is made warm",
+              "SATIN-AUTH-005", "SATIN-AUTH-007", "SATIN-AUTH-010", "SATIN-AUTH-011", "SATIN-AUTH-012",
+              "SATIN-AUTH-015", "SATIN-STOP-017")
+        return crossed
+
     def apply_authorizations(self, regular: int, reservoir: int):
         """SATIN-SCHED-008 step 2 and the authorities' records of step 3, for a list that fits and whose
         every entry is accepted."""
         tx, env, d = self.tx, self.env, self.d
         done: set = set()
         indicated: set = set()  # the authorities a list entry charged an indicator for (SATIN-AUTH-009)
-        for chain_id, target, nonce, authority in tx.authorizations:
-            self.load(authority, "an authority the list's simulation loads, the whole list walked, whether or not the "
-                      "list is then applied", "SATIN-AUTH-005", "SATIN-WIT-004", "SATIN-WIT-008")
         self.probe.setdefault("list", regular)
         for index, (chain_id, target, nonce, authority) in enumerate(tx.authorizations):
             if chain_id not in (0, env.chain_id) or nonce == MAX_U64:
