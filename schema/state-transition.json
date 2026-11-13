@@ -38,7 +38,7 @@
         "receipt": {"description": "null: no receipt (refused or faulted).", "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/TxReceipt"}]},
         "gasLedgers": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/GasLedgers"}]},
         "resources": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/Resources"}]},
-        "limit": {"description": "null: no limit stopped the transaction. A stop of its own frame: from schema 1.1 on, behind group:limit-stop, with its diagnostics behind group:limit-diagnostics.", "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/LimitStop"}]},
+        "limit": {"description": "null: no limit stopped the transaction. A stop of its own frame: behind group:limit-stop, with its diagnostics behind group:limit-diagnostics.", "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/LimitStop"}]},
         "gasPools": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/GasPools"}]},
         "detention": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/Detention"}]},
         "reads": {"$ref": "common.json#/$defs/Reads"},

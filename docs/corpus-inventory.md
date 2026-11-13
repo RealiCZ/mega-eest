@@ -90,7 +90,7 @@ converts the scenario crate at the evm2-based implementation's pin (`f3d84454`),
 | --- | --- |
 | Converted into a candidate authoring document | 871 |
 | Limit or detention-cap override: parameterized-model lane (D-11) | 1,035 |
-| Cites no active rule of the pinned registry: needs authored rules and assertions | 1,877 |
+| Cites no active rule of the pinned registry: needs authored rules | 1,877 |
 | Earlier transactions of its block: needs a block profile | 44 |
 | Oracle answers without their request order: a transcript needs a recorded run | 22 |
 | Simulation switch (`skip_nonce_check`, `skip_eip3607`) | 7 |
@@ -98,7 +98,7 @@ converts the scenario crate at the evm2-based implementation's pin (`f3d84454`),
 
 `summary.json` lists every excluded scenario by name under its reason. A converted candidate's
 transaction is a synthetic message (the scenario senders have no keys) or a deposit envelope; it
-cites the scenario's own rule ids through one unreviewed assertion over the whole expected result,
-and keeps its name and group as aliases. `mega-fixture fill` completes it with an implementation's
+cites the scenario's own rule ids as its rules, unreviewed until a reviewer names the rules it pins,
+and keeps its name and group as aliases; it sits at `candidates/exported/<caseId>.json`. `mega-fixture fill` completes it with an implementation's
 observations into `candidates/filled/<adapter>/`; none is promoted without review. stateless-validator's
 `test_data/` is still inventoried by reference only; it belongs to the proof profile of phase 3.

@@ -1,4 +1,4 @@
-//! The wire contract of MegaETH execution fixtures (`mega-execution-fixture` 1.x).
+//! The wire contract of MegaETH execution fixtures (`mega-execution-fixture` 2.x).
 //!
 //! This crate decodes and validates fixtures, writes their canonical JSON, computes their digests
 //! and compares an implementation's observations with a fixture's expected result. It depends on

@@ -21,9 +21,10 @@ The conversion follows docs/corpus-inventory.md §1:
   needs their request order for a transcript, and one with an L1 fee needs signed bytes: each is
   excluded with that reason, to be converted when its profile or input exists.
 
-The scenario's own rule ids are kept where the pinned registry has them as active rules, cited
-by one unreviewed assertion over the whole expected result; the name and group stay as aliases.
-A candidate is evidence for review, never an expectation by itself.
+The scenario's own rule ids are kept as the candidate's rules where the pinned registry has them
+as active rules, unreviewed until a reviewer names the rules the case pins (D-76); the name and
+group stay as aliases. Each authoring document is written at `<out-dir>/<caseId>.json`, the slice's
+layout. A candidate is evidence for review, never an expectation by itself.
 
 Usage:
     tools/export_scenarios.py <scenarios.jsonl> <out-dir>
@@ -160,12 +161,11 @@ def convert(s: dict, descriptor: str, active: set[str], commit: str) -> dict:
         notes.append(f"rule ids not active in the pinned registry, kept as aliases only: {dropped}")
     return {
         "format": "mega-execution-fixture",
-        "schemaVersion": "1.0",
+        "schemaVersion": "2.0",
         "caseId": case_id(s),
         "specRef": {"name": "megaeth/Satin", "descriptor": descriptor},
         "profile": "state-transition",
         "rules": rules,
-        "assertions": [{"path": "/expected", "rules": rules}],
         "input": inp,
         "provenance": {
             "status": "candidate",
@@ -173,8 +173,7 @@ def convert(s: dict, descriptor: str, active: set[str], commit: str) -> dict:
             "aliases": [s["name"], s["group"]],
             "originalRules": s["rules"],
             "conversion": notes,
-            "review": "unreviewed: the assertion covers the whole expected result until a reviewer names the "
-                      "distinguishing observation of each rule",
+            "review": "unreviewed: the scenario's own rule ids, until a reviewer names the rules the case pins",
         },
     }
 
@@ -204,7 +203,7 @@ def main(argv: list[str]) -> int:
         reason = exclusion(s)
         cid = case_id(s)
         if reason is None and not [r for r in s["rules"] if r in active]:
-            reason = "cites no active rule of the pinned registry: needs authored rules and assertions"
+            reason = "cites no active rule of the pinned registry: needs authored rules"
         if reason is None and cid in seen:
             reason = f"duplicate case id of {seen[cid]}"
         if reason:
@@ -213,7 +212,8 @@ def main(argv: list[str]) -> int:
             continue
         seen[cid] = s["name"]
         doc = convert(s, descriptor, active, commit)
-        path = os.path.join(out, cid.replace("/", "--") + ".json")
+        path = os.path.join(out, cid + ".json")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, "w", encoding="utf-8") as g:
             g.write(json.dumps(doc, indent=2, sort_keys=True) + "\n")
         converted += 1

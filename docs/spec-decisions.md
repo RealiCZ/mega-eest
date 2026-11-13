@@ -48,7 +48,7 @@ fixtures may assert), or **none**.
 | QF-06 | A spec never changes earlier blocks; contracts keep working | — | expect: historical cases keep their spec |
 | QF-07 | No Satin reference implementation is named | — | scope: two engines agreeing is evidence, never the definition |
 | QF-08 | Each rule has one home; gathering pages link the detail | — | none: one registry entry per id |
-| QF-09 | The rule-id scheme is adopted | — | input: `rules` and `assertions` cite these ids |
+| QF-09 | The rule-id scheme is adopted | — | input: a case's `rules` cite these ids |
 | QG-01 | Every EIP-8037 rule an outcome depends on is restated, the EIP cited for provenance | — | none |
 | QG-02 | Each applied EIP is pinned to a commit | — | none |
 | QG-03 | Current values are written | — | expect: values may change with a new spec digest |

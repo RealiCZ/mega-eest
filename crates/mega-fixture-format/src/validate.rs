@@ -4,7 +4,7 @@
 
 use crate::error::{child, index, Error, ErrorCode};
 use crate::json::Value;
-use crate::model::{Fixture, Profile, RuleRef, LIMIT_DIAGNOSTICS, LIMIT_KINDS};
+use crate::model::{Fixture, Profile, LIMIT_DIAGNOSTICS, LIMIT_KINDS};
 use crate::registry::SpecStore;
 use std::collections::BTreeSet;
 
@@ -90,11 +90,6 @@ pub fn validate(value: &Value, fixture: &Fixture, store: &SpecStore) -> Result<(
     // 2. Sorted sets of the envelope.
     check_sorted(arr(get(value, "requires")), "/requires")?;
     check_sorted(arr(get(value, "rules")), "/rules")?;
-    let paths: Vec<Value> = arr(get(value, "assertions")).iter().map(|a| get(a, "path").clone()).collect();
-    check_sorted(&paths, "/assertions")?;
-    for (i, a) in arr(get(value, "assertions")).iter().enumerate() {
-        check_sorted(arr(get(a, "rules")), &format!("/assertions/{i}/rules"))?;
-    }
 
     // 3. Every cited rule resolves against the case's registry, active at that spec.
     for (i, rule) in fixture.rules.iter().enumerate() {
@@ -110,31 +105,11 @@ pub fn validate(value: &Value, fixture: &Fixture, store: &SpecStore) -> Result<(
         }
     }
 
-    // 4. Assertions are bound and cover exactly the cited rules.
-    let cited: BTreeSet<&RuleRef> = fixture.rules.iter().collect();
-    let mut covered: BTreeSet<&RuleRef> = BTreeSet::new();
-    for (i, a) in fixture.assertions.iter().enumerate() {
-        if value.pointer(&a.path).is_none() {
-            return Err(err(ErrorCode::UnboundAssertion, format!("/assertions/{i}/path"), format!("{} resolves to nothing", a.path)));
-        }
-        for (j, rule) in a.rules.iter().enumerate() {
-            if !cited.contains(rule) {
-                return Err(err(ErrorCode::AssertionRuleNotCited, format!("/assertions/{i}/rules/{j}"), format!("{rule} is not in rules")));
-            }
-            covered.insert(rule);
-        }
-    }
-    for (i, rule) in fixture.rules.iter().enumerate() {
-        if !covered.contains(rule) {
-            return Err(err(ErrorCode::UncoveredRule, index("/rules", i), format!("no assertion distinguishes {rule}")));
-        }
-    }
-
-    // 5. Transaction sources are consistent with their bytes and their type.
+    // 4. Transaction sources are consistent with their bytes and their type.
     check_transactions(fixture.profile, input)?;
 
-    // 6. requires lists exactly the groups carried and the features used.
-    let derived = derive_requirements_at(fixture.profile, input, expected, fixture.schema_minor)?;
+    // 5. requires lists exactly the groups carried and the features used.
+    let derived = derive_requirements(fixture.profile, input, expected)?;
     let listed: BTreeSet<String> = arr(get(value, "requires")).iter().map(|v| str_of(v).to_string()).collect();
     if derived != listed {
         let missing: Vec<_> = derived.difference(&listed).collect();
@@ -142,16 +117,16 @@ pub fn validate(value: &Value, fixture: &Fixture, store: &SpecStore) -> Result<(
         return Err(err(ErrorCode::RequirementMismatch, "/requires", format!("missing {missing:?}, not used {extra:?}")));
     }
 
-    // 7. Outcomes are consistent with the other groups.
+    // 6. Outcomes are consistent with the other groups.
     check_consistency(fixture.profile, input, expected)?;
 
-    // 8. State checks.
+    // 7. State checks.
     check_state(fixture.profile, input, expected)?;
 
-    // 9. Remaining sorted sets.
+    // 8. Remaining sorted sets.
     check_observation_sets(fixture.profile, expected)?;
 
-    // 10. References between input and expected.
+    // 9. References between input and expected.
     check_references(fixture.profile, input, expected)
 }
 
@@ -198,35 +173,18 @@ fn check_synthetic(tx: &Value, path: &str) -> Result<()> {
     Ok(())
 }
 
-/// The requirements a transaction result's `limit` implies. From schema 1.1 on a stop requires
-/// `group:limit-stop`, and one that carries a diagnostic member `group:limit-diagnostics`; a 1.0
-/// stop carries every member and implies neither (docs/format.md, decision D-62).
-fn limit_requirements(stop: &Value, path: &str, schema_minor: u32, out: &mut BTreeSet<String>) -> Result<()> {
-    let Value::Object(members) = stop else { return Ok(()) };
-    if schema_minor == 0 {
-        if let Some(missing) = LIMIT_DIAGNOSTICS.iter().find(|k| !members.contains_key(**k)) {
-            return Err(err(ErrorCode::MissingField, child(path, missing), "a schema 1.0 limit stop carries every member"));
-        }
-        return Ok(());
-    }
+/// The requirements a transaction result's `limit` implies: a stop requires `group:limit-stop`, and
+/// one that carries a diagnostic member `group:limit-diagnostics` (docs/format.md, decision D-62).
+fn limit_requirements(stop: &Value, out: &mut BTreeSet<String>) {
+    let Value::Object(members) = stop else { return };
     out.insert("group:limit-stop".to_string());
     if LIMIT_DIAGNOSTICS.iter().any(|k| members.contains_key(*k)) {
         out.insert("group:limit-diagnostics".to_string());
     }
-    Ok(())
 }
 
-/// The schema minor version this crate writes: 1.1 adds the limit stop's requirements.
-pub(crate) const SCHEMA_MINOR: u32 = 1;
-
-/// The group and feature requirements a case's content implies, at the schema version this crate
-/// writes.
+/// The group and feature requirements a case's content implies.
 pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Value) -> Result<BTreeSet<String>> {
-    derive_requirements_at(profile, input, expected, SCHEMA_MINOR)
-}
-
-/// The group and feature requirements a case's content implies, at schema version 1.`schema_minor`.
-pub(crate) fn derive_requirements_at(profile: Profile, input: &Value, expected: &Value, schema_minor: u32) -> Result<BTreeSet<String>> {
     let mut out = BTreeSet::new();
     let mut limits = BTreeSet::new();
     let mut add = |s: &str| {
@@ -261,7 +219,7 @@ pub(crate) fn derive_requirements_at(profile: Profile, input: &Value, expected: 
                     add(group);
                 }
             }
-            limit_requirements(get(expected, "limit"), "/expected/limit", schema_minor, &mut limits)?;
+            limit_requirements(get(expected, "limit"), &mut limits);
             let tx = get(input, "transaction");
             if str_of(get(tx, "kind")) == "synthetic" {
                 add("feature:synthetic-transaction");
@@ -310,7 +268,7 @@ pub(crate) fn derive_requirements_at(profile: Profile, input: &Value, expected: 
             }
             tx_groups(&txs, &mut out)?;
             for tx in &txs {
-                limit_requirements(get(tx, "limit"), "/expected", schema_minor, &mut limits)?;
+                limit_requirements(get(tx, "limit"), &mut limits);
             }
         }
     }

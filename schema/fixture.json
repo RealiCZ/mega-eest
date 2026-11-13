@@ -1,16 +1,16 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "MegaETH execution fixture 1.x",
-  "description": "One filled case: a concrete input, its spec, the observations a conforming implementation must produce, the rules they cover, and non-normative provenance. Unknown members are errors everywhere except inside provenance. docs/format.md states the meaning of every member; docs/canonical-json.md the encoding.",
+  "title": "MegaETH execution fixture 2.x",
+  "description": "One filled case: a concrete input, its spec, the observations a conforming implementation must produce, the rules the case pins, and non-normative provenance. Unknown members are errors everywhere except inside provenance. docs/format.md states the meaning of every member; docs/canonical-json.md the encoding.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["format", "schemaVersion", "caseId", "specRef", "profile", "requires", "rules", "assertions", "input", "expected", "provenance"],
+  "required": ["format", "schemaVersion", "caseId", "specRef", "profile", "requires", "rules", "input", "expected", "provenance"],
   "properties": {
     "format": {"const": "mega-execution-fixture", "x-error": "unsupported-format"},
     "schemaVersion": {
-      "description": "major.minor; this schema reads major 1. A minor addition is used only behind a feature listed in requires.",
+      "description": "major.minor; this schema reads major 2. A minor addition is used only behind a feature listed in requires.",
       "type": "string",
-      "pattern": "^1\\.(0|[1-9][0-9]*)$",
+      "pattern": "^2\\.(0|[1-9][0-9]*)$",
       "x-error": "unsupported-schema-version"
     },
     "caseId": {"$ref": "common.json#/$defs/CaseId"},
@@ -26,15 +26,10 @@
       "items": {"$ref": "#/$defs/Requirement"}
     },
     "rules": {
-      "description": "The rules the case covers, sorted, no duplicates; exactly the union of the assertions' rules.",
+      "description": "The rules the case pins, sorted, no duplicates (docs/rule-mapping.md). The whole expected result is compared, whatever the rules.",
       "type": "array",
       "minItems": 1,
       "items": {"$ref": "common.json#/$defs/RuleRef"}
-    },
-    "assertions": {
-      "type": "array",
-      "minItems": 1,
-      "items": {"$ref": "#/$defs/Assertion"}
     },
     "input": {"type": "object"},
     "expected": {"type": "object"},
@@ -92,16 +87,6 @@
         "group:witness"
       ],
       "x-error": "unknown-requirement"
-    },
-    "Assertion": {
-      "description": "A JSON Pointer into expected and the rules the value there distinguishes.",
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["path", "rules"],
-      "properties": {
-        "path": {"type": "string", "pattern": "^/expected(/[^/]*)*$", "x-error": "unbound-assertion"},
-        "rules": {"type": "array", "minItems": 1, "items": {"$ref": "common.json#/$defs/RuleRef"}}
-      }
     },
     "Provenance": {
       "description": "Non-normative: not in the semantic digest, bound by the file digest. Open for extension.",

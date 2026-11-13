@@ -297,19 +297,17 @@ def chain():
     return {"chainId": q(CHAIN_ID), "schedule": [{"spec": SATIN, "timestamp": "0x0"}], "rawConfig": None}
 
 
-def envelope(case_id, profile, requires, assertions, inp, expected, provenance_extra=None):
-    rules = sorted({r for a in assertions for r in a["rules"]})
+def envelope(case_id, profile, requires, rules, inp, expected, provenance_extra=None):
     prov = dict(PROVENANCE)
     prov.update(provenance_extra or {})
     return {
         "format": "mega-execution-fixture",
-        "schemaVersion": "1.0",
+        "schemaVersion": "2.0",
         "caseId": case_id,
         "specRef": SATIN,
         "profile": profile,
         "requires": sorted(requires),
-        "rules": rules,
-        "assertions": sorted(assertions, key=lambda a: a["path"]),
+        "rules": sorted(rules),
         "input": inp,
         "expected": expected,
         "provenance": prov,
@@ -330,11 +328,7 @@ def state_transition():
         "satin/state-gas/sstore-fresh-slot/minimum-bucket",
         "state-transition",
         st_requires,
-        [
-            {"path": "/expected/gasLedgers", "rules": ["SATIN-POOL-019", "SATIN-STATE-008"]},
-            {"path": "/expected/state", "rules": ["SATIN-STATE-008"]},
-            {"path": "/expected/reads/buckets", "rules": ["SATIN-WIT-009"]},
-        ],
+        ["SATIN-POOL-019", "SATIN-STATE-008", "SATIN-WIT-009"],
         {
             "chain": {"chainId": q(CHAIN_ID)},
             "block": block_env(2, 1_700_000_002),
@@ -394,11 +388,7 @@ def deposit_case():
         "state-transition",
         ["group:outcome", "group:state", "group:receipts", "group:gas-ledgers", "group:resources", "group:limit",
          "feature:deposit"],
-        [
-            {"path": "/expected/state/accounts/" + hx(depositor), "rules": ["SATIN-DEP-003"]},
-            {"path": "/expected/resources/stateGrowth", "rules": ["SATIN-DEP-003"]},
-            {"path": "/expected/receipt", "rules": ["SATIN-DEP-009"]},
-        ],
+        ["SATIN-DEP-003", "SATIN-DEP-009"],
         {
             "chain": {"chainId": q(CHAIN_ID)},
             "block": block_env(3, 1_700_000_003),
@@ -436,7 +426,7 @@ def validation_case():
         "satin/transaction-validation/gas-limit-below-intrinsic-regular",
         "transaction-validation",
         ["group:validation"],
-        [{"path": "/expected/validation", "rules": ["SATIN-VAL-002", "SATIN-VAL-003"]}],
+        ["SATIN-VAL-002", "SATIN-VAL-003"],
         {"chain": {"chainId": q(CHAIN_ID)}, "block": None, "pre": None, "raw": hx(raw)},
         {"validation": {"status": "rejected", "phase": "validation", "reasons": ["intrinsic-gas-too-low"]}},
         {"input": "A gas limit of 10,000 is below TX_BASE_COST (12,000) alone, so step 2 of SATIN-VAL-003 refuses it whatever else the transaction carries."},
@@ -450,11 +440,7 @@ def invalid_block_case():
         "satin/sequencer-registry/foreign-code/block-invalid",
         "block-import",
         ["group:blocks", "group:state", "group:outcome", "group:receipts", "feature:sparse-state"],
-        [
-            {"path": "/expected/blocks/0", "rules": ["SATIN-REG-004"]},
-            {"path": "/expected/head", "rules": ["SATIN-REG-004"]},
-            {"path": "/expected/state", "rules": ["SATIN-REG-004"]},
-        ],
+        ["SATIN-REG-004"],
         {
             "chain": chain(),
             "anchor": {"header": genesis},
@@ -490,7 +476,7 @@ def witness_case():
         "satin/stateless-witness/parent-anchor/wrong-parent-hash",
         "stateless-block",
         ["group:blocks", "group:state", "group:outcome", "group:receipts", "group:witness"],
-        [{"path": "/expected/witness", "rules": ["SATIN-WIT-010"]}],
+        ["SATIN-WIT-010"],
         {
             "chain": chain(),
             "anchor": {"header": genesis},
@@ -518,10 +504,7 @@ def block_build_case():
         "satin/block-building/policy-data-size/skip-and-continue",
         "block-build",
         ["group:blocks", "group:decisions", "group:state", "group:outcome", "group:receipts"],
-        [
-            {"path": "/expected/decisions", "rules": ["SATIN-BLK-011"]},
-            {"path": "/expected/committed", "rules": ["SATIN-BLK-011"]},
-        ],
+        ["SATIN-BLK-011"],
         {
             "chain": chain(),
             "anchor": {"header": genesis},
@@ -623,17 +606,16 @@ def negatives(base: dict, deposit_base: dict, block_base: dict, build_base: dict
 
     c = copy.deepcopy(base)
     c["rules"] = sorted(c["rules"] + ["SATIN-POOL-999"])
-    c["assertions"][0]["rules"] = sorted(c["assertions"][0]["rules"] + ["SATIN-POOL-999"])
     add("unknown-rule--pool-999.json", c)
 
     c = copy.deepcopy(base)
     c["rules"] = sorted(c["rules"] + ["SATIN-POOL-013"])
-    c["assertions"][0]["rules"] = sorted(c["assertions"][0]["rules"] + ["SATIN-POOL-013"])
     add("retired-rule--pool-013.json", c)
 
+    # Schema 1's per-path rule lists: schema 2 has no `assertions` member (D-76).
     c = copy.deepcopy(base)
-    c["rules"] = sorted(c["rules"] + ["SATIN-POOL-018"])
-    add("uncovered-rule--cited-without-assertion.json", c)
+    c["assertions"] = [{"path": "/expected/gasLedgers", "rules": ["SATIN-POOL-019", "SATIN-STATE-008"]}]
+    add("unknown-field--assertions-member.json", c)
 
     c = copy.deepcopy(base)
     c["input"]["pre"]["accounts"][hx(CONTRACT)]["storage"] = {ZERO32: "0x0"}
@@ -644,15 +626,6 @@ def negatives(base: dict, deposit_base: dict, block_base: dict, build_base: dict
     c["expected"]["outcome"]["execution"] = None
     c["expected"]["outcome"]["commit"] = {"status": "not-committed"}
     add("inconsistent-outcome--refused-with-receipt.json", c)
-
-    c = copy.deepcopy(base)
-    c["expected"]["limit"] = None
-    c["assertions"] = sorted(c["assertions"] + [{"path": "/expected/limit/dimension", "rules": ["SATIN-STATE-008"]}], key=lambda a: a["path"])
-    add("unbound-assertion--path-into-null.json", c)
-
-    c = copy.deepcopy(base)
-    c["assertions"] = list(reversed(c["assertions"]))
-    add("unsorted-set--assertions-out-of-order.json", c)
 
     c = copy.deepcopy(deposit_base)
     c["input"]["transaction"]["kind"] = "signed"
@@ -718,6 +691,14 @@ def main(argv: list[str]) -> int:
     ).items():
         files[os.path.join("examples", "negative", name)] = text
     stale = []
+    for sub in ("examples", os.path.join("examples", "negative")):  # a file the generator no longer writes
+        for name in sorted(os.listdir(os.path.join(ROOT, sub))):
+            rel = os.path.join(sub, name)
+            if name.endswith(".json") and rel not in files:
+                if check:
+                    stale.append(rel)
+                else:
+                    os.remove(os.path.join(ROOT, rel))
     for rel, text in sorted(files.items()):
         path = os.path.join(ROOT, rel)
         if check:

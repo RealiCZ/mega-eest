@@ -97,8 +97,8 @@ def case_rejects() -> dict[str, tuple[bytes, str, str]]:
         position = sorted(base["requires"] + [extra]).index(extra)
         mutate(vid, "unknown-requirement", f"/requires/{position}",
                lambda c, extra=extra: c.__setitem__("requires", sorted(c["requires"] + [extra])))
-    mutate("case-schema-major-2", "unsupported-schema-version", "/schemaVersion",
-           lambda c: c.__setitem__("schemaVersion", "2.0"))
+    mutate("case-schema-major-1", "unsupported-schema-version", "/schemaVersion",
+           lambda c: c.__setitem__("schemaVersion", "1.1"))
     mutate("case-unknown-format", "unsupported-format", "/format",
            lambda c: c.__setitem__("format", "eest-state-test"))
     mutate("case-unknown-field", "unknown-field", "/expected/inspected",
@@ -135,8 +135,8 @@ def case_rejects() -> dict[str, tuple[bytes, str, str]]:
     mutate("case-synthetic-fee-fields-of-another-type", "inconsistent-transaction", "/input/transaction/gasPrice", synthetic)
     mutate("case-deposit-kind-with-signed-bytes", "inconsistent-transaction", "/input/transaction/raw",
            lambda c: c["input"]["transaction"].__setitem__("kind", "deposit"))
-    mutate("case-assertions-duplicate-path", "unsorted-set", "/assertions",
-           lambda c: c["assertions"].insert(1, copy.deepcopy(c["assertions"][0])))
+    mutate("case-assertions-member", "unknown-field", "/assertions",
+           lambda c: c.__setitem__("assertions", [{"path": "/expected/gasLedgers", "rules": c["rules"][:1]}]))
     build = load_example("block-build-policy-skip.json")
     c = copy.deepcopy(build)
     c["input"]["actions"].insert(2, {"op": "commit", "candidate": "0x0"})

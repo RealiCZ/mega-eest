@@ -10,7 +10,7 @@
 //! candidate: a new fixture with `provenance.status` `candidate`, into a directory that is not an
 //! examples or release directory ([`fill`], [`is_forbidden_fill_dir`]).
 
-use crate::compare::{compare, rules_at, Verdict};
+use crate::compare::{compare, Verdict};
 use crate::error::{Error, ErrorCode};
 use crate::json::{self, Value};
 use crate::model::Requirement;
@@ -272,8 +272,8 @@ pub fn input_digest(case: &Case) -> String {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Status {
     Pass,
-    /// The first differing semantic path, both values (`None`: absent) and the rules whose
-    /// assertions cover the path.
+    /// The first differing semantic path, both values (`None`: absent) and the rules the case
+    /// pins.
     Fail {
         path: String,
         expected: Option<Value>,
@@ -429,7 +429,7 @@ pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn A
     report.status = match compare(&case, observations, &caps.requires) {
         Verdict::Pass => Status::Pass,
         Verdict::Fail { path, expected, actual } => {
-            let rules = rules_at(&case, &path).into_iter().map(|r| r.to_string()).collect();
+            let rules = case.fixture.rules.iter().map(|r| r.to_string()).collect();
             Status::Fail { path, expected, actual, rules }
         }
         Verdict::Unsupported { missing } => Status::Unsupported { missing: missing.iter().map(|r| r.as_str().to_string()).collect() },
@@ -451,7 +451,7 @@ pub fn is_forbidden_fill_dir(dir: &Path) -> bool {
 }
 
 /// Fills a candidate: `authoring` is a fixture without `requires` and `expected` (its input,
-/// rules, assertions and authoring provenance); the adapter's `observations` become `expected`,
+/// rules and authoring provenance); the adapter's `observations` become `expected`,
 /// `requires` is derived, and the provenance records the filler and marks the fixture a
 /// candidate. The result is validated before it is returned.
 pub fn fill(authoring: &Value, observations: &Value, filler: &Value, store: &SpecStore) -> Result<Case, Error> {
