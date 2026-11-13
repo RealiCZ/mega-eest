@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-cdded1e], source commit `cdded1e1d131a1d16a2c4b1cd
 (committed `2026-11-12T16:34:44+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **181** (140 gating, 41 quarantined).
-Cited rule IDs: **189**. Uncited rule IDs in that registry: **221**
-(212 active, 9 retired).
+Cases: **236** (193 gating, 43 quarantined).
+Cited rule IDs: **213**. Uncited rule IDs in that registry: **197**
+(188 active, 9 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -89,7 +89,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -230,6 +285,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -251,6 +307,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
@@ -336,6 +406,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
@@ -381,6 +458,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
@@ -450,7 +531,61 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -587,6 +722,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -623,6 +760,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -656,6 +796,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
@@ -677,6 +818,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
@@ -729,6 +878,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/take-backs/set-then-clear] | gating | unqualified | [satin-cdded1e] |
@@ -746,6 +896,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
@@ -757,6 +908,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/take-backs/set-then-clear] | gating | unqualified | [satin-cdded1e] |
@@ -767,6 +919,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
@@ -778,6 +931,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/take-backs/set-then-clear] | gating | unqualified | [satin-cdded1e] |
@@ -790,6 +944,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -836,10 +991,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+
+### SATIN-DEP-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-DEP-003
 
@@ -857,6 +1019,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -883,6 +1046,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -896,6 +1060,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -910,7 +1075,57 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
@@ -918,6 +1133,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-003
 
@@ -927,7 +1148,58 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
@@ -937,6 +1209,45 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
+### SATIN-DET-004
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-006
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-008
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+
 ### SATIN-DET-009
 
 | Case | Status | Citation | Registry |
@@ -945,16 +1256,52 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
+
+### SATIN-DET-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-011
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -968,7 +1315,56 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
@@ -976,6 +1372,60 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-013
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-014
 
@@ -985,12 +1435,167 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
+
+### SATIN-DET-015
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-016
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-018
 
@@ -999,7 +1604,39 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
@@ -1016,6 +1653,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 
@@ -1024,10 +1676,60 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
+
+### SATIN-DET-021
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-022
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-023
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-024
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-DET-026
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-FWD-001
 
@@ -1054,6 +1756,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -1136,6 +1856,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -1218,6 +1956,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -1316,7 +2072,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -1491,7 +2302,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -1666,7 +2532,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -1814,6 +2735,32 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/offset-into-head] | gating | unqualified | [satin-d334ef8] |
@@ -1861,6 +2808,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
@@ -1976,6 +2934,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/records-unpaid/send-hint-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/zero-gas-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/zero-gas-one-short] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/limit-control/value-funded] | gating | unqualified | [satin-d334ef8] |
@@ -2034,6 +2997,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -2093,6 +3074,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -2128,6 +3110,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/zero-gas-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -2202,6 +3187,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/records-unpaid/access-control-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/zero-gas-exact] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/limit-control/value-funded] | gating | unqualified | [satin-d334ef8] |
@@ -2229,6 +3218,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/contract-refused] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -2253,6 +3247,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -2263,6 +3258,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
@@ -2327,7 +3324,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -2485,6 +3537,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/at-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
@@ -2547,6 +3617,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/records-unpaid/access-control-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/zero-gas-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -2591,6 +3662,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -2678,6 +3767,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/contract-refused] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -2763,7 +3853,61 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -2994,7 +4138,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -3130,6 +4329,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -3157,6 +4357,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
@@ -3180,6 +4381,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
@@ -3218,15 +4423,71 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/contract] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/contract-refused] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+
+### SATIN-LIM-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-LOG-001
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/call-order/answered/access-control-one-record] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
@@ -3313,6 +4574,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -3331,6 +4593,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/call-order/answered/access-control-one-record] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
@@ -3382,6 +4648,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/refused-read] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-MAC-002
 
@@ -3389,6 +4656,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/refused-read] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-MAC-003
 
@@ -3410,6 +4678,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/refused-read] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
+
+### SATIN-MST-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-ORCL-002
 
@@ -3516,7 +4790,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -3640,6 +4943,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/records-unpaid/send-hint-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/zero-gas-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/send-hint/at-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
@@ -3672,9 +4978,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/contract] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/contract-refused] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+
+### SATIN-PCMP-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-PCMP-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-POOL-005
 
@@ -3718,7 +5039,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -3893,7 +5269,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -4064,7 +5495,38 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -4195,6 +5657,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -4276,6 +5751,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/contract] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-then-restored-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/signs-turned] | gating | unqualified | [satin-cdded1e] |
@@ -4342,6 +5819,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -4412,6 +5907,32 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/records-unpaid/zero-gas-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-reverts] | gating | unqualified | [satin-d34e626] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/at-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
@@ -4468,6 +5989,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-reverts] | gating | unqualified | [satin-d34e626] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/offset-into-head] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
@@ -4504,6 +6050,54 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/records-unpaid/zero-gas-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-reverts] | gating | unqualified | [satin-d34e626] |
 | [satin/delegated-recipient/cold-delegate-one-short] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -4595,7 +6189,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -4770,7 +6419,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -4944,7 +6648,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -5088,6 +6847,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -5160,7 +6921,37 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/access-control/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -5255,7 +7046,41 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -5358,6 +7183,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
@@ -5450,7 +7286,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -5625,7 +7516,62 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
@@ -5764,6 +7710,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
@@ -5789,6 +7736,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/delegated-recipient/warm-delegate] | gating | unqualified | [satin-5fb2688] |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
@@ -5837,6 +7787,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -5859,6 +7811,23 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/take-backs/destroyed-creation/new-beneficiary] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/nonce-bumped] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-SCHED-012
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-SD-001
 
@@ -6221,6 +8190,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
@@ -6292,6 +8272,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
@@ -6345,6 +8333,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -6392,6 +8384,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
@@ -6438,6 +8438,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
@@ -6461,6 +8462,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/existing-caller/fresh-slot] | quarantined | unqualified | [satin-d34e626] |
+| [satin/detention/cap/spill-before-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole-write-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
@@ -6522,6 +8532,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
@@ -6532,16 +8567,75 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
+### SATIN-STOP-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+
 ### SATIN-STOP-009
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
@@ -6552,6 +8646,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
@@ -6568,12 +8687,47 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-016
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-018
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
@@ -6593,6 +8747,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
@@ -6603,6 +8762,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/basefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/blobbasefee] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/coinbase] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/gaslimit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/second-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/spill-before-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
@@ -6717,6 +8901,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
+| [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/take-backs/set-then-clear] | gating | unqualified | [satin-cdded1e] |
@@ -6937,29 +9122,12 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-BLK-010` | active | [block/block-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/block-limits.md) |
 | `SATIN-BLK-011` | active | [block/block-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/block-limits.md) |
 | `SATIN-BLK-012` | active | [block/block-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/block-limits.md) |
-| `SATIN-DEP-002` | active | [block/deposits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/deposits.md) |
 | `SATIN-DEP-008` | active | [block/deposits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/deposits.md) |
 | `SATIN-DEP-010` | active | [block/deposits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/deposits.md) |
 | `SATIN-DEP-011` | active | [block/deposits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/deposits.md) |
 | `SATIN-DEP-012` | active | [block/deposits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/deposits.md) |
 | `SATIN-DEP-013` | active | [block/deposits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/deposits.md) |
-| `SATIN-DET-002` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-004` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-005` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-006` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-007` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-008` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-010` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-013` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-015` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-016` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-017` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-021` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-022` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-023` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-024` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
 | `SATIN-DET-025` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-DET-026` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
 | `SATIN-DET-027` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-detention.md) |
 | `SATIN-FWD-004` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-forwarding.md) |
 | `SATIN-FWD-005` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-forwarding.md) |
@@ -6991,7 +9159,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-LIM-009` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-014` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-016` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/resource-limits.md) |
-| `SATIN-LIM-017` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-018` | retired | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LOG-007` | active | [evm/transfer-logs.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/transfer-logs.md) |
 | `SATIN-MAC-006` | active | [system-contracts/mega-access-control.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/mega-access-control.md) |
@@ -7009,7 +9176,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-MST-007` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-MST-008` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-MST-009` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-010` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-ORCL-001` | active | [system-contracts/oracle.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/oracle.md) |
 | `SATIN-ORCL-007` | active | [system-contracts/oracle.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/oracle.md) |
 | `SATIN-ORCL-008` | active | [system-contracts/oracle.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/oracle.md) |
@@ -7041,9 +9207,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-PCMP-002` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-PCMP-003` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-PCMP-004` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-005` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-PCMP-006` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-007` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-PCMP-008` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-POOL-001` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-002` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-model.md) |
@@ -7062,7 +9226,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-REG-007` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/sequencer-registry.md) |
 | `SATIN-REG-008` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/sequencer-registry.md) |
 | `SATIN-REG-009` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/sequencer-registry.md) |
-| `SATIN-SCHED-012` | active | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-schedule.md) |
 | `SATIN-SCHED-013` | retired | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-schedule.md) |
 | `SATIN-SCHED-014` | active | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/gas-schedule.md) |
 | `SATIN-SIZE-001` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/contract-limits.md) |
@@ -7079,14 +9242,12 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-STATE-010` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/state-gas.md) |
 | `SATIN-STOP-002` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-003` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-005` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-006` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-007` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-008` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-010` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-013` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-015` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-016` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-017` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-019` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-SYSC-001` | active | [system-contracts/overview.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/overview.md) |
@@ -7148,7 +9309,62 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/detention/balance-static-one-short]: ../slice/cases/satin--detention--balance-static-one-short.json
 [satin/detention/balance-static-out-of-gas]: ../slice/cases/satin--detention--balance-static-out-of-gas.json
 [satin/detention/balance-static-paid]: ../slice/cases/satin--detention--balance-static-paid.json
+[satin/detention/beneficiary/authority]: ../slice/cases/satin--detention--beneficiary--authority.json
+[satin/detention/beneficiary/extcodehash]: ../slice/cases/satin--detention--beneficiary--extcodehash.json
+[satin/detention/beneficiary/extcodesize]: ../slice/cases/satin--detention--beneficiary--extcodesize.json
+[satin/detention/beneficiary/recipient-at-limit]: ../slice/cases/satin--detention--beneficiary--recipient-at-limit.json
+[satin/detention/beneficiary/recipient-one-past-limit]: ../slice/cases/satin--detention--beneficiary--recipient-one-past-limit.json
+[satin/detention/beneficiary/sender]: ../slice/cases/satin--detention--beneficiary--sender.json
+[satin/detention/block-environment/basefee]: ../slice/cases/satin--detention--block-environment--basefee.json
+[satin/detention/block-environment/blobbasefee]: ../slice/cases/satin--detention--block-environment--blobbasefee.json
+[satin/detention/block-environment/coinbase]: ../slice/cases/satin--detention--block-environment--coinbase.json
+[satin/detention/block-environment/gaslimit]: ../slice/cases/satin--detention--block-environment--gaslimit.json
+[satin/detention/block-environment/prevrandao]: ../slice/cases/satin--detention--block-environment--prevrandao.json
+[satin/detention/block-environment/slotnum]: ../slice/cases/satin--detention--block-environment--slotnum.json
+[satin/detention/blockhash/current-block]: ../slice/cases/satin--detention--blockhash--current-block.json
+[satin/detention/blockhash/future-block]: ../slice/cases/satin--detention--blockhash--future-block.json
+[satin/detention/blockhash/in-range]: ../slice/cases/satin--detention--blockhash--in-range.json
 [satin/detention/call-value-crossing]: ../slice/cases/satin--detention--call-value-crossing.json
+[satin/detention/cap/after-larger-spend-at-limit]: ../slice/cases/satin--detention--cap--after-larger-spend-at-limit.json
+[satin/detention/cap/after-larger-spend-one-past-limit]: ../slice/cases/satin--detention--cap--after-larger-spend-one-past-limit.json
+[satin/detention/cap/history-refill-after-read-at-limit]: ../slice/cases/satin--detention--cap--history-refill-after-read-at-limit.json
+[satin/detention/cap/history-refill-after-read-one-past-limit]: ../slice/cases/satin--detention--cap--history-refill-after-read-one-past-limit.json
+[satin/detention/cap/second-read-at-limit]: ../slice/cases/satin--detention--cap--second-read-at-limit.json
+[satin/detention/cap/second-read-one-past-limit]: ../slice/cases/satin--detention--cap--second-read-one-past-limit.json
+[satin/detention/cap/spill-before-read-at-limit]: ../slice/cases/satin--detention--cap--spill-before-read-at-limit.json
+[satin/detention/cap/spill-before-read-one-past-limit]: ../slice/cases/satin--detention--cap--spill-before-read-one-past-limit.json
+[satin/detention/cap/state-refill-after-read-at-limit]: ../slice/cases/satin--detention--cap--state-refill-after-read-at-limit.json
+[satin/detention/cap/state-refill-after-read-one-past-limit]: ../slice/cases/satin--detention--cap--state-refill-after-read-one-past-limit.json
+[satin/detention/cap/timestamp-at-limit]: ../slice/cases/satin--detention--cap--timestamp-at-limit.json
+[satin/detention/cap/timestamp-one-past-limit]: ../slice/cases/satin--detention--cap--timestamp-one-past-limit.json
+[satin/detention/creation/beneficiary-selfbalance]: ../slice/cases/satin--detention--creation--beneficiary-selfbalance.json
+[satin/detention/creation/create-at-beneficiary-access-off]: ../slice/cases/satin--detention--creation--create-at-beneficiary-access-off.json
+[satin/detention/creation/created-at-beneficiary]: ../slice/cases/satin--detention--creation--created-at-beneficiary.json
+[satin/detention/deposit/user-deposit]: ../slice/quarantine/satin--detention--deposit--user-deposit.json
+[satin/detention/history-contract/at-number]: ../slice/cases/satin--detention--history-contract--at-number.json
+[satin/detention/history-contract/input-refused]: ../slice/cases/satin--detention--history-contract--input-refused.json
+[satin/detention/history-contract/short-of-number]: ../slice/cases/satin--detention--history-contract--short-of-number.json
+[satin/detention/not-volatile/blobhash]: ../slice/cases/satin--detention--not-volatile--blobhash.json
+[satin/detention/not-volatile/other-accounts]: ../slice/cases/satin--detention--not-volatile--other-accounts.json
+[satin/detention/precompile/bn254-pairing-over-size-limit]: ../slice/cases/satin--detention--precompile--bn254-pairing-over-size-limit.json
+[satin/detention/precompile/identity/priced-at-allowance]: ../slice/cases/satin--detention--precompile--identity--priced-at-allowance.json
+[satin/detention/precompile/identity/priced-at-forward]: ../slice/cases/satin--detention--precompile--identity--priced-at-forward.json
+[satin/detention/precompile/identity/priced-past-allowance]: ../slice/cases/satin--detention--precompile--identity--priced-past-allowance.json
+[satin/detention/precompile/identity/priced-past-forward]: ../slice/cases/satin--detention--precompile--identity--priced-past-forward.json
+[satin/detention/precompile/identity/value-crossing]: ../slice/cases/satin--detention--precompile--identity--value-crossing.json
+[satin/detention/precompile/identity/value-unfunded]: ../slice/cases/satin--detention--precompile--identity--value-unfunded.json
+[satin/detention/precompile/identity/value-within-allowance]: ../slice/cases/satin--detention--precompile--identity--value-within-allowance.json
+[satin/detention/precompile/modexp/over-bound-at-allowance]: ../slice/cases/satin--detention--precompile--modexp--over-bound-at-allowance.json
+[satin/detention/precompile/modexp/over-bound-past-allowance]: ../slice/quarantine/satin--detention--precompile--modexp--over-bound-past-allowance.json
+[satin/detention/stipend/spun-at-limit]: ../slice/cases/satin--detention--stipend--spun-at-limit.json
+[satin/detention/stipend/spun-one-past-limit]: ../slice/cases/satin--detention--stipend--spun-one-past-limit.json
+[satin/detention/withheld/forward-sees-whole]: ../slice/cases/satin--detention--withheld--forward-sees-whole.json
+[satin/detention/withheld/gas-sees-whole]: ../slice/cases/satin--detention--withheld--gas-sees-whole.json
+[satin/detention/withheld/refund-cap]: ../slice/cases/satin--detention--withheld--refund-cap.json
+[satin/detention/withheld/sstore-check-sees-whole]: ../slice/cases/satin--detention--withheld--sstore-check-sees-whole.json
+[satin/detention/withheld/sstore-check-sees-whole-write-paid]: ../slice/cases/satin--detention--withheld--sstore-check-sees-whole-write-paid.json
+[satin/detention/withheld/state-gas-at-limit]: ../slice/cases/satin--detention--withheld--state-gas-at-limit.json
+[satin/detention/withheld/state-gas-one-past-limit]: ../slice/cases/satin--detention--withheld--state-gas-one-past-limit.json
 [satin/gas-pools/answered-call-history-returns]: ../slice/quarantine/satin--gas-pools--answered-call-history-returns.json
 [satin/gas-pools/fresh-slot-partly-from-regular]: ../slice/cases/satin--gas-pools--fresh-slot-partly-from-regular.json
 [satin/gas-pools/fresh-slot-restored]: ../slice/quarantine/satin--gas-pools--fresh-slot-restored.json

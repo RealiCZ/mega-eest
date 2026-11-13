@@ -39,6 +39,13 @@ specification's text and constants:
   destroyed it, a value sent to it and its removal; a creation onto an address whose leaf the state
   holds with storage, whose slots read zero; a mark a failed frame discards; and the read of a
   destruction's beneficiary that is the block beneficiary, marked last.
+- **The edges of gas detention's rules** (D-67): the volatile reads of the block environment
+  (`NUMBER`, `BLOCKHASH`, `COINBASE`, `PREVRANDAO`, `GASLIMIT`, `BASEFEE`, `BLOBBASEFEE`, `SLOTNUM`), of
+  the beneficiary's account (`SELFBALANCE` of its own frame, `EXTCODESIZE`, `EXTCODEHASH`) and their
+  absence (`BLOBHASH`, a creation onto the beneficiary); a transaction detained from its start; an
+  `SSTORE` in a detained frame; and a call to a precompile decided from its price: the identity
+  precompile, ModExp's EIP-7883 price over and under EIP-7823's bound, and the BN254 pairing over its
+  size limit.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -48,7 +55,7 @@ raises `Unmodelled` rather than guessing.
 
 | Not in the model | Where it is covered instead |
 | --- | --- |
-| A general EVM: arbitrary bytecode, the whole opcode set, precompiles; `CREATE2`, `CALLCODE` and `STATICCALL`; a creation that fails or collides, or lands on an address with a balance; a `SELFDESTRUCT` to itself of an account created in the transaction, or in a creation transaction's own frame; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a limit crossed below the transaction's own frame other than at a start without a frame; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
+| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's run and the prices of ModExp and of an over-size BN254 pairing; `CREATE2`, `CALLCODE` and `STATICCALL`; a creation that fails or collides, or lands on an address with a balance; a `SELFDESTRUCT` to itself of an account created in the transaction, or in a creation transaction's own frame; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a limit crossed below the transaction's own frame other than at a start without a frame; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | An expectation two engines agree on but the model does not derive | Nothing, today. Such a case would be a different kind of expectation, an agreement rather than a derivation from the specification, and would have to be labelled apart from the spec-derived cases (its own provenance status and evidence) if it were ever added |
@@ -69,15 +76,16 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `run.py` | `Run`: the run state, composed of the mixins below |
 | `transaction.py` | Validation's refusals, intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, the out-of-gas path before it |
 | `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; a deposit's run, and a failed deposit |
+| `precompiles.py` | A call to a precompile: the funds check, the price read before it runs, and under gas detention the decision from it (`SATIN-DET-021` to `-024`) |
 | `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, the give-back into the reservoir |
-| `detention.py` | The limit a volatile read sets, and a frame's spendable and withheld parts |
-| `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use, the volatile reads and their refusal, the opcode charges of a call, a `DELEGATECALL`, a creation and a `SELFDESTRUCT` |
+| `detention.py` | The limit a volatile read sets, the caps it is set from, a frame's spendable and withheld parts, and a transaction detained from its start |
+| `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use, the volatile reads and their refusal, the opcode charges of a call, a `DELEGATECALL`, a creation and a `SELFDESTRUCT`; under gas detention's cases, the readers of the whole regular gas |
 | `calls.py` | A call decided in the order of `SATIN-ICPT-007`: interception, the frame start, the records a value start makes and takes back, the child and what it returns |
 | `frames.py` | A child frame's budgets and reservoir share, the snapshot its failure returns to, how it ends (`SATIN-POOL-012`, `-014`), a value start without a frame held to the started frame's budget, and `DELEGATECALL` |
 | `creation.py` | A `CREATE` from a frame, onto an absent address or one whose storage then reads zero; a `SELFDESTRUCT` in the order of `SATIN-SD-019`: the first of an account created in the transaction with the destruction table and its mark, a repeated one, and one of an account the transaction did not create |
 | `interception.py` | The transaction's own `keylessDeploy` call: the decoder's conditions and the deployment's first steps |
 | `authorizations.py` | An EIP-7702 list before the first frame: its simulation's loads, each entry's charges and records, a further entry for one authority |
-| `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, and a creation's deposited code |
+| `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, in a detained frame its static cost apart and its state and history drawn from the withheld part first, and a creation's deposited code |
 | `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it |
 | `limits.py` | A write of the transaction's own frame held to its budget and then the transaction's limit |
 
