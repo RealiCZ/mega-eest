@@ -1979,7 +1979,10 @@ QUARANTINE_RECORDS = {"satin/deposits/existing-caller/fresh-slot": "the fresh sl
 # and a deposit pays history gas (SATIN-HIST-016). Each records what that implementation's difference makes of
 # the derived figure: GAS above the rule's by the give-back the frame's reservoir holds when GAS reads, or a
 # deposit's gas used below the rule's by its whole history. tools/run-slice.sh checks the figure on every run.
+# A record names the revision it was made at (D-53): REVM_PIN, or REVM_REMADE for a record the pin's move to that
+# revision changed, made again there (D-77). run-slice.sh checks every record at the current pin.
 REVM_PIN = "4e39cfd6"
+REVM_REMADE = "7110d87b"
 GIVE_BACKS = {  # case -> (the slot its GAS is stored in, what the reservoir holds when GAS reads)
     "satin/call-order/answered/access-control-two-records": (
         3, "the history of the two records the opcode charged for the start that MegaAccessControl's answer replaced"),
@@ -1998,17 +2001,14 @@ GIVE_BACKS = {  # case -> (the slot its GAS is stored in, what the reservoir hol
 DEPOSIT_HISTORY = {"satin/deposits/existing-caller/one-log": "the log's"}
 
 
-# The detention cases the revm-based implementation fails, for two more decided rules it has not made yet: a
-# refused volatile read charges nothing (SATIN-MAC-004), and the Oracle's SLOAD reads and marks before its one
-# charge (SATIN-ORCL-004). The first difference of each is the regular ledger the block counts. A refusal's figure
-# is derived, the rule's plus the static cost that implementation charges first, or plus the gas the frame held and
-# burns when it cannot pay it. An Oracle read's figure is that implementation's run, recorded: it follows from what
-# it does once the read is skipped or the crossing comes early, which the model does not restate (D-60).
-REFUSALS = {"satin/access-control/refused-read": "static", "satin/access-control/refused-read-under-static-gas": "held"}
-ORACLE_RUNS = {  # case -> the regular ledger the revm-based implementation reports
-    "satin/oracle/read-short-of-warm-base": 0x13180AC,
-    "satin/oracle/read-short-of-cold-access": 0x1318462,
-    "satin/oracle/read-at-crossing": 0x1316789,
+# The Oracle's reads the revm-based implementation fails. At REVM_REMADE its Oracle read is the rule's, the slot read
+# and the read marked before the one charge (SATIN-ORCL-004), and so is the regular ledger the block counts; these
+# cases are deposits (D-60), which it charges no history gas (SATIN-HIST-016), so the first difference of each is the
+# deposit's gas used, short by its body's history, derived (D-77). Each records what follows the rule's read.
+ORACLE_READS = {
+    "satin/oracle/read-short-of-warm-base": "stop",
+    "satin/oracle/read-short-of-cold-access": "stop",
+    "satin/oracle/read-at-crossing": "out-of-gas",
 }
 
 
@@ -2016,11 +2016,13 @@ ORACLE_RUNS = {  # case -> the regular ledger the revm-based implementation repo
 # every transaction's validation, to classify it, where SATIN-REG-002 has the block resolve the live system
 # address once and no transaction read the registry: the registry's account is the first difference of each
 # non-deposit case, derived from the case's pre-state (D-61). Where the case's own edge differs too, the verdict
-# says so. The deposit's first difference is its history, which that implementation does not charge.
+# says so; where it no longer does at REVM_REMADE, the record is made again there and its verdict says the edge is the
+# rule's, naming the rule (READS_REMADE, D-77). The deposit's first difference is its history, which that
+# implementation does not charge.
 READS_QUARANTINE = {
-    "satin/reads/list-simulated-out-of-gas": "; it also skips the simulation of a list too short to cross a limit "
-        "(SATIN-AUTH-005, SATIN-WIT-004), so the list that runs out of gas at its first entry leaves the second "
-        "authority unloaded and out of its reads",
+    "satin/reads/list-simulated-out-of-gas": "; its simulation of the list is the rule's: the list, too short to cross "
+        "a limit, is simulated all the same (SATIN-AUTH-005, SATIN-WIT-004), so the list that runs out of gas at its "
+        "first entry leaves both authorities in its reads",
     "satin/reads/list-simulated-applied": "",
     "satin/reads/delegate-not-loaded": "",
     "satin/reads/delegate-loaded": "",
@@ -2028,6 +2030,7 @@ READS_QUARANTINE = {
     "satin/reads/balance-cold-paid": "",
     "satin/reads/oracle-slot-before-charge": None,
 }
+READS_REMADE = {"satin/reads/list-simulated-out-of-gas", "satin/reads/oracle-slot-before-charge"}
 
 
 # The gas-pools cases the revm-based implementation fails: it credits a give-back to the frame's regular gas,
@@ -2079,45 +2082,25 @@ def forward_cap(remaining: int) -> int:
     return remaining - remaining * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR
 
 
-# The cases of gas detention's rules the revm-based implementation fails (D-68): a user's deposit, which it charges no
-# history gas (SATIN-HIST-016), and a ModExp input over EIP-7823's bound priced between the allowance and the
-# forward, which it runs instead of answering with the crossing (SATIN-DET-023, -024). The first difference of each is
-# derived: the deposit's gas used short by its body's history; the regular ledger above the rule's by the forward the
-# failed call consumes, less the copy of the stop's return data the rule's caller makes.
-DETENTION_QUARANTINE = {"satin/detention/deposit/user-deposit": "deposit",
-                        "satin/detention/precompile/modexp/over-bound-past-allowance": "modexp"}
+# The case of gas detention's rules the revm-based implementation fails (D-68): a user's deposit, which it charges no
+# history gas (SATIN-HIST-016). Its first difference is derived: the deposit's gas used short by its body's history.
+# The ModExp input over EIP-7823's bound priced between the allowance and the forward, which it ran instead of
+# answering with the crossing (SATIN-DET-023, -024), gates since REVM_REMADE (D-77).
+DETENTION_QUARANTINE = {"satin/detention/deposit/user-deposit"}
 
 
 def detention_quarantine(c: Case, fx: dict) -> dict:
     adapter, ledgers = "mega-eest-adapter-revm", fx["expected"]["gasLedgers"]
-    if DETENTION_QUARANTINE[c.case_id] == "deposit":
-        used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
-        body, price = model.TX_BODY_SIZE, model.COST_PER_HISTORY_BYTE
-        if history != body * price:
-            raise SystemExit(f"{c.case_id}: the deposit keeps more history than its body")
-        verdict = ("SATIN-DET-026 and SATIN-MST-010 detain a user's deposit as any transaction, which the revm-based "
-                   f"implementation at {REVM_PIN} does: its callee is stopped at the crossing as the rule has it; but "
-                   "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas for its body, and that implementation "
-                   f"charges a deposit none, so its gas used is the body's {body} x {price} = {fmt(history)} below the rule's")
-        return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
-                "actual": q(used - history), "verdict": verdict}
-    block = int(ledgers["blockGas"], 16)
-    if int(ledgers["regular"], 16) != block:
-        raise SystemExit(f"{c.case_id}: the block's figure is not the regular ledger")
-    remaining = c.probe["forward"]
-    forward = remaining - remaining * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR
-    stop_words = (len(model.limit_exceeded(model.DETENTION_STOP, 0)) + 31) // 32
-    copy = model.COPY_WORD * stop_words
-    verdict = ("SATIN-DET-023 prices a ModExp input by its Osaka formula whatever its lengths, an input over EIP-7823's "
-               "bound included, since SATIN-PCMP-007 charges that price before the bound check, and SATIN-DET-024 makes "
-               "an input priced past the allowance and within the forward that would fail a check after its gas charge "
-               f"the crossing, which moves nothing and returns the forward; the revm-based implementation at {REVM_PIN} "
-               f"runs the call instead, which fails the bound and consumes its forward of {fmt(forward)}, and its caller "
-               "copies empty return data where the rule's copies the stop's "
-               f"{stop_words} words at {model.COPY_WORD} each: its regular ledger, which the block counts, is "
-               f"{fmt(forward)} - {copy} = {fmt(forward - copy)} above the rule's")
-    return {"adapter": adapter, "path": "/expected/gasLedgers/blockGas", "expected": q(block),
-            "actual": q(block + forward - copy), "verdict": verdict}
+    used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
+    body, price = model.TX_BODY_SIZE, model.COST_PER_HISTORY_BYTE
+    if history != body * price:
+        raise SystemExit(f"{c.case_id}: the deposit keeps more history than its body")
+    verdict = ("SATIN-DET-026 and SATIN-MST-010 detain a user's deposit as any transaction, which the revm-based "
+               f"implementation at {REVM_PIN} does: its callee is stopped at the crossing as the rule has it; but "
+               "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas for its body, and that implementation "
+               f"charges a deposit none, so its gas used is the body's {body} x {price} = {fmt(history)} below the rule's")
+    return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
+            "actual": q(used - history), "verdict": verdict}
 
 
 # The limit-stop deposits the revm-based implementation fails: it charges a deposit no history gas (SATIN-HIST-016), so
@@ -2251,58 +2234,44 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
         registry = fx["input"]["pre"]["accounts"][h(REGISTRY)]
         read = {"balance": registry["balance"], "codeHash": h(ex.keccak256(bytes.fromhex(registry["code"][2:]))),
                 "nonce": registry["nonce"]}
+        rev = REVM_REMADE if c.case_id in READS_REMADE else REVM_PIN
         reg = ("SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no "
                "transaction read the registry for its classification, so a transaction's reads hold neither the "
-               f"registry's account nor its slot 0; the revm-based implementation at {REVM_PIN} reads both in every "
+               f"registry's account nor its slot 0; the revm-based implementation at {rev} reads both in every "
                "transaction's validation")
         extra = READS_QUARANTINE[c.case_id]
         if extra is None:
             ledgers = fx["expected"]["gasLedgers"]
             used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
             verdict = ("SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas, and the revm-based implementation "
-                       f"at {REVM_PIN} charges it none, so its gas used is {fmt(history)} below the rule's, the first "
-                       f"difference; its reads differ too: {reg}, and it skips the Oracle read it cannot pay the cold "
-                       "access of (SATIN-ORCL-004), so its reads lack the Oracle's slot")
+                       f"at {rev} charges it none, so its gas used is {fmt(history)} below the rule's, the first "
+                       f"difference; its reads differ too: {reg}; its Oracle read is the rule's: the slot is loaded "
+                       "before the charge (SATIN-ORCL-004), and is in its reads")
             return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
                     "actual": q(used - history), "verdict": verdict}
         verdict = f"{reg}, so its reads hold the registry's account, the first difference{extra}"
         return {"adapter": adapter, "path": f"/expected/reads/accounts/{h(REGISTRY)}", "expected": None, "actual": read,
                 "verdict": verdict}
-    if c.case_id in REFUSALS or c.case_id in ORACLE_RUNS:
-        block = int(fx["expected"]["gasLedgers"]["blockGas"], 16)
-        if int(fx["expected"]["gasLedgers"]["regular"], 16) != block:
-            raise SystemExit(f"{c.case_id}: the block's figure is not the regular ledger")
-        path = "/expected/gasLedgers/blockGas"
-    if c.case_id in REFUSALS:
-        static = model.WARM_READ
-        if REFUSALS[c.case_id] == "static":
-            more = static
-            how = (f"charges BALANCE's static cost, {static}, before it refuses the read at the load, so the frame reverts "
-                   f"on {static} less")
+    if c.case_id in ORACLE_READS:
+        ledgers = fx["expected"]["gasLedgers"]
+        used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
+        body, price = model.TX_BODY_SIZE, model.COST_PER_HISTORY_BYTE
+        if history != body * price:
+            raise SystemExit(f"{c.case_id}: the deposit keeps more history than its body")
+        if ORACLE_READS[c.case_id] == "stop":
+            after = ("the SLOAD loads the slot and marks the read before its cold access, which is then one charge "
+                     "(SATIN-ORCL-004), so the later call's charge past the Oracle's cap is stopped (SATIN-DET-003, "
+                     "SATIN-DET-012)")
         else:
-            more = c.probe["refused"]
-            how = (f"charges BALANCE's static cost, {static}, first, which the {more} of regular gas the frame holds cannot "
-                   "pay: the frame runs out of gas instead of being refused, and burns them")
-        verdict = ("SATIN-MAC-003 and SATIN-MAC-004 refuse a volatile read in a frame whose access is off before the opcode "
-                   "charges anything, the frame reverting on the gas it held at the opcode; the revm-based implementation "
-                   f"at {REVM_PIN} {how}: the regular ledger, which the block counts, is {fmt(more)} above the rule's")
-        return {"adapter": adapter, "path": path, "expected": q(block), "actual": q(block + more), "verdict": verdict}
-    if c.case_id in ORACLE_RUNS:
-        actual = ORACLE_RUNS[c.case_id]
-        if c.case_id.endswith("at-crossing"):
-            how = (f"charges the read's warm base, {model.WARM_READ}, first, which the spendable part cannot pay and the "
-                   "whole regular gas can: the crossing, which stops the Oracle's frame and returns its regular gas to its "
-                   f"caller, where the rule's one charge of {fmt(model.COLD_SLOAD)}, beyond the whole, is an out-of-gas "
-                   "(SATIN-DET-018, SATIN-DET-020) that burns it")
-        else:
-            how = (f"charges the read's warm base, {model.WARM_READ}, first and skips the read when the cold access "
-                   "cannot be paid, marking nothing, so the later call's charge past the Oracle's cap is paid instead of "
-                   "stopped (SATIN-DET-003, SATIN-DET-012)")
-        verdict = ("SATIN-ORCL-004 makes the Oracle's SLOAD load the slot and mark the read before its cold access, which "
-                   f"is then one charge; the revm-based implementation at {REVM_PIN} {how}. Its regular ledger, which the "
-                   f"block counts, is {fmt(abs(actual - block))} {'above' if actual > block else 'below'} the rule's; the "
-                   "deposit's history, which it does not charge either (SATIN-HIST-016), is not in that figure")
-        return {"adapter": adapter, "path": path, "expected": q(block), "actual": q(actual), "verdict": verdict}
+            after = ("the SLOAD marks the read before its cold access, which is then one charge (SATIN-ORCL-004), and "
+                     f"that charge of {fmt(model.COLD_SLOAD)}, beyond the whole regular gas, is an out-of-gas "
+                     "(SATIN-DET-018, SATIN-DET-020)")
+        verdict = ("SATIN-HIST-016 makes a deposit pay history gas as any transaction does, for its body among the rest; "
+                   f"the revm-based implementation at {REVM_REMADE} charges a deposit none, so its gas used is the body's "
+                   f"{body} x {price} = {fmt(history)} below the rule's, the first difference. Its Oracle read is the "
+                   f"rule's: {after}; its regular ledger, which the block counts, is the rule's")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
+                "actual": q(used - history), "verdict": verdict}
     return None
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",

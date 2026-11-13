@@ -195,7 +195,7 @@
       "adapter": "mega-eest-adapter-revm",
       "expected": null,
       "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
-      "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 4e39cfd6 reads both in every transaction's validation, so its reads hold the registry's account, the first difference; it also skips the simulation of a list too short to cross a limit (SATIN-AUTH-005, SATIN-WIT-004), so the list that runs out of gas at its first entry leaves the second authority unloaded and out of its reads"
+      "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference; its simulation of the list is the rule's: the list, too short to cross a limit, is simulated all the same (SATIN-AUTH-005, SATIN-WIT-004), so the list that runs out of gas at its first entry leaves both authorities in its reads"
     },
     "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
     "status": "candidate"

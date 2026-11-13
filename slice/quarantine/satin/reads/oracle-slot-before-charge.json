@@ -191,7 +191,7 @@
       "adapter": "mega-eest-adapter-revm",
       "expected": "0xb20e",
       "path": "/expected/gasLedgers/gasUsed",
-      "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas, and the revm-based implementation at 4e39cfd6 charges it none, so its gas used is 27,280 below the rule's, the first difference; its reads differ too: SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 4e39cfd6 reads both in every transaction's validation, and it skips the Oracle read it cannot pay the cold access of (SATIN-ORCL-004), so its reads lack the Oracle's slot"
+      "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas, and the revm-based implementation at 7110d87b charges it none, so its gas used is 27,280 below the rule's, the first difference; its reads differ too: SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation; its Oracle read is the rule's: the slot is loaded before the charge (SATIN-ORCL-004), and is in its reads"
     },
     "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
     "status": "candidate"

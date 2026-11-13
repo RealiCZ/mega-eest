@@ -161,11 +161,11 @@
     "definition": "tools/make_slice.py::detention_cases",
     "generator": "tools/make_slice.py",
     "quarantine": {
-      "actual": "0x13180ac",
+      "actual": "0x5367",
       "adapter": "mega-eest-adapter-revm",
-      "expected": "0x5367",
-      "path": "/expected/gasLedgers/blockGas",
-      "verdict": "SATIN-ORCL-004 makes the Oracle's SLOAD load the slot and mark the read before its cold access, which is then one charge; the revm-based implementation at 4e39cfd6 charges the read's warm base, 100, first and skips the read when the cold access cannot be paid, marking nothing, so the later call's charge past the Oracle's cap is paid instead of stopped (SATIN-DET-003, SATIN-DET-012). Its regular ledger, which the block counts, is 20,000,069 above the rule's; the deposit's history, which it does not charge either (SATIN-HIST-016), is not in that figure"
+      "expected": "0xbdf7",
+      "path": "/expected/gasLedgers/gasUsed",
+      "verdict": "SATIN-HIST-016 makes a deposit pay history gas as any transaction does, for its body among the rest; the revm-based implementation at 7110d87b charges a deposit none, so its gas used is the body's 310 x 88 = 27,280 below the rule's, the first difference. Its Oracle read is the rule's: the SLOAD loads the slot and marks the read before its cold access, which is then one charge (SATIN-ORCL-004), so the later call's charge past the Oracle's cap is stopped (SATIN-DET-003, SATIN-DET-012); its regular ledger, which the block counts, is the rule's"
     },
     "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
     "status": "candidate"

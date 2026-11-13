@@ -984,3 +984,50 @@ the opcodes' static gas (`SATIN-SCHED-002`, 127), a value call's charge order (`
 data size's counting points and the KV count (`SATIN-ACCT-002`, `-012`, 251 and 241) and the base
 layer (`SATIN-BASE-001`, 17). That is the index's truthful picture, not a loss of coverage: the
 expectations are the same values.
+
+From the move of the revm-based pin to `7110d87b`:
+
+**D-77. The revm-based pin moves to `7110d87b`; three quarantined cases gate, five records are
+made again.** The revm-based pin moved from `4e39cfd6` to `7110d87b`. Its root manifest moves the
+revm fork from `4c8f0d43` to `a125b2c4`, the fork revision that charges ModExp's price before
+EIP-7823's input-size bound, and keeps the op-revm fork (`8c0db939`), the OP monorepo revision
+(`f67d87cd`), the crates.io versions and the toolchain. The adapter's manifest moves its twelve
+revm patches with it, and its lockfile moves those crates, mega-evm and mega-system-contracts,
+nothing else. The revision drops `read_l1_block_info` from the crate's exports and changes the
+block executor and the L1 block contract's report; the adapter uses none of it, as it runs
+`MegaEvm::execute_transaction` over its own database, so it builds unchanged and no adapter change
+was needed. The system contracts' versioned artifacts
+(D-55) and the SALT mapping's source (D-53) are byte-identical at both revisions, so
+`tools/system-contracts.json` and the SALT member keep the revision they were read at, as does the
+corpus inventory, which was read at `4e39cfd6` and is not read again here.
+
+The revision adopts four rules the quarantine is about:
+
+- the Oracle's `SLOAD` reads the slot and marks the read before any of its charge
+  (`SATIN-ORCL-004`);
+- a refused volatile read charges nothing (`SATIN-MAC-003`, `-004`);
+- ModExp is priced before its input-size bound, so an input over EIP-7823's bound priced past the
+  allowance is the crossing (`SATIN-DET-023`, `-024`);
+- every EIP-7702 authorization list is simulated before the first frame, whatever its length
+  (`SATIN-AUTH-005`, `SATIN-WIT-004`).
+
+Every gating case passes on it, plain and instrumented. Of the forty-five quarantined cases:
+
+- three pass on both implementations and gate: the two refused reads (D-60) and the ModExp input
+  over the bound priced one past the allowance (D-68). Their verdicts named only rules their areas'
+  scopes hold or their derivations did not apply, so each pins the rules it pinned. The slice gates
+  220 cases, which pin 156 rules in 19 areas: `access-control` is an area of the gating slice.
+- five still fail, but their first difference moved or their verdict's account of it no longer
+  holds; their records are made again at `7110d87b` and name it. The three Oracle reads' regular
+  ledger is the rule's, and their first difference is the deposit's gas used, short of the rule's
+  by its body's history (`SATIN-HIST-016`), derived as every deposit's is, where D-60 recorded that
+  implementation's run. The list that runs out of gas at its first entry still differs first at
+  the registry's account, but its simulation loads both authorities; the deposit's Oracle slot
+  still differs first at its history, but its reads hold the slot. Each verdict says its edge is
+  the rule's and names the rules it named, so each case pins the rules it pinned.
+- the other thirty-seven fail exactly as recorded, path and both values, and pass on the
+  evm2-based implementation. Their records keep the revision they were made at, `4e39cfd6`, and the
+  first three deposits `5e3f30ad`, as D-53 kept them; `tools/run-slice.sh` checks each at the pin.
+
+No case's `input` or `expected` changes, and no case's pinned rules: the rule-to-case index cites
+the same 193 rules, and only the three cases' group moves in it.

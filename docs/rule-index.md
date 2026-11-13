@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-cdded1e], source commit `cdded1e1d131a1d16a2c4b1cd
 (committed `2026-11-12T16:34:44+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **262** (217 gating, 45 quarantined).
+Cases: **262** (220 gating, 42 quarantined).
 Cited rule IDs: **193**. Uncited rule IDs in that registry: **217**
 (208 active, 9 retired).
 
@@ -293,7 +293,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -360,7 +360,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -435,7 +435,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -462,7 +462,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-012
 
@@ -512,7 +512,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -568,7 +568,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -627,7 +627,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -657,7 +657,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -710,7 +710,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -735,7 +735,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -805,7 +805,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -832,7 +832,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-022
 
@@ -852,14 +852,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-024
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
-| [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-026
 
@@ -1429,36 +1429,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
-| [satin/access-control/refused-read] | quarantined | unqualified | [satin-5fb2688] |
-| [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read] | gating | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
 
 ### SATIN-MAC-002
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
-| [satin/access-control/refused-read] | quarantined | unqualified | [satin-5fb2688] |
-| [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read] | gating | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
 
 ### SATIN-MAC-003
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
-| [satin/access-control/refused-read] | quarantined | unqualified | [satin-5fb2688] |
-| [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read] | gating | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
 
 ### SATIN-MAC-004
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
-| [satin/access-control/refused-read] | quarantined | unqualified | [satin-5fb2688] |
-| [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read] | gating | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
 
 ### SATIN-MAC-005
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
-| [satin/access-control/refused-read] | quarantined | unqualified | [satin-5fb2688] |
-| [satin/access-control/refused-read-under-static-gas] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read] | gating | unqualified | [satin-5fb2688] |
+| [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
 
 ### SATIN-MST-010
 
@@ -3150,8 +3150,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-WIT-016` | active | [block/stateless-witness.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/stateless-witness.md) |
 | `SATIN-WIT-017` | active | [block/stateless-witness.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/block/stateless-witness.md) |
 
-[satin/access-control/refused-read]: ../slice/quarantine/satin/access-control/refused-read.json
-[satin/access-control/refused-read-under-static-gas]: ../slice/quarantine/satin/access-control/refused-read-under-static-gas.json
+[satin/access-control/refused-read]: ../slice/cases/satin/access-control/refused-read.json
+[satin/access-control/refused-read-under-static-gas]: ../slice/cases/satin/access-control/refused-read-under-static-gas.json
 [satin/authorizations/absent-authority]: ../slice/cases/satin/authorizations/absent-authority.json
 [satin/authorizations/empty-leaf-authority]: ../slice/cases/satin/authorizations/empty-leaf-authority.json
 [satin/call-order/answered/access-control-one-record]: ../slice/quarantine/satin/call-order/answered/access-control-one-record.json
@@ -3234,7 +3234,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/detention/precompile/identity/value-unfunded]: ../slice/cases/satin/detention/precompile/identity/value-unfunded.json
 [satin/detention/precompile/identity/value-within-allowance]: ../slice/cases/satin/detention/precompile/identity/value-within-allowance.json
 [satin/detention/precompile/modexp/over-bound-at-allowance]: ../slice/cases/satin/detention/precompile/modexp/over-bound-at-allowance.json
-[satin/detention/precompile/modexp/over-bound-past-allowance]: ../slice/quarantine/satin/detention/precompile/modexp/over-bound-past-allowance.json
+[satin/detention/precompile/modexp/over-bound-past-allowance]: ../slice/cases/satin/detention/precompile/modexp/over-bound-past-allowance.json
 [satin/detention/stipend/spun-at-limit]: ../slice/cases/satin/detention/stipend/spun-at-limit.json
 [satin/detention/stipend/spun-one-past-limit]: ../slice/cases/satin/detention/stipend/spun-one-past-limit.json
 [satin/detention/withheld/forward-sees-whole]: ../slice/cases/satin/detention/withheld/forward-sees-whole.json

@@ -154,13 +154,6 @@
     },
     "definition": "tools/make_slice.py::detention_cases",
     "generator": "tools/make_slice.py",
-    "quarantine": {
-      "actual": "0x46a3",
-      "adapter": "mega-eest-adapter-revm",
-      "expected": "0x4671",
-      "path": "/expected/gasLedgers/blockGas",
-      "verdict": "SATIN-MAC-003 and SATIN-MAC-004 refuse a volatile read in a frame whose access is off before the opcode charges anything, the frame reverting on the gas it held at the opcode; the revm-based implementation at 4e39cfd6 charges BALANCE's static cost, 100, first, which the 50 of regular gas the frame holds cannot pay: the frame runs out of gas instead of being refused, and burns them: the regular ledger, which the block counts, is 50 above the rule's"
-    },
     "specCommit": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
     "status": "candidate"
   },

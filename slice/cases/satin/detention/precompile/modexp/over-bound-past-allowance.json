@@ -131,13 +131,6 @@
     },
     "definition": "tools/make_slice.py::detention_rule_cases",
     "generator": "tools/make_slice.py",
-    "quarantine": {
-      "actual": "0x13fb752",
-      "adapter": "mega-eest-adapter-revm",
-      "expected": "0x130e5af",
-      "path": "/expected/gasLedgers/blockGas",
-      "verdict": "SATIN-DET-023 prices a ModExp input by its Osaka formula whatever its lengths, an input over EIP-7823's bound included, since SATIN-PCMP-007 charges that price before the bound check, and SATIN-DET-024 makes an input priced past the allowance and within the forward that would fail a check after its gas charge the crossing, which moves nothing and returns the forward; the revm-based implementation at 4e39cfd6 runs the call instead, which fails the bound and consumes its forward of 971,180, and its caller copies empty return data where the rule's copies the stop's 3 words at 3 each: its regular ledger, which the block counts, is 971,180 - 9 = 971,171 above the rule's"
-    },
     "specCommit": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
     "status": "candidate"
   },
