@@ -1073,3 +1073,6 @@ expansion, the first fill batch's clarifications, and that refusal's follow-ups.
   `SATIN-STOP-016`, which `c130558` retires: that case stays at `cdded1e`, and to move it, its
   derivation would have to cite `SATIN-DET-022` and `SATIN-STOP-014` instead. `tools/make_slice.py`
   now refuses a case that applies a rule its own snapshot retires.
+- **The corpus inventory.** Section 2 of [the corpus inventory](corpus-inventory.md) is read again
+  at the revm-based pin, `7110d87b`. Its integration tests, replay fixtures and deviation registry are
+  byte-identical to `4e39cfd6`'s, so every count stands.
