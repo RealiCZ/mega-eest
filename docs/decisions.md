@@ -834,3 +834,89 @@ case expresses, or what the text states:
   positive effects, a creation transaction whose own frame destroys the account it creates, a
   `SELFDESTRUCT` to itself of an account created in the transaction, a creation onto an address with
   a balance, and a destruction in a static frame.
+
+**D-73. The limit-stop page's uncited rules are cases.** Twelve rules of the limit-stop page had no
+case (`docs/rule-index.md`). Twenty-six cases at `cdded1e` (`specs/satin-cdded1e`, whose page is
+the same text at the specification's later `be819ae`) now pin eleven of them, in the area
+`limit-stops`, each at the edge where its outcome changes, most in pairs one unit apart, and hold
+what the existing tests of both implementations check of the page under the protocol's limits:
+
+- **A stop below the transaction's own frame** (`SATIN-STOP-005` to `-008`): a child stopped by the
+  transaction's data-size limit after hints used what it had left, its kept log discarded, and its
+  caller's log exactly the room the discard gave back or one byte past it; a child stopped by its
+  state-growth budget, the share of the ten its caller left, and its caller's fresh slots exactly
+  filling its own budget or one past it. The caller returns the child's return data, the stop's
+  bytes, when it succeeds.
+- **The hint exception** (`SATIN-STOP-006`): a frame running on its caller's storage takes the
+  caller's record back, sends a hint into the room that freed, and succeeds, reverts, halts or is
+  itself stopped; a failure puts the record back with the hint still counted, and the caller returns
+  the stop of the transaction's data-size limit before its next instruction.
+- **A start that crosses** (`SATIN-STOP-013`, `-015`): a value call to a contract whose start's
+  records and transfer log land exactly on the data-size limit or one byte past it; a creation with an
+  endowment stopped at its start, whose creator keeps its nonce bump and its record, which lands on
+  the limit or one byte past it and then stops the creator.
+- **Which endings are stops** (`SATIN-STOP-002`, `-003`, `-010`, `-019`): a log one byte past the
+  data-size limit with exactly its regular charge (the stop) and one gas less (a halt, no stop); a
+  value call one gas short of its start record's history (out of gas before the first frame, no stop)
+  and with the gas to run (the compute stop); a deposit holding exactly the charge that crosses gas
+  detention (a stop, settled as a revert) and one gas less (a halt, a failed deposit).
+- **A list that does not fit** (`SATIN-STOP-017`, `SATIN-AUTH-010`): 1,001 entries of absent
+  authorities, one more than the state-growth limit, are skipped and the first frame is stopped
+  before it runs, naming the transaction limit.
+- **What else the tests check of the page**: a contract reverting with `MegaLimitExceeded`'s bytes,
+  of each of the four kinds, and a caller re-raising a stop it caught, both ordinary reverts with no
+  stop reported (`SATIN-STOP-020`, `-021`); a stop above the execution cap, whose reservoir returns
+  (`SATIN-STOP-009`); and a frame three calls deep stopped by its budget of 940, its relays returning
+  the stop's bytes (`SATIN-LIM-003`).
+
+A case that pins the page carries `stops` (`tools/make_slice.py`): its derivation also cites the
+rules that give a stop its kind and say which endings are stops (`SATIN-STOP-002`, `-003`, `-007`,
+`-008`, `-019`). The flag adds citations only; the older cases do not carry it and keep their bytes.
+`SATIN-STOP-016` has no case: D-75.
+
+**D-74. The model learns the stops below the first frame (D-63 and D-65 amended).** The model held
+only the transaction's own frame to the limits. It now also derives:
+
+- a write of a child frame held to its budget, its share of its caller's remaining
+  (`SATIN-LIM-003`, `-004`), and then to the transaction's limit (`SATIN-LIM-011`), the stop a
+  revert its caller catches, whose counts the failure discards (`SATIN-STOP-005`, `-006`);
+- a decided start of a value call to a contract, and of a `CREATE`, held to what it kept before the
+  frame runs (`SATIN-LIM-013`, `SATIN-STOP-013`): the start is reverted, the child's regular gas
+  returns untouched with its reservoir share, and the start's history and the created account's state
+  gas are given back to the caller (`SATIN-HIST-014`, `SATIN-POOL-015`); a creator's nonce record,
+  counted on it once the creation returned and held to its limits (`SATIN-LIM-008`,
+  `SATIN-STOP-015`), the creation's regular gas being the creator's again before the record is held;
+- a hint admitted in a frame that then fails stays counted, and the frame the failure returns into
+  returns the data-size stop when that leaves the transaction over its limit (`SATIN-STOP-006`,
+  `-012`); a first frame that halts after admitted hints keeps them counted (`SATIN-ORCL-009`);
+- a deposit whose own frame is stopped, settled as a revert that keeps the mint, the nonce bump and a
+  created caller with its state gas (`SATIN-STOP-009` to `-011`);
+- an EIP-7702 list whose KV or state-growth total crosses the transaction's limit, skipped from its
+  simulation and the first frame stopped before it runs (`SATIN-AUTH-010` to `-012`).
+
+No opcode is added to the interpreter. Two probes are: the regular gas before the first `LOG` and
+before the first memory expansion, so that a case sits on a charge. A tuned case may be a deposit,
+whose gas limit is its envelope's. The revm-based implementation fails the two deposit cases, both
+for the history gas it does not charge a deposit (`SATIN-HIST-016`): the stopped deposit's gas used is
+below the rule's by its body's history, and the deposit one gas short of the crossing holds that
+history more regular gas, pays the charge and is stopped where the rule's runs out of gas and fails.
+Both are quarantined with that verdict; the evm2-based implementation passes every case.
+
+**D-75. What the limit-stop cases cannot hold.**
+
+- **`SATIN-STOP-016`** asks that a frame answered without running, whose answer gas detention
+  rewrites to the stop, have what its start moved reverted. The answers detention rewrites are a
+  precompile's, decided from its price before the value moves (`SATIN-DET-021`, `-022`), and an
+  interceptor's (`SATIN-DET-025`), which answers before the frame start and moves nothing: neither
+  has moved anything when it is rewritten, so no transaction shows the rule, and the precompiles are
+  outside the model (D-63).
+- **`SATIN-STOP-017`'s first clause** is validation's: a body that, with a record's bytes for each
+  authorization entry, crosses the 13,107,200-byte data-size limit is refused. A case would carry
+  that body in its transaction bytes, over 26 MB of hex. Its second clause has the case of D-73.
+- **KV stops** stay out of reach (half a million records cost more gas than a transaction holds),
+  and a frame's data-size budget is reached only through its own logs and records, whose history
+  costs over a billion gas: the data-size stops below the first frame name the transaction limit,
+  after hints used what it had left (`SATIN-LIM-012`), and the frame budget is named on state
+  growth.
+- **The list that fits**, 1,000 absent authorities applied, is the skipped list's control; it is not
+  cheap (over 200,000,000 of state gas and a thousand accounts in the state diff) and is left out.

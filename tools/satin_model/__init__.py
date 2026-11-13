@@ -45,6 +45,10 @@ narrow class of transactions the slice uses:
   needs it, and the `gasPools` group: the first frame's pools at its start and end;
 - a stop of the transaction's own frame, its result: gas detention's crossing, and an `SSTORE`'s
   record or a log's bytes held to the frame's budget and the transaction's limit;
+- the stops below it (D-74): a child's write held to its budget and the transaction's limit, the
+  stop its caller catches, a value call's or a `CREATE`'s start held to what it kept, the creator's
+  nonce record, a failed frame's hints and the data-size stop of the frame it returns into, a
+  deposit whose own frame is stopped, and an EIP-7702 list that does not fit, skipped;
 - gas detention: `TIMESTAMP`, a deposit's `SLOAD` in the Oracle's frame and `BALANCE` as reads, the
   limit they set, every frame's spendable and withheld parts, each part an opcode deducts as one
   charge, the crossing that stops a child frame and the out-of-gas beyond its whole gas; and

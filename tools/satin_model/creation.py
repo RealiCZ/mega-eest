@@ -8,7 +8,7 @@ from .constants import (
     ACCOUNT_STATE, BLOCK_ENV_ACCESS_COMPUTE_GAS, CODE_STATE_PER_BYTE, COLD_ACCOUNT_ACCESS, COST_PER_HISTORY_BYTE,
     GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR, LEGACY_CREATE_SHARE, LEGACY_SELFDESTRUCT_SHARE, SELFDESTRUCT_COST,
     SELFDESTRUCT_NEW_ACCOUNT_COST, SLOT_STATE, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
-    WRITE_RECORD_SIZE,
+    WRITE_RECORD_SIZE, limit_exceeded,
 )
 from .records import Account, created_address, fmt, h, pad_address, Unmodelled
 
@@ -22,8 +22,10 @@ class CreationMixin:
         """A `CREATE` once its regular charges are made: the created account's state gas before the forward, its
         legacy share first (SATIN-HIST-011, SATIN-STATE-012), the forward, the history of the start's records
         after it (SATIN-HIST-009), the creation's reservoir share (SATIN-POOL-011), the start, the init code and
-        the deposit, and the creator's nonce record once the creation returned (SATIN-LIM-008). Returns (the
-        created address, the regular gas the creation returns)."""
+        the deposit, and the creator's nonce record once the creation returned (SATIN-LIM-008); a start that
+        crosses a limit stops the creation before it runs (SATIN-STOP-013, -015). Returns (the created address, zero
+        when the creation was stopped, the regular gas left to credit, none, the creation's having been credited to
+        the creator before its nonce record is held, and the return data the creation leaves)."""
         d, tx = self.d, self.tx
         creator_acct = self.state.setdefault(creator, Account())
         target = created_address(creator, creator_acct.nonce)
@@ -103,18 +105,64 @@ class CreationMixin:
               f"nonce 1, is one write record ({WRITE_RECORD_SIZE} bytes) and one unit of state growth on the creation"
               + (f", and the endowment of {value} wei moves with its transfer log ({TRANSFER_LOG_SIZE} bytes)" if value else ""),
               "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-ACCT-014", "SATIN-LOG-001", "SATIN-LOG-006")
+        child["name"] = name
+        crossing = self.start_crossing(child)
+        if crossing:
+            kind, crossed, which, rises = crossing
+            d.add("outcome", f"{name}'s start is held to what it kept once decided: the created account's record and its "
+                  "unit of state growth" + (" and the endowment's transfer log" if value else "") + f", {fmt(rises[0])} "
+                  f"bytes of data size, {rises[1]} KV update and {rises[2]} of state growth on the creation, first to its "
+                  f"budget, its share of the creator's remaining, and then to the transaction's limit: it crosses {which}, "
+                  f"so the creation is stopped with MegaLimitExceeded({kind}, {fmt(crossed)}) before its init code runs an "
+                  "instruction, and what its start moved is reverted with it: the created account"
+                  + (" and the endowment with its transfer log" if value else "") + "; the creator's nonce bump is not the "
+                  "start's and stays", "SATIN-LIM-010", "SATIN-LIM-011", "SATIN-LIM-013", "SATIN-STOP-013",
+                  "SATIN-STOP-015", "SATIN-STOP-018", *self.kind_rules())
+            self.frame_restore(snap)
+            self.caught(frame)
+            self.state.setdefault(creator, Account()).nonce += 1
+            frame["reservoir"] += share
+            self.give_back(frame, RECORD_HISTORY + state)
+            self.history_gas -= RECORD_HISTORY
+            self.history_bytes -= WRITE_RECORD_SIZE
+            self.state_gas -= state
+            d.add("gasLedgers", f"the stopped creation ran nothing: its {fmt(forward)} of regular gas returns to the creator "
+                  f"untouched, with its reservoir share, and the creator is given back the created account's {fmt(state)} of "
+                  f"state gas, its legacy share included, and its record's {fmt(RECORD_HISTORY)} of history, into its "
+                  "reservoir" + ("; the history of the creator's own nonce record stays charged" if creator in records
+                                 else ""), "SATIN-POOL-012", "SATIN-POOL-015", "SATIN-HIST-014", "SATIN-HIST-012",
+                  "SATIN-STOP-005")
+            # The creation has returned: its regular gas is the creator's before the nonce record is held (SATIN-LIM-008).
+            frame["regular"] += forward
+            self.regular_charges -= forward
+            self.creator_record(frame, creator, records, stopped=True)
+            return bytes(20), 0, limit_exceeded(kind, crossed)
         status, out = self.run_child(child, init, {"address": target, "caller": creator, "value": value,
                                                    "calldata": b"", "name": name}, name, create=True)
         if status != "success":
             raise Unmodelled("a creation that fails")
         d.add("gasLedgers", f"{name} returns {fmt(child['regular'])} of regular gas to its creator", "SATIN-POOL-012")
         left = self.end_child(frame, child, status, snap, name)
-        if creator in records:
-            self.kv.add(("a", creator))
-            self.data_size += WRITE_RECORD_SIZE
-            d.add("resources", f"the creator's nonce record ({WRITE_RECORD_SIZE} bytes, one KV update), counted on the "
-                  "creator once the creation returned", "SATIN-LIM-008", "SATIN-ACCT-004")
-        return target, left
+        frame["regular"] += left
+        self.regular_charges -= left
+        self.creator_record(frame, creator, records)
+        return target, 0, b""
+
+    def creator_record(self, frame, creator: bytes, records: list, stopped: bool = False) -> None:
+        """SATIN-LIM-008: the creator's nonce record, counted on the creator once the creation returned with the nonce
+        bumped, held to the creator's limits before the creator runs on."""
+        if creator not in records:
+            return
+        self.hold_to_limits(WRITE_RECORD_SIZE, 1, 0, "the creator's nonce record", frame)
+        self.kv.add(("a", creator))
+        self.data_size += WRITE_RECORD_SIZE
+        if stopped:
+            self.d.add("resources", f"the creator's nonce record ({WRITE_RECORD_SIZE} bytes, one KV update) survives the "
+                       "stopped creation and is counted on the creator once the creation returned, held to the creator's "
+                       "limits, which it fits", "SATIN-LIM-008", "SATIN-STOP-015", "SATIN-ACCT-004")
+        else:
+            self.d.add("resources", f"the creator's nonce record ({WRITE_RECORD_SIZE} bytes, one KV update), counted on the "
+                       "creator once the creation returned", "SATIN-LIM-008", "SATIN-ACCT-004")
 
     def storage_reads_zero(self, target: bytes, acct: Account) -> None:
         """A creation onto an address whose leaf the state holds with storage (SATIN-SD-016): a slot the
@@ -299,7 +347,7 @@ class CreationMixin:
             cleared = [] if ("a", address) in self.kv else [address]
         records_made = cleared + made
         self.hold_to_limits(WRITE_RECORD_SIZE * len(records_made) + TRANSFER_LOG_SIZE, len(records_made), int(new_ben),
-                            f"the SELFDESTRUCT of {h(address)}")
+                            f"the SELFDESTRUCT of {h(address)}", frame)
         acct.balance = 0
         self.state.setdefault(beneficiary, Account()).balance += balance
         for a in records_made:

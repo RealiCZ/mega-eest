@@ -181,6 +181,12 @@ class TransactionMixin:
             sender_acct.nonce += 1
 
         if tx.authorizations:
+            for chain_id, target, nonce, authority in tx.authorizations:
+                self.load(authority, "an authority the list's simulation loads, the whole list walked, whether or not the "
+                          "list is then applied", "SATIN-AUTH-005", "SATIN-WIT-004", "SATIN-WIT-008")
+            skipped = self.list_crossing()
+            if skipped:
+                return self.list_skipped(skipped, intrinsic, floor, price)
             try:
                 regular, reservoir = self.apply_authorizations(regular, reservoir)
             except OutOfGasBeforeFrame as e:
@@ -360,13 +366,14 @@ class TransactionMixin:
             self.stop = (DETENTION_STOP, e.limit)
             d.add("outcome", f"the transaction's own frame reaches gas detention's crossing at {e}: the charge is not made, "
                   f"and the frame is stopped with MegaLimitExceeded({DETENTION_STOP}, {fmt(e.limit)}), the transaction's "
-                  "result", "SATIN-DET-018", "SATIN-STOP-001", "SATIN-STOP-004", "SATIN-STOP-021")
+                  "result", "SATIN-DET-018", "SATIN-STOP-001", "SATIN-STOP-004", "SATIN-STOP-021", *self.kind_rules())
         except LimitStop as e:
             status, output = "revert", limit_exceeded(e.kind, e.limit)
             self.stop = (e.kind, e.limit)
-            d.add("outcome", f"the transaction's own frame crosses a limit at {e}: the write is not kept, and the frame is "
+            d.add("outcome", f"the transaction's own frame crosses a limit at {e}: "
+                  + ("" if getattr(e, "resumed", False) else "the write is not kept, and ") + "the frame is "
                   f"stopped with MegaLimitExceeded({e.kind}, {fmt(e.limit)}), the transaction's result",
-                  "SATIN-STOP-001", "SATIN-STOP-004", "SATIN-STOP-018", "SATIN-STOP-021")
+                  "SATIN-STOP-001", "SATIN-STOP-004", "SATIN-STOP-018", "SATIN-STOP-021", *self.kind_rules())
 
         if status == "success" and create:
             self.deposit_code(output, frame, recipient)
@@ -376,10 +383,16 @@ class TransactionMixin:
             # is consumed; its records, logs, state and storage are taken back. The start's record
             # and the created account's state gas: the part the reservoir paid returns (POOL-015,
             # HIST-005); here no reservoir paid them unless the case has one.
-            if self.hint_bytes:
-                raise Unmodelled("a halt after an admitted hint")
             self.restore(snapshot)
             self.destroyed = set()  # the first frame's failure discards every mark (SATIN-SD-010)
+            if self.hint_bytes:
+                # An admitted hint is the transaction's, on no frame: it stays counted through a halt (SATIN-ORCL-009).
+                self.data_size += self.hint_bytes
+                d.add("resources", f"the admitted hints' {fmt(self.hint_bytes)} bytes stay counted as data size through the "
+                      "halt", "SATIN-ORCL-009", "SATIN-STOP-012")
+            if self.stops:
+                d.add("limit", "the frame halts: a halt is not a limit stop, so the transaction reports no stop",
+                      "SATIN-STOP-002", "SATIN-OUT-007")
             spent_regular = tx.gas_limit - frame["reservoir_at_start"] - (pre_frame_history + pre_frame_state if reservoir else 0)
             if sum(drawn):
                 raise Unmodelled("a halt after the reservoir paid a charge for the first frame's start")
@@ -408,15 +421,21 @@ class TransactionMixin:
             self.refund = 0
             execution = {"status": "halt", "output": "0x", "createdAddress": None}
         elif status == "revert":
+            if self.stops and self.stop is None:
+                d.add("limit", "the frame reverts with data of its own making: what a contract returns, the bytes of "
+                      "MegaLimitExceeded or a stop it caught among them, is an ordinary revert and no limit stop, so the "
+                      "transaction reports none", "SATIN-STOP-020", "SATIN-STOP-021")
             self.restore(snapshot)
             self.destroyed = set()  # the first frame's failure discards every mark (SATIN-SD-010)
             if self.hint_bytes:
                 # An admitted hint is the transaction's, on no frame: it stays counted (SATIN-STOP-012, ORCL-009).
-                if self.stop is None:
-                    raise Unmodelled("a revert after an admitted hint")
                 self.data_size += self.hint_bytes
-                d.add("resources", f"the admitted hints' {fmt(self.hint_bytes)} bytes stay counted as data size through the "
-                      "stop", "SATIN-STOP-012", "SATIN-ORCL-009")
+                if self.stop is None:
+                    d.add("resources", f"the admitted hints' {fmt(self.hint_bytes)} bytes stay counted as data size through "
+                          "the revert", "SATIN-ORCL-009", "SATIN-STOP-012")
+                else:
+                    d.add("resources", f"the admitted hints' {fmt(self.hint_bytes)} bytes stay counted as data size through "
+                          "the stop", "SATIN-STOP-012", "SATIN-ORCL-009")
             self.undo_start(moved, create, recipient, new_account, pre_frame_history, pre_frame_state)
             if keyless and start_record:
                 self.history_gas -= pre_frame_history
@@ -433,14 +452,50 @@ class TransactionMixin:
                       f"{fmt(self.stop[1])}, return data MegaLimitExceeded({self.stop[0]}, {fmt(self.stop[1])}); the "
                       "transaction settles as a revert, keeping what was applied before its first frame",
                       "SATIN-STOP-009", "SATIN-STOP-011", "SATIN-STOP-018", "SATIN-STOP-021")
+                if self.stops:
+                    d.add("limit", "the transaction passed validation and paid every charge made before its first frame, so "
+                          "the stop applies to it", "SATIN-STOP-003")
             self.refund = 0
             execution = {"status": "revert", "output": h(output), "createdAddress": None}
         else:
             total = intrinsic + self.pre_frame_regular + self.regular_charges + self.history_gas + self.state_gas
+            if self.stops and self.caught_stop:
+                d.add("outcome", "every stop below the transaction's own frame was caught, and the callers ran on as after "
+                      "any failed call: the transaction succeeds, keeping what its frames did and nothing of a frame that "
+                      "was stopped", "SATIN-STOP-008")
             # A creation's output is what its initcode returned: the code it deposited.
             execution = {"status": "success", "output": h(output), "createdAddress": h(recipient) if create else None}
 
         return self.settle(total, floor, price, status, execution, create, recipient)
+
+    def list_skipped(self, crossed, intrinsic: int, floor: int, price: int) -> Result:
+        """SATIN-AUTH-010: a list whose KV or state-growth total crosses the transaction's limit is skipped and the
+        transaction's own frame is stopped before it runs, naming the transaction limit, no frame budget existing yet;
+        the transaction settles as a stop of its own frame (SATIN-STOP-009), keeping its body (SATIN-AUTH-011)."""
+        tx, d = self.tx, self.d
+        if tx.value or tx.to is None or delegate_of(self.state.get(tx.to, Account()).code) is not None:
+            raise Unmodelled("a skipped list on a transaction whose first frame starts with a charge")
+        kind, value = crossed
+        self.stop = (kind, value)
+        d.add("outcome", f"the transaction's own frame is stopped before it runs, with MegaLimitExceeded({kind}, "
+              f"{fmt(value)}), the transaction's result: the list's total crosses before the first frame, where no frame "
+              "budget exists yet, so the stop names the transaction limit; state growth, like KV updates, can cross "
+              "before the first frame only on the authorization list, which is skipped", "SATIN-AUTH-010",
+              "SATIN-STOP-001", "SATIN-STOP-017", "SATIN-STOP-018", "SATIN-STOP-021", *self.kind_rules())
+        total = intrinsic + self.history_gas
+        d.add("gasLedgers", f"the skipped list charges nothing but what validation charged: the intrinsic gas, every entry's "
+              f"PER_AUTH_BASE_COST among it, and the body's history, its entries' bytes among them; the frame runs "
+              f"nothing; total = {fmt(intrinsic)} + {fmt(self.history_gas)} = {fmt(total)}, the rest returning to the "
+              "sender", "SATIN-AUTH-007", "SATIN-AUTH-011", "SATIN-STOP-009", "SATIN-POOL-017")
+        d.add("resources", "the skipped list keeps nothing: the body's data size alone, no write record, no state growth",
+              "SATIN-AUTH-011", "SATIN-STOP-011")
+        d.add("limit", f"the stop of the transaction's own frame is its result: {STOP_DIMENSIONS[kind]}, limit "
+              f"{fmt(value)}, return data MegaLimitExceeded({kind}, {fmt(value)}); the transaction settles as a revert, "
+              "keeping what was applied before its first frame, of which the skipped list is no part",
+              "SATIN-STOP-009", "SATIN-STOP-011", "SATIN-STOP-018", "SATIN-STOP-021")
+        self.refund = 0
+        return self.settle(total, floor, price, "revert", {"status": "revert", "output": h(limit_exceeded(kind, value)),
+                                                           "createdAddress": None}, False, tx.to)
 
     def out_of_gas_before_frame(self, intrinsic: int, floor: int, price: int, reservoir: int, what: str) -> Result:
         """SATIN-SCHED-009 and SATIN-SCHED-010: a transaction that cannot pay a charge before its first frame
@@ -449,6 +504,10 @@ class TransactionMixin:
         tx, d = self.tx, self.d
         d.add("outcome", f"the transaction cannot pay {what}: it runs out of gas before its first frame and runs no frame",
               "SATIN-SCHED-009")
+        if self.stops:
+            d.add("limit", "a transaction that cannot pay a charge made before its first frame reports no stop, whatever "
+                  "its frame would have crossed: the stop applies only to a transaction that passes validation and pays "
+                  "every charge before its first frame", "SATIN-STOP-003", "SATIN-OUT-006")
         total = tx.gas_limit - reservoir
         d.add("gasLedgers", "out of gas before the first frame: the intrinsic gas and the body's history stay charged, the "
               f"rest of the regular budget is consumed, and the reservoir left, {fmt(reservoir)}, returns to the sender; "

@@ -25,7 +25,8 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
     """One transaction against a complete pre-state."""
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
-                 reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False):
+                 reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
+                 stops: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
         # The cases of the destruction page's own rules (decision D-70) cite them where their steps apply them:
         # the first effective destruction and its mark, a destruction without the table, the marked account and
@@ -34,6 +35,10 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # The cases of gas detention's rules at `cdded1e` (decision D-67): their derivations cite the rules of the
         # readers that see the withheld part, the stipend, the settlement and the caps where the run reaches them.
         self.detention = detention
+        # A case that pins the limit-stop page (decision D-73): the derivation also cites the rules that give a
+        # stop its kind and say which endings are stops (SATIN-STOP-002, -003, -019).
+        self.stops = stops
+        self.caught_stop = False  # a frame below the transaction's own was stopped and its caller ran on
         # The `gasPools` group (decision D-64): the first frame's pools at its start and end, and the
         # regular gas it and its children paid for state and history charges.
         self.pools = pools
@@ -57,7 +62,8 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # regular gas a frame holds at a refused read, "oracle-sload" the regular gas at the first Oracle read;
         # "child-room" and "oracle-sload-room" what the limit leaves the transaction's compute at the first
         # detained child's start and at a detained Oracle read; "list" the regular gas when an authorization
-        # list starts to be applied, "balance" the regular gas at the first BALANCE.
+        # list starts to be applied, "balance" the regular gas at the first BALANCE; "log" and "expand" the regular
+        # gas before the first LOG's charge and before the first memory expansion's.
         self.probe: dict[str, int] = {}
         # Gas detention (SATIN-DET-009, -012): the transaction's compute, every regular charge its frames
         # make, and the limit the most restrictive volatile read set, None before any read.

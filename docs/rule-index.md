@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-cdded1e], source commit `cdded1e1d131a1d16a2c4b1cd
 (committed `2026-11-12T16:34:44+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **236** (193 gating, 43 quarantined).
-Cited rule IDs: **213**. Uncited rule IDs in that registry: **197**
-(188 active, 9 retired).
+Cases: **262** (217 gating, 45 quarantined).
+Cited rule IDs: **228**. Uncited rule IDs in that registry: **182**
+(173 active, 9 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -30,8 +30,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-one-word] | gating | unqualified | [satin-d34e626] |
@@ -173,10 +186,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -332,6 +371,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -415,6 +464,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
@@ -463,6 +517,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored] | gating | unqualified | [satin-d34e626] |
@@ -489,6 +547,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/log-reverted/allowance] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-ACCT-012
@@ -614,10 +673,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -763,6 +846,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -837,6 +924,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -870,6 +960,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-deposit] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-AUTH-004
@@ -887,8 +978,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
+
+### SATIN-AUTH-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-AUTH-008
 
@@ -913,6 +1011,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/take-backs/set-then-clear] | gating | unqualified | [satin-cdded1e] |
 
+### SATIN-AUTH-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-AUTH-011
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-AUTH-012
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+
 ### SATIN-AUTH-015
 
 | Case | Status | Citation | Registry |
@@ -920,6 +1036,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
@@ -1009,6 +1126,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-deposit] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-DEP-004
@@ -1020,6 +1139,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
 | [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1030,12 +1151,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-deposit] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-DEP-006
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-deposit] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-DEP-007
@@ -1047,6 +1170,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
 | [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1061,6 +1185,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
 | [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1128,6 +1254,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1202,6 +1332,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1367,6 +1501,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1487,6 +1625,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1639,6 +1781,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1784,8 +1929,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1884,8 +2045,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -1984,8 +2161,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -2156,10 +2349,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -2386,10 +2605,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -2616,10 +2861,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -2767,9 +3038,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -2830,7 +3116,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -2891,6 +3187,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/call-order/records-unpaid/send-hint-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
@@ -2943,6 +3244,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/limit-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -3025,8 +3330,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -3075,6 +3396,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -3121,6 +3444,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/limit-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
@@ -3195,6 +3531,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/access-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/limit-control/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/log-reverted/allowance] | quarantined | unqualified | [satin-cdded1e] |
@@ -3231,6 +3571,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/not-created/changed-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/log-reverted/allowance] | quarantined | unqualified | [satin-cdded1e] |
@@ -3248,6 +3590,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
 | [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -3261,6 +3604,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
@@ -3408,10 +3753,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -3558,8 +3929,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/at-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -3690,8 +4077,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -3782,8 +4185,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-into-head] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/keyless-start-record-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/pre-frame/keyless-start-record-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/take-backs/sent-back/signs-turned] | gating | unqualified | [satin-cdded1e] |
@@ -3936,10 +4352,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -4039,18 +4479,25 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 
 ### SATIN-LIM-003
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-LIM-004
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -4058,12 +4505,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-LIM-006
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
@@ -4222,10 +4685,35 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -4330,6 +4818,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -4358,7 +4847,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -4366,7 +4866,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 
@@ -4374,7 +4887,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-LIM-013
 
@@ -4386,6 +4905,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
@@ -4489,6 +5012,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/answered/access-control-one-record] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
@@ -4536,7 +5062,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/answered/access-control-one-record] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/deposits/existing-caller/one-log] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-one-word] | gating | unqualified | [satin-d34e626] |
@@ -4599,6 +5129,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
@@ -4732,8 +5267,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-ORCL-009
 
@@ -4746,8 +5294,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-ORCL-010
 
@@ -4758,8 +5319,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/at-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-OUT-001
 
@@ -4848,7 +5422,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-one-word] | gating | unqualified | [satin-d34e626] |
@@ -4934,6 +5520,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/value-transfer/existing-eoa] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/with-fees] | gating | unqualified | [satin-d34e626] |
 
+### SATIN-OUT-006
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+
 ### SATIN-OUT-007
 
 | Case | Status | Citation | Registry |
@@ -4949,8 +5541,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/at-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -5123,10 +5728,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -5353,10 +5984,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -5551,7 +6208,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/intrinsic/calldata/non-zero-bytes] | gating | unqualified | [satin-d34e626] |
 | [satin/intrinsic/calldata/zero-bytes] | gating | unqualified | [satin-d34e626] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-one-word] | gating | unqualified | [satin-d34e626] |
@@ -5683,6 +6353,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -5785,6 +6462,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
@@ -5847,8 +6528,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -5942,10 +6639,33 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
@@ -6019,9 +6739,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-log] | gating | unqualified | [satin-d34e626] |
@@ -6110,9 +6845,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/halt/invalid-opcode] | gating | unqualified | [satin-d34e626] |
@@ -6273,10 +7026,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -6503,10 +7282,35 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -6732,10 +7536,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -6962,8 +7792,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
@@ -7095,8 +7941,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-at-crossing] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
@@ -7204,6 +8066,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -7370,10 +8239,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -7600,10 +8495,36 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
@@ -7711,6 +8632,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
@@ -7741,6 +8663,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/pre-frame/keyless-start-record-exact] | gating | unqualified | [satin-5fb2688] |
@@ -7767,6 +8693,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/delegated-recipient/cold-delegate-one-short] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
 | [satin/reads/delegate-not-loaded] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 
@@ -7775,6 +8702,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/delegated-recipient/cold-delegate-one-short] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
 | [satin/reads/delegate-not-loaded] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | quarantined | unqualified | [satin-5fb2688] |
 
@@ -8212,6 +9140,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -8291,6 +9224,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -8337,6 +9273,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -8403,6 +9341,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -8482,6 +9423,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -8557,11 +9503,66 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-003
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-004
 
@@ -8592,9 +9593,23 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
@@ -8606,6 +9621,48 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-006
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-008
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-009
 
@@ -8636,11 +9693,29 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-011
 
@@ -8671,9 +9746,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
@@ -8681,7 +9767,23 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-013
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-014
 
@@ -8693,11 +9795,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
 
+### SATIN-STOP-015
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+
 ### SATIN-STOP-016
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-018
 
@@ -8728,12 +9843,51 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/answer-stopped] | quarantined | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-019
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-020
 
@@ -8755,6 +9909,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 
@@ -8787,9 +9946,25 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/state-gas-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/authorization-list/one-authority-over] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/compute-at-one-charge] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/compute-at-static-cost] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/deposit/stopped] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/revert-with-stop-bytes/kind-3] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 
@@ -8797,6 +9972,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
@@ -8806,6 +9985,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
@@ -8815,6 +9998,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
@@ -8857,6 +10050,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/kept] | quarantined | unqualified | [satin-cdded1e] |
@@ -8910,6 +10107,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | quarantined | unqualified | [satin-cdded1e] |
@@ -8926,6 +10126,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
@@ -8941,6 +10151,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-deposit] | quarantined | unqualified | [satin-cdded1e] |
 
 ### SATIN-VAL-002
@@ -9095,10 +10306,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-AUTH-002` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
 | `SATIN-AUTH-003` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
 | `SATIN-AUTH-006` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-007` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-010` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-011` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
-| `SATIN-AUTH-012` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
 | `SATIN-AUTH-013` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
 | `SATIN-AUTH-014` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
 | `SATIN-AUTH-017` | active | [evm/authorizations.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/authorizations.md) |
@@ -9186,7 +10393,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-OUT-003` | active | [evm/outcomes.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/outcomes.md) |
 | `SATIN-OUT-004` | active | [evm/outcomes.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/outcomes.md) |
 | `SATIN-OUT-005` | active | [evm/outcomes.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/outcomes.md) |
-| `SATIN-OUT-006` | active | [evm/outcomes.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/outcomes.md) |
 | `SATIN-OUT-008` | active | [evm/outcomes.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/outcomes.md) |
 | `SATIN-OUT-009` | active | [evm/outcomes.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/outcomes.md) |
 | `SATIN-OUT-011` | active | [evm/outcomes.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/outcomes.md) |
@@ -9240,16 +10446,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-STATE-007` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/state-gas.md) |
 | `SATIN-STATE-009` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/state-gas.md) |
 | `SATIN-STATE-010` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/state-gas.md) |
-| `SATIN-STOP-002` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-003` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-006` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-007` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-008` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-010` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-013` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-015` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-017` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
-| `SATIN-STOP-019` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-SYSC-001` | active | [system-contracts/overview.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/overview.md) |
 | `SATIN-SYSC-002` | active | [system-contracts/overview.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/overview.md) |
 | `SATIN-SYSC-003` | active | [system-contracts/overview.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/cdded1e1d131a1d16a2c4b1cd873557f16a6a558/docs/spec/satin/system-contracts/overview.md) |
@@ -9393,10 +10589,36 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/keyless/recognition/offset-zero]: ../slice/cases/satin--keyless--recognition--offset-zero.json
 [satin/keyless/recognition/one-byte-short]: ../slice/cases/satin--keyless--recognition--one-byte-short.json
 [satin/keyless/recognition/unpadded-bytes]: ../slice/cases/satin--keyless--recognition--unpadded-bytes.json
+[satin/limit-stops/authorization-list/one-authority-over]: ../slice/cases/satin--limit-stops--authorization-list--one-authority-over.json
+[satin/limit-stops/child-budget/caller-crosses-its-budget]: ../slice/cases/satin--limit-stops--child-budget--caller-crosses-its-budget.json
+[satin/limit-stops/child-budget/caller-fills-its-budget]: ../slice/cases/satin--limit-stops--child-budget--caller-fills-its-budget.json
+[satin/limit-stops/child-budget/depth-three]: ../slice/cases/satin--limit-stops--child-budget--depth-three.json
+[satin/limit-stops/child-stopped/caller-log-crosses]: ../slice/cases/satin--limit-stops--child-stopped--caller-log-crosses.json
+[satin/limit-stops/child-stopped/caller-log-fits]: ../slice/cases/satin--limit-stops--child-stopped--caller-log-fits.json
+[satin/limit-stops/child-stopped/caller-re-raises]: ../slice/cases/satin--limit-stops--child-stopped--caller-re-raises.json
 [satin/limit-stops/compute-at-one-charge]: ../slice/cases/satin--limit-stops--compute-at-one-charge.json
 [satin/limit-stops/compute-at-static-cost]: ../slice/cases/satin--limit-stops--compute-at-static-cost.json
+[satin/limit-stops/creation-stopped/creator-record-crosses]: ../slice/cases/satin--limit-stops--creation-stopped--creator-record-crosses.json
+[satin/limit-stops/creation-stopped/creator-record-fits]: ../slice/cases/satin--limit-stops--creation-stopped--creator-record-fits.json
 [satin/limit-stops/data-size-at-limit]: ../slice/cases/satin--limit-stops--data-size-at-limit.json
 [satin/limit-stops/data-size-one-byte-over]: ../slice/cases/satin--limit-stops--data-size-one-byte-over.json
+[satin/limit-stops/deposit/out-of-gas]: ../slice/quarantine/satin--limit-stops--deposit--out-of-gas.json
+[satin/limit-stops/deposit/stopped]: ../slice/quarantine/satin--limit-stops--deposit--stopped.json
+[satin/limit-stops/hint-into-freed-room/halted]: ../slice/cases/satin--limit-stops--hint-into-freed-room--halted.json
+[satin/limit-stops/hint-into-freed-room/kept]: ../slice/cases/satin--limit-stops--hint-into-freed-room--kept.json
+[satin/limit-stops/hint-into-freed-room/reverted]: ../slice/cases/satin--limit-stops--hint-into-freed-room--reverted.json
+[satin/limit-stops/hint-into-freed-room/stopped]: ../slice/cases/satin--limit-stops--hint-into-freed-room--stopped.json
+[satin/limit-stops/log-over-limit/regular-charge-paid]: ../slice/cases/satin--limit-stops--log-over-limit--regular-charge-paid.json
+[satin/limit-stops/log-over-limit/regular-charge-short]: ../slice/cases/satin--limit-stops--log-over-limit--regular-charge-short.json
+[satin/limit-stops/pre-frame/start-record-paid]: ../slice/cases/satin--limit-stops--pre-frame--start-record-paid.json
+[satin/limit-stops/pre-frame/start-record-unpaid]: ../slice/cases/satin--limit-stops--pre-frame--start-record-unpaid.json
+[satin/limit-stops/reservoir/compute-stop-above-cap]: ../slice/cases/satin--limit-stops--reservoir--compute-stop-above-cap.json
+[satin/limit-stops/revert-with-stop-bytes/kind-0]: ../slice/cases/satin--limit-stops--revert-with-stop-bytes--kind-0.json
+[satin/limit-stops/revert-with-stop-bytes/kind-1]: ../slice/cases/satin--limit-stops--revert-with-stop-bytes--kind-1.json
+[satin/limit-stops/revert-with-stop-bytes/kind-2]: ../slice/cases/satin--limit-stops--revert-with-stop-bytes--kind-2.json
+[satin/limit-stops/revert-with-stop-bytes/kind-3]: ../slice/cases/satin--limit-stops--revert-with-stop-bytes--kind-3.json
+[satin/limit-stops/start-crossing/value-call-at-limit]: ../slice/cases/satin--limit-stops--start-crossing--value-call-at-limit.json
+[satin/limit-stops/start-crossing/value-call-one-byte-over]: ../slice/cases/satin--limit-stops--start-crossing--value-call-one-byte-over.json
 [satin/limit-stops/state-growth-one-over]: ../slice/cases/satin--limit-stops--state-growth-one-over.json
 [satin/logs/log-after-value-transfer]: ../slice/cases/satin--logs--log-after-value-transfer.json
 [satin/logs/log0-empty]: ../slice/cases/satin--logs--log0-empty.json

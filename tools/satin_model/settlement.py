@@ -4,10 +4,10 @@ diff and the limit group; the snapshot a failed first frame returns to; a deposi
 from __future__ import annotations
 
 from .constants import (
-    ACCOUNT_STATE, BASE_FEE_VAULT, limit_exceeded, REFUND_QUOTIENT, STOP_DIMENSIONS, TRANSFER_LOG_ADDRESS,
+    ACCOUNT_STATE, BASE_FEE_VAULT, DETENTION_STOP, limit_exceeded, REFUND_QUOTIENT, STOP_DIMENSIONS, TRANSFER_LOG_ADDRESS,
     TRANSFER_LOG_SIZE, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT, WRITE_RECORD_SIZE,
 )
-from .records import Account, dim, fmt, h, Halt, q, Result, Unmodelled, word
+from .records import Account, dim, fmt, h, Halt, LimitStop, q, Result, Stopped, Unmodelled, word
 
 
 class SettlementMixin:
@@ -166,6 +166,8 @@ class SettlementMixin:
             status, output = self.execute(code, frame, False)
         except Halt as e:
             return self.failed_deposit(kept, nonce_before, was_empty, caller_state, str(e))
+        except (Stopped, LimitStop) as e:
+            return self.stopped_deposit(kept, intrinsic, floor, nonce_before, was_empty, e)
         if status != "success":
             raise Unmodelled("a reverting deposit")
         total = intrinsic + self.regular_charges + self.history_gas + self.state_gas
@@ -199,6 +201,68 @@ class SettlementMixin:
             observations["reads"] = self.reads_observation()
         return Result(observations, d)
 
+    def stopped_deposit(self, kept, intrinsic: int, floor: int, nonce_before: int, was_empty: bool, e) -> Result:
+        """A deposit whose own frame is stopped settles as SATIN-STOP-009 states, as a revert: it is not a failed
+        deposit (SATIN-STOP-010, SATIN-DEP-007). It keeps what was applied before its first frame, its mint, its nonce
+        bump and a caller account it created with that account's state gas (SATIN-STOP-011); every write and log of
+        its frame is reverted, its frame's state and history charges are given back, and it is billed its intrinsic
+        gas, its body's history, the kept charges and what ran."""
+        tx, d = self.tx, self.d
+        detained = isinstance(e, Stopped)
+        kind, value = (DETENTION_STOP, e.limit) if detained else (e.kind, e.limit)
+        self.stop = (kind, value)
+        output = limit_exceeded(kind, value)
+        d.add("outcome", f"the deposit's own frame is stopped at {e}: the charge is not made, and the frame reverts with "
+              f"MegaLimitExceeded({kind}, {fmt(value)}), the transaction's result. A stop is a revert and not a halt, so the "
+              "deposit is not a failed deposit: it settles as a revert", *(("SATIN-DET-018",) if detained else ()),
+              "SATIN-STOP-001", "SATIN-STOP-004", "SATIN-STOP-010", "SATIN-DEP-007", "SATIN-STOP-021", *self.kind_rules())
+        self.restore(kept)
+        if self.hint_bytes:
+            self.data_size += self.hint_bytes
+            d.add("resources", f"the admitted hints' {fmt(self.hint_bytes)} bytes stay counted as data size through the stop",
+                  "SATIN-STOP-012", "SATIN-ORCL-009")
+        self.refund = 0
+        total = intrinsic + self.regular_charges + self.history_gas + self.state_gas
+        regular_ledger = total - self.state_gas - self.history_gas
+        gas_used = max(total, floor)
+        d.add("gasLedgers", f"revert: the frame's state and history charges are given back and return with the reservoir; "
+              f"its regular charges {fmt(self.regular_charges)} stay spent, and the deposit keeps its body's history "
+              f"{fmt(self.history_gas)} ({self.history_bytes} history bytes)"
+              + (f" and the created caller's {fmt(self.state_gas)} of state gas" if self.state_gas else "")
+              + f": ledgers state {fmt(self.state_gas)}, history {fmt(self.history_gas)}, regular {fmt(regular_ledger)}, total "
+              f"{fmt(total)}", "SATIN-STOP-009", "SATIN-STOP-011", "SATIN-POOL-014", "SATIN-POOL-019", "SATIN-HIST-016",
+              "SATIN-HIST-022")
+        d.add("gasLedgers", f"gas used max({fmt(total)}, floor {fmt(floor)}) = {fmt(gas_used)}, which the deposit does not "
+              f"pay; block gas max({fmt(regular_ledger)}, {fmt(floor)})", "SATIN-POOL-018", "SATIN-POOL-020")
+        d.add("state", "the deposit keeps what was applied before its first frame: the mint credited to its sender and its "
+              "nonce bump" + (", and the caller account it created" if was_empty else ""), "SATIN-STOP-011", "SATIN-DEP-004")
+        ledgers = {"total": q(total), "regular": q(regular_ledger), "state": q(self.state_gas), "history": q(self.history_gas),
+                   "historyBytes": q(self.history_bytes), "refund": q(0), "floor": q(floor), "gasUsed": q(gas_used),
+                   "blockGas": q(max(regular_ledger, floor))}
+        resources = {"dataSize": dim(TX_DATA_LIMIT, self.data_size), "kvUpdates": dim(TX_KV_UPDATE_LIMIT, len(self.kv)),
+                     "stateGrowth": dim(TX_STATE_GROWTH_LIMIT, self.growth)}
+        d.add("resources", f"kept: data size {self.data_size}, {len(self.kv)} KV updates, state growth {self.growth}",
+              "SATIN-STOP-009", "SATIN-LIM-007")
+        receipt = {"type": "0x7e", "status": "0x0", "gasUsed": q(gas_used), "logs": [],
+                   "depositNonce": q(nonce_before), "depositReceiptVersion": "0x1"}
+        d.add("receipt", f"a deposit receipt with status 0x0, as a reverted deposit's: gas used {fmt(gas_used)}, no logs, its "
+              f"nonce before the deposit ({nonce_before}) and receipt version 1", "SATIN-STOP-009", "SATIN-DEP-009",
+              "SATIN-POOL-018")
+        d.add("limit", f"the stop of the deposit's own frame is its result: {STOP_DIMENSIONS[kind]}, limit {fmt(value)}, "
+              f"return data MegaLimitExceeded({kind}, {fmt(value)})", "SATIN-STOP-009", "SATIN-STOP-010", "SATIN-STOP-018",
+              "SATIN-STOP-021", *self.kind_rules())
+        d.add("limit", "the deposit passed validation and paid every charge made before its first frame, the created "
+              "caller's state gas among them, so the stop applies to it", "SATIN-STOP-003")
+        outcome = {"admission": {"status": "admitted"}, "execution": {"status": "revert", "output": h(output),
+                                                                       "createdAddress": None},
+                   "commit": {"status": "committed"}}
+        observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
+                        "resources": resources,
+                        "limit": {"dimension": STOP_DIMENSIONS[kind], "limit": q(value), "returnData": h(output)}}
+        if self.reads or self.pools:
+            raise Unmodelled("the reads or the pools of a stopped deposit")
+        return Result(observations, d)
+
     def failed_deposit(self, kept, nonce_before: int, was_empty: bool, caller_state: int, why: str) -> Result:
         """A deposit whose own frame halts is a failed deposit (SATIN-DEP-004): it keeps its sender's nonce bump
         and mint and applies nothing else, uses its whole gas limit, reported as regular gas, with no state and
@@ -208,6 +272,9 @@ class SettlementMixin:
         tx, d = self.tx, self.d
         if self.hint_bytes:
             raise Unmodelled("a failed deposit that admitted a hint")
+        if self.stops:
+            d.add("limit", "the deposit's own frame halts, and a halt is no limit stop: the deposit is a failed deposit and "
+                  "reports no stop", "SATIN-STOP-002", "SATIN-STOP-010", "SATIN-DEP-004")
         self.restore(kept)
         body = self.data_size
         d.add("outcome", f"the deposit's own frame halts ({why}): a failed deposit, which keeps its sender's nonce bump and "
