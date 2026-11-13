@@ -74,11 +74,11 @@ specification's text and constants:
   and a legacy transaction without a chain id; a nonce of 2^64 - 1 and an empty authorization list;
   a deposit that fails validation, carries the base layer's system-transaction flag, cannot pay its
   empty caller or its start record, carries a value to an existing account or one its minted balance
-  cannot fund, or whose own frame reverts, and a failed deposit's reads; and a live system address resolved from a registry holding version
+  cannot fund, or whose own frame reverts, and a failed deposit's reads; a creation transaction that
+  cannot pay a charge before its first frame, whose sender keeps the nonce bump the creation would
+  have made (`SATIN-SCHED-010`); and a live system address resolved from a registry holding version
   2.0.0's code, from which a deposit is a failed deposit and a Mega System Transaction is refused for
-  its own checks or promoted to a deposit that fails validation (D-87). A creation transaction that
-  cannot pay a charge before its first frame stays outside the model until `SATIN-SCHED-010` states
-  its nonce (D-85).
+  its own checks or promoted to a deposit that fails validation (D-87).
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists

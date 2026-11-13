@@ -2645,9 +2645,13 @@ def outcome_edge_cases() -> list[Case]:
                                                                        "at once"),
                  boundary=f"the gas limit {'one below' if short else 'at'} the new caller's state gas", spec=spec,
                  outcomes=True, deposit=(ETH, gas), absent_sender=True))
-    # The creation's one-gas-short side is not a case: SATIN-SCHED-010 with SATIN-ACCT-008 would leave the included
-    # transaction's nonce unbumped, which both implementations bump; the text is to be fixed first.
     create_least = model.TX_BASE_COST + model.CREATE_ACCESS + body + record + state
+    add(Case("satin/outcomes/pre-frame/created-account-one-short", f"a creation transaction with no initcode and a gas "
+             f"limit of {fmt(create_least - 1)}: the intrinsic gas, the body's history and the start record leave one gas "
+             f"short of the created account's state gas, {fmt(state)}: the transaction runs out of gas before its first "
+             "frame and is included out of gas, its fee charged, and its sender keeps the nonce bump the creation would "
+             "have made, with no account created (SATIN-OUT-006, SATIN-SCHED-010)", boundary="the gas limit one below the "
+             "created account's state gas", spec=spec, outcomes=True, to=None, data=b"", gas=create_least - 1))
     add(Case("satin/outcomes/pre-frame/created-account-paid", f"a creation transaction with no initcode and a gas limit of "
              f"{fmt(create_least)}: the intrinsic gas, the body's history and the start record leave exactly the created "
              f"account's state gas, {fmt(state)}, so the charges before the first frame are paid; the frame runs nothing "

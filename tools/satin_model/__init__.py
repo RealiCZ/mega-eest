@@ -44,7 +44,8 @@ narrow class of transactions the slice uses:
   delegate's access before the first frame;
 - a transaction that runs out of gas before its first frame, everything applied after validation's
   changes to its sender taken back, an authorization list's charges, applied entries and all, and a
-  delegate's access among the charges it cannot pay;
+  delegate's access among the charges it cannot pay; a creation's sender keeps the nonce bump the
+  creation would have made (`SATIN-SCHED-010`);
 - for the cases that ask, the `reads` group: what the transaction loads, as the stateless witness
   needs it, and the `gasPools` group: the first frame's pools at its start and end;
 - a stop of the transaction's own frame, its result: gas detention's crossing, and an `SSTORE`'s

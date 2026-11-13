@@ -1113,9 +1113,10 @@ sit in the `outcomes` and `validation` areas:
 - **Reverts, and charges before the first frame**: a frame that reverts with `ORIGIN` and `CHAINID`,
   a transaction's and a deposit's, which is no failed deposit, and a deposit's revert with a value or
   from a caller it created (`SATIN-OUT-014`); a value transfer whose gas limit pays its start record
-  exactly, a new recipient's state gas one gas short and paid, a creation transaction that pays its
-  created account exactly, and a deposit one gas short of its start record or of its new caller's
-  state gas and at each (`SATIN-OUT-006`); a deposit whose own frame halts, below and above the
+  exactly, a new recipient's state gas one gas short and paid, a creation transaction one gas short
+  of its created account's state gas, whose sender keeps the nonce bump the creation would have made
+  (`SATIN-SCHED-010`), and one that pays it exactly, and a deposit one gas short of its start record
+  or of its new caller's state gas and at each (`SATIN-OUT-006`); a deposit whose own frame halts, below and above the
   execution cap, or cannot fund its value, a failed deposit, which keeps its reads (`SATIN-OUT-005`,
   `-013`, `SATIN-WIT-002`).
 - **Validation**: a gas limit at the floor exactly (step 5 refuses), at the intrinsic gas exactly
@@ -1143,14 +1144,13 @@ deposit's reads; a nonce of 2^64 - 1 and an empty authorization list; and a case
 `CHAINID` reads, so that a deposit's `CHAINID` is not 1 by default, and which a legacy transaction
 may omit. The entry skipped for its chain id is D-88's gate (`SATIN-AUTH-002`).
 
-A creation transaction one gas short of its created account's state gas is not a case. It runs out of
-gas before its first frame, and `SATIN-SCHED-010` keeps of what was applied only "what validation did
-to the sender's account (its fee and a call's nonce bump)", with `SATIN-ACCT-008` putting a
-creation's nonce bump in its first frame: the included transaction would keep its nonce and could be
-included again. Both implementations bump it, as `SATIN-TAKE-008`'s row for a list that runs out of
-gas before the first frame has it ("a creation's sender the bump the creation would have made"), but
-that row's transaction cannot be a creation. The case waits for `SATIN-SCHED-010` to say so; its
-control, the creation that pays its account exactly, is a case.
+A creation transaction that cannot pay a charge before its first frame was outside the model. D-88's
+rollback to what validation left would leave its sender's nonce unbumped, since `SATIN-ACCT-008`
+makes a creation's bump in its first frame, but `SATIN-SCHED-010`'s second sentence keeps it: "the
+sender of a creation keeps the nonce bump the creation would have made". The model now bumps a
+creation's sender's nonce on that path, after the rollback, and the creation one gas short of its
+created account's state gas is a case, at nonce 1; both implementations bump it. No other case
+reaches that path.
 
 Three of the listed rules no transaction-level case holds:
 
@@ -1182,7 +1182,7 @@ implementation:
   is recorded as observed at the pin, the model not running the Oracle's dispatcher there.
 
 The deposit side of `SATIN-OUT-005`, `-016`, `SATIN-VAL-005` and `-008` is pinned by these cases
-alone; the slice gates 306 cases and quarantines sixty-two.
+alone; the slice gates 307 cases and quarantines sixty-two.
 
 **D-87. A case can name a live system address.** Every other case's SequencerRegistry holds other
 code, so it resolves no live system address. These cases hold the registry's version 2.0.0 runtime

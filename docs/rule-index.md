@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-c130558], source commit `c130558e2f38a913982dc17f0
 (committed `2026-11-13T14:39:19+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **368** (306 gating, 62 quarantined).
+Cases: **369** (307 gating, 62 quarantined).
 Cited rule IDs: **224**. Uncited rule IDs in that registry: **186**
 (176 active, 10 retired).
 
@@ -2141,6 +2141,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/outcomes/deposit/reverted-new-caller] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/reverted-with-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/created-account-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/created-account-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-new-caller-paid] | quarantined | unqualified | [satin-c130558] |
@@ -2419,6 +2420,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/outcomes/halt/with-reservoir] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/keyless/overhead-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/keyless/overhead-paid] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/created-account-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/new-account-state-one-short] | gating | unqualified | [satin-c130558] |
@@ -2672,6 +2674,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/delegated-recipient/cold-delegate-one-short] | gating | unqualified | [satin-5fb2688] |
+| [satin/outcomes/pre-frame/created-account-one-short] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-SCHED-011
 
@@ -4246,6 +4249,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/outcomes/halt/with-reservoir]: ../slice/cases/satin/outcomes/halt/with-reservoir.json
 [satin/outcomes/keyless/overhead-one-short]: ../slice/cases/satin/outcomes/keyless/overhead-one-short.json
 [satin/outcomes/keyless/overhead-paid]: ../slice/cases/satin/outcomes/keyless/overhead-paid.json
+[satin/outcomes/pre-frame/created-account-one-short]: ../slice/cases/satin/outcomes/pre-frame/created-account-one-short.json
 [satin/outcomes/pre-frame/created-account-paid]: ../slice/cases/satin/outcomes/pre-frame/created-account-paid.json
 [satin/outcomes/pre-frame/deposit-new-caller-one-short]: ../slice/quarantine/satin/outcomes/pre-frame/deposit-new-caller-one-short.json
 [satin/outcomes/pre-frame/deposit-new-caller-paid]: ../slice/quarantine/satin/outcomes/pre-frame/deposit-new-caller-paid.json

@@ -246,7 +246,13 @@ class TransactionMixin:
         if not create:
             sender_acct.nonce += 1
 
-        # What validation did is all a transaction that runs out of gas before its first frame keeps (SATIN-SCHED-010).
+        # SATIN-SCHED-010, all of it: a transaction that runs out of gas before its first frame takes back everything
+        # applied before that frame except what validation did to its sender (its fee and a call's nonce bump) and a
+        # deposit's created caller; its intrinsic gas and body history stay charged, the rest of its regular budget is
+        # consumed and the reservoir left returns; a creation's sender keeps the nonce bump the creation would have made;
+        # and a deposit becomes a failed deposit instead (run_deposit, which deposits take above). This snapshot is
+        # validation's part: out_of_gas_before_frame restores it, then makes a creation's bump, which validation does
+        # not make (SATIN-ACCT-008 puts it in the first frame).
         self.validated = self.snapshot()
         if tx.authorizations:
             self.load_authorities()
@@ -309,7 +315,7 @@ class TransactionMixin:
                           "before the first frame and no earlier", "SATIN-SCHED-008", "SATIN-WIT-008")
             r = min(reservoir, amount)
             if amount - r > regular:
-                if (tx.authorizations and not self.lists) or r or reservoir != self.reservoir_after_body or create:
+                if (tx.authorizations and not self.lists) or r or reservoir != self.reservoir_after_body:
                     raise Unmodelled("a transaction that cannot pay a charge before its first frame")
                 return self.out_of_gas_before_frame(intrinsic, floor, price, reservoir,
                                                     f"{what}, {fmt(amount)}, with {fmt(regular)} regular gas left")
@@ -639,7 +645,8 @@ class TransactionMixin:
         """SATIN-SCHED-009 and SATIN-SCHED-010: a transaction that cannot pay a charge before its first frame
         runs out of gas without running a frame: everything applied before the first frame is taken back to
         what validation left (the snapshot `validated`), the authorizations the list applied among it, and the
-        accounts the transaction loaded stay loaded."""
+        accounts the transaction loaded stay loaded; the sender of a creation keeps the nonce bump the creation
+        would have made, which its first frame makes when it runs (SATIN-ACCT-008)."""
         tx, d = self.tx, self.d
         d.add("outcome", f"the transaction cannot pay {what}: it runs out of gas before its first frame and runs no frame",
               "SATIN-SCHED-009")
@@ -656,6 +663,12 @@ class TransactionMixin:
                   "growth those counted; the accounts the list's simulation and application loaded stay loaded",
                   "SATIN-SCHED-010", "SATIN-AUTH-015")
         self.restore(self.validated)
+        if tx.to is None:
+            sender = self.state[tx.sender]
+            sender.nonce += 1
+            d.add("state", f"the sender of a creation keeps the nonce bump the creation would have made, though no frame "
+                  f"runs to make it: its nonce becomes {sender.nonce}, with no created account", "SATIN-SCHED-010",
+                  "SATIN-ACCT-008")
         if self.stops:
             d.add("limit", "a transaction that cannot pay a charge made before its first frame reports no stop, whatever "
                   "its frame would have crossed: the stop applies only to a transaction that passes validation and pays "
