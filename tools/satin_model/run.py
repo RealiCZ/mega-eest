@@ -47,6 +47,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # cites the class each ending is in, the rule that makes a refusal the first failing step, and what a failed
         # deposit and a refused transaction report (SATIN-OUT-002 to -018, SATIN-VAL-003, -004, -008).
         self.outcomes = outcomes
+        self.promoted = False  # a Mega System Transaction promoted to a deposit (SATIN-MST-005)
         self.caught_stop = False  # a frame below the transaction's own was stopped and its caller ran on
         # The `gasPools` group (decision D-64): the first frame's pools at its start and end, and the
         # regular gas it and its children paid for state and history charges.

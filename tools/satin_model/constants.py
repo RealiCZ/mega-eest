@@ -116,6 +116,7 @@ IDENTITY_BASE, IDENTITY_WORD = 15, 3  # inherited identity price: 15 + 3 a word
 MODEXP_MIN_GAS = 500  # SATIN-PCMP-002: EIP-7883's minimum
 MODEXP_MAX_INPUT_SIZE = 1_024  # SATIN-PCMP-002: EIP-7823's bound on each length
 BN254_PAIRING_MAX_INPUT_SIZE = 57_600  # SATIN-PCMP-001, SATIN-PCMP-004
+BN254_PAIRING_BASE, BN254_PAIRING_PER_PAIR, BN254_PAIR_SIZE = 45_000, 34_000, 192  # inherited EIP-1108 price, 192-byte pairs
 # SATIN-STOP-002, SATIN-STOP-018: the kind of each dimension's stop, and the dimension the format names it by.
 DATA_SIZE_STOP, KV_UPDATE_STOP, STATE_GROWTH_STOP = 0, 1, 3
 STOP_DIMENSIONS = {DATA_SIZE_STOP: "data-size", KV_UPDATE_STOP: "kv-updates", DETENTION_STOP: "compute",

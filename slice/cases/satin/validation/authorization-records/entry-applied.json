@@ -151,8 +151,10 @@
   ],
   "rules": [
     "SATIN-VAL-001",
+    "SATIN-VAL-002",
     "SATIN-VAL-003",
-    "SATIN-VAL-004"
+    "SATIN-VAL-004",
+    "SATIN-VAL-007"
   ],
   "schemaVersion": "2.0",
   "specRef": {

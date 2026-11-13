@@ -2,15 +2,15 @@
   "caseId": "satin/outcomes/precompile/bn254-pairing-over-size-limit",
   "expected": {
     "gasLedgers": {
-      "blockGas": "0x1ef89",
+      "blockGas": "0xa841e8",
       "floor": "0x3a98",
-      "gasUsed": "0x25a19",
+      "gasUsed": "0xa8ac78",
       "history": "0x6a90",
       "historyBytes": "0x136",
       "refund": "0x0",
-      "regular": "0x1ef89",
+      "regular": "0xa841e8",
       "state": "0x0",
-      "total": "0x25a19"
+      "total": "0xa8ac78"
     },
     "limit": null,
     "outcome": {
@@ -29,7 +29,7 @@
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
-      "gasUsed": "0x25a19",
+      "gasUsed": "0xa8ac78",
       "logs": [],
       "status": "0x1",
       "type": "0x0"
@@ -88,7 +88,7 @@
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "code": "0x5f5f61e1015f5f6008620186a0f15000",
+          "code": "0x5f5f61e1c05f5f600862a7d8c0f1503d5f5f3e3d5ff3",
           "nonce": "0x1",
           "storage": {}
         },
@@ -120,13 +120,14 @@
     },
     "transaction": {
       "kind": "signed",
-      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1808026a037abd59b2ae917db9ae6528f8e6a7e588b445bd1372ea295b330cecfdb76351da00af281f0a2f8216a03102560bc82b936a2cb1e51b7b5052600045195e427b885"
+      "raw": "0xf860808083c65d409400000000000000000000000000000000000c0de1808025a014a97adb9dfd130c8788dfe42c4c1cda3e31a080b781e1c6703e06affab8ecbca034febbce9e5f22d65365398ea86621f17c2de347f85155515d6f1d1c39c5ace7"
     }
   },
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "a contract calls the BN254 pairing with 57,601 input bytes, one over its size limit, forwarding 100,000: the call fails before any gas check and consumes the whole forward, and the caller stops on what it kept (SATIN-OUT-004, SATIN-OUT-011)"
+      "boundary": "the input one pair over the size limit",
+      "intent": "a contract calls the BN254 pairing with 57,792 zero bytes, 301 pairs of points at infinity, forwarding 11,000,000, which pays their price, 10,279,000: one pair over its size limit, so the call fails before any gas check and consumes the whole forward, and the caller returns empty return data (SATIN-OUT-004, SATIN-OUT-011)"
     },
     "definition": "tools/make_slice.py::outcome_cases",
     "generator": "tools/make_slice.py",

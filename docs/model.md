@@ -64,13 +64,21 @@ specification's text and constants:
   charged price included (`SATIN-DET-011` at `c130558`, D-78).
 - **The outcomes page's classes and validation's order** (D-85): a child stopped by gas detention's
   limit or halting beyond its whole gas, a refused read in a child, a system contract's
-  `NotIntercepted()`, a precompile that fails where no limit is set (the identity's price, the BN254
-  pairing over its size limit); `CREATE`'s operands and its initcode size checked before its charges,
-  and a creation's code over `MAX_CONTRACT_SIZE`, each a halt; `CHAINID`, on the case's chain; a
-  deposit that fails validation, cannot pay its empty caller or its start record, carries a value to
-  an existing account or its minted balance cannot fund, or whose own frame reverts; and a live
-  system address resolved from a registry holding version 2.0.0's code, from which a deposit is a
-  failed deposit (D-87).
+  `NotIntercepted()`, KeylessDeploy's step 1 overhead unpaid; a precompile call that fails where no
+  limit is set (the identity's price, the BN254 pairing over its size limit), the BN254 pairing of
+  points at infinity within it, and a value call to the identity precompile whose start is held to
+  the limits (`SATIN-LIM-013`, `-014`); `CREATE`'s and `CREATE2`'s operands, initcode size, initcode
+  cost, memory and then `CREATE_ACCESS` in the order of `SATIN-SIZE-005`, `CREATE2` only as far as a
+  missing salt; a creation's code over `MAX_CONTRACT_SIZE` and its code deposit in its frame, and a
+  creation's halt after the reservoir paid its start; `CHAINID`, on the case's chain,
+  and a legacy transaction without a chain id; a nonce of 2^64 - 1 and an empty authorization list;
+  a deposit that fails validation, carries the base layer's system-transaction flag, cannot pay its
+  empty caller or its start record, carries a value to an existing account or one its minted balance
+  cannot fund, or whose own frame reverts, and a failed deposit's reads; and a live system address resolved from a registry holding version
+  2.0.0's code, from which a deposit is a failed deposit and a Mega System Transaction is refused for
+  its own checks or promoted to a deposit that fails validation (D-87). A creation transaction that
+  cannot pay a charge before its first frame stays outside the model until `SATIN-SCHED-010` states
+  its nonce (D-85).
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists

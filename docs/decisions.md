@@ -1084,42 +1084,73 @@ page gathers rules whose detail lives elsewhere, and validation's order names wh
 checks refuses a transaction; every derivation already ends in one class or another, but no case
 cited the class it ended in. A case may now ask for it (`outcomes` in `tools/make_slice.py`, as
 `stops` did for the limit-stop page, D-73): its derivation also cites the class each ending is in
-(`SATIN-OUT-002` to `-018`), the step of `SATIN-VAL-003` that names a refusal, and what a failed
-deposit and a refused transaction report. No other case's derivation changes, so no existing case
-pins more than it did. The cases, all at `c130558`, sit in the `outcomes` and `validation` areas:
+(`SATIN-OUT-002` to `-018`), the step of `SATIN-VAL-003` that names a refusal or the checks an
+admitted transaction passes, and what a failed deposit and a refused transaction report. No other
+case's derivation changes, so no existing case pins more than it did. The cases, all at `c130558`,
+sit in the `outcomes` and `validation` areas:
 
 - **Stops, refusals and halts below the first frame**: a child that crosses gas detention's limit is
   stopped and its caller catches the stop, against the same charge beyond the child's whole regular
   gas, an out-of-gas (`SATIN-OUT-002`); a volatile read refused in a child, a revert its caller
-  catches (`SATIN-OUT-008`); MegaLimitControl called with a selector it has no method for, whose
-  bytecode reverts with `NotIntercepted()` (`SATIN-OUT-009`); a precompile that fails, the BN254
-  pairing over its size limit and the identity precompile one gas short of its price, against its
-  price exactly (`SATIN-OUT-004`, `-011`).
-- **The size checks and the halts of the transaction's own frame**: a `CREATE` of initcode one byte
-  over `MAX_INITCODE_SIZE`, against one at it, and a creation transaction whose code is one byte
-  over `MAX_CONTRACT_SIZE` (`SATIN-OUT-003`, `SATIN-SIZE-003`); a `CREATE` short of its operands and
-  a `DUP1` of an empty stack, each a halt with no reason the specification names (`SATIN-OUT-012`,
-  `-013`, `-018`).
+  catches (`SATIN-OUT-008`); MegaLimitControl's `NotIntercepted()`, and KeylessDeploy's step 1
+  overhead one gas short, a halt, and paid, `MalformedEncoding()` (`SATIN-OUT-009`).
+- **Precompiles**: the identity precompile one gas short of its price and at it; the BN254 pairing
+  of 300 pairs of points at infinity, at its size limit, which runs and answers 1, and of 301, one
+  pair over it, which fails before any gas check, both forwarded more than their price, so that the
+  size limit alone decides (`SATIN-OUT-004`, `-011`); a value call to the identity precompile whose
+  start would cross the transaction's data-size limit, failing on its stipend, which keeps nothing
+  and is no stop (`SATIN-LIM-014`), and priced within it, whose start is held to its limits and
+  stopped (`SATIN-LIM-013`).
+- **The size checks and creation's order** (`SATIN-SIZE-005`, `-006`): a `CREATE` of initcode one
+  byte over `MAX_INITCODE_SIZE` against one at it; a creation transaction whose code is one byte
+  over `MAX_CONTRACT_SIZE`, on a gas limit that could pay that code's deposit, so the size check
+  alone halts it (`SATIN-OUT-003`); one byte of code whose deposit is one gas short, a halt, and
+  paid (`SATIN-OUT-007`, `SATIN-SCHED-011`); a `CREATE` short of its operands and a `DUP1` of an
+  empty stack, halts with no reason the specification names (`SATIN-OUT-012`, `-013`, `-018`); and
+  under gas detention a `CREATE2` missing only its salt, whose initcode cost is the crossing (a
+  stop) or is paid with its memory (a halt on the salt), and a `CREATE` of oversized initcode, which
+  halts at the size check before any charge could be the crossing.
 - **Reverts, and charges before the first frame**: a frame that reverts with `ORIGIN` and `CHAINID`,
-  a transaction's and a deposit's, which is no failed deposit (`SATIN-OUT-014`); a value transfer
-  whose gas limit pays its start record exactly (the other side of
-  `satin/limit-stops/pre-frame/start-record-unpaid`), one gas short of a new recipient's state gas
-  and at it, and a deposit one gas short of its start record and at it (`SATIN-OUT-006`); a deposit
-  whose own frame halts or cannot fund its value, a failed deposit (`SATIN-OUT-005`, `-013`).
-- **Validation's order**: a gas limit at the floor exactly, which step 3 passes and step 5 refuses,
-  and one below both the intrinsic regular gas and the floor, which step 2 refuses
-  (`SATIN-VAL-003`); a deposit one gas short of its intrinsic gas with its body's history, a failed
-  deposit, and at it (`SATIN-VAL-008`, `SATIN-OUT-016`); an authorization entry applied and one
-  skipped for its chain id, whose record step 1 counts either way and the data size before the first
-  frame counts only for the applied one (`SATIN-VAL-001`, `-004`).
+  a transaction's and a deposit's, which is no failed deposit, and a deposit's revert with a value or
+  from a caller it created (`SATIN-OUT-014`); a value transfer whose gas limit pays its start record
+  exactly, a new recipient's state gas one gas short and paid, a creation transaction that pays its
+  created account exactly, and a deposit one gas short of its start record or of its new caller's
+  state gas and at each (`SATIN-OUT-006`); a deposit whose own frame halts, below and above the
+  execution cap, or cannot fund its value, a failed deposit, which keeps its reads (`SATIN-OUT-005`,
+  `-013`, `SATIN-WIT-002`).
+- **Validation**: a gas limit at the floor exactly (step 5 refuses), at the intrinsic gas exactly
+  below the floor (step 3) and below both (step 2), and a call and a transfer to the sender at the
+  least gas limit, admitted (`SATIN-VAL-003`); a legacy transaction without a chain id, admitted,
+  and transactions of types 1, 2 and 4 carrying chain id 0, refused (`SATIN-VAL-006`); a nonce of
+  2^64 - 1, refused, one below it, admitted, and an empty authorization list, refused
+  (`SATIN-VAL-007`); a deposit one gas short of its intrinsic gas with its body's history, and one
+  carrying the base layer's system-transaction flag, failed deposits, and one at that gas
+  (`SATIN-VAL-008`, `SATIN-OUT-016`); an authorization entry applied and one skipped for its chain
+  id, whose record step 1 counts either way and the data size before the first frame counts only for
+  the applied one (`SATIN-VAL-001`, `-004`); and the transactions from the live system address of
+  D-87.
 
 The model grows only as far as these cases need (docs/model.md): the opcode `CHAINID` (`ORIGIN` is
-D-88's); `CREATE`'s operands and its initcode size checked before its charges (`SATIN-SIZE-005`), and
-a creation's code over `MAX_CONTRACT_SIZE`; a precompile call that fails where no limit is set; a
-deposit that fails validation, cannot pay its empty caller or its start record, carries a value to an
-existing account, or whose own frame reverts; and a case's chain id, which `CHAINID` reads, so that a
-deposit's `CHAINID` is not 1 by default. The entry skipped for its chain id is D-88's gate
-(`SATIN-AUTH-002`).
+D-88's), and `CREATE2` as far as its salt operand; `CREATE`'s operands, its initcode size, its initcode cost,
+its memory and then `CREATE_ACCESS`, in the order of `SATIN-SIZE-005`, where the model had charged
+`CREATE_ACCESS` first (no committed case moves: every one pays all three or none); a creation's
+code over `MAX_CONTRACT_SIZE`, its code deposit charged in its frame, and a creation's halt after the
+reservoir paid its start; a precompile call that fails where no limit is set, the BN254 pairing of
+points at infinity within its size limit, and a value call to the identity precompile whose start is
+held to the limits; a deposit that fails validation, carries the system-transaction flag, cannot pay
+its empty caller or its start record, carries a value, or whose own frame reverts, and a failed
+deposit's reads; a nonce of 2^64 - 1 and an empty authorization list; and a case's chain id, which
+`CHAINID` reads, so that a deposit's `CHAINID` is not 1 by default, and which a legacy transaction
+may omit. The entry skipped for its chain id is D-88's gate (`SATIN-AUTH-002`).
+
+A creation transaction one gas short of its created account's state gas is not a case. It runs out of
+gas before its first frame, and `SATIN-SCHED-010` keeps of what was applied only "what validation did
+to the sender's account (its fee and a call's nonce bump)", with `SATIN-ACCT-008` putting a
+creation's nonce bump in its first frame: the included transaction would keep its nonce and could be
+included again. Both implementations bump it, as `SATIN-TAKE-008`'s row for a list that runs out of
+gas before the first frame has it ("a creation's sender the bump the creation would have made"), but
+that row's transaction cannot be a creation. The case waits for `SATIN-SCHED-010` to say so; its
+control, the creation that pays its account exactly, is a case.
 
 Three of the listed rules no transaction-level case holds:
 
@@ -1132,34 +1163,49 @@ limit, over 26 MB of hex in a case (D-75); for the same reason step 1 and step 4
 have no refusing case. `SATIN-VAL-005` is held on its deposit side only (D-87).
 
 **D-86. The deposits of the outcomes page and of validation are quarantined against the revm-based
-implementation.** Eight of the cases of D-85 are deposits, and the revm-based implementation at its
-pin, `7110d87b`, charges a deposit no history gas (`SATIN-HIST-016`, `SATIN-DEP-001`). Each fails
-there as its record says, made at `7110d87b`, and passes on the evm2-based implementation:
+implementation.** Sixteen of the cases of D-85 are deposits, a Mega System Transaction promoted to
+one among them, and the revm-based implementation at its pin, `7110d87b`, charges a deposit and a
+system-originated transaction no history gas (`SATIN-HIST-016`, `SATIN-DEP-001`, `SATIN-MST-008`).
+Each fails there as its record says, made at `7110d87b`, and passes on the evm2-based
+implementation:
 
 - a deposit that runs, reverting or succeeding, uses its whole history less than the rule's
   (`gasUsed`);
-- a failed deposit, its own frame halting, its value unfunded or its sender the live system
-  address, reports its kept body as no history bytes (`historyBytes`, `SATIN-HIST-022`,
-  `SATIN-DEP-006`);
-- a deposit one gas short of its intrinsic gas with its body's history, or of its start record, is
-  admitted and runs, counting its intrinsic regular gas alone, where the rule makes it a failed
-  deposit whose block gas is its whole gas limit (`blockGas`, `SATIN-VAL-008`, `SATIN-DEP-004`,
-  `-005`).
+- a failed deposit, its own frame halting, its value unfunded, its flag the base layer's
+  system-transaction flag or its sender the live system address, reports its kept body as no history
+  bytes (`historyBytes`, `SATIN-HIST-022`, `SATIN-DEP-006`);
+- a deposit one gas short of its intrinsic gas with its body's history, of its start record or of
+  its new caller's state gas is admitted and runs, counting its intrinsic regular gas alone, where
+  the rule makes it a failed deposit whose block gas is its whole gas limit (`blockGas`,
+  `SATIN-VAL-008`, `SATIN-DEP-004`, `-005`); the promoted Mega System Transaction short of its
+  history runs the Oracle's bytecode on its empty input, which reverts, and the block gas it counts
+  is recorded as observed at the pin, the model not running the Oracle's dispatcher there.
 
 The deposit side of `SATIN-OUT-005`, `-016`, `SATIN-VAL-005` and `-008` is pinned by these cases
-alone; the slice gates 281 cases, and quarantines fifty-four.
+alone; the slice gates 306 cases and quarantines sixty-two.
 
-**D-87. A case can name a live system address.** Every case's SequencerRegistry holds other code,
-so it resolves no live system address. `SATIN-VAL-005`'s deposit side needs one: a deposit from
-the live system address never has the system shape and is a failed deposit (`SATIN-MST-003`,
-`SATIN-DEP-008`). Its case holds the registry's version 2.0.0 runtime code, read from the revm-based
-implementation's versioned artifacts at its pin and refused unless its keccak256 is the
-specification's `SEQUENCER_REGISTRY_CODE_HASH`, with slot 0 naming the deposit's sender; the model
-resolves the address as `SATIN-REG-002` states. The code is held in `tools/make_slice.py`, not in
+**D-87. A case can name a live system address.** Every other case's SequencerRegistry holds other
+code, so it resolves no live system address. These cases hold the registry's version 2.0.0 runtime
+code, read from the revm-based implementation's versioned artifacts at its pin and refused unless
+its keccak256 is the specification's `SEQUENCER_REGISTRY_CODE_HASH`, with slot 0 naming the case's
+sender; the model resolves the address as `SATIN-REG-002` states and classifies the transaction as
+`SATIN-MST-001` to `-005` do. The code is held in `tools/make_slice.py`, not in
 `tools/system-contracts.json`, which lists the contracts a call can reach (D-55): no case calls the
-registry. The refusal of a transaction other than a deposit from that address has no case: the
-evm2-based adapter maps no refusal reason for it and reports an error, and the adapters are
-unchanged here.
+registry.
+
+- **A deposit from the live system address** never has the system shape and is a failed deposit
+  (`SATIN-VAL-005`, `SATIN-MST-003`, `SATIN-DEP-008`).
+- **A Mega System Transaction** (a legacy call to the Oracle from that address) is refused for its
+  own checks before its promotion: carrying no chain id, its sender holding code, its nonce above
+  the system address's, or both at 2^64 - 1 (`SATIN-VAL-006`, `-007`, `SATIN-MST-005`). One that
+  passes them and is one gas short of its intrinsic gas with its body's history is promoted and is a
+  failed deposit (`SATIN-VAL-008`). The specification does not say which receipt a promoted
+  transaction has; it is a legacy transaction in its block, so the model gives it the envelope's
+  receipt, type `0x0` with no deposit fields, which both implementations report. A promoted
+  transaction that runs is not modelled.
+- **The refusal of a transaction without the system shape** from that address has no case: neither
+  adapter maps it to a reason (each reports an error for it), and only the evm2-based adapter may
+  change here, which alone would not let the case gate or be quarantined.
 
 From the authorization page's uncited rules:
 

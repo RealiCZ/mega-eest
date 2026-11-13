@@ -4,7 +4,7 @@ precompile, ModExp's EIP-7883 price over and under EIP-7823's bound, and the BN2
 from __future__ import annotations
 
 from .constants import (
-    BN254_PAIRING, BN254_PAIRING_MAX_INPUT_SIZE, DETENTION_STOP, IDENTITY, IDENTITY_BASE, IDENTITY_WORD,
+    BN254_PAIR_SIZE, BN254_PAIRING, BN254_PAIRING_BASE, BN254_PAIRING_MAX_INPUT_SIZE, BN254_PAIRING_PER_PAIR, DETENTION_STOP, IDENTITY, IDENTITY_BASE, IDENTITY_WORD,
     limit_exceeded, MODEXP, MODEXP_MAX_INPUT_SIZE, MODEXP_MIN_GAS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE,
     TRANSFER_TOPIC, WRITE_RECORD_SIZE,
 )
@@ -55,10 +55,66 @@ class PrecompilesMixin:
                               "bytes, which ModExp checks after it charges that price" if over else "")), over
         if target == BN254_PAIRING:
             if len(data) <= BN254_PAIRING_MAX_INPUT_SIZE:
-                raise Unmodelled("a BN254 pairing within its size limit")
+                if any(data) or len(data) % BN254_PAIR_SIZE or not self.outcomes:
+                    raise Unmodelled("a BN254 pairing within its size limit other than of points at infinity")
+                pairs = len(data) // BN254_PAIR_SIZE
+                price = BN254_PAIRING_BASE + BN254_PAIRING_PER_PAIR * pairs
+                return price, (f"the BN254 pairing's EIP-1108 price for {pairs} pairs, {fmt(BN254_PAIRING_BASE)} + "
+                               f"{fmt(BN254_PAIRING_PER_PAIR)} x {pairs} = {fmt(price)}"), False
             return 0, (f"zero: the BN254 pairing's {fmt(len(data))} input bytes are over its size limit of "
                        f"{fmt(BN254_PAIRING_MAX_INPUT_SIZE)}, refused before any gas check"), True
         raise Unmodelled(f"the precompile at {h(target)}")
+
+    def precompile_value_start(self, frame, caller_acct, caller: bytes, target: bytes, value: int, data: bytes,
+                               child_gas: int, records: list, history: int, price: int, fails: bool):
+        """A value call to the identity precompile where no limit is set (D-85): the start moves the value and makes its
+        records and transfer log; a precompile that then fails takes them back, counts nothing and is no stop
+        (SATIN-LIM-014); one that would succeed has its start held to the limits first (SATIN-LIM-013)."""
+        d = self.d
+        if target != IDENTITY or fails or self.state.get(target) is None or self.state[target].empty():
+            raise Unmodelled("a value call to a precompile other than an existing identity precompile")
+        child = self.new_child(frame, child_gas, 0)
+        snap = self.frame_snapshot()
+        caller_acct.balance -= value
+        self.state[target].balance += value
+        for a in records:
+            self.kv.add(("a", a))
+        self.data_size += WRITE_RECORD_SIZE * len(records) + TRANSFER_LOG_SIZE
+        self.logs.append((TRANSFER_LOG_ADDRESS, [TRANSFER_TOPIC, pad_address(caller), pad_address(target)],
+                          value.to_bytes(32, "big")))
+        moved = WRITE_RECORD_SIZE * len(records) + TRANSFER_LOG_SIZE
+        d.add("resources", f"the start moves the value {value} to the precompile and makes the {len(records)} records the "
+              f"opcode charged and the transfer log, {fmt(moved)} bytes of data size", "SATIN-LIM-013", "SATIN-ACCT-005",
+              "SATIN-LOG-006")
+
+        def take_back(why: str) -> None:
+            self.frame_restore(snap)
+            self.give_back(frame, history)
+            self.history_gas -= history
+            self.history_bytes -= WRITE_RECORD_SIZE * len(records)
+            d.add("gasLedgers", f"{why}: the value, its records and its transfer log are taken back, and the "
+                  f"{fmt(history)} of history the opcode charged for the records is given back into the caller's reservoir",
+                  "SATIN-HIST-012", "SATIN-HIST-014", "SATIN-POOL-014")
+
+        if price > child_gas:
+            d.add("outcome", f"the identity precompile is priced {fmt(price)}, past the {fmt(child_gas)} its start was "
+                  "given: it fails after its value moved, so its start kept nothing, counts nothing and is not stopped by "
+                  f"a limit, though the {fmt(moved)} bytes it moved would not have fit; its result is the failure, which "
+                  "consumes the gas forwarded to it", "SATIN-LIM-014", "SATIN-OUT-011", "SATIN-OUT-007")
+            take_back("the failed precompile's start")
+            return False, b"", 0
+        crossing = self.start_crossing(child)
+        if crossing:
+            kind, crossed, which, rises = crossing
+            d.add("outcome", f"the identity precompile's forward {fmt(child_gas)} pays its price {fmt(price)}, so its start "
+                  f"is decided and held to what it kept, {fmt(rises[0])} bytes of data size: it crosses {which}, so the "
+                  f"start is stopped with MegaLimitExceeded({kind}, {fmt(crossed)}) before the precompile runs, a stop its "
+                  "caller catches, and its gas returns", "SATIN-LIM-013", "SATIN-STOP-013", "SATIN-OUT-002",
+                  "SATIN-OUT-011", *self.kind_rules())
+            take_back("the stopped start")
+            self.caught(frame)
+            return False, limit_exceeded(kind, crossed), child_gas
+        raise Unmodelled("a value call to the identity precompile whose start fits")
 
     def precompile_call(self, frame, caller: bytes, target: bytes, value: int, data: bytes, child_gas: int,
                         records: list, history: int, share: int):
@@ -107,7 +163,7 @@ class PrecompilesMixin:
                       + ("within the allowance: it runs on its whole forward" if price <= allowance else
                          "past its whole forward: it runs on its forward and fails, as without the read"),
                       "SATIN-DET-021", "SATIN-DET-023")
-        if value:
+        if value and not (self.limit is None and self.outcomes):
             if price > child_gas or fails or target != IDENTITY:
                 raise Unmodelled("a value call to a precompile that fails")
             # The start: the value moves and makes the records the opcode charged, and its transfer log (SATIN-LIM-013).
@@ -122,7 +178,8 @@ class PrecompilesMixin:
                   "log", "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-LOG-006")
         if self.limit is None and self.outcomes:  # the outcome of a precompile call where no limit is set (D-85)
             if value:
-                raise Unmodelled("a value call to a precompile in an outcomes case")
+                return self.precompile_value_start(frame, caller_acct, caller, target, value, data, child_gas, records,
+                                                   history, price, fails)
             if fails:
                 d.add("outcome", f"the precompile at {h(target)} is given {fmt(len(data))} input bytes, over its size limit: "
                       f"the call fails before any gas check and consumes all the gas forwarded to it, {fmt(child_gas)}, a "
@@ -134,6 +191,14 @@ class PrecompilesMixin:
                       "forwarded: it fails out of gas and consumes all the gas forwarded to it, and its caller resumes on "
                       "what it kept", "SATIN-OUT-011", "SATIN-OUT-007")
                 return False, b"", 0
+            if target == BN254_PAIRING:
+                d.add("outcome", f"the BN254 pairing is given {fmt(len(data))} input bytes, within its size limit of "
+                      f"{fmt(BN254_PAIRING_MAX_INPUT_SIZE)}: {how}, which its forward {fmt(child_gas)} pays; every pair is "
+                      "the point at infinity on both curves, so the pairing check holds and it returns the word 1, and "
+                      f"returns the {fmt(child_gas - price)} it did not charge", "SATIN-OUT-004", "SATIN-PCMP-001",
+                      "SATIN-POOL-012")
+                self.compute += price
+                return True, (1).to_bytes(32, "big"), child_gas - price
             if target != IDENTITY:
                 raise Unmodelled("the output of a precompile other than the identity")
             d.add("outcome", f"the precompile at {h(target)} is priced {fmt(price)} and forwarded {fmt(child_gas)}, which "

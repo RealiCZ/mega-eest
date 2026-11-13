@@ -64,11 +64,14 @@ narrow class of transactions the slice uses:
   price (the identity precompile, ModExp's price, a BN254 pairing over its size limit);
 - calls, value transfers, creation transactions and deposits, with or without a reservoir, and a
   deposit whose own frame halts (`SATIN-DEP-004`);
-- for the outcomes page and validation's order (D-85): `CREATE`'s operand and initcode-size checks and
-  a creation's code over `MAX_CONTRACT_SIZE`, each a halt; a precompile call that fails where no limit
-  is set; a deposit that fails validation, cannot pay a charge before its first frame, carries a value
-  to an existing account, or whose own frame reverts; and a deposit from a live system address the
-  registry names (D-87);
+- for the outcomes page and validation's order (D-85): `CREATE`'s and `CREATE2`'s operands, size check
+  and charges in the order of `SATIN-SIZE-005` (`CREATE2` as far as its salt), a creation's code over
+  `MAX_CONTRACT_SIZE` and its code deposit, each failure a halt; a precompile call that fails where no
+  limit is set, a BN254 pairing of points at infinity, and a value call to the identity precompile
+  whose start is held to the limits; a deposit that fails validation, cannot pay a charge before its
+  first frame, carries a value, or whose own frame reverts, and a failed deposit's reads; an empty
+  authorization list and a sender's nonce of 2^64 - 1; and the transactions from a live system
+  address the registry names, refused or promoted (D-87);
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check

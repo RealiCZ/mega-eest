@@ -150,8 +150,16 @@ class SettlementMixin:
         sender.balance += tx.mint
         sender.nonce += 1
         self.probe.setdefault("deposit-intrinsic", intrinsic)
+        if tx.system_flag:
+            # SATIN-DEP-008, SATIN-VAL-008: the base layer refuses the flag from Regolith on; a deposit is never rejected.
+            d.add("outcome", "the deposit carries the base layer's system-transaction flag, which the base layer refuses "
+                  "from Regolith on: it fails that check, and a deposit is not rejected but included as a failed deposit",
+                  "SATIN-DEP-008", "SATIN-VAL-008", "SATIN-DEP-004")
+            if was_empty:
+                self.growth += 1
+            return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
         live = self.live_system_address()
-        if live == tx.sender:
+        if live == tx.sender and not self.promoted:
             # SATIN-VAL-005, SATIN-MST-003, SATIN-DEP-008: a deposit never has the system shape; from the live system
             # address it is invalid, and as a deposit it is included as a failed deposit, which runs no call.
             d.add("outcome", f"the deposit's caller {h(tx.sender)} is the live system address, the registry's code being "
@@ -169,10 +177,12 @@ class SettlementMixin:
                   f"{fmt(intrinsic)} and its body's history gas {fmt(body_history)}, {fmt(intrinsic + body_history)}: it "
                   "fails validation, and a deposit that fails a validation check is not rejected but included as a failed "
                   "deposit", "SATIN-DEP-001", "SATIN-VAL-002", "SATIN-VAL-008", "SATIN-DEP-004",
-                  *(("SATIN-OUT-016",) if self.outcomes else ()))
+                  *(("SATIN-OUT-016",) if self.outcomes else ()), *(("SATIN-MST-005",) if self.promoted else ()))
             if was_empty:
                 self.growth += 1
             return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
+        if self.promoted:
+            raise Unmodelled("a promoted Mega System Transaction that runs")
         if self.outcomes:
             d.add("outcome", f"the deposit's gas limit {fmt(tx.gas_limit)} pays its intrinsic regular gas and its body's "
                   f"history gas, {fmt(intrinsic + body_history)}: it passes validation", "SATIN-DEP-001", "SATIN-VAL-002",
@@ -191,6 +201,9 @@ class SettlementMixin:
                 self.growth += 1
                 return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="pre-frame")
             regular -= caller_state - r
+            if self.outcomes:
+                d.add("outcome", f"the deposit pays its empty caller's new-account state gas {fmt(caller_state)} before its "
+                      "first frame: it is no failed deposit for it", "SATIN-OUT-006", "SATIN-DEP-003")
             self.growth += 1
             d.add("gasLedgers", f"the caller is empty under EIP-161: its new-account state gas {fmt(ACCOUNT_STATE)} x m={m} = "
                   f"{fmt(caller_state)}, the first charge before the frame", "SATIN-DEP-003", "SATIN-SCHED-008")
@@ -206,6 +219,10 @@ class SettlementMixin:
         kept = self.snapshot()  # the mint, the nonce bump and the created caller, which a failed deposit keeps
         if tx.value:
             if tx.value > sender.balance:
+                # The start that cannot fund the value makes no record (step 3); the recipient is loaded at step 4, which
+                # charges an existing recipient nothing, and then the frame's start fails.
+                self.load(tx.to, "the recipient, at step 4 of the charges before the first frame, before the first "
+                          "frame's start finds the value unfunded", "SATIN-SCHED-008", "SATIN-WIT-008")
                 # SATIN-DEP-004: a first frame whose value the sender, its mint credited, cannot fund makes the deposit a
                 # failed deposit; such a start makes no record, so none is charged (SATIN-HIST-015).
                 d.add("outcome", f"the deposit's value {fmt(tx.value)} is more than its sender holds with its mint "
@@ -263,7 +280,10 @@ class SettlementMixin:
             return self.stopped_deposit(kept, intrinsic, floor, nonce_before, was_empty, e)
         if status == "revert":
             if tx.value:
-                raise Unmodelled("a reverting deposit with value")
+                d.add("gasLedgers", f"the frame reverts: its start is taken back with it, the value {tx.value}, the "
+                      f"recipient's record and the transfer log, and the start record's {fmt(WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE)} "
+                      "of history gas, charged before the frame, is given back", "SATIN-HIST-005", "SATIN-POOL-014",
+                      "SATIN-ACCT-006")
             return self.reverted_deposit(kept, intrinsic, floor, nonce_before, was_empty, output)
         if status != "success":
             raise Unmodelled("a deposit's frame ending in " + status)
@@ -455,15 +475,27 @@ class SettlementMixin:
                    "refund": q(0), "floor": q(0), "gasUsed": q(gas), "blockGas": q(gas)}
         resources = {"dataSize": dim(TX_DATA_LIMIT, body), "kvUpdates": dim(TX_KV_UPDATE_LIMIT, 0),
                      "stateGrowth": dim(TX_STATE_GROWTH_LIMIT, self.growth)}
-        receipt = {"type": "0x7e", "status": "0x0", "gasUsed": q(gas), "logs": [],
-                   "depositNonce": q(nonce_before), "depositReceiptVersion": "0x1"}
-        d.add("receipt", f"a failed deposit's receipt: status 0x0, gas used {fmt(gas)}, no logs, its nonce before the deposit "
-              f"({nonce_before}) and receipt version 1", "SATIN-DEP-004", "SATIN-DEP-009", "SATIN-POOL-018")
+        if self.promoted:
+            # A promoted Mega System Transaction is a legacy transaction in its block: its receipt is the legacy one, with
+            # no deposit fields (D-87).
+            receipt = {"type": q(tx.ty), "status": "0x0", "gasUsed": q(gas), "logs": [], "depositNonce": None,
+                       "depositReceiptVersion": None}
+            d.add("receipt", f"the promoted transaction's receipt is its envelope's, a legacy receipt: status 0x0, gas used "
+                  f"{fmt(gas)}, no logs and no deposit fields (D-87)", "SATIN-DEP-004", "SATIN-POOL-018")
+        else:
+            receipt = {"type": "0x7e", "status": "0x0", "gasUsed": q(gas), "logs": [],
+                       "depositNonce": q(nonce_before), "depositReceiptVersion": "0x1"}
+            d.add("receipt", f"a failed deposit's receipt: status 0x0, gas used {fmt(gas)}, no logs, its nonce before the "
+                  f"deposit ({nonce_before}) and receipt version 1", "SATIN-DEP-004", "SATIN-DEP-009", "SATIN-POOL-018")
         outcome = {"admission": {"status": "failed-deposit"}, "execution": None, "commit": {"status": "committed"}}
         observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
                         "resources": resources, "limit": None}
-        if self.reads or self.pools:
-            raise Unmodelled("the reads or the pools of a failed deposit")
+        if self.pools:
+            raise Unmodelled("the pools of a failed deposit")
+        if self.reads:
+            d.add("reads", "a failed deposit takes back what it wrote, not what it loaded: its reads are every load its "
+                  "execution made before it failed", "SATIN-WIT-002", "SATIN-DEP-004")
+            observations["reads"] = self.reads_observation()
         return Result(observations, d)
 
     def diff(self) -> dict:

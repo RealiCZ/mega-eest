@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-c130558], source commit `c130558e2f38a913982dc17f0
 (committed `2026-11-13T14:39:19+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **335** (281 gating, 54 quarantined).
-Cited rule IDs: **223**. Uncited rule IDs in that registry: **187**
-(177 active, 10 retired).
+Cases: **368** (306 gating, 62 quarantined).
+Cited rule IDs: **224**. Uncited rule IDs in that registry: **186**
+(176 active, 10 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -681,6 +681,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
 | [satin/detention/deposit/user-deposit] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/outcomes/deposit/reverted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-new-caller] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-with-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
@@ -703,6 +707,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
 | [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/deposit/intrinsic-and-history-one-short] | quarantined | unqualified | [satin-c130558] |
 
@@ -712,18 +717,26 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/limit-stops/deposit/out-of-gas] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/outcomes/deposit/halted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/halted-with-reservoir] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/value-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/value-unfunded-reads] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/deposit/intrinsic-and-history-one-short] | quarantined | unqualified | [satin-c130558] |
+| [satin/validation/deposit/system-transaction-flag] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/system-address/deposit-from-live-system-address] | quarantined | unqualified | [satin-c130558] |
+| [satin/validation/system-address/system-tx-below-intrinsic-and-history] | quarantined | unqualified | [satin-c130558] |
 
 ### SATIN-DEP-006
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/outcomes/deposit/halted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/halted-with-reservoir] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/value-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/value-unfunded-reads] | quarantined | unqualified | [satin-c130558] |
 | [satin/take-backs/failed-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/validation/deposit/system-transaction-flag] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/system-address/deposit-from-live-system-address] | quarantined | unqualified | [satin-c130558] |
 
 ### SATIN-DEP-007
@@ -1501,6 +1514,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/empty-account] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/answered-call-history-returns] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/outcomes/precompile/identity-value-start-fails] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-stopped] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/refused-read/child-reverts-caught] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/stop/child-stopped-caught] | gating | unqualified | [satin-c130558] |
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
@@ -1552,6 +1567,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/read-short-of-cold-access] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/outcomes/deposit/reverted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-new-caller] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-with-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/reads/oracle-slot-before-charge] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/validation/deposit/intrinsic-and-history-paid] | quarantined | unqualified | [satin-c130558] |
@@ -1564,8 +1582,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/new-caller/bucket-x2] | quarantined | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | quarantined | unqualified | [satin-d34e626] |
 | [satin/outcomes/deposit/halted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/halted-with-reservoir] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/value-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/value-unfunded-reads] | quarantined | unqualified | [satin-c130558] |
 | [satin/take-backs/failed-deposit] | quarantined | unqualified | [satin-cdded1e] |
+| [satin/validation/deposit/system-transaction-flag] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/system-address/deposit-from-live-system-address] | quarantined | unqualified | [satin-c130558] |
 
 ### SATIN-HIST-023
@@ -1974,6 +1995,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/refused-read] | gating | unqualified | [satin-5fb2688] |
 | [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
 
+### SATIN-MST-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/validation/system-address/system-tx-below-intrinsic-and-history] | quarantined | unqualified | [satin-c130558] |
+
 ### SATIN-MST-010
 
 | Case | Status | Citation | Registry |
@@ -2045,12 +2072,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/outcomes/halt/create-initcode-over-limit-detained] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/halt/create2-short-of-salt-at-crossing] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/halt/create2-short-of-salt-charges-paid] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/keyless/overhead-paid] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/new-account-state-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/start-record-paid] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/bn254-pairing-at-size-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/precompile/identity-at-price] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/precompile/identity-one-short-of-price] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-fails] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-stopped] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/refused-read/child-reverts-caught] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/return/one-word] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -2067,12 +2102,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/outcomes/halt/create2-short-of-salt-at-crossing] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-stopped] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/stop/child-stopped-caught] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-OUT-003
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/outcomes/halt/create-initcode-over-limit-detained] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/halt/create2-short-of-salt-at-crossing] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/halt/create2-short-of-salt-charges-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/create-initcode-at-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/create-initcode-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
@@ -2081,6 +2121,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/outcomes/precompile/bn254-pairing-at-size-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-OUT-005
@@ -2088,18 +2129,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/outcomes/deposit/halted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/halted-with-reservoir] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/value-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/value-unfunded-reads] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-one-short] | quarantined | unqualified | [satin-c130558] |
 
 ### SATIN-OUT-006
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/outcomes/deposit/reverted-new-caller] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-with-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/created-account-paid] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/new-account-state-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/new-account-state-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/start-record-paid] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/size/code-deposit-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/size/code-deposit-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-OUT-007
@@ -2107,12 +2158,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/outcomes/halt/create-initcode-over-limit-detained] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/create-short-of-operands] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/halt/create2-short-of-salt-charges-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/dup-of-empty-stack] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/invalid-opcode] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/halt/out-of-gas-at-sstore] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/halt/with-reservoir] | gating | unqualified | [satin-d34e626] |
+| [satin/outcomes/keyless/overhead-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/created-account-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/precompile/identity-one-short-of-price] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-fails] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-stopped] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/size/code-deposit-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/size/code-deposit-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/create-initcode-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/stop/child-halted-control] | gating | unqualified | [satin-c130558] |
@@ -2127,6 +2186,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/outcomes/keyless/overhead-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/keyless/overhead-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/system-refusal/not-intercepted] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-OUT-010
@@ -2144,21 +2205,29 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/outcomes/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/precompile/identity-at-price] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/precompile/identity-one-short-of-price] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-fails] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-stopped] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-OUT-012
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/outcomes/halt/create-short-of-operands] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/halt/create2-short-of-salt-at-crossing] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/halt/create2-short-of-salt-charges-paid] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-OUT-013
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/outcomes/deposit/halted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/halted-with-reservoir] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/value-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/value-unfunded-reads] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/create-short-of-operands] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/dup-of-empty-stack] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/keyless/overhead-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/size/code-deposit-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/create-initcode-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
 
@@ -2167,6 +2236,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/outcomes/deposit/reverted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-new-caller] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-with-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/keyless/overhead-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/revert/origin-and-chain-id] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-OUT-016
@@ -2181,6 +2253,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/outcomes/halt/create-short-of-operands] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/dup-of-empty-stack] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/keyless/overhead-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/size/code-deposit-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/create-initcode-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
 
@@ -2281,18 +2355,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/outcomes/deposit/reverted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-new-caller] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-with-value] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/outcomes/halt/create-initcode-over-limit-detained] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/create-short-of-operands] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/halt/create2-short-of-salt-charges-paid] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/dup-of-empty-stack] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/invalid-opcode] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/halt/out-of-gas-at-sstore] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/halt/with-reservoir] | gating | unqualified | [satin-d34e626] |
+| [satin/outcomes/keyless/overhead-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/keyless/overhead-paid] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-fails] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/precompile/identity-value-start-stopped] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/refused-read/child-reverts-caught] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/after-log] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/empty] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/origin-and-chain-id] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/revert/with-data] | gating | unqualified | [satin-d34e626] |
+| [satin/outcomes/size/code-deposit-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/create-initcode-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/stop/child-halted-control] | gating | unqualified | [satin-c130558] |
@@ -2322,14 +2405,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/outcomes/deposit/halted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/halted-with-reservoir] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/reverted] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-new-caller] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/reverted-with-value] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/value-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/outcomes/deposit/value-unfunded-reads] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/halt/create-short-of-operands] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/dup-of-empty-stack] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/halt/invalid-opcode] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/halt/out-of-gas-at-sstore] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/halt/with-reservoir] | gating | unqualified | [satin-d34e626] |
+| [satin/outcomes/keyless/overhead-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/keyless/overhead-paid] | gating | unqualified | [satin-c130558] |
+| [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/new-account-state-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/revert/after-fresh-slot] | gating | unqualified | [satin-d34e626] |
@@ -2337,6 +2427,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/outcomes/revert/empty] | gating | unqualified | [satin-d34e626] |
 | [satin/outcomes/revert/origin-and-chain-id] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/revert/with-data] | gating | unqualified | [satin-d34e626] |
+| [satin/outcomes/size/code-deposit-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/create-initcode-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
 
@@ -3549,13 +3640,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/validation/authorization-records/entry-applied] | gating | unqualified | [satin-c130558] |
+| [satin/validation/authorization-records/entry-skipped] | gating | unqualified | [satin-c130558] |
 | [satin/validation/below-intrinsic-regular] | gating | unqualified | [satin-d34e626] |
 | [satin/validation/body-history-uncovered] | gating | unqualified | [satin-d34e626] |
+| [satin/validation/chain-id/legacy-without-chain-id] | gating | unqualified | [satin-c130558] |
 | [satin/validation/deposit/intrinsic-and-history-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/deposit/intrinsic-and-history-paid] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/floor-above-gas-limit] | gating | unqualified | [satin-d34e626] |
+| [satin/validation/nonce/below-maximum] | gating | unqualified | [satin-c130558] |
 | [satin/validation/order/below-intrinsic-and-floor] | gating | unqualified | [satin-c130558] |
+| [satin/validation/order/call-at-least-gas-limit] | gating | unqualified | [satin-c130558] |
 | [satin/validation/order/gas-limit-at-floor] | gating | unqualified | [satin-c130558] |
+| [satin/validation/order/gas-limit-at-intrinsic-below-floor] | gating | unqualified | [satin-c130558] |
+| [satin/validation/order/self-transfer-at-least-gas-limit] | gating | unqualified | [satin-c130558] |
+| [satin/validation/system-address/system-tx-below-intrinsic-and-history] | quarantined | unqualified | [satin-c130558] |
 
 ### SATIN-VAL-003
 
@@ -3563,8 +3662,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/validation/authorization-records/entry-applied] | gating | unqualified | [satin-c130558] |
 | [satin/validation/authorization-records/entry-skipped] | gating | unqualified | [satin-c130558] |
+| [satin/validation/chain-id/legacy-without-chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/validation/nonce/below-maximum] | gating | unqualified | [satin-c130558] |
 | [satin/validation/order/below-intrinsic-and-floor] | gating | unqualified | [satin-c130558] |
+| [satin/validation/order/call-at-least-gas-limit] | gating | unqualified | [satin-c130558] |
 | [satin/validation/order/gas-limit-at-floor] | gating | unqualified | [satin-c130558] |
+| [satin/validation/order/gas-limit-at-intrinsic-below-floor] | gating | unqualified | [satin-c130558] |
+| [satin/validation/order/self-transfer-at-least-gas-limit] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-VAL-004
 
@@ -3584,26 +3688,46 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/validation/chain-id-mismatch] | gating | unqualified | [satin-d34e626] |
+| [satin/validation/chain-id/access-list-chain-zero] | gating | unqualified | [satin-c130558] |
+| [satin/validation/chain-id/authorization-chain-zero] | gating | unqualified | [satin-c130558] |
+| [satin/validation/chain-id/fee-market-chain-zero] | gating | unqualified | [satin-c130558] |
+| [satin/validation/chain-id/legacy-without-chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/validation/system-address/system-tx-chain-id-missing] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-VAL-007
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/validation/authorization-list/empty] | gating | unqualified | [satin-c130558] |
+| [satin/validation/authorization-records/entry-applied] | gating | unqualified | [satin-c130558] |
+| [satin/validation/authorization-records/entry-skipped] | gating | unqualified | [satin-c130558] |
+| [satin/validation/chain-id/legacy-without-chain-id] | gating | unqualified | [satin-c130558] |
 | [satin/validation/fee-cap-below-base-fee] | gating | unqualified | [satin-d34e626] |
 | [satin/validation/insufficient-funds] | gating | unqualified | [satin-d34e626] |
 | [satin/validation/nonce-too-high] | gating | unqualified | [satin-d34e626] |
 | [satin/validation/nonce-too-low] | gating | unqualified | [satin-d34e626] |
+| [satin/validation/nonce/at-maximum] | gating | unqualified | [satin-c130558] |
+| [satin/validation/nonce/below-maximum] | gating | unqualified | [satin-c130558] |
+| [satin/validation/order/call-at-least-gas-limit] | gating | unqualified | [satin-c130558] |
+| [satin/validation/order/self-transfer-at-least-gas-limit] | gating | unqualified | [satin-c130558] |
 | [satin/validation/priority-above-max-fee] | gating | unqualified | [satin-d34e626] |
 | [satin/validation/sender-has-code] | gating | unqualified | [satin-d34e626] |
+| [satin/validation/system-address/system-tx-chain-id-missing] | gating | unqualified | [satin-c130558] |
+| [satin/validation/system-address/system-tx-nonce-at-maximum] | gating | unqualified | [satin-c130558] |
+| [satin/validation/system-address/system-tx-nonce-too-high] | gating | unqualified | [satin-c130558] |
+| [satin/validation/system-address/system-tx-sender-has-code] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-VAL-008
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/outcomes/pre-frame/deposit-new-caller-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/outcomes/pre-frame/deposit-start-record-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/deposit/intrinsic-and-history-one-short] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/deposit/intrinsic-and-history-paid] | quarantined | unqualified | [satin-c130558] |
+| [satin/validation/deposit/system-transaction-flag] | quarantined | unqualified | [satin-c130558] |
 | [satin/validation/system-address/deposit-from-live-system-address] | quarantined | unqualified | [satin-c130558] |
+| [satin/validation/system-address/system-tx-below-intrinsic-and-history] | quarantined | unqualified | [satin-c130558] |
 
 ### SATIN-WIT-001
 
@@ -3819,7 +3943,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-MST-002` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-MST-003` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-MST-004` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-005` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-MST-006` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-MST-007` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-MST-008` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/system-tx.md) |
@@ -4106,22 +4229,37 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/oracle/read-short-of-cold-access]: ../slice/quarantine/satin/oracle/read-short-of-cold-access.json
 [satin/oracle/read-short-of-warm-base]: ../slice/quarantine/satin/oracle/read-short-of-warm-base.json
 [satin/outcomes/deposit/halted]: ../slice/quarantine/satin/outcomes/deposit/halted.json
+[satin/outcomes/deposit/halted-with-reservoir]: ../slice/quarantine/satin/outcomes/deposit/halted-with-reservoir.json
 [satin/outcomes/deposit/reverted]: ../slice/quarantine/satin/outcomes/deposit/reverted.json
+[satin/outcomes/deposit/reverted-new-caller]: ../slice/quarantine/satin/outcomes/deposit/reverted-new-caller.json
+[satin/outcomes/deposit/reverted-with-value]: ../slice/quarantine/satin/outcomes/deposit/reverted-with-value.json
 [satin/outcomes/deposit/value-unfunded]: ../slice/quarantine/satin/outcomes/deposit/value-unfunded.json
+[satin/outcomes/deposit/value-unfunded-reads]: ../slice/quarantine/satin/outcomes/deposit/value-unfunded-reads.json
 [satin/outcomes/halt/after-fresh-slot]: ../slice/cases/satin/outcomes/halt/after-fresh-slot.json
+[satin/outcomes/halt/create-initcode-over-limit-detained]: ../slice/cases/satin/outcomes/halt/create-initcode-over-limit-detained.json
 [satin/outcomes/halt/create-short-of-operands]: ../slice/cases/satin/outcomes/halt/create-short-of-operands.json
+[satin/outcomes/halt/create2-short-of-salt-at-crossing]: ../slice/cases/satin/outcomes/halt/create2-short-of-salt-at-crossing.json
+[satin/outcomes/halt/create2-short-of-salt-charges-paid]: ../slice/cases/satin/outcomes/halt/create2-short-of-salt-charges-paid.json
 [satin/outcomes/halt/dup-of-empty-stack]: ../slice/cases/satin/outcomes/halt/dup-of-empty-stack.json
 [satin/outcomes/halt/invalid-opcode]: ../slice/cases/satin/outcomes/halt/invalid-opcode.json
 [satin/outcomes/halt/out-of-gas-at-sstore]: ../slice/cases/satin/outcomes/halt/out-of-gas-at-sstore.json
 [satin/outcomes/halt/with-reservoir]: ../slice/cases/satin/outcomes/halt/with-reservoir.json
+[satin/outcomes/keyless/overhead-one-short]: ../slice/cases/satin/outcomes/keyless/overhead-one-short.json
+[satin/outcomes/keyless/overhead-paid]: ../slice/cases/satin/outcomes/keyless/overhead-paid.json
+[satin/outcomes/pre-frame/created-account-paid]: ../slice/cases/satin/outcomes/pre-frame/created-account-paid.json
+[satin/outcomes/pre-frame/deposit-new-caller-one-short]: ../slice/quarantine/satin/outcomes/pre-frame/deposit-new-caller-one-short.json
+[satin/outcomes/pre-frame/deposit-new-caller-paid]: ../slice/quarantine/satin/outcomes/pre-frame/deposit-new-caller-paid.json
 [satin/outcomes/pre-frame/deposit-start-record-one-short]: ../slice/quarantine/satin/outcomes/pre-frame/deposit-start-record-one-short.json
 [satin/outcomes/pre-frame/deposit-start-record-paid]: ../slice/quarantine/satin/outcomes/pre-frame/deposit-start-record-paid.json
 [satin/outcomes/pre-frame/new-account-state-one-short]: ../slice/cases/satin/outcomes/pre-frame/new-account-state-one-short.json
 [satin/outcomes/pre-frame/new-account-state-paid]: ../slice/cases/satin/outcomes/pre-frame/new-account-state-paid.json
 [satin/outcomes/pre-frame/start-record-paid]: ../slice/cases/satin/outcomes/pre-frame/start-record-paid.json
+[satin/outcomes/precompile/bn254-pairing-at-size-limit]: ../slice/cases/satin/outcomes/precompile/bn254-pairing-at-size-limit.json
 [satin/outcomes/precompile/bn254-pairing-over-size-limit]: ../slice/cases/satin/outcomes/precompile/bn254-pairing-over-size-limit.json
 [satin/outcomes/precompile/identity-at-price]: ../slice/cases/satin/outcomes/precompile/identity-at-price.json
 [satin/outcomes/precompile/identity-one-short-of-price]: ../slice/cases/satin/outcomes/precompile/identity-one-short-of-price.json
+[satin/outcomes/precompile/identity-value-start-fails]: ../slice/cases/satin/outcomes/precompile/identity-value-start-fails.json
+[satin/outcomes/precompile/identity-value-start-stopped]: ../slice/cases/satin/outcomes/precompile/identity-value-start-stopped.json
 [satin/outcomes/refused-read/child-reverts-caught]: ../slice/cases/satin/outcomes/refused-read/child-reverts-caught.json
 [satin/outcomes/return/one-word]: ../slice/cases/satin/outcomes/return/one-word.json
 [satin/outcomes/revert/after-fresh-slot]: ../slice/cases/satin/outcomes/revert/after-fresh-slot.json
@@ -4129,6 +4267,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/outcomes/revert/empty]: ../slice/cases/satin/outcomes/revert/empty.json
 [satin/outcomes/revert/origin-and-chain-id]: ../slice/cases/satin/outcomes/revert/origin-and-chain-id.json
 [satin/outcomes/revert/with-data]: ../slice/cases/satin/outcomes/revert/with-data.json
+[satin/outcomes/size/code-deposit-one-short]: ../slice/cases/satin/outcomes/size/code-deposit-one-short.json
+[satin/outcomes/size/code-deposit-paid]: ../slice/cases/satin/outcomes/size/code-deposit-paid.json
 [satin/outcomes/size/create-initcode-at-limit]: ../slice/cases/satin/outcomes/size/create-initcode-at-limit.json
 [satin/outcomes/size/create-initcode-over-limit]: ../slice/cases/satin/outcomes/size/create-initcode-over-limit.json
 [satin/outcomes/size/deployed-code-over-limit]: ../slice/cases/satin/outcomes/size/deployed-code-over-limit.json
@@ -4208,24 +4348,40 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/take-backs/sent-back/signs-turned]: ../slice/cases/satin/take-backs/sent-back/signs-turned.json
 [satin/take-backs/sent-back/signs-turned-paid]: ../slice/quarantine/satin/take-backs/sent-back/signs-turned-paid.json
 [satin/take-backs/set-then-clear]: ../slice/cases/satin/take-backs/set-then-clear.json
+[satin/validation/authorization-list/empty]: ../slice/cases/satin/validation/authorization-list/empty.json
 [satin/validation/authorization-records/entry-applied]: ../slice/cases/satin/validation/authorization-records/entry-applied.json
 [satin/validation/authorization-records/entry-skipped]: ../slice/cases/satin/validation/authorization-records/entry-skipped.json
 [satin/validation/below-intrinsic-regular]: ../slice/cases/satin/validation/below-intrinsic-regular.json
 [satin/validation/body-history-uncovered]: ../slice/cases/satin/validation/body-history-uncovered.json
 [satin/validation/chain-id-mismatch]: ../slice/cases/satin/validation/chain-id-mismatch.json
+[satin/validation/chain-id/access-list-chain-zero]: ../slice/cases/satin/validation/chain-id/access-list-chain-zero.json
+[satin/validation/chain-id/authorization-chain-zero]: ../slice/cases/satin/validation/chain-id/authorization-chain-zero.json
+[satin/validation/chain-id/fee-market-chain-zero]: ../slice/cases/satin/validation/chain-id/fee-market-chain-zero.json
+[satin/validation/chain-id/legacy-without-chain-id]: ../slice/cases/satin/validation/chain-id/legacy-without-chain-id.json
 [satin/validation/deposit/intrinsic-and-history-one-short]: ../slice/quarantine/satin/validation/deposit/intrinsic-and-history-one-short.json
 [satin/validation/deposit/intrinsic-and-history-paid]: ../slice/quarantine/satin/validation/deposit/intrinsic-and-history-paid.json
+[satin/validation/deposit/system-transaction-flag]: ../slice/quarantine/satin/validation/deposit/system-transaction-flag.json
 [satin/validation/fee-cap-below-base-fee]: ../slice/cases/satin/validation/fee-cap-below-base-fee.json
 [satin/validation/floor-above-gas-limit]: ../slice/cases/satin/validation/floor-above-gas-limit.json
 [satin/validation/gas-limit-above-block]: ../slice/cases/satin/validation/gas-limit-above-block.json
 [satin/validation/insufficient-funds]: ../slice/cases/satin/validation/insufficient-funds.json
 [satin/validation/nonce-too-high]: ../slice/cases/satin/validation/nonce-too-high.json
 [satin/validation/nonce-too-low]: ../slice/cases/satin/validation/nonce-too-low.json
+[satin/validation/nonce/at-maximum]: ../slice/cases/satin/validation/nonce/at-maximum.json
+[satin/validation/nonce/below-maximum]: ../slice/cases/satin/validation/nonce/below-maximum.json
 [satin/validation/order/below-intrinsic-and-floor]: ../slice/cases/satin/validation/order/below-intrinsic-and-floor.json
+[satin/validation/order/call-at-least-gas-limit]: ../slice/cases/satin/validation/order/call-at-least-gas-limit.json
 [satin/validation/order/gas-limit-at-floor]: ../slice/cases/satin/validation/order/gas-limit-at-floor.json
+[satin/validation/order/gas-limit-at-intrinsic-below-floor]: ../slice/cases/satin/validation/order/gas-limit-at-intrinsic-below-floor.json
+[satin/validation/order/self-transfer-at-least-gas-limit]: ../slice/cases/satin/validation/order/self-transfer-at-least-gas-limit.json
 [satin/validation/priority-above-max-fee]: ../slice/cases/satin/validation/priority-above-max-fee.json
 [satin/validation/sender-has-code]: ../slice/cases/satin/validation/sender-has-code.json
 [satin/validation/system-address/deposit-from-live-system-address]: ../slice/quarantine/satin/validation/system-address/deposit-from-live-system-address.json
+[satin/validation/system-address/system-tx-below-intrinsic-and-history]: ../slice/quarantine/satin/validation/system-address/system-tx-below-intrinsic-and-history.json
+[satin/validation/system-address/system-tx-chain-id-missing]: ../slice/cases/satin/validation/system-address/system-tx-chain-id-missing.json
+[satin/validation/system-address/system-tx-nonce-at-maximum]: ../slice/cases/satin/validation/system-address/system-tx-nonce-at-maximum.json
+[satin/validation/system-address/system-tx-nonce-too-high]: ../slice/cases/satin/validation/system-address/system-tx-nonce-too-high.json
+[satin/validation/system-address/system-tx-sender-has-code]: ../slice/cases/satin/validation/system-address/system-tx-sender-has-code.json
 [satin/value-transfer/absent-recipient/bucket-x4]: ../slice/cases/satin/value-transfer/absent-recipient/bucket-x4.json
 [satin/value-transfer/absent-recipient/minimum-bucket]: ../slice/cases/satin/value-transfer/absent-recipient/minimum-bucket.json
 [satin/value-transfer/contract-revert]: ../slice/cases/satin/value-transfer/contract-revert.json

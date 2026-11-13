@@ -5075,7 +5075,7 @@
       "area": "outcomes",
       "caseId": "satin/outcomes/size/deployed-code-over-limit",
       "file": "cases/satin/outcomes/size/deployed-code-over-limit.json",
-      "fileDigest": "sha256:0709a3bec5ca17aeae679a0569c5845ce748af5ab27fff9eb6d53a3bc223f986",
+      "fileDigest": "sha256:8274573768c1adf0875d9e7a90c153b118e3975eaaad178932ecfae61fc4415f",
       "rules": [
         "SATIN-OUT-003",
         "SATIN-OUT-006",
@@ -5092,9 +5092,55 @@
     },
     {
       "area": "outcomes",
+      "caseId": "satin/outcomes/size/code-deposit-one-short",
+      "file": "cases/satin/outcomes/size/code-deposit-one-short.json",
+      "fileDigest": "sha256:4ac2abd14220e9592b90f31f3d9ec3b57e08c49361cd12b0e86a4b8b00fed731",
+      "rules": [
+        "SATIN-OUT-006",
+        "SATIN-OUT-007",
+        "SATIN-OUT-013",
+        "SATIN-OUT-018",
+        "SATIN-POOL-014",
+        "SATIN-POOL-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/size/code-deposit-paid",
+      "file": "cases/satin/outcomes/size/code-deposit-paid.json",
+      "fileDigest": "sha256:f024b750442c2928873ee8551047abf856e9a507a5986cefdb6955430609d366",
+      "rules": [
+        "SATIN-OUT-006",
+        "SATIN-OUT-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/precompile/bn254-pairing-at-size-limit",
+      "file": "cases/satin/outcomes/precompile/bn254-pairing-at-size-limit.json",
+      "fileDigest": "sha256:8913d07c223b24b1f42952139944876f08b2344dec9d76f3550e2efcf8706e2c",
+      "rules": [
+        "SATIN-OUT-001",
+        "SATIN-OUT-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
       "caseId": "satin/outcomes/precompile/bn254-pairing-over-size-limit",
       "file": "cases/satin/outcomes/precompile/bn254-pairing-over-size-limit.json",
-      "fileDigest": "sha256:474406897b4e427602d1de1a29cbdb091f69a731203413e40bcc7f6ce8a62733",
+      "fileDigest": "sha256:946d7290784b7001a66c508e503c459d96f0f5287e293247dc449fb82f4d1f5a",
       "rules": [
         "SATIN-OUT-001",
         "SATIN-OUT-004",
@@ -5259,11 +5305,13 @@
       "area": "validation",
       "caseId": "satin/validation/authorization-records/entry-skipped",
       "file": "cases/satin/validation/authorization-records/entry-skipped.json",
-      "fileDigest": "sha256:113f4e4581869df891af5c9ff0c2c14cce8e27ac75a31554e8f607f1c81cb310",
+      "fileDigest": "sha256:62cba619788aa46fe8b884a9c1d14bdaef955af56ff0eeda47ce5e5fd0baa5e6",
       "rules": [
         "SATIN-VAL-001",
+        "SATIN-VAL-002",
         "SATIN-VAL-003",
-        "SATIN-VAL-004"
+        "SATIN-VAL-004",
+        "SATIN-VAL-007"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -5274,11 +5322,339 @@
       "area": "validation",
       "caseId": "satin/validation/authorization-records/entry-applied",
       "file": "cases/satin/validation/authorization-records/entry-applied.json",
-      "fileDigest": "sha256:c689f00f69e3df544dd644302f0acda29aa47bd58cec79786fa83edce054cf18",
+      "fileDigest": "sha256:1d964b918ded15debc048da4a018781c2d8d93dae15e8aef395c7a610c73bf66",
       "rules": [
         "SATIN-VAL-001",
+        "SATIN-VAL-002",
         "SATIN-VAL-003",
-        "SATIN-VAL-004"
+        "SATIN-VAL-004",
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/order/call-at-least-gas-limit",
+      "file": "cases/satin/validation/order/call-at-least-gas-limit.json",
+      "fileDigest": "sha256:c32bbc79805900380304f90d54dc84fca130a654f9b45373e279418eeab5fa2c",
+      "rules": [
+        "SATIN-VAL-002",
+        "SATIN-VAL-003",
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/order/self-transfer-at-least-gas-limit",
+      "file": "cases/satin/validation/order/self-transfer-at-least-gas-limit.json",
+      "fileDigest": "sha256:1f880d1cad1a8dd2fb47c2e1a42529a94c65ae43906f89b9be2d748bac0cb5de",
+      "rules": [
+        "SATIN-VAL-002",
+        "SATIN-VAL-003",
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/order/gas-limit-at-intrinsic-below-floor",
+      "file": "cases/satin/validation/order/gas-limit-at-intrinsic-below-floor.json",
+      "fileDigest": "sha256:2ad28bd0cebdf030c4bf3cc7074f9d05a0c18e5959cfdd00c37cdade0e30e8bb",
+      "rules": [
+        "SATIN-VAL-002",
+        "SATIN-VAL-003"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/chain-id/legacy-without-chain-id",
+      "file": "cases/satin/validation/chain-id/legacy-without-chain-id.json",
+      "fileDigest": "sha256:9bcd9cb775a3f158da5ec5e3278faeb2d20a8aa5f04d27759a328d4d3375aa9b",
+      "rules": [
+        "SATIN-VAL-002",
+        "SATIN-VAL-003",
+        "SATIN-VAL-006",
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/chain-id/access-list-chain-zero",
+      "file": "cases/satin/validation/chain-id/access-list-chain-zero.json",
+      "fileDigest": "sha256:4e8d4f2bcb0b24651d54533076e2723ad82d11ceb2f00a67b3291714020c2d07",
+      "rules": [
+        "SATIN-VAL-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/chain-id/fee-market-chain-zero",
+      "file": "cases/satin/validation/chain-id/fee-market-chain-zero.json",
+      "fileDigest": "sha256:cdb77f837e24bf502d134ac350e6692213452b4284190bc9bf30352e1628892c",
+      "rules": [
+        "SATIN-VAL-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/chain-id/authorization-chain-zero",
+      "file": "cases/satin/validation/chain-id/authorization-chain-zero.json",
+      "fileDigest": "sha256:feb4f567ef9d742ede2429573ace6268f66bbe98def9260476d235902a903aac",
+      "rules": [
+        "SATIN-VAL-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/nonce/at-maximum",
+      "file": "cases/satin/validation/nonce/at-maximum.json",
+      "fileDigest": "sha256:c1f0e8cd63abdb5d3d4dde93860ab8ad1a5cbd473b5b01205b789cc97023625e",
+      "rules": [
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/nonce/below-maximum",
+      "file": "cases/satin/validation/nonce/below-maximum.json",
+      "fileDigest": "sha256:d2179f785561a79d7d626f61222ad92c60a03b7dafe5fca844854869ebd0cc33",
+      "rules": [
+        "SATIN-VAL-002",
+        "SATIN-VAL-003",
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/authorization-list/empty",
+      "file": "cases/satin/validation/authorization-list/empty.json",
+      "fileDigest": "sha256:0b9619605f6dc00e0319154c976c051edbb05b7b84af15b2666f8359faeac4ec",
+      "rules": [
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/pre-frame/created-account-paid",
+      "file": "cases/satin/outcomes/pre-frame/created-account-paid.json",
+      "fileDigest": "sha256:64c27a704249ed8966910f78567c70c58c767e632d6e1fc2884726f55716de83",
+      "rules": [
+        "SATIN-OUT-006",
+        "SATIN-OUT-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/halt/create2-short-of-salt-at-crossing",
+      "file": "cases/satin/outcomes/halt/create2-short-of-salt-at-crossing.json",
+      "fileDigest": "sha256:4b322a8186a57a9c0a57101c1206dc1f5aa40b8b85f0a5b6db4d61aa1ec31b65",
+      "rules": [
+        "SATIN-OUT-001",
+        "SATIN-OUT-002",
+        "SATIN-OUT-003",
+        "SATIN-OUT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/halt/create2-short-of-salt-charges-paid",
+      "file": "cases/satin/outcomes/halt/create2-short-of-salt-charges-paid.json",
+      "fileDigest": "sha256:6134bba220003a1ad2d6d0f56bb45922c4cc9971176ac3647cc0694890760af9",
+      "rules": [
+        "SATIN-OUT-001",
+        "SATIN-OUT-003",
+        "SATIN-OUT-007",
+        "SATIN-OUT-012",
+        "SATIN-POOL-014"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/halt/create-initcode-over-limit-detained",
+      "file": "cases/satin/outcomes/halt/create-initcode-over-limit-detained.json",
+      "fileDigest": "sha256:b47f9aeb81f7e98258d36889030361881b58c40d81aac05d62770925c14ac2ce",
+      "rules": [
+        "SATIN-OUT-001",
+        "SATIN-OUT-003",
+        "SATIN-OUT-007",
+        "SATIN-POOL-014"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/precompile/identity-value-start-fails",
+      "file": "cases/satin/outcomes/precompile/identity-value-start-fails.json",
+      "fileDigest": "sha256:95a27b0692d2a0b86ab651588be4ea1a6c9c691174e85357ff279404f24aa283",
+      "rules": [
+        "SATIN-HIST-012",
+        "SATIN-OUT-001",
+        "SATIN-OUT-007",
+        "SATIN-OUT-011",
+        "SATIN-POOL-014"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/precompile/identity-value-start-stopped",
+      "file": "cases/satin/outcomes/precompile/identity-value-start-stopped.json",
+      "fileDigest": "sha256:265ee3b35c5dce9349dadfd092e774237a365357ff51bc4f03c22c6a5045f9d4",
+      "rules": [
+        "SATIN-HIST-012",
+        "SATIN-OUT-001",
+        "SATIN-OUT-002",
+        "SATIN-OUT-007",
+        "SATIN-OUT-011",
+        "SATIN-POOL-014"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/system-address/system-tx-chain-id-missing",
+      "file": "cases/satin/validation/system-address/system-tx-chain-id-missing.json",
+      "fileDigest": "sha256:c2ee4dfd0b90f1e29ecae2ca446f432d57d6170e8d6c0f88db16b3125f679176",
+      "rules": [
+        "SATIN-VAL-006",
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/system-address/system-tx-sender-has-code",
+      "file": "cases/satin/validation/system-address/system-tx-sender-has-code.json",
+      "fileDigest": "sha256:a711d89e232f6fc1396d775231c21d4117acf25265167a052d668857f195b950",
+      "rules": [
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/system-address/system-tx-nonce-too-high",
+      "file": "cases/satin/validation/system-address/system-tx-nonce-too-high.json",
+      "fileDigest": "sha256:c00433d22e579c7ea3adcee15d07f5a95314295862230b5aa31aaa01636041e2",
+      "rules": [
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/system-address/system-tx-nonce-at-maximum",
+      "file": "cases/satin/validation/system-address/system-tx-nonce-at-maximum.json",
+      "fileDigest": "sha256:a8031deab79c8501458d646ca7c8fbc8c014d589539889336c2079b51d873d25",
+      "rules": [
+        "SATIN-VAL-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/keyless/overhead-one-short",
+      "file": "cases/satin/outcomes/keyless/overhead-one-short.json",
+      "fileDigest": "sha256:4f937c65b675caccd3c54d2218ecc3e9bf5d8a1bb81853548391ba172fa43f52",
+      "rules": [
+        "SATIN-OUT-007",
+        "SATIN-OUT-009",
+        "SATIN-OUT-013",
+        "SATIN-OUT-018",
+        "SATIN-POOL-014",
+        "SATIN-POOL-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/keyless/overhead-paid",
+      "file": "cases/satin/outcomes/keyless/overhead-paid.json",
+      "fileDigest": "sha256:64f32e83fc6525bcd6e642cccf9bc541418e52739bff314a344ebcab0fc02909",
+      "rules": [
+        "SATIN-OUT-001",
+        "SATIN-OUT-009",
+        "SATIN-OUT-014",
+        "SATIN-POOL-014",
+        "SATIN-POOL-017"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -6745,6 +7121,201 @@
         "SATIN-HIST-022",
         "SATIN-VAL-005",
         "SATIN-VAL-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/pre-frame/deposit-new-caller-one-short",
+      "file": "quarantine/satin/outcomes/pre-frame/deposit-new-caller-one-short.json",
+      "fileDigest": "sha256:dad88936f4d79472d574d20ba78b6cb391132b0a0d4ec77363ce7a4f1f1ba556",
+      "knownFail": {
+        "actual": "0x3a98",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x37257",
+        "path": "/expected/gasLedgers/blockGas",
+        "verdict": "SATIN-DEP-001 holds a deposit's gas limit to its intrinsic regular gas and its body's history gas, SATIN-HIST-016 charges a deposit its first frame's start record as any transaction, and a deposit that fails validation or cannot pay a charge made before its first frame is a failed deposit (SATIN-VAL-008, SATIN-DEP-004), whose block gas is its whole gas limit, 225,879 (SATIN-DEP-005); the revm-based implementation at 7110d87b charges a deposit no history gas, so it admits the deposit, runs its frame and counts its intrinsic regular gas alone, 15,000"
+      },
+      "rules": [
+        "SATIN-DEP-001",
+        "SATIN-DEP-004",
+        "SATIN-DEP-005",
+        "SATIN-OUT-005",
+        "SATIN-OUT-006",
+        "SATIN-POOL-017",
+        "SATIN-VAL-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/pre-frame/deposit-new-caller-paid",
+      "file": "quarantine/satin/outcomes/pre-frame/deposit-new-caller-paid.json",
+      "fileDigest": "sha256:71c0d71a2edd832aded1bcf7bc9b733ff5edc70b4d97bc891e83d6b661491dbd",
+      "knownFail": {
+        "actual": "0x307c8",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x37258",
+        "path": "/expected/gasLedgers/gasUsed",
+        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body and its first frame's start record among the rest; the revm-based implementation at 7110d87b charges a deposit no history gas, so its gas used is the deposit's 310 history bytes at 88 gas, 27,280, below the rule's"
+      },
+      "rules": [
+        "SATIN-DEP-001",
+        "SATIN-HIST-016",
+        "SATIN-OUT-001",
+        "SATIN-OUT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/deposit/halted-with-reservoir",
+      "file": "quarantine/satin/outcomes/deposit/halted-with-reservoir.json",
+      "fileDigest": "sha256:d2ed6cbb4c65ab53c2da8912101d775857c7b94eaf7d107bf1fded881a893d46",
+      "knownFail": {
+        "actual": "0x0",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x136",
+        "path": "/expected/gasLedgers/historyBytes",
+        "verdict": "SATIN-HIST-022 makes a deposit report the history bytes it keeps, and SATIN-DEP-006 has a failed deposit keep its body, 310 bytes, which it reports as its history bytes though it pays no history gas (SATIN-DEP-005); the revm-based implementation at 7110d87b charges a deposit no history gas and reports a failed deposit's history bytes as 0"
+      },
+      "rules": [
+        "SATIN-DEP-005",
+        "SATIN-DEP-006",
+        "SATIN-HIST-022",
+        "SATIN-OUT-005",
+        "SATIN-OUT-013",
+        "SATIN-POOL-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/deposit/reverted-with-value",
+      "file": "quarantine/satin/outcomes/deposit/reverted-with-value.json",
+      "fileDigest": "sha256:774c1f51417be79a916aec9de1d9b5edb2da832ccb05b2475e523d6b85532393",
+      "knownFail": {
+        "actual": "0x5218",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0xbca8",
+        "path": "/expected/gasLedgers/gasUsed",
+        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body and its first frame's start record among the rest; the revm-based implementation at 7110d87b charges a deposit no history gas, so its gas used is the deposit's 310 history bytes at 88 gas, 27,280, below the rule's"
+      },
+      "rules": [
+        "SATIN-DEP-001",
+        "SATIN-HIST-016",
+        "SATIN-OUT-006",
+        "SATIN-OUT-014",
+        "SATIN-POOL-014",
+        "SATIN-POOL-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/deposit/reverted-new-caller",
+      "file": "quarantine/satin/outcomes/deposit/reverted-new-caller.json",
+      "fileDigest": "sha256:6e15d85f649bb6f79fb7e756fcd5b21a0ba2a01e0c7ae0ac97a7762f8ba8f2da",
+      "knownFail": {
+        "actual": "0x307d8",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x37268",
+        "path": "/expected/gasLedgers/gasUsed",
+        "verdict": "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas as any transaction does, for its body and its first frame's start record among the rest; the revm-based implementation at 7110d87b charges a deposit no history gas, so its gas used is the deposit's 310 history bytes at 88 gas, 27,280, below the rule's"
+      },
+      "rules": [
+        "SATIN-DEP-001",
+        "SATIN-HIST-016",
+        "SATIN-OUT-006",
+        "SATIN-OUT-014",
+        "SATIN-POOL-014",
+        "SATIN-POOL-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/system-address/system-tx-below-intrinsic-and-history",
+      "file": "quarantine/satin/validation/system-address/system-tx-below-intrinsic-and-history.json",
+      "fileDigest": "sha256:4d2412d4dc2eed5577908e0f4f024d8726b832e208db900ca8634cb8d8ad86da",
+      "knownFail": {
+        "actual": "0x3adc",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0xa527",
+        "path": "/expected/gasLedgers/blockGas",
+        "verdict": "SATIN-MST-008 and SATIN-HIST-016 make a system-originated transaction pay history gas as any transaction does, so a Mega System Transaction whose gas limit is below its intrinsic regular gas and its body's history fails its promoted deposit's check and is a failed deposit (SATIN-VAL-008, SATIN-MST-005), whose block gas is its whole gas limit, 42,279 (SATIN-DEP-005); the revm-based implementation at 7110d87b charges it no history gas, so it runs the Oracle's bytecode on the empty input, which reverts, and counts 15,068"
+      },
+      "rules": [
+        "SATIN-DEP-005",
+        "SATIN-MST-005",
+        "SATIN-VAL-002",
+        "SATIN-VAL-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/deposit/system-transaction-flag",
+      "file": "quarantine/satin/validation/deposit/system-transaction-flag.json",
+      "fileDigest": "sha256:68fc7fc81c51322a9b3dba236f569d76fed452fa40db635e97de8441fbc4db62",
+      "knownFail": {
+        "actual": "0x0",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x136",
+        "path": "/expected/gasLedgers/historyBytes",
+        "verdict": "SATIN-HIST-022 makes a deposit report the history bytes it keeps, and SATIN-DEP-006 has a failed deposit keep its body, 310 bytes, which it reports as its history bytes though it pays no history gas (SATIN-DEP-005); the revm-based implementation at 7110d87b charges a deposit no history gas and reports a failed deposit's history bytes as 0"
+      },
+      "rules": [
+        "SATIN-DEP-005",
+        "SATIN-DEP-006",
+        "SATIN-HIST-022",
+        "SATIN-VAL-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "outcomes",
+      "caseId": "satin/outcomes/deposit/value-unfunded-reads",
+      "file": "quarantine/satin/outcomes/deposit/value-unfunded-reads.json",
+      "fileDigest": "sha256:18503e62cbdccd7baca3f1d5ca7eb0b5a5078b62051fb19937e469cc847e5b75",
+      "knownFail": {
+        "actual": "0x0",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x136",
+        "path": "/expected/gasLedgers/historyBytes",
+        "verdict": "SATIN-HIST-022 makes a deposit report the history bytes it keeps, and SATIN-DEP-006 has a failed deposit keep its body, 310 bytes, which it reports as its history bytes though it pays no history gas (SATIN-DEP-005); the revm-based implementation at 7110d87b charges a deposit no history gas and reports a failed deposit's history bytes as 0"
+      },
+      "rules": [
+        "SATIN-DEP-005",
+        "SATIN-DEP-006",
+        "SATIN-HIST-022",
+        "SATIN-OUT-005",
+        "SATIN-OUT-013",
+        "SATIN-POOL-017"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
