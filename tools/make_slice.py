@@ -1138,6 +1138,7 @@ def take_back_cases() -> list[Case]:
 HEIR = bytes.fromhex("00000000000000000000000000000000000000e1")  # an existing beneficiary, holding 1 wei
 WRAPPER = bytes.fromhex("00000000000000000000000000000000000c0deb")  # a frame that calls the created account and fails
 LIBRARY = bytes.fromhex("00000000000000000000000000000000000c0dec")  # code a constructor runs by DELEGATECALL
+HALTER = bytes.fromhex("00000000000000000000000000000000000c0ded")  # a child that halts at once
 
 
 def selfdestruct_to(beneficiary: bytes) -> bytes:
@@ -1303,6 +1304,16 @@ def selfdestruct_cases() -> list[Case]:
              f"destroys itself; then W {what}: the mark and every effect of the table are discarded with W, and {kept}",
              accounts={**heir, **wrapper}, gas=3_000_000,
              code=create(0, init) + call(2_000_000, WRAPPER, 0, 0) + b"\x50" + tail + STOP)
+
+    # The give-back is reservoir of the destroying frame and returns up the chain as reservoir (SATIN-SD-010, -005):
+    # after the destruction, P calls a child that halts, which burns the regular gas it was forwarded and returns
+    # the reservoir share it received; the give-back, in P's reservoir, is not forwarded and not burned.
+    case("first-effective/give-back-as-reservoir", "P creates C, which destroys itself, and the table's give-back "
+         "returns to P as reservoir; P then calls a child, forwarding all the regular gas it may, and the child halts: "
+         "it burns the regular gas it was forwarded and returns the reservoir share it received, so the give-back "
+         "returns to the sender, none of it burned", gas=3_000_000,
+         accounts={**heir, HALTER: model.Account(nonce=1, code=INVALID)},
+         code=destroy + call(MAX_GAS, HALTER, 0, 0) + b"\x50" + STOP)
 
     # The volatile read of a destruction's beneficiary, the block beneficiary (SATIN-SD-020, SATIN-DET-001, -003): a
     # contract holding 10 wei destroys itself to the block beneficiary, which the state holds no account for, and its
@@ -1544,6 +1555,19 @@ TAKE_BACKS_QUARANTINE = {
 }
 # The failed-deposit example: the history bytes it keeps, which the revm-based implementation does not report.
 TAKE_BACKS_DEPOSITS = {"satin/take-backs/failed-deposit"}
+# The destruction cases the revm-based implementation fails: it credits the table's give-back to the regular gas of
+# the frames that paid the charges, where SATIN-SD-005 and SATIN-SD-010 make it reservoir of the destroying frame,
+# which returns up the chain as reservoir. The difference shows without the pools when the caller then forwards all
+# it may to a child that halts: that implementation forwards the give-back too, and the child burns it (D-70). Each
+# records the child whose CALL forwards it.
+SELFDESTRUCT_QUARANTINE = {"satin/selfdestruct/first-effective/give-back-as-reservoir": HALTER}
+
+
+def forward_cap(remaining: int) -> int:
+    """What a CALL forwards of `remaining` regular gas at most (SATIN-FWD-001)."""
+    return remaining - remaining * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR
+
+
 def storage_path(address: bytes, slot: int) -> str:
     return f"/expected/state/accounts/{h(address)}/storage/0x{slot:064x}"
 
@@ -1574,6 +1598,20 @@ def edge_quarantine(c: Case, fx: dict) -> dict | None:
                    f"{price} = {fmt(history)}")
         return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used), "actual": q(used - history),
                 "verdict": verdict}
+    if c.case_id in SELFDESTRUCT_QUARANTINE:
+        child = SELFDESTRUCT_QUARANTINE[c.case_id].hex()
+        regular, given = c.probe["forward:" + child], c.probe["reservoir:" + child]
+        more = forward_cap(regular + given) - forward_cap(regular)
+        block = int(fx["expected"]["gasLedgers"]["blockGas"], 16)
+        verdict = ("SATIN-SD-005 and SATIN-SD-010 make the destruction table's give-back reservoir of the destroying "
+                   "frame, which returns up the chain as reservoir (SATIN-POOL-012), and SATIN-HIST-012 never credits it "
+                   f"to regular gas; the revm-based implementation at {REVM_PIN} credits the give-back, {fmt(given)}, to "
+                   "the regular gas of the frames that paid the charges, so the caller's next CALL forwards "
+                   f"{fmt(more)} more regular gas to a child that halts and burns it, where SATIN-POOL-014 returns a "
+                   "halted child's reservoir share: the regular ledger, which the block counts, is that much above the "
+                   "rule's")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/blockGas", "expected": q(block),
+                "actual": q(block + more), "verdict": verdict}
     if c.case_id in TAKE_BACKS_DEPOSITS:
         kept = int(fx["expected"]["gasLedgers"]["historyBytes"], 16)
         verdict = ("SATIN-HIST-022 makes a deposit report the history bytes it keeps, and SATIN-DEP-006 and SATIN-TAKE-012 "

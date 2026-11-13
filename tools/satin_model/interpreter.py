@@ -391,6 +391,8 @@ class InterpreterMixin:
                           "SATIN-HIST-010", "SATIN-STATE-001", "SATIN-STATE-003", "SATIN-STATE-012", "SATIN-POOL-008")
                 remaining = frame["regular"]
                 self.probe.setdefault("forward", remaining)
+                self.probe.setdefault("forward:" + target.hex(), remaining)  # each target's first CALL
+                self.probe.setdefault("reservoir:" + target.hex(), frame["reservoir"])
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
                 self.draw_regular(frame, forward)

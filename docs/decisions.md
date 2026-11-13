@@ -700,7 +700,7 @@ EIP-7623 floor", now reads: the EIP-7623 floor the settlement applies, and 0 for
 shapes.** The rules of SELFDESTRUCT and the Destruction Table that no case cited (`SATIN-SD-001`,
 `-002`, `-003`, `-010` to `-017` and `-020`) are now derived at `cdded1e` (`specs/satin-cdded1e`;
 the page is the same bytes at the specification's later main, so no snapshot is added), in the area
-`selfdestruct`: 28 cases, each pinning a rule where its outcome changes, with a control beside it
+`selfdestruct`: 29 cases, each pinning a rule where its outcome changes, with a control beside it
 where one is cheap. The scenarios come from the existing tests of both implementations; every
 expected value comes from the specification through the model.
 
@@ -727,9 +727,14 @@ expected value comes from the specification through the model.
   account at its `SELFDESTRUCT`; it now keeps it in the run's state, marked, so that a later call runs
   its code and a later value reaches it (`SATIN-SD-015`), and the state diff deletes it. The take-back
   examples' figures do not move.
-- **No quarantine.** The 28 cases pass on both implementations. None observes the pools: where a
-  give-back lands is the take-back examples' observation (D-65), and the revm-based implementation's
-  departure from `SATIN-HIST-012` there stays quarantined with them.
+- **One quarantine.** The 28 gating cases pass on both implementations; none observes the pools.
+  A 29th shows where the table's give-back lands without them: once it is back in its creator's
+  reservoir (`SATIN-SD-005`, `SATIN-SD-010`), the creator calls a child that halts, which burns the
+  regular gas it was forwarded and returns its reservoir share (`SATIN-POOL-014`). The revm-based
+  implementation credits the give-back to regular gas (its departure from `SATIN-HIST-012`, D-65),
+  so the creator forwards most of it and the child burns it; its gas used is above the rule's by
+  what the forward grows by, a figure the generator derives from the run. The case is quarantined
+  with that verdict and passes on the evm2-based implementation.
 
 **D-71. A `SELFDESTRUCT` to a cold beneficiary pays the whole cold account access.**
 `SATIN-SCHED-003` lists the cold account access as an addition to the warm read, which is how an

@@ -49,7 +49,7 @@ derivation, and the two implementations run against it.
 | `limit-stops` | 5 | a stop of the transaction's own frame, its result (`SATIN-STOP-009`, `-021`), settled as a revert: gas detention's crossing at one memory expansion and at `BALANCE`'s static cost (kind 2); the fresh slot that takes the frame's state growth past its budget (kind 3, `SATIN-LIM-002`, `-010`); and, after hints used what the transaction had left, a log one byte past the transaction's data-size limit while the frame's budget holds it (kind 0, `SATIN-LIM-011`, `-012`), with the log that lands exactly on the limit |
 | `gas-pools` | 2 | the first frame's pools observed directly (`gasPools`, D-64): a plain transfer as the control, and a fresh slot whose state gas a small reservoir pays in part, regular gas paying the legacy share, the rest and the record (`SATIN-POOL-008`) |
 | `take-backs` | 2 | the worked examples of the take-back page (`SATIN-TAKE-005` to `-012`), one case each, of which these two gate: a list whose two entries for one absent authority delegate and then clear (`SATIN-TAKE-008`, `SATIN-AUTH-009`), and a value round trip whose earlier transfer turns the signs, the second start's records charged to a caller left too little regular gas, which runs out of gas (`SATIN-TAKE-006`, `SATIN-HIST-009`); the other fifteen are quarantined below |
-| `selfdestruct` | 28 | the destruction page's own rules (D-70): a destruction of an account the transaction did not create moves the balance, writes the account it clears and its beneficiary, and applies no table (`SATIN-SD-001`, `-012`), to an existing, a new, a changed or the sending account, to itself, with no balance, at a bucket multiplier of 2 and under a reverting caller; the first effective destruction of an account created in the transaction (`SATIN-SD-002`), at an absent address and at one whose leaf the state holds with storage, which does not collide, keeps its leaf's charge and reads its slots as zero (`SATIN-SD-003`, `-016`, `-017`), in its constructor and after a slot restored to zero; a repeated destruction that applies the table for nothing (`SATIN-SD-011`); the marked account, whose stores pay their regular gas and no state gas (`SATIN-SD-013`, on little gas against the unmarked control), whose code deposited after the mark keeps no state gas (`SATIN-SD-014`), and which keeps its logs and is removed with a value sent to it (`SATIN-SD-015`); a mark discarded by a frame that reverts or halts (`SATIN-SD-010`); and the read of a destruction's beneficiary, the block beneficiary, marked once the destruction completed and not when it halts in its charges (`SATIN-SD-020`) |
+| `selfdestruct` | 28 | the destruction page's own rules (D-70): a destruction of an account the transaction did not create moves the balance, writes the account it clears and its beneficiary, and applies no table (`SATIN-SD-001`, `-012`), to an existing, a new, a changed or the sending account, to itself, with no balance, at a bucket multiplier of 2 and under a reverting caller; the first effective destruction of an account created in the transaction (`SATIN-SD-002`), at an absent address and at one whose leaf the state holds with storage, which does not collide, keeps its leaf's charge and reads its slots as zero (`SATIN-SD-003`, `-016`, `-017`), in its constructor and after a slot restored to zero; a repeated destruction that applies the table for nothing (`SATIN-SD-011`); the marked account, whose stores pay their regular gas and no state gas (`SATIN-SD-013`, on little gas against the unmarked control), whose code deposited after the mark keeps no state gas (`SATIN-SD-014`), and which keeps its logs and is removed with a value sent to it (`SATIN-SD-015`); a mark discarded by a frame that reverts or halts (`SATIN-SD-010`); and the read of a destruction's beneficiary, the block beneficiary, marked once the destruction completed and not when it halts in its charges (`SATIN-SD-020`); one more, the give-back kept as reservoir through a halting child, is quarantined below |
 | `pre-frame` | 3 | the reservoir pays the authorities' records first (`SATIN-HIST-005`), shown by a first frame that halts; the transaction's own start record charged before interception answers its `keylessDeploy` call, one gas below step 1's overhead and at it |
 
 The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
@@ -61,7 +61,7 @@ system contracts a call can reach (D-55).
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: forty cases the revm-based implementation fails against a decided rule it
+- `quarantine/`: forty-one cases the revm-based implementation fails against a decided rule it
   has not made yet, each passing on the evm2-based implementation:
   - four deposit cases. `SATIN-HIST-016` and `SATIN-DEP-001` make a deposit pay history gas for its
     body, its logs and its write records; the revm-based implementation charges none. The
@@ -106,6 +106,11 @@ system contracts a call can reach (D-55).
     drops what the halted frame paid. The failed deposit's ledgers are `SATIN-DEP-005`'s, with floor
     and refund 0 (D-66); the revm-based implementation reports its history bytes, the body and
     calldata it keeps (`SATIN-HIST-022`), as 0.
+  - one destruction case (D-70): a creation destroyed, whose give-back returns to its creator as
+    reservoir (`SATIN-SD-005`, `SATIN-SD-010`), before the creator calls a child that halts. The
+    revm-based implementation credits the give-back to regular gas, so the creator forwards most of
+    it to the child, which burns it: its gas used is above the rule's, a difference no pool
+    observation is needed to see.
 
   The expectation is the rule's; the cases stay out of the gating slice until that implementation
   is fixed, and `tools/run-slice.sh` checks that each still fails exactly as `index.json` records

@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-cdded1e], source commit `cdded1e1d131a1d16a2c4b1cd
 (committed `2026-11-12T16:34:44+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **180** (140 gating, 40 quarantined).
+Cases: **181** (140 gating, 41 quarantined).
 Cited rule IDs: **189**. Uncited rule IDs in that registry: **221**
 (212 active, 9 retired).
 
@@ -161,6 +161,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -273,6 +274,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -347,6 +349,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -515,6 +518,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -591,6 +595,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -626,6 +631,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -692,6 +698,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
@@ -1073,6 +1080,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -1154,6 +1162,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -1235,6 +1244,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
@@ -1378,6 +1388,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -1552,6 +1563,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -1726,6 +1738,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -1878,6 +1891,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/not-created/moves-balance] | gating | unqualified | [satin-cdded1e] |
@@ -1925,6 +1939,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -1973,6 +1988,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -2044,6 +2060,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -2084,6 +2101,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -2127,6 +2145,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -2380,6 +2399,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -2486,6 +2506,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -2596,6 +2617,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -2809,6 +2831,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -2906,6 +2929,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -3042,6 +3066,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -3113,6 +3138,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -3163,6 +3189,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -3212,6 +3239,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -3316,6 +3344,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -3542,6 +3571,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -3629,6 +3659,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-child/halted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/signs-turned] | gating | unqualified | [satin-cdded1e] |
@@ -3759,6 +3790,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -3933,6 +3965,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -4085,6 +4118,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -4187,6 +4221,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -4273,6 +4308,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4332,6 +4368,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -4411,6 +4448,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
@@ -4629,6 +4667,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -4803,6 +4842,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -4976,6 +5016,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5146,6 +5187,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5251,6 +5293,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5335,6 +5378,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
@@ -5478,6 +5522,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5652,6 +5697,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5799,6 +5845,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5824,6 +5871,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5853,6 +5901,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5880,6 +5929,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5903,6 +5953,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5926,6 +5977,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5949,6 +6001,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5972,6 +6025,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -5995,6 +6049,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -6102,6 +6157,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -6173,6 +6229,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -6242,6 +6299,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
@@ -6283,6 +6341,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -6340,6 +6399,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
@@ -6411,6 +6471,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -6565,6 +6626,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -6621,6 +6683,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf-bucket-x2] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
@@ -6667,6 +6730,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/give-back-as-reservoir] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/both-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | quarantined | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | quarantined | unqualified | [satin-cdded1e] |
@@ -7142,6 +7206,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/selfdestruct/first-effective/absent-leaf]: ../slice/cases/satin--selfdestruct--first-effective--absent-leaf.json
 [satin/selfdestruct/first-effective/absent-leaf-bucket-x2]: ../slice/cases/satin--selfdestruct--first-effective--absent-leaf-bucket-x2.json
 [satin/selfdestruct/first-effective/empty-leaf-with-storage]: ../slice/cases/satin--selfdestruct--first-effective--empty-leaf-with-storage.json
+[satin/selfdestruct/first-effective/give-back-as-reservoir]: ../slice/quarantine/satin--selfdestruct--first-effective--give-back-as-reservoir.json
 [satin/selfdestruct/first-effective/in-constructor]: ../slice/cases/satin--selfdestruct--first-effective--in-constructor.json
 [satin/selfdestruct/first-effective/slot-restored-before]: ../slice/cases/satin--selfdestruct--first-effective--slot-restored-before.json
 [satin/selfdestruct/marked/code-deposited]: ../slice/cases/satin--selfdestruct--marked--code-deposited.json
