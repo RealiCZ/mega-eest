@@ -12,6 +12,7 @@ from .frames import FramesMixin
 from .interception import InterceptionMixin
 from .interpreter import InterpreterMixin
 from .limits import LimitsMixin
+from .precompiles import PrecompilesMixin
 from .pools import PoolsMixin
 from .reads import ReadsMixin
 from .settlement import SettlementMixin
@@ -19,16 +20,21 @@ from .storage import StorageMixin
 from .transaction import TransactionMixin
 
 
-class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, InterpreterMixin, CallsMixin, FramesMixin, CreationMixin, InterceptionMixin, AuthorizationsMixin, StorageMixin, ReadsMixin, LimitsMixin):
+class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, InterpreterMixin, CallsMixin, FramesMixin, CreationMixin, InterceptionMixin, AuthorizationsMixin, StorageMixin, ReadsMixin, LimitsMixin,
+          PrecompilesMixin):
     """One transaction against a complete pre-state."""
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
-                 reads: bool = False, pools: bool = False, destruction: bool = False, stops: bool = False):
+                 reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
+                 stops: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
         # The cases of the destruction page's own rules (decision D-70) cite them where their steps apply them:
         # the first effective destruction and its mark, a destruction without the table, the marked account and
         # its removal at the transaction's end (SATIN-SD-001 to -003, -010 to -017, -020).
         self.destruction = destruction
+        # The cases of gas detention's rules at `cdded1e` (decision D-67): their derivations cite the rules of the
+        # readers that see the withheld part, the stipend, the settlement and the caps where the run reaches them.
+        self.detention = detention
         # A case that pins the limit-stop page (decision D-73): the derivation also cites the rules that give a
         # stop its kind and say which endings are stops (SATIN-STOP-002, -003, -019).
         self.stops = stops

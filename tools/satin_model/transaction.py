@@ -332,6 +332,18 @@ class TransactionMixin:
         frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
         self.probe.setdefault("frame", regular)
         self.first_frame = frame
+        # SATIN-DET-008: a transaction whose sender, call recipient or applied EIP-7702 authority is the block
+        # beneficiary is detained from its start; a creation onto the beneficiary's address is not (SATIN-DET-006).
+        parties = [name for name, who in (("sender", tx.sender), ("call recipient", None if create else recipient))
+                   if who == env.coinbase]
+        if any(authority == env.coinbase for *_, authority in tx.authorizations):
+            parties.append("applied EIP-7702 authority")
+        if parties:
+            self.detain_from_start(frame, parties)
+        elif create and recipient == env.coinbase:
+            d.add("gasLedgers", f"the created address {h(recipient)} is the block beneficiary: the creation transaction is "
+                  "not detained from its start for it, its loads of the sender and the created address being the "
+                  "creation's own checks", "SATIN-DET-006")
         # What the transaction's own frame is given in each dimension: what the transaction has left once the
         # body and the counts made before the first frame are counted (SATIN-LIM-002).
         self.frame_start_counts = (self.data_size, len(self.kv), self.growth)

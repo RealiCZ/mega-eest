@@ -35,6 +35,11 @@ class CreationMixin:
         existing = self.state.get(target)
         if existing is not None and not existing.empty():
             raise Unmodelled("a creation onto an address empty under EIP-161 or occupied")
+        if target == self.env.coinbase or creator == self.env.coinbase:
+            d.add("outcome", f"the CREATE's {'created address' if target == self.env.coinbase else 'creator'} is the block "
+                  "beneficiary: its loads of the creator and the created address are the creation's own checks, so it "
+                  "is not marked as a read" + (", and it is not refused though the frame's volatile-data access is off"
+                                               if frame.get("access_off") else ""), "SATIN-DET-006")
         self.warm_accounts.add(target)
         m = self.multiplier(self.salt_bucket(target, None))
         state = ACCOUNT_STATE * m

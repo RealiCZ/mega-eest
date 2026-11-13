@@ -8,8 +8,8 @@ envelope), the SALT capacities its state lands in — and its expected observati
 existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of the charge-order
 principles, gas detention, the Oracle's reads, the refused volatile read, the reads group, the
 stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64, and
-those for the take-back page's worked examples and the destruction page's own rules
-`specs/satin-cdded1e`, D-65 and D-70). No implementation is
+those for the take-back page's worked examples, the destruction page's own rules and gas detention's
+rules `specs/satin-cdded1e`, D-65, D-70 and D-67). No implementation is
 run: the filler's output is a candidate to compare with, never the source of these values
 (`tools/run-slice.sh` runs both implementations against them).
 
@@ -94,6 +94,7 @@ LIST_KEY = 0x5EED_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_00
 CHAIN_ID = 1
 BLOCK_GAS_LIMIT = 10_000_000_000
 BLOCK_TIMESTAMP = 0x6553F102
+BLOCK_NUMBER = 2
 ETH = 10**18
 ZERO32 = "0x" + "00" * 32
 
@@ -225,7 +226,8 @@ class Case:
                  sender_code=b"", storage=None, extra=None, salt=None, access_list=None, chain_id=CHAIN_ID,
                  deposit=None, absent_sender=False, boundary="", salt_complete=True, spec=DEFAULT_SPEC, accounts=None,
                  contract_balance=0, authorizations=None, system=False, check=None, tune=None, make=None,
-                 params=None, retune=None, reads=False, pools=False, destruction=False, stops=False):
+                 params=None, retune=None, reads=False, pools=False, destruction=False, coinbase=COINBASE,
+                 detention=False, block_hashes=None, stops=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -257,6 +259,9 @@ class Case:
         self.reads = reads  # the case carries the reads group (D-61)
         self.pools = pools  # the case carries the gasPools group (D-64)
         self.destruction = destruction  # the case cites the destruction page's own rules (D-70)
+        self.coinbase = coinbase  # the block beneficiary
+        self.detention = detention  # a case of gas detention's rules at cdded1e (D-67)
+        self.block_hashes = block_hashes or {}  # number -> the hash BLOCKHASH answers
         self.stops = stops  # the case pins the limit-stop page: its derivation cites which endings are stops (D-73)
         if make:
             self.code = make(**self.params)
@@ -407,6 +412,7 @@ def cases() -> list[Case]:
     out += interception_cases()
     out += ordering_cases()
     out += detention_cases()
+    out += detention_rule_cases()
     out += reads_cases()
     out += limit_cases()
     out += gas_pools_cases()
@@ -791,6 +797,273 @@ def detention_cases() -> list[Case]:
     add(Case("satin/access-control/refused-read-under-static-gas", "as the refused read, the frame holding 50 of regular "
              f"gas at the BALANCE, under its static cost {model.WARM_READ}: refused all the same, not out of gas", spec=spec,
              system=True, code=refused, gas=100_000, tune=("refused", 50)))
+    return out
+
+
+# --- Gas detention's rules at cdded1e: what is volatile, compute, the withheld part, precompiles ------
+
+SPINNER = bytes.fromhex("00000000000000000000000000000000000c0df1")  # a value call's callee that runs on its stipend
+REPORTER = bytes.fromhex("00000000000000000000000000000000000c0df2")  # a callee that returns the GAS it starts with
+# EIP-2935's history contract, its runtime code as the EIP deploys it: the system address's path stores the parent
+# hash; every other caller's input is checked to be one word, then NUMBER is read before the requested block is
+# checked against the window and its slot loaded.
+HISTORY_CODE = bytes.fromhex(
+    "3373fffffffffffffffffffffffffffffffffffffffe14604657602036036042575f35600143038111604257611fff81430311604257"
+    "611fff9006545f5260205ff35b5f5ffd5b5f35611fff60014303065500")
+SPIN_STEPS = 1_000  # the JUMPDESTs the stipend's callee runs before it stops
+
+
+def over_cap(cap: int) -> bytes:
+    """One memory expansion whose cost is past `cap`: past what any read's limit leaves the transaction."""
+    return burn(words_within(cap) + 1)
+
+
+def detention_rule_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = TAKE_BACK_SPEC
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    big = over_cap(cap)
+    start = {"words": words_within(cap - 30_000), "pad": 0}
+
+    def at_and_past(name: str, at_intent: str, past_intent: str, make, params, retune, past, **kw):
+        """A case tuned to land exactly on its edge, and its twin one step past it: `past` turns the tuned
+        parameters into the twin's."""
+        at = Case(f"satin/detention/{name}-at-limit", at_intent, spec=spec, detention=True, make=make, params=params,
+                  retune=retune, boundary="the transaction's compute reaches its limit exactly", **kw)
+        remade(at)
+        add(at)
+        add(Case(f"satin/detention/{name}-one-past-limit", past_intent, spec=spec, detention=True, make=make,
+                 params=past(dict(at.params)), boundary="the transaction's compute one past its limit", **kw))
+
+    # What is volatile: BLOBHASH is not (SATIN-DET-002); every BLOCKHASH is (SATIN-DET-004). The read shows in one
+    # memory expansion past the cap, which a read stops and nothing else does.
+    add(Case("satin/detention/not-volatile/blobhash", "BLOBHASH reads the transaction's own blob hashes, no volatile "
+             f"data: nothing is marked, and one memory expansion of {fmt(model.memory_cost(words_within(cap) + 1))}, past "
+             "the cap, completes", spec=spec, detention=True, gas=21_000_000,
+             code=push(0) + b"\x49\x50" + big + STOP))
+    for name, n, what in (("current-block", BLOCK_NUMBER, "of the current block, which BLOCKHASH answers with zero"),
+                          ("future-block", BLOCK_NUMBER + 1, "of a future block, which BLOCKHASH answers with zero"),
+                          ("in-range", BLOCK_NUMBER - 1, "of the previous block, whose hash BLOCKHASH answers")):
+        add(Case(f"satin/detention/blockhash/{name}", f"BLOCKHASH {what}, is a read of the block environment whatever "
+                 "its operand: the memory expansion after it, past the cap, is stopped with MegaLimitExceeded(2, limit)",
+                 spec=spec, detention=True, gas=21_000_000, code=push(n) + b"\x40\x50" + big + STOP,
+                 block_hashes={BLOCK_NUMBER - 1: bytes.fromhex("a1" * 32)}))
+    # The block environment's other reads, and the beneficiary's account read by EXTCODESIZE and EXTCODEHASH
+    # (SATIN-DET-001); reads of other accounts and of a contract's own storage are none.
+    for op, name in ((0x41, "COINBASE"), (0x44, "PREVRANDAO"), (0x45, "GASLIMIT"), (0x48, "BASEFEE"),
+                     (0x4A, "BLOBBASEFEE"), (0x4B, "SLOTNUM")):
+        add(Case(f"satin/detention/block-environment/{name.lower()}", f"{name} is a read of the block environment: the "
+                 "memory expansion after it, past the cap, is stopped with MegaLimitExceeded(2, limit)", spec=spec,
+                 detention=True, gas=21_000_000, code=bytes([op]) + b"\x50" + big + STOP))
+    for op, name in ((0x3B, "EXTCODESIZE"), (0x3F, "EXTCODEHASH")):
+        add(Case(f"satin/detention/beneficiary/{name.lower()}", f"{name} of the block beneficiary is a read of its "
+                 "account: the memory expansion after it, past the cap, is stopped", spec=spec, detention=True,
+                 gas=21_000_000, code=push(int.from_bytes(COINBASE, "big")) + bytes([op]) + b"\x50" + big + STOP))
+    add(Case("satin/detention/not-volatile/other-accounts", "BALANCE of an account that is not the block beneficiary, "
+             "the contract's own SELFBALANCE and an SLOAD of its own storage read nothing volatile: the memory expansion "
+             "after them, past the cap, completes", spec=spec, detention=True, gas=21_000_000, storage={1: 7},
+             code=push(int.from_bytes(UNTOUCHED, "big")) + b"\x31\x50" + b"\x47\x50" + push(1) + b"\x54\x50" + big + STOP))
+    # A call to the EIP-2935 history contract is a read where, and only when, its code completes a NUMBER
+    # (SATIN-DET-005): the call itself is not marked.
+    history = {model.HISTORY_STORAGE_ADDRESS: model.Account(code=HISTORY_CODE)}
+    future = mstore(0, BLOCK_NUMBER + 3)  # a requested block in the future: the contract reverts after its NUMBER
+    for name, gas, size, intent, edge in (
+            ("at-number", 52, 32, "forwarded exactly the gas its code spends up to and including NUMBER: NUMBER "
+             "completes, so the call is a read, and the contract then runs out of gas; the memory expansion after the "
+             "call, past the cap, is stopped", "the forward at the gas the history contract spends through its NUMBER"),
+            ("short-of-number", 51, 32, "forwarded one gas less: the contract runs out of gas at NUMBER, which does not "
+             "complete, so nothing is marked and the memory expansion after the call, past the cap, completes",
+             "the forward one below the gas the history contract spends through its NUMBER"),
+            ("input-refused", 10_000, 0, "with an empty input: the contract's input check, which comes before its "
+             "NUMBER, refuses it with a revert, so nothing is marked and the memory expansion after the call, past the "
+             "cap, completes", "")):
+        add(Case(f"satin/detention/history-contract/{name}", f"a call to the EIP-2935 history contract {intent}",
+                 spec=spec, detention=True, gas=21_000_000, accounts=history, boundary=edge,
+                 code=future + call(gas, model.HISTORY_STORAGE_ADDRESS, 0, size) + b"\x50" + big + STOP))
+    # A creation is never a read (SATIN-DET-006), and the beneficiary's own frame reads by its own SELFBALANCE
+    # (SATIN-DET-007): the created address made the block beneficiary.
+    created = model.created_address(SENDER, 0)
+    add(Case("satin/detention/creation/created-at-beneficiary", "a creation transaction whose created address is the "
+             "block beneficiary is not detained from its start: its initcode's memory expansion past the cap completes, "
+             "and the account is created", spec=spec, detention=True, to=None, coinbase=created, gas=21_500_000,
+             data=big + ret(0, 0)))
+    add(Case("satin/detention/creation/beneficiary-selfbalance", "the same creation's initcode, running as the block "
+             "beneficiary, reads its own balance by SELFBALANCE: a read of the beneficiary's account, so the memory "
+             "expansion after it, past the cap, stops the transaction's own frame", spec=spec, detention=True, to=None,
+             coinbase=created, gas=21_500_000, data=b"\x47\x50" + big + ret(0, 0)))
+    disable = mstore(0, int.from_bytes(model.DISABLE_VOLATILE_DATA_ACCESS, "big") << 224) \
+        + call(10_000, model.MEGA_ACCESS_CONTROL, 0, 4) + b"\x50"
+    add(Case("satin/detention/creation/create-at-beneficiary-access-off", "a contract switches its volatile-data access "
+             "off, then CREATEs an account at the block beneficiary's address: the creation is neither refused nor "
+             "marked, and the memory expansion after it, past the cap, completes", spec=spec, detention=True, system=True,
+             coinbase=model.created_address(CONTRACT, 1), gas=21_500_000, code=disable + create(0, ret(0, 0)) + big + STOP))
+    # Detained from the start (SATIN-DET-008): the sender, the recipient or an applied authority is the beneficiary.
+    pad_end = lambda words, pad: burn(words) + b"\x5b" * pad + STOP
+    at_and_past("beneficiary/recipient", "a transaction to the block beneficiary, a contract, is detained from its "
+                "start at compute zero: its frame's compute reaches the cap exactly and it completes",
+                "the same transaction one compute past the cap: its last JUMPDEST is stopped with MegaLimitExceeded(2, "
+                "limit)", pad_end, {"words": words_within(cap - 6_000), "pad": 0}, [("end-spendable", 0, "pad", -1)],
+                lambda p: {**p, "pad": p["pad"] + 1}, coinbase=CONTRACT, gas=21_000_000)
+    add(Case("satin/detention/beneficiary/sender", "a transaction whose sender is the block beneficiary is detained from "
+             "its start: one memory expansion past the cap stops its frame", spec=spec, detention=True, coinbase=SENDER,
+             gas=21_000_000, code=big + STOP))
+    add(Case("satin/detention/beneficiary/authority", "an EIP-7702 transaction whose applied authority is the block "
+             "beneficiary is detained from its start, though neither its sender nor its recipient is: one memory "
+             "expansion past the cap stops its frame", spec=spec, detention=True, ty=4, coinbase=AUTHORITY,
+             authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 0)], accounts={AUTHORITY: model.Account(balance=1)},
+             gas=21_500_000, code=big + STOP))
+    # The cap (SATIN-DET-012, -013): the limit is the compute at the read plus the protocol's cap, exactly.
+    at_and_past("cap/timestamp", "TIMESTAMP detains the transaction, and its frame then computes exactly to the limit, "
+                "the compute at the read plus the cap: it completes", "one compute more: the last JUMPDEST is stopped",
+                lambda words, pad: detained(words, pad) + STOP, {"words": words_within(cap - 6_000), "pad": 0},
+                [("end-spendable", 0, "pad", -1)], lambda p: {**p, "pad": p["pad"] + 1}, gas=21_000_000)
+    # The limit only goes down (SATIN-DET-012): a later read whose own limit is higher binds nothing.
+    mid = words_within(cap // 2)
+    at_and_past("cap/second-read", "TIMESTAMP, then half the cap of compute, then NUMBER, whose own limit is higher: "
+                "the first read's limit binds, and the frame computes exactly to it and completes",
+                "one compute more: stopped at the first read's limit",
+                lambda words, pad: b"\x42\x50" + burn(mid) + b"\x43\x50" + burn(words) + b"\x5b" * pad + STOP,
+                {"words": words_within(cap - 6_000), "pad": 0}, [("end-spendable", 0, "pad", -1)],
+                lambda p: {**p, "pad": p["pad"] + 1}, gas=21_000_000)
+    # The cap counts from the compute at the read, which may be larger than the cap itself (SATIN-DET-012).
+    before = words_within(cap + cap // 4)
+    at_and_past("cap/after-larger-spend", "a transaction computes more than the cap, then reads TIMESTAMP: it may still "
+                "compute the cap after the read, exactly, and completes", "one compute more: stopped",
+                lambda words, pad: burn(before) + b"\x42\x50" + burn(words) + b"\x5b" * pad + STOP,
+                {"words": words_within(model.memory_cost(before) + cap - 6_000), "pad": 0},
+                [("end-spendable", 0, "pad", -1)], lambda p: {**p, "pad": p["pad"] + 1}, gas=46_000_000)
+    # State and history gas regular gas paid before the read is not compute (SATIN-DET-009).
+    at_and_past("cap/spill-before-read", "a fresh slot written before TIMESTAMP, its state gas and its record's history "
+                "paid from regular gas with no reservoir: that is not compute, so the frame computes the cap after the "
+                "read exactly and completes", "one compute more: stopped",
+                lambda words, pad: sstore(1, 1) + b"\x42\x50" + burn(words) + b"\x5b" * pad + STOP,
+                {"words": words_within(cap - 6_000), "pad": 0}, [("end-spendable", 0, "pad", -1)],
+                lambda p: {**p, "pad": p["pad"] + 1}, gas=21_000_000)
+    # A give-back after the read lands in the reservoir and lifts nothing (SATIN-DET-009, SATIN-HIST-012).
+    for name, storage, first, back, what in (
+            ("state-refill", {}, 1, 0, "a fresh slot written before TIMESTAMP and written back to zero after it: its "
+             "state gas and its record's history are given back into the reservoir"),
+            ("history-refill", {1: 1}, 2, 1, "a slot written away from its non-zero original before TIMESTAMP and back "
+             "after it: its record and the record's history are given back into the reservoir")):
+        at_and_past(f"cap/{name}-after-read", f"{what}, which gives the frame no compute: it computes the cap after the "
+                    "read exactly and completes", "one compute more: stopped",
+                    lambda words, pad, first=first, back=back: sstore(1, first) + b"\x42\x50" + sstore(1, back)
+                    + burn(words) + b"\x5b" * pad + STOP, {"words": words_within(cap - 6_000), "pad": 0},
+                    [("end-spendable", 0, "pad", -1)], lambda p: {**p, "pad": p["pad"] + 1}, gas=21_000_000,
+                    storage=storage)
+    # The stipend (SATIN-DET-010): what a value call's callee runs on it is compute, and what it leaves of it
+    # lowers nothing when it comes back.
+    spinner = {SPINNER: model.Account(nonce=1, code=b"\x5b" * SPIN_STEPS + STOP)}
+    at_and_past("stipend/spun", f"after TIMESTAMP, a value call forwarding no gas runs a callee that spends "
+                f"{fmt(SPIN_STEPS)} of its {fmt(model.CALL_STIPEND)} stipend: that is compute, and the stipend's rest "
+                "comes back without lowering it, so the caller's JUMPDESTs reach the limit exactly and it completes",
+                "one JUMPDEST more: stopped, as it would not be if the callee's work were not compute or the stipend's "
+                "rest lowered it",
+                lambda words, pad: b"\x42\x50" + burn(words) + call(0, SPINNER, 1, 0) + b"\x50" + b"\x5b" * pad + STOP,
+                dict(start), [("end-spendable", 0, "pad", -1)], lambda p: {**p, "pad": p["pad"] + 1},
+                gas=21_000_000, contract_balance=10, accounts=spinner)
+    # The withheld part: GAS, the SSTORE check and the forward see it (SATIN-DET-015); the settlement returns it and
+    # the refund cap leaves it out (SATIN-DET-016); state and history gas draw it first (SATIN-DET-017).
+    add(Case("satin/detention/withheld/gas-sees-whole", "TIMESTAMP detains a transaction of 25,000,000 gas, which "
+             "withholds what is past the cap: GAS, stored in slot 0, reads the whole regular gas, the withheld part "
+             "included", spec=spec, detention=True, gas=25_000_000, code=b"\x42\x50" + b"\x5a" + push(0) + b"\x55" + STOP))
+    add(Case("satin/detention/withheld/sstore-check-sees-whole", f"a detained frame with {fmt(2_000)} of spendable gas, "
+             f"under the {fmt(model.CALL_STIPEND)} of SSTORE's minimum-gas check, and much more withheld writes a fresh "
+             "slot: the check reads the whole regular gas and passes, and the write's charge is the crossing, a stop "
+             "and not an out-of-gas", spec=spec, detention=True, gas=21_000_000,
+             make=lambda words, pad: detained(words, pad) + sstore(1, 1) + STOP, params=dict(start),
+             retune=[("sstore-room", 2_000, "pad", -1)], boundary="the spendable part under the minimum-gas check"))
+    add(Case("satin/detention/withheld/sstore-check-sees-whole-write-paid", f"a slot written before TIMESTAMP is "
+             f"written again in a detained frame with {fmt(2_000)} of spendable gas, under the "
+             f"{fmt(model.CALL_STIPEND)} of SSTORE's minimum-gas check: the check reads the whole regular gas and passes, "
+             "the warm rewrite costs its static cost alone, and the transaction completes as without the read",
+             spec=spec, detention=True, gas=21_000_000,
+             make=lambda words, pad: sstore(1, 1) + detained(words, pad) + sstore(1, 2) + STOP, params=dict(start),
+             retune=[("sstore-room", 2_000, "pad", -1)], boundary="the spendable part under the minimum-gas check"))
+    reporter = {REPORTER: model.Account(nonce=1, code=b"\x5a" + push(0) + b"\x52" + push(32) + push(0) + b"\xf3")}
+    add(Case("satin/detention/withheld/forward-sees-whole", "a detained frame with little spendable gas and much "
+             "withheld calls a contract with all the gas it may forward: the forward is computed from the whole regular "
+             "gas, as the callee's GAS, which the transaction returns, shows", spec=spec, detention=True, gas=21_000_000,
+             accounts=reporter, make=lambda words, pad: detained(words, pad) + call(MAX_GAS, REPORTER, 0, 0)
+             + RETURN_RETURNDATA, params=dict(start), retune=[("child-room", 100, "pad", -1)]))
+    add(Case("satin/detention/withheld/refund-cap", "TIMESTAMP detains a transaction of 25,000,000 gas that clears two "
+             "slots: the withheld gas returns to the sender and is not in the total whose fifth caps the refund, so the "
+             "refund is capped", spec=spec, detention=True, gas=25_000_000, storage={1: 5, 2: 5},
+             code=b"\x42\x50" + sstore(1, 0) + sstore(2, 0) + STOP))
+    sstore_regular = model.COLD_SSTORE_ACCESS + model.SSTORE_SET
+    tail = 50
+    at_and_past("withheld/state-gas", f"a detained frame writes a fresh slot with {fmt(sstore_regular + tail)} of "
+                "spendable gas: the slot's regular charge leaves it the "
+                f"{tail} its JUMPDESTs then spend, because the slot's state gas and its record's history draw the "
+                "withheld part first; it completes at its limit", "one JUMPDEST more: stopped",
+                lambda words, pad, tail: detained(words, pad) + sstore(1, 1) + b"\x5b" * tail + STOP,
+                {**start, "tail": tail}, [("sstore-room", sstore_regular + tail, "pad", -1)],
+                lambda p: {**p, "tail": p["tail"] + 1}, gas=21_000_000)
+    # Precompiles (SATIN-DET-021 to -024): decided from the price, read before the precompile runs.
+    words32 = 32 * 32
+    identity_price = model.IDENTITY_BASE + model.IDENTITY_WORD * 32
+    for name, room, gas, tail, intent, edge in (
+            ("identity/priced-at-allowance", identity_price, MAX_GAS, STOP, f"priced {fmt(identity_price)}, the allowance "
+             "exactly: it runs on its whole forward, and the transaction completes at its limit",
+             "the price at the allowance"),
+            ("identity/priced-past-allowance", identity_price - 1, MAX_GAS, RETURN_RETURNDATA, "priced one past the "
+             "allowance and within its forward: it does not run and is the crossing, whose stop its caller catches and "
+             "returns", "the price one past the allowance"),
+            ("identity/priced-at-forward", 60, identity_price, RETURN_RETURNDATA, "forwarded its price, past an allowance "
+             "of 60: the price is within the forward, so it is the crossing", "the price at the forward"),
+            ("identity/priced-past-forward", 60, identity_price - 1, RETURN_RETURNDATA, "forwarded one gas less than its "
+             "price, past an allowance of 60: it runs on its forward and fails out of gas, as without the read, and what "
+             "it burns is no compute, so its caller completes", "the price one past the forward")):
+        add(Case(f"satin/detention/precompile/{name}", "after TIMESTAMP, a call to the identity precompile with "
+                 f"{fmt(words32)} bytes of input, " + intent, spec=spec, detention=True, gas=21_000_000, boundary=edge,
+                 make=lambda words, pad, gas=gas, tail=tail: detained(words, pad) + call(gas, model.IDENTITY, 0, words32)
+                 + tail, params=dict(start), retune=[("precompile-room", room, "pad", -1)]))
+    held = {model.IDENTITY: model.Account(balance=1)}
+    add(Case("satin/detention/precompile/identity/value-within-allowance", "after TIMESTAMP, a value call to the identity "
+             f"precompile with {fmt(words32)} bytes of input, priced within the allowance: it runs on its whole forward, "
+             "the value moves, and the start keeps its records and its transfer log, as without the read", spec=spec,
+             detention=True, gas=21_000_000, accounts=held, contract_balance=10,
+             code=detained(start["words"], 0) + call(MAX_GAS, model.IDENTITY, 1, words32) + RETURN_RETURNDATA))
+    for name, balance, intent in (
+            ("identity/value-crossing", 10, "carrying one wei its caller can fund, priced past the allowance: the "
+             "crossing, held to the price alone, so the value does not move and no record or transfer log is kept"),
+            ("identity/value-unfunded", 0, "carrying one wei its caller cannot fund, priced past the allowance: refused "
+             "on its caller's account, it runs no precompile and fails as without the read, not the crossing")):
+        add(Case(f"satin/detention/precompile/{name}", "after TIMESTAMP, a value call to the identity precompile with "
+                 f"{fmt(words32)} bytes of input, " + intent, spec=spec, detention=True, gas=21_000_000, accounts=held,
+                 contract_balance=balance, make=lambda words, pad: detained(words, pad)
+                 + call(MAX_GAS, model.IDENTITY, 1, words32) + RETURN_RETURNDATA, params=dict(start),
+                 retune=[("precompile-room", identity_price - 1, "pad", -1)]))
+    over_bound = model.MODEXP_MAX_INPUT_SIZE + 1
+    modexp_input = word(over_bound) + word(0) + word(0)
+    modexp_price = model.modexp_price(modexp_input)[0]
+    for name, room, tail, intent, edge in (
+            ("modexp/over-bound-at-allowance", modexp_price, STOP, "the allowance exactly: it runs, charges its price, "
+             "fails EIP-7823's bound and consumes its forward, as without the read", "the price at the allowance"),
+            ("modexp/over-bound-past-allowance", modexp_price - 1, RETURN_RETURNDATA, "one past the allowance and within "
+             "its forward: an input that would fail a check made after the gas charge is the crossing too",
+             "the price one past the allowance")):
+        add(Case(f"satin/detention/precompile/{name}", f"after TIMESTAMP, a ModExp call whose base length, "
+                 f"{fmt(over_bound)}, is over EIP-7823's bound, priced by its formula all the same, {fmt(modexp_price)}: "
+                 + intent, spec=spec, detention=True, gas=21_000_000, boundary=edge,
+                 make=lambda words, pad, tail=tail: detained(words, pad) + bytes_to_memory(modexp_input)
+                 + call(MAX_GAS, model.MODEXP, 0, len(modexp_input)) + tail,
+                 params={"words": words_within(cap - 2 * modexp_price - 30_000), "pad": 0},
+                 retune=[("precompile-room", room, "pad", -1)]))
+    pairing = model.BN254_PAIRING_MAX_INPUT_SIZE + 1
+    add(Case("satin/detention/precompile/bn254-pairing-over-size-limit", f"after TIMESTAMP, a BN254 pairing call of "
+             f"{fmt(pairing)} bytes, one over its size limit, with an allowance of 100 and a forward past the pairing "
+             "formula's price for that many bytes: priced at zero, it runs on its forward, fails before any gas check and "
+             "consumes the forward, as without the read", spec=spec, detention=True, gas=31_000_000,
+             make=lambda words, pad: detained(words, pad) + call(MAX_GAS, model.BN254_PAIRING, 0, pairing) + STOP,
+             params=dict(start), retune=[("precompile-room", 100, "pad", -1)]))
+    # A user's deposit is detained as any transaction (SATIN-DET-026).
+    burner = {BURNER: model.Account(nonce=1, code=big + STOP)}
+    add(Case("satin/detention/deposit/user-deposit", "a user's deposit reads TIMESTAMP and calls a contract whose one "
+             "memory expansion is past the cap: the callee is stopped with MegaLimitExceeded(2, limit), which the deposit "
+             "returns", spec=spec, detention=True, deposit=(0, 21_000_000), sender_nonce=3, accounts=burner,
+             code=b"\x42\x50" + call(MAX_GAS, BURNER, 0, 0) + RETURN_RETURNDATA))
     return out
 
 
@@ -1607,7 +1880,8 @@ def build(c: Case):
         address = {"created": created, "sender": sender}.get(who, who)
         capacity = int(m * salt_mapping.MIN_BUCKET_SIZE)
         buckets[salt_bucket(address, slot)] = capacity
-    env = model.Env(CHAIN_ID, COINBASE, c.base_fee, BLOCK_GAS_LIMIT, buckets, timestamp=BLOCK_TIMESTAMP)
+    env = model.Env(CHAIN_ID, c.coinbase, c.base_fee, BLOCK_GAS_LIMIT, buckets, timestamp=BLOCK_TIMESTAMP,
+                    number=BLOCK_NUMBER, block_hashes=dict(c.block_hashes))
 
     if c.deposit:
         mint, gas = c.deposit
@@ -1629,19 +1903,19 @@ def build(c: Case):
                       authorizations=[(cid, target, n, ex.address_of(k)) for k, cid, target, n in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
     run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
-                    destruction=c.destruction, stops=c.stops)
+                    destruction=c.destruction, detention=c.detention, stops=c.stops)
     result = run.run()
     result.probe = run.probe
 
     inp = {
         "chain": {"chainId": q(CHAIN_ID)},
         "block": {
-            "number": q(2), "timestamp": q(BLOCK_TIMESTAMP), "coinbase": h(COINBASE), "gasLimit": q(BLOCK_GAS_LIMIT),
+            "number": q(BLOCK_NUMBER), "timestamp": q(BLOCK_TIMESTAMP), "coinbase": h(c.coinbase), "gasLimit": q(BLOCK_GAS_LIMIT),
             "baseFee": q(c.base_fee), "prevRandao": ZERO32, "parentHash": "0x" + (0xA11CE).to_bytes(32, "big").hex(),
             "parentTimestamp": q(0x6553F101), "parentBeaconBlockRoot": ZERO32, "extraData": "0x", "slotNumber": "0x0",
             "blobBaseFee": "0x1", "depositOnly": False, "activation": False,
         },
-        "blockHashes": {},
+        "blockHashes": {q(n): h(v) for n, v in sorted(c.block_hashes.items())},
         "pre": {"completeness": "complete",
                 "accounts": {h(a): account(x.nonce, x.balance, x.code, x.storage) for a, x in sorted(pre.items())}},
         "transaction": source,
@@ -1801,6 +2075,47 @@ def forward_cap(remaining: int) -> int:
     return remaining - remaining * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR
 
 
+# The cases of gas detention's rules the revm-based implementation fails (D-68): a user's deposit, which it charges no
+# history gas (SATIN-HIST-016), and a ModExp input over EIP-7823's bound priced between the allowance and the
+# forward, which it runs instead of answering with the crossing (SATIN-DET-023, -024). The first difference of each is
+# derived: the deposit's gas used short by its body's history; the regular ledger above the rule's by the forward the
+# failed call consumes, less the copy of the stop's return data the rule's caller makes.
+DETENTION_QUARANTINE = {"satin/detention/deposit/user-deposit": "deposit",
+                        "satin/detention/precompile/modexp/over-bound-past-allowance": "modexp"}
+
+
+def detention_quarantine(c: Case, fx: dict) -> dict:
+    adapter, ledgers = "mega-eest-adapter-revm", fx["expected"]["gasLedgers"]
+    if DETENTION_QUARANTINE[c.case_id] == "deposit":
+        used, history = int(ledgers["gasUsed"], 16), int(ledgers["history"], 16)
+        body, price = model.TX_BODY_SIZE, model.COST_PER_HISTORY_BYTE
+        if history != body * price:
+            raise SystemExit(f"{c.case_id}: the deposit keeps more history than its body")
+        verdict = ("SATIN-DET-026 and SATIN-MST-010 detain a user's deposit as any transaction, which the revm-based "
+                   f"implementation at {REVM_PIN} does: its callee is stopped at the crossing as the rule has it; but "
+                   "SATIN-HIST-016 and SATIN-DEP-001 make a deposit pay history gas for its body, and that implementation "
+                   f"charges a deposit none, so its gas used is the body's {body} x {price} = {fmt(history)} below the rule's")
+        return {"adapter": adapter, "path": "/expected/gasLedgers/gasUsed", "expected": q(used),
+                "actual": q(used - history), "verdict": verdict}
+    block = int(ledgers["blockGas"], 16)
+    if int(ledgers["regular"], 16) != block:
+        raise SystemExit(f"{c.case_id}: the block's figure is not the regular ledger")
+    remaining = c.probe["forward"]
+    forward = remaining - remaining * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR
+    stop_words = (len(model.limit_exceeded(model.DETENTION_STOP, 0)) + 31) // 32
+    copy = model.COPY_WORD * stop_words
+    verdict = ("SATIN-DET-023 prices a ModExp input by its Osaka formula whatever its lengths, an input over EIP-7823's "
+               "bound included, since SATIN-PCMP-007 charges that price before the bound check, and SATIN-DET-024 makes "
+               "an input priced past the allowance and within the forward that would fail a check after its gas charge "
+               f"the crossing, which moves nothing and returns the forward; the revm-based implementation at {REVM_PIN} "
+               f"runs the call instead, which fails the bound and consumes its forward of {fmt(forward)}, and its caller "
+               "copies empty return data where the rule's copies the stop's "
+               f"{stop_words} words at {model.COPY_WORD} each: its regular ledger, which the block counts, is "
+               f"{fmt(forward)} - {copy} = {fmt(forward - copy)} above the rule's")
+    return {"adapter": adapter, "path": "/expected/gasLedgers/blockGas", "expected": q(block),
+            "actual": q(block + forward - copy), "verdict": verdict}
+
+
 # The limit-stop deposits the revm-based implementation fails: it charges a deposit no history gas (SATIN-HIST-016), so
 # a stopped deposit's gas used is below the rule's by its body's history, and the deposit one gas short of the crossing
 # charge holds that history more regular gas, which pays the charge: it stops where the rule runs out of gas (D-74).
@@ -1814,6 +2129,8 @@ def storage_path(address: bytes, slot: int) -> str:
 def edge_quarantine(c: Case, fx: dict) -> dict | None:
     """The quarantine record of an edge case the revm-based implementation fails, or None."""
     adapter = "mega-eest-adapter-revm"
+    if c.case_id in DETENTION_QUARANTINE:
+        return detention_quarantine(c, fx)
     if c.case_id in GIVE_BACKS:
         slot, what = GIVE_BACKS[c.case_id]
         held, gas = c.probe["gas-reservoir"], c.probe["gas"]

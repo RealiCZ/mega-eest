@@ -4,7 +4,8 @@ at the schedule's price, the volatile reads and their refusal, and a call's opco
 from __future__ import annotations
 
 from .constants import (
-    ACCESS_TYPE_BENEFICIARY, ACCESS_TYPE_TIMESTAMP, ACCOUNT_STATE, BLOCK_ENV_ACCESS_COMPUTE_GAS, CALL_STIPEND,
+    ACCESS_TYPE_BENEFICIARY, ACCESS_TYPE_TIMESTAMP, ACCOUNT_STATE, BLOCK_ENV_ACCESS_COMPUTE_GAS, BLOCKHASH_WINDOW,
+    CALL_STIPEND, G_BLOCKHASH, HISTORY_STORAGE_ADDRESS, PRECOMPILE_SET,
     CALL_VALUE_COST, COLD_ACCOUNT_SURCHARGE, COLD_SLOAD, COPY_WORD, COST_PER_HISTORY_BYTE, CREATE_ACCESS, ex, G_BASE,
     G_HIGH, G_JUMPDEST, G_LOW, G_MID, G_VERYLOW, G_ZERO, GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR,
     INITCODE_WORD_COST, KECCAK_BASE,
@@ -29,8 +30,20 @@ def to_signed(v: int) -> int:
     return v - 2**256 if v >> 255 else v
 
 
+# The block environment's opcodes that read it whatever their operands (SATIN-DET-001), besides TIMESTAMP, NUMBER and
+# BLOCKHASH, each at its inherited static gas of 2.
+BLOCK_ENV_READS = {0x41: "COINBASE", 0x44: "PREVRANDAO", 0x45: "GASLIMIT", 0x48: "BASEFEE", 0x4A: "BLOBBASEFEE",
+                   0x4B: "SLOTNUM"}
+
+
 class InterpreterMixin:
     """One frame's bytecode: the opcodes the slice's cases and the system contracts' dispatchers use, each charge"""
+
+    def block_field(self, op: int) -> int:
+        """What a block-environment opcode pushes: the block's own field; SLOTNUM pushes zero (SATIN-BASE-005)."""
+        env = self.env
+        return {0x41: int.from_bytes(env.coinbase, "big"), 0x44: env.prev_randao, 0x45: env.block_gas_limit,
+                0x48: env.base_fee, 0x4A: env.blob_base_fee, 0x4B: 0}[op]
 
     def execute(self, code: bytes, frame, create: bool, ctx=None):
         """Runs one frame. `ctx` is a child frame's context (address, caller, value, calldata); the
@@ -97,6 +110,8 @@ class InterpreterMixin:
             pc += 1
             if op == 0x00:  # STOP
                 steps.append(f"STOP {G_ZERO}")
+                if not ctx and frame.get("spendable") is not None:
+                    self.probe.setdefault("end-spendable", frame["spendable"])
                 break
             if op == 0x5F:  # PUSH0
                 self.charge_regular(frame, G_BASE, "PUSH0")
@@ -303,6 +318,84 @@ class InterpreterMixin:
                     if dest not in jumpdests:
                         raise Halt("a jump to an invalid destination")
                     pc = dest
+            elif op == 0x06:
+                a, b = pop(), pop()
+                simple("MOD", G_LOW, a % b if b else 0)
+            elif op == 0x43:  # NUMBER
+                if frame.get("access_off"):
+                    raise Unmodelled("a refused NUMBER")
+                self.charge_regular(frame, G_BASE, "NUMBER")
+                stack.append(self.env.number)
+                steps.append(f"NUMBER {G_BASE}")
+                if address == HISTORY_STORAGE_ADDRESS:
+                    self.history_number = True
+                    d.add("gasLedgers", "the EIP-2935 history contract's code completes its NUMBER: the call is a read of "
+                          "the block environment there, and the call itself was not marked", "SATIN-DET-005")
+                self.volatile_read(frame, "NUMBER, a read of the block environment, once it completes,")
+            elif op == 0x40:  # BLOCKHASH
+                if frame.get("access_off"):
+                    raise Unmodelled("a refused BLOCKHASH")
+                n = pop()
+                self.charge_regular(frame, G_BLOCKHASH, "BLOCKHASH")
+                number = self.env.number
+                in_range = number - BLOCKHASH_WINDOW <= n < number
+                if in_range and n not in self.env.block_hashes:
+                    raise Unmodelled("a BLOCKHASH of a block whose hash the case does not give")
+                answer = int.from_bytes(self.env.block_hashes[n], "big") if in_range else 0
+                stack.append(answer)
+                steps.append(f"BLOCKHASH {G_BLOCKHASH}")
+                where = ("the current block" if n == number else "a future block" if n > number else
+                         "a block outside the last " + str(BLOCKHASH_WINDOW) if not in_range else "a block in range")
+                d.add("gasLedgers", f"BLOCKHASH of block {n if n < 2**64 else '2^256 - 1' if n == 2**256 - 1 else n}, "
+                      f"{where} of block {number}, pushes " + ("its hash" if in_range else "zero") + ": it loads the block "
+                      "number before it decides whether its operand is in range, so it is a read of the block environment "
+                      "whatever its operand", "SATIN-DET-004")
+                self.volatile_read(frame, "BLOCKHASH, a read of the block environment, once it completes,")
+            elif op in BLOCK_ENV_READS:  # COINBASE, PREVRANDAO, GASLIMIT, BASEFEE, BLOBBASEFEE, SLOTNUM
+                name, value = BLOCK_ENV_READS[op], self.block_field(op)
+                if frame.get("access_off"):
+                    raise Unmodelled(f"a refused {name}")
+                self.charge_regular(frame, G_BASE, name)
+                stack.append(value)
+                steps.append(f"{name} {G_BASE}")
+                self.volatile_read(frame, f"{name}, a read of the block environment, once it completes,")
+            elif op in (0x3B, 0x3F):  # EXTCODESIZE, EXTCODEHASH
+                who = (pop() % 2**160).to_bytes(20, "big")
+                name = "EXTCODESIZE" if op == 0x3B else "EXTCODEHASH"
+                if who != self.env.coinbase or frame.get("access_off"):
+                    raise Unmodelled(f"an {name} of an account other than the block beneficiary, or refused")
+                static = 2 * WARM_READ if op == 0x3B else WARM_READ  # SATIN-SCHED-002, -003
+                self.charge_regular(frame, static, f"{name}'s static cost")
+                acct = self.state.get(who)
+                ext = acct.code if acct is not None else b""
+                stack.append(len(ext) if op == 0x3B else
+                             0 if acct is None or acct.empty() else int.from_bytes(ex.keccak256(ext), "big"))
+                steps.append(f"{name} {static}")
+                d.add("gasLedgers", f"{name} of the block beneficiary {h(who)}, warm from the transaction's start: its static "
+                      f"cost {static}, no cold access", "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-SCHED-012")
+                self.volatile_read(frame, f"{name} of the block beneficiary's account, once it completes,")
+            elif op == 0x49:  # BLOBHASH
+                i = pop()
+                self.charge_regular(frame, G_VERYLOW, "BLOBHASH")
+                if tx.ty != 0:
+                    raise Unmodelled("a BLOBHASH outside a legacy transaction")
+                stack.append(0)
+                steps.append(f"BLOBHASH {G_VERYLOW}")
+                d.add("gasLedgers", f"BLOBHASH of index {i} pushes zero, the transaction carrying no blob hash; it reads the "
+                      "transaction's own blob hashes and is no volatile read: nothing is marked", "SATIN-DET-002")
+            elif op == 0x47:  # SELFBALANCE
+                if frame.get("access_off") and address == self.env.coinbase:
+                    raise Unmodelled("a refused SELFBALANCE")
+                self.charge_regular(frame, G_LOW, "SELFBALANCE")
+                stack.append(self.state.get(address, Account()).balance)
+                steps.append(f"SELFBALANCE {G_LOW}")
+                if address == self.env.coinbase:
+                    d.add("gasLedgers", f"the frame runs as the block beneficiary {h(address)}: its own SELFBALANCE is a "
+                          "read of the beneficiary's account", "SATIN-DET-007", "SATIN-DET-001")
+                    self.volatile_read(frame, "SELFBALANCE of the beneficiary's own frame, once it completes,")
+                elif self.detention:
+                    d.add("gasLedgers", f"SELFBALANCE of {h(address)}, which is not the block beneficiary, reads nothing "
+                          "volatile", "SATIN-DET-001")
             elif op == 0x42:  # TIMESTAMP
                 if frame.get("access_off"):
                     return refuse(ACCESS_TYPE_TIMESTAMP, "TIMESTAMP")
@@ -343,6 +436,10 @@ class InterpreterMixin:
                 d.add("gasLedgers", f"GAS pushes the regular gas the frame has left after its own {G_BASE}, "
                       f"{fmt(frame['regular'])}, and not the reservoir, which holds {fmt(frame['reservoir'])}",
                       "SATIN-POOL-009")
+                if self.detention and frame.get("spendable") is not None:
+                    d.add("gasLedgers", f"the frame is detained: GAS sees both parts, the {fmt(frame['spendable'])} spendable "
+                          f"and the {fmt(frame['regular'] - frame['spendable'])} withheld, not the spendable part alone",
+                          "SATIN-DET-015")
             elif op == 0x5B:
                 self.charge_regular(frame, G_JUMPDEST, "JUMPDEST")
                 steps.append(f"JUMPDEST {G_JUMPDEST}")
@@ -367,15 +464,21 @@ class InterpreterMixin:
                 expand(r_off, r_size, "CALL output")
                 if value:
                     self.charge_regular(frame, CALL_VALUE_COST, "the value transfer")
-                cold = target not in self.warm_accounts
+                cold = target not in self.warm_accounts and target not in PRECOMPILE_SET
                 if cold:
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
                     self.warm_accounts.add(target)
+                elif target in PRECOMPILE_SET:
+                    d.add("gasLedgers", f"the precompile at {h(target)} is warm from the transaction's start: the CALL makes "
+                          "no cold access, its own regular charges coming first, as any opcode's", "SATIN-SCHED-012",
+                          "SATIN-DET-021")
                 self.load(target, "the CALL's target, once the opcode's access is paid", "SATIN-WIT-002", "SATIN-WIT-008")
                 callee = self.state.get(target)
                 opcode_charges = self.regular_charges - before
                 new_account = 0
                 if value and (callee is None or callee.empty()):
+                    if target in PRECOMPILE_SET:
+                        raise Unmodelled("a value call to a precompile the state holds no account for")
                     if not self.principles:
                         raise Unmodelled("a value call to an account empty under EIP-161")
                     # SATIN-HIST-010 step 2: the new account's state gas, its legacy share first, before the forward.
@@ -397,6 +500,11 @@ class InterpreterMixin:
                 self.probe.setdefault("reservoir:" + target.hex(), frame["reservoir"])
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
+                if self.detention and frame.get("spendable") is not None:
+                    d.add("gasLedgers", f"the frame is detained, {fmt(frame['spendable'])} of its {fmt(remaining)} regular "
+                          "gas spendable: the forward is computed from the whole regular gas, the withheld part included, "
+                          "and drawn from the withheld part first; it is not compute", "SATIN-DET-015", "SATIN-DET-017",
+                          "SATIN-DET-009")
                 self.draw_regular(frame, forward)
                 self.regular_charges += forward
                 child_gas = forward + (CALL_STIPEND if value else 0)
@@ -452,12 +560,28 @@ class InterpreterMixin:
                           "SATIN-HIST-009", "SATIN-HIST-010", "SATIN-HIST-014", "SATIN-HIST-015", "SATIN-POOL-008",
                           *self.order()[1])
                 share = self.reservoir_share(frame, f"the start of the CALL to {h(target)}")
-                ok, out, left = self.call(frame, address, target, value, bytes(memory[a_off:a_off + a_size]), child_gas,
-                                          records, history, new_account, share)
+                self.history_number = False
+                if target in PRECOMPILE_SET:
+                    ok, out, left = self.precompile_call(frame, address, target, value, bytes(memory[a_off:a_off + a_size]),
+                                                         child_gas, records, history, share)
+                else:
+                    ok, out, left = self.call(frame, address, target, value, bytes(memory[a_off:a_off + a_size]),
+                                              child_gas, records, history, new_account, share)
                 frame["regular"] += left
                 self.regular_charges -= left
                 self.resume(frame, f"the CALL to {h(target)}")
                 self.split(frame)  # the caller resumes (SATIN-DET-014, SATIN-DET-019)
+                if self.detention and target == HISTORY_STORAGE_ADDRESS and not self.history_number:
+                    d.add("gasLedgers", "the call to the EIP-2935 history contract ended without its code completing a "
+                          "NUMBER: the call itself is not marked, so it is no read", "SATIN-DET-005", "SATIN-DET-003")
+                if self.detention and value and ok and self.limit is not None and target not in PRECOMPILE_SET:
+                    d.add("gasLedgers", f"the value call returns: what its callee ran on the {fmt(CALL_STIPEND)} stipend was "
+                          f"compute, and the {fmt(left)} it left, the rest of the stipend among it, comes back to the caller "
+                          f"without lowering the compute, {fmt(self.compute)}", "SATIN-DET-010", "SATIN-DET-009")
+                if self.detention and frame.get("spendable") is not None:
+                    d.add("gasLedgers", f"the caller resumes on {fmt(frame['regular'])} of regular gas, the gas the call "
+                          f"returned among it: {fmt(frame['spendable'])} spendable, what the limit leaves the transaction",
+                          "SATIN-DET-014", "SATIN-DET-015", "SATIN-DET-019")
                 returndata = out
                 if r_size:
                     raise Unmodelled("a call that copies its output")

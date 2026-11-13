@@ -53,6 +53,11 @@ narrow class of transactions the slice uses:
   limit they set, every frame's spendable and withheld parts, each part an opcode deducts as one
   charge, the crossing that stops a child frame and the out-of-gas beyond its whole gas; and
   `disableVolatileDataAccess()` with the refusal of a volatile read in a frame whose access is off;
+- for gas detention's rules at `cdded1e`: `NUMBER`, `BLOCKHASH`, `COINBASE`, `PREVRANDAO`, `GASLIMIT`,
+  `BASEFEE`, `BLOBBASEFEE` and `SLOTNUM` as reads, `SELFBALANCE` of the beneficiary's own frame and its
+  `EXTCODESIZE` and `EXTCODEHASH`, `BLOBHASH` and a creation onto the beneficiary as none, a transaction
+  detained from its start, an `SSTORE` in a detained frame, and a call to a precompile decided from its
+  price (the identity precompile, ModExp's price, a BN254 pairing over its size limit);
 - calls, value transfers, creation transactions and deposits, with or without a reservoir, and a
   deposit whose own frame halts (`SATIN-DEP-004`);
 - the refusals of transaction validation.
@@ -79,4 +84,5 @@ from .constants import *  # noqa: F401,F403
 from .records import *  # noqa: F401,F403
 from .interception import keyless_arguments, rlp_decodes_as_list  # noqa: F401
 from .interpreter import jump_destinations, to_signed  # noqa: F401
+from .precompiles import modexp_price  # noqa: F401
 from .run import Run  # noqa: F401

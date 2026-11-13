@@ -696,6 +696,75 @@ consensus figure depends on the choice: it is a reporting convention of the form
 not a rule of the specification. Both implementations already report it so. D-40's `floor`, "the
 EIP-7623 floor", now reads: the EIP-7623 floor the settlement applies, and 0 for a failed deposit.
 
+**D-67. Gas detention's uncited rules are cases at `cdded1e`, and the model learns the reads and the
+precompiles they need.** Fifty-five cases under `satin/detention/` cite the gas detention page of
+`cdded1e` (`specs/satin-cdded1e`; the page is unchanged at the specification's later commits). Each
+pins a rule where its outcome changes, most as a pair: one case tuned to land exactly on the edge
+and its twin one step past it, sized from the model's own figure (D-57, D-59).
+
+- **What is volatile.** A read shows in one memory expansion past the cap after it, which the read
+  stops with `MegaLimitExceeded(2, limit)` and nothing else does: `BLOBHASH` is no read
+  (`SATIN-DET-002`); `BLOCKHASH` of the current, a future and an in-range block is
+  (`SATIN-DET-004`), as are `COINBASE`, `PREVRANDAO`, `GASLIMIT`, `BASEFEE`, `BLOBBASEFEE`, `SLOTNUM`
+  and `EXTCODESIZE` and `EXTCODEHASH` of the beneficiary (`SATIN-DET-001`); `BALANCE` of another
+  account, a contract's own `SELFBALANCE` and its own storage are not. A call to the EIP-2935 history
+  contract is a read when its code completes `NUMBER`, forwarded exactly the gas to it, and none when
+  forwarded one gas less or refused by its input check (`SATIN-DET-005`). A creation onto the
+  beneficiary's address is no read, from a transaction or by `CREATE` with access off; its initcode,
+  running as the beneficiary, reads by `SELFBALANCE` (`SATIN-DET-006`, `-007`). A transaction whose
+  sender, recipient or applied authority is the beneficiary is detained from its start, its limit
+  the cap exactly (`SATIN-DET-008`).
+- **Compute and the cap.** The limit is the compute at the read plus the protocol's cap, exactly,
+  after a spend larger than the cap too, and a later read with a higher limit binds nothing
+  (`SATIN-DET-012`, `-013`); state and history gas paid before the read is no compute, and a
+  give-back after it lifts nothing (`SATIN-DET-009`); what a value call's callee runs on its stipend is compute, and the stipend's rest
+  lowers nothing when it returns (`SATIN-DET-010`). A user's deposit is detained (`SATIN-DET-026`).
+- **The withheld part.** `GAS`, the forward and `SSTORE`'s minimum-gas check read the whole regular
+  gas (`SATIN-DET-015`); the settlement returns the withheld part and leaves it out of the refund's cap
+  (`SATIN-DET-016`); a fresh slot's state gas and its record's history draw it first
+  (`SATIN-DET-017`).
+- **Precompiles.** The identity precompile priced at the allowance runs, one past it is the crossing,
+  priced at its forward is the crossing and one past its forward runs and fails, burning no compute;
+  a value call priced past the allowance moves nothing, one its caller cannot fund is refused as
+  without the read, and one within the allowance runs (`SATIN-DET-021`, `-022`, `-024`). ModExp over
+  EIP-7823's bound is priced by its formula and is the crossing one past the allowance; a BN254
+  pairing over its size limit is priced at zero (`SATIN-DET-023`, `-024`).
+- **The model.** The interpreter gains `NUMBER`, `BLOCKHASH`, `BLOBHASH`, `SELFBALANCE`, `COINBASE`,
+  `PREVRANDAO`, `GASLIMIT`, `BASEFEE`, `BLOBBASEFEE`, `SLOTNUM`, `MOD`, and `EXTCODESIZE` and
+  `EXTCODEHASH` of the beneficiary; `SSTORE` in a detained frame, its static cost a charge of its own
+  (`SATIN-SCHED-002`, `-003`, `SATIN-DET-018`); a call to a precompile, warm from the start
+  (`SATIN-SCHED-012`), decided from its price for the identity precompile, ModExp and the BN254
+  pairing over its size limit (`precompiles.py`); the beneficiary's detention before the first frame;
+  and the CREATE and creation onto the beneficiary. The steps that cite the readers, the stipend, the
+  settlement and the caps are written for these cases alone (`Run(detention=True)`), so every case
+  made before stays byte-identical.
+- **Not cased.** `SATIN-DET-025` needs an intercepted answer that spends regular gas; MegaAccessControl's
+  and MegaLimitControl's answers charge nothing (`SATIN-ICPT-004`), and KeylessDeploy's from a frame is
+  outside the model. `SATIN-DET-027` is a node's local choice of precompiles, which no transaction can
+  show. The system-originated half of `SATIN-DET-026` needs the block's live system address, which the
+  pre-block sequence resolves (`SATIN-REG-002`): a block profile's.
+
+**D-68. Two detention cases are quarantined against the revm-based implementation.** At
+`4e39cfd6` it fails two of D-67's cases, each against a decided rule; both pass on the evm2-based
+implementation, and their first differences are derived. A user's deposit is detained as the rule
+has it, but its gas used is short by its body's history (`SATIN-HIST-016`), as every deposit case's
+is. A ModExp input over EIP-7823's bound priced one past the allowance is run instead of answered with
+the crossing (`SATIN-DET-023`, `-024`): the call fails and consumes its forward, so the regular ledger
+is above the rule's by that forward, less the copy of the stop's return data the rule's caller makes.
+
+**D-69. The readings D-67's cases take where the page leaves a figure open.** None of them moves a
+figure a case asserts; each is stated in the derivation that uses it.
+
+- A precompile priced within the allowance that then fails a check made after its gas charge (ModExp
+  over EIP-7823's bound) counts its charged price as compute and the rest of the forward it consumes
+  as none: paid work before the halt counts and what a halting frame burns does not
+  (`SATIN-DET-011`, `-019`). The case that runs it ends with no further charge.
+- A value call's forward, against which a precompile's price is held, is the child's whole regular
+  gas, the stipend included, as `SATIN-DET-011` and `SATIN-STOP-014` count it; the value cases sit far
+  from that edge.
+- A value call to a precompile is made to an account the state holds, so the start makes no new
+  account: the model does not restate the state gas of a precompile's account created by a value.
+
 **D-70. The destruction page's own rules are cases, and the model learns the destruction's other
 shapes.** The rules of SELFDESTRUCT and the Destruction Table that no case cited (`SATIN-SD-001`,
 `-002`, `-003`, `-010` to `-017` and `-020`) are now derived at `cdded1e` (`specs/satin-cdded1e`;

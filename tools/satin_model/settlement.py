@@ -30,6 +30,12 @@ class SettlementMixin:
         if self.refund:
             d.add("gasLedgers", f"refund min(counter {fmt(self.refund)}, total {fmt(total)} / {REFUND_QUOTIENT} = {fmt(cap)}) = "
                   f"{fmt(refund)}", "SATIN-POOL-018")
+        if self.detention and self.limit is not None and self.first_frame is not None:
+            end = self.first_frame
+            withheld = end["regular"] - end["spendable"] if end.get("spendable") is not None else 0
+            d.add("gasLedgers", f"the first frame ends holding {fmt(end['regular'])} of regular gas, {fmt(withheld)} of it "
+                  "withheld: the withheld part is unspent gas, returned to the sender with the rest of the unspent gas, "
+                  f"and is not part of the total {fmt(total)} that caps the refund", "SATIN-DET-016", "SATIN-POOL-017")
         d.add("gasLedgers", f"ledgers: state {fmt(self.state_gas)}, history {fmt(self.history_gas)} "
               f"({self.history_bytes} bytes), regular = total {fmt(total)} - state - history = {fmt(regular_ledger)}",
               "SATIN-POOL-019", "SATIN-HIST-022")
@@ -152,6 +158,9 @@ class SettlementMixin:
         self.load(tx.to, "the recipient, at step 4 of the charges before the first frame; a deposit pays no fee and "
                   "reads no L1 block information", "SATIN-SCHED-008", "SATIN-WIT-008")
         frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
+        if self.detention:
+            d.add("gasLedgers", "the deposit is a user's, not system-originated: it is detained after a read of volatile "
+                  "data as any transaction is", "SATIN-DET-026", "SATIN-MST-010", "SATIN-DEP-002")
         kept = self.snapshot()  # the mint, the nonce bump and the created caller, which a failed deposit keeps
         try:
             status, output = self.execute(code, frame, False)
