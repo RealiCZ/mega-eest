@@ -21,10 +21,23 @@ class StorageMixin:
         first_access = (address, key) not in self.original
         original = self.original.setdefault((address, key), 0 if address in self.zero_storage else
                                             self.pre.get(address, Account()).storage.get(key, 0))
-        if frame.get("spendable") is not None:
-            raise Unmodelled("an SSTORE in a detained frame")
+        detained = frame.get("spendable") is not None
+        if detained:
+            if address in self.destroyed:
+                raise Unmodelled("an SSTORE of a destroyed account in a detained frame")
+            # Under detention each part the opcode deducts is a charge of its own (SATIN-DET-018): the static cost
+            # first (SATIN-SCHED-002, -003), then the minimum-gas check, then the dynamic cost.
+            self.probe.setdefault("sstore-room", frame["spendable"])
+            self.charge_regular(frame, WARM_READ, "SSTORE's static cost")
+            d.add("gasLedgers", f"SSTORE in a detained frame: its static cost {WARM_READ} is a charge of its own, paid from "
+                  f"the spendable part, now {fmt(frame['spendable'])}", "SATIN-DET-018", "SATIN-SCHED-002",
+                  "SATIN-SCHED-003")
         if frame["regular"] <= CALL_STIPEND:
             raise Halt(f"SSTORE with no more than the {fmt(CALL_STIPEND)} stipend left")
+        if detained:
+            d.add("gasLedgers", f"its minimum-gas check reads the whole regular gas, {fmt(frame['regular'])} > "
+                  f"{fmt(CALL_STIPEND)}, the withheld part included, not the {fmt(frame['spendable'])} spendable, and "
+                  "passes", "SATIN-DET-015")
         self.load_slot(address, key, "SSTORE, which reads the slot's value", "SATIN-WIT-002")
         cold = (address, key) not in self.warm_slots
         self.warm_slots.add((address, key))
@@ -38,7 +51,10 @@ class StorageMixin:
                   "original is zero", "SATIN-SD-003", "SATIN-SD-016")
         if address in self.destroyed:
             return self.sstore_marked(frame, address, key, new, present, original, access, write, cold)
-        self.charge_regular(frame, access + write, "SSTORE")
+        if detained:
+            self.charge_regular(frame, access + write - WARM_READ, "SSTORE's dynamic cost")
+        else:
+            self.charge_regular(frame, access + write, "SSTORE")
         label = f"SSTORE slot {key} {original}->{present}->{new}: {'cold' if cold else 'warm'} access {fmt(access)}"
         rules = ["SATIN-SCHED-003", "SATIN-SCHED-004"] if cold else ["SATIN-SCHED-003"]
         if write:
@@ -50,7 +66,14 @@ class StorageMixin:
             m = self.multiplier(self.salt_bucket(address, key))
             charge = SLOT_STATE * m
             legacy = min(charge, max(0, LEGACY_SSTORE_SHARE))
+            before = (frame["regular"], frame.get("spendable"))
             self.charge_state(frame, charge, legacy, "a fresh slot")
+            if detained:
+                drawn = before[0] - frame["regular"]
+                d.add("gasLedgers", f"the fresh slot's state gas draws {fmt(drawn)} of regular gas, its legacy share and "
+                      f"what the reservoir could not pay, from the withheld part first: the spendable part goes from "
+                      f"{fmt(before[1])} to {fmt(frame['spendable'])}; it is not compute", "SATIN-DET-017",
+                      "SATIN-DET-009")
             pools.append(frame["reservoir"])
             self.state_gas += charge
             self.growth += 1
@@ -96,7 +119,12 @@ class StorageMixin:
         # The write record and its history, SATIN-ACCT-004 and SATIN-HIST-006.
         if now and not was:
             history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
+            before = frame.get("spendable")
             self.charge_state(frame, history, 0, "the slot's write record")
+            if detained:
+                d.add("gasLedgers", f"the record's history, {fmt(history)}, what the reservoir cannot pay from regular gas, "
+                      f"draws the withheld part first: the spendable part goes from {fmt(before)} to "
+                      f"{fmt(frame['spendable'])}", "SATIN-DET-017")
             pools.append(frame["reservoir"])
             self.kv.add(record)
             self.record_frames[record] = frame

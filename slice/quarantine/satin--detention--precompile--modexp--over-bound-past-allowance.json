@@ -1,0 +1,442 @@
+{
+  "assertions": [
+    {
+      "path": "/expected/gasLedgers",
+      "rules": [
+        "SATIN-DET-001",
+        "SATIN-DET-003",
+        "SATIN-DET-009",
+        "SATIN-DET-011",
+        "SATIN-DET-012",
+        "SATIN-DET-013",
+        "SATIN-DET-014",
+        "SATIN-DET-015",
+        "SATIN-DET-016",
+        "SATIN-DET-017",
+        "SATIN-DET-019",
+        "SATIN-DET-021",
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-HIST-002",
+        "SATIN-HIST-003",
+        "SATIN-HIST-004",
+        "SATIN-HIST-010",
+        "SATIN-HIST-022",
+        "SATIN-HIST-023",
+        "SATIN-ICPT-004",
+        "SATIN-LIM-017",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-012",
+        "SATIN-POOL-017",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-SCHED-002",
+        "SATIN-SCHED-003",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-SCHED-012",
+        "SATIN-STOP-005"
+      ]
+    },
+    {
+      "path": "/expected/outcome",
+      "rules": [
+        "SATIN-DET-021",
+        "SATIN-DET-023",
+        "SATIN-DET-024",
+        "SATIN-OUT-001",
+        "SATIN-STOP-014",
+        "SATIN-STOP-020"
+      ]
+    },
+    {
+      "path": "/expected/receipt",
+      "rules": [
+        "SATIN-POOL-018"
+      ]
+    },
+    {
+      "path": "/expected/resources",
+      "rules": [
+        "SATIN-ACCT-002",
+        "SATIN-ACCT-012",
+        "SATIN-HIST-003",
+        "SATIN-LIM-001",
+        "SATIN-LIM-007"
+      ]
+    }
+  ],
+  "caseId": "satin/detention/precompile/modexp/over-bound-past-allowance",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x130e5af",
+      "floor": "0x3a98",
+      "gasUsed": "0x131503f",
+      "history": "0x6a90",
+      "historyBytes": "0x136",
+      "refund": "0x0",
+      "regular": "0x130e5af",
+      "state": "0x0",
+      "total": "0x131503f"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x84b9026700000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000001312d02",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x131503f",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x42506230fec051505b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b6104015f525f6020525f6040525f5f60605f5f60057ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff13d5f5f3e3d5ff3",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf86180808401406f409400000000000000000000000000000000000c0de1808026a0ba508c54ca32524e3b4f8e02310fec70435503fc49de383de5ae0942d0d56101a0220779ee999723be8e90bd36d7622e5b137d07271d83d5fd4ea719c08acb1e05"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the price one past the allowance",
+      "intent": "after TIMESTAMP, a ModExp call whose base length, 1,025, is over EIP-7823's bound, priced by its formula all the same, 33,282: one past the allowance and within its forward: an input that would fail a check made after the gas charge is the crossing too"
+    },
+    "derivation": [
+      {
+        "path": "/expected/gasLedgers",
+        "rules": [
+          "SATIN-DET-001",
+          "SATIN-DET-003",
+          "SATIN-DET-009",
+          "SATIN-DET-011",
+          "SATIN-DET-012",
+          "SATIN-DET-013",
+          "SATIN-DET-014",
+          "SATIN-DET-015",
+          "SATIN-DET-016",
+          "SATIN-DET-017",
+          "SATIN-DET-019",
+          "SATIN-DET-021",
+          "SATIN-FWD-001",
+          "SATIN-FWD-002",
+          "SATIN-FWD-003",
+          "SATIN-HIST-002",
+          "SATIN-HIST-003",
+          "SATIN-HIST-004",
+          "SATIN-HIST-010",
+          "SATIN-HIST-022",
+          "SATIN-HIST-023",
+          "SATIN-ICPT-004",
+          "SATIN-LIM-017",
+          "SATIN-POOL-005",
+          "SATIN-POOL-006",
+          "SATIN-POOL-007",
+          "SATIN-POOL-012",
+          "SATIN-POOL-017",
+          "SATIN-POOL-018",
+          "SATIN-POOL-019",
+          "SATIN-POOL-020",
+          "SATIN-SCHED-002",
+          "SATIN-SCHED-003",
+          "SATIN-SCHED-005",
+          "SATIN-SCHED-006",
+          "SATIN-SCHED-012",
+          "SATIN-STOP-005"
+        ],
+        "steps": [
+          "intrinsic regular gas = TX_BASE_COST 12,000 + COLD_ACCOUNT_ACCESS 3,000 = 15,000",
+          "floor = base 15,000 + 64 x 0 calldata and access-list bytes = 15,000",
+          "body = TX_BODY_SIZE 310 + 0 calldata bytes + 0 access-list bytes = 310 bytes; its history gas 310 x 88 = 27,280",
+          "pools: regular budget min(21,000,000, 200,000,000) - 15,000 = 20,985,000, reservoir 0",
+          "body history 27,280: 0 from the reservoir, 27,280 from the regular budget",
+          "TIMESTAMP, a read of the block environment, once it completes, is a volatile read, marked at compute 2: the transaction's limit becomes 2 + 20,000,000 = 20,000,002",
+          "the cap is BLOCK_ENV_ACCESS_COMPUTE_GAS, 20,000,000, a protocol value the specification fixes with the other limits and no configuration supplies",
+          "the frame's regular gas 20,957,718 is split: 20,000,000 spendable, what the limit leaves the transaction, and the rest withheld",
+          "the precompile at 0x0000000000000000000000000000000000000005 is warm from the transaction's start: the CALL makes no cold access, its own regular charges coming first, as any opcode's",
+          "the frame is detained, 33,281 of its 990,999 regular gas spendable: the forward is computed from the whole regular gas, the withheld part included, and drawn from the withheld part first; it is not compute",
+          "CALL to 0x0000000000000000000000000000000000000005 with value 0: the opcode's own charges 100 = warm read 100; forward min(the gas operand 2^256 - 1, 990,999 - 990,999 x 2 / 100 = 971,180) = 971,180",
+          "the crossing bills nothing of the price: the forward, 971,180, returns to the caller, which resumes held to what the limit leaves the transaction",
+          "the caller resumes on 990,999 of regular gas, the gas the call returned among it: 33,281 spendable, what the limit leaves the transaction",
+          "the call returns 971,180 regular gas to its caller; success 0, 68 bytes of return data",
+          "frame opcodes: TIMESTAMP 2, POP 2, PUSH3 3, MLOAD 3 + memory to 100343 words, POP 2, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, JUMPDEST 1, PUSH2 3, PUSH0 2, MSTORE 3 + memory to 100343 words, PUSH0 2, PUSH1 3, MSTORE 3 + memory to 100343 words, PUSH0 2, PUSH1 3, MSTORE 3 + memory to 100343 words, PUSH0 2, PUSH0 2, PUSH1 3, PUSH0 2, PUSH0 2, PUSH1 3, PUSH32 3, CALL 100 net, RETURNDATASIZE 2, PUSH0 2, PUSH0 2, RETURNDATACOPY 12 + memory to 100343 words, RETURNDATASIZE 2, PUSH0 2, RETURN 68 bytes; regular charges of the frame 19,966,743",
+          "the first frame ends holding 990,977 of regular gas, 957,718 of it withheld: the withheld part is unspent gas, returned to the sender with the rest of the unspent gas, and is not part of the total 20,009,023 that caps the refund",
+          "ledgers: state 0, history 27,280 (310 bytes), regular = total 20,009,023 - state - history = 19,981,743",
+          "gas used max(20,009,023 - 0, floor 15,000) = 20,009,023; the block counts max(regular 19,981,743, floor 15,000) = 19,981,743"
+        ]
+      },
+      {
+        "path": "/expected/outcome",
+        "rules": [
+          "SATIN-DET-021",
+          "SATIN-DET-023",
+          "SATIN-DET-024",
+          "SATIN-OUT-001",
+          "SATIN-STOP-014",
+          "SATIN-STOP-020"
+        ],
+        "steps": [
+          "the call to the precompile at 0x0000000000000000000000000000000000000005 is forwarded 971,180, more than the allowance 33,281 the limit 20,000,002 leaves the transaction's compute 19,966,721, so it is decided from its price, read before it runs: ModExp's EIP-7883 price for a base of 1,025 bytes, an exponent of 0 and a modulus of 0: max(500, multiplication complexity 33,282 x iteration count 1) = 33,282, whatever the lengths: the base is over EIP-7823's bound of 1,024 bytes, which ModExp checks after it charges that price, past the allowance and within the forward: it does not run and is the crossing, its result the compute stop MegaLimitExceeded(2, 20,000,002), which its caller catches",
+          "admitted; the frame succeeds"
+        ]
+      },
+      {
+        "path": "/expected/receipt",
+        "rules": [
+          "SATIN-POOL-018"
+        ],
+        "steps": [
+          "status 0x1, gas used 20,009,023, 0 logs in execution order"
+        ]
+      },
+      {
+        "path": "/expected/resources",
+        "rules": [
+          "SATIN-ACCT-002",
+          "SATIN-ACCT-012",
+          "SATIN-HIST-003",
+          "SATIN-LIM-001",
+          "SATIN-LIM-007"
+        ],
+        "steps": [
+          "data size starts at the body's 310 bytes; its five fixed records are not KV updates",
+          "kept: data size 310 bytes, 0 KV updates, state growth 0; the limits are the protocol's 13,107,200, 500,000 and 1,000"
+        ]
+      }
+    ],
+    "evidence": "derived from the specification by tools/satin_model.py, an executable restatement of the cited rules that shares no code with either implementation; implementation runs are cross-checks only",
+    "generator": "tools/make_slice.py",
+    "quarantine": {
+      "actual": "0x13fb752",
+      "adapter": "mega-eest-adapter-revm",
+      "expected": "0x130e5af",
+      "path": "/expected/gasLedgers/blockGas",
+      "verdict": "SATIN-DET-023 prices a ModExp input by its Osaka formula whatever its lengths, an input over EIP-7823's bound included, since SATIN-PCMP-007 charges that price before the bound check, and SATIN-DET-024 makes an input priced past the allowance and within the forward that would fail a check after its gas charge the crossing, which moves nothing and returns the forward; the revm-based implementation at 4e39cfd6 runs the call instead, which fails the bound and consumes its forward of 971,180, and its caller copies empty return data where the rule's copies the stop's 3 words at 3 each: its regular ledger, which the block counts, is 971,180 - 9 = 971,171 above the rule's"
+    },
+    "review": {
+      "decision": "pending: approval is the owner's",
+      "ruleTexts": {
+        "SATIN-ACCT-002": "sha256:15a57f42e12a7c6edb72a991fef190eaa0672b3193e8745a64ec5f631fc370ba",
+        "SATIN-ACCT-012": "sha256:d5b25ab3bab59b0e29a130178677245e965255d13a4374addfc07db8c3ea3d90",
+        "SATIN-DET-001": "sha256:94539a8c15699780f2cb98f765ab9cd2c778f84845dfb0afc9fea8e13032deb9",
+        "SATIN-DET-003": "sha256:0199ac4221d9667ab66238f71a6e21bdbd54116008484dcfe8439fcda50d491c",
+        "SATIN-DET-009": "sha256:906933980b80a77e809fadc44b23a5da93f8e06368062c8a65a2e9a521c129b9",
+        "SATIN-DET-011": "sha256:e4a72b6b9898eba36ba3bf762abdd6631cd678630e8cc1d6f6b7a2fa740bad55",
+        "SATIN-DET-012": "sha256:74c864cd78d51a113a1689b36197707b43d502c26121ae476d73d404346516ed",
+        "SATIN-DET-013": "sha256:13c0084b8ffe811e72905c081a215545861b8a32dd98259463be816268a259a6",
+        "SATIN-DET-014": "sha256:8fd5b83ae4813a8dff14c3db15e8ad13039aa70d5e05609a68e51bdfc5deb3a3",
+        "SATIN-DET-015": "sha256:ab7fda5e130e82e74bfe4ad3d6f445341c44d1b17e203e979b74fa120a36ffce",
+        "SATIN-DET-016": "sha256:2c9685274d005ad480087ab441fddeec37aeece4eb20acc47983b0b6ed7e61f0",
+        "SATIN-DET-017": "sha256:b2c32c696636ca48d8f9e7e9bd121d56d298446919fbbe4e3d310d7ce4a099d3",
+        "SATIN-DET-019": "sha256:1e910fa2a6d99cd6e92c253682147a45ec14196536329348906f41e70fc61837",
+        "SATIN-DET-021": "sha256:fe063749f5258e9d20804de83f6f6d4426b546c18353c0b8ea73113695c6c278",
+        "SATIN-DET-023": "sha256:35200aa7874f324b549dec8e84306de9b9d5b4f00cc5b6ce5b379d81613156ea",
+        "SATIN-DET-024": "sha256:58696d157388a882eed601429798124e4d91a5b0090070d2fd4f0ba1532c0b04",
+        "SATIN-FWD-001": "sha256:6c7659d5a302e9beb6d1379a57a73907facb6acba3f77cfe52f96433789d0e7c",
+        "SATIN-FWD-002": "sha256:b8ef24f501a7e16e7f0278caff0d8ccc33d434731a56bf0a6d1b6cf636641031",
+        "SATIN-FWD-003": "sha256:d48c3e97738bf0cc86df4e884fc91f4ad71665b9a8ce4f2baf91b504ccd65ea3",
+        "SATIN-HIST-002": "sha256:25b81f15f444a2b56d289e489301321d295bec49cc486f3356d4826da584fb22",
+        "SATIN-HIST-003": "sha256:5c278d629bff537ddefd0d3b1192dfd67dab5ea126eeaeda86d21e7f72a867b1",
+        "SATIN-HIST-004": "sha256:ed165b75e64fdae2ff1c9f97dd815ea124b28818647c873db13e217eac046d90",
+        "SATIN-HIST-010": "sha256:293454e21a8ce7c810c1b35cf40412e98404d1867088fe0beaddef8b9fb17443",
+        "SATIN-HIST-022": "sha256:297c3750e19b202dea5b7e729c925d236e8b6180328cd13373e17ed70079f84a",
+        "SATIN-HIST-023": "sha256:f970dd9a6fd4ebf029d29ddaf51c4e5d8b1ade5677a06586efb3bc25207be94f",
+        "SATIN-ICPT-004": "sha256:bfbdd109615321a54a70d898f7cea22b27430ca86e68b899f80e07a7cb1b7b6c",
+        "SATIN-LIM-001": "sha256:3373ca5b61edec132530b7106ded735fb8430ffabeaa013ce4fe7e8bda446b62",
+        "SATIN-LIM-007": "sha256:5a1c7ff7c36129b99db578bfd7913d56aa93ad57cd18b1530c6fcbe09490a4f6",
+        "SATIN-LIM-017": "sha256:d7db3f9a3862f638f863a1920d4cce00bfda334226b81c8ad8bfc5d1cb7873ce",
+        "SATIN-OUT-001": "sha256:46f617445fce43654529b3eb3b0509ebccef494605755e6ae683334594d0fc97",
+        "SATIN-POOL-005": "sha256:3fb2a1aee19ce0ce816e028227a038b092eff061a3711fe323382d439bc69ded",
+        "SATIN-POOL-006": "sha256:a3ef2a7daef0ac743b5581692a8aad5d7c508be2cc0fa8bbc93e6bccb29c60b7",
+        "SATIN-POOL-007": "sha256:0727d784afe6cf7658f76fede2b54204435850b4cc343eb9f685ce6e6bee73c1",
+        "SATIN-POOL-012": "sha256:5bd0b2e931d18a0c52e0f368b4ab65b9b7d7e417e6e32f5fb17a53e31cac6227",
+        "SATIN-POOL-017": "sha256:bd979f8e4c3b6a327a799764858c28a94f3bfb420b3f7135383f6e2530c0ff0d",
+        "SATIN-POOL-018": "sha256:9929e1b284b53eb5dd9b3c870e652f11c100b50a1c6acff271d50ba638518478",
+        "SATIN-POOL-019": "sha256:a6ac430192e0db3481ba472d854857fd1f085ae38d786de7c0cca641f86ab7c2",
+        "SATIN-POOL-020": "sha256:21f6377838f6381cc57d4daa30eded2538857412c73e493ed0ab47fc528e40a8",
+        "SATIN-SCHED-002": "sha256:1c2b3f8de03bf18e2aeee6021a522e9d6f843ec8e8929e580d4992c651b54c6d",
+        "SATIN-SCHED-003": "sha256:67aa0b10b4ad03935766594cae480e33b6921b7e7c5a7eca814493024d28bcc7",
+        "SATIN-SCHED-005": "sha256:9c958ad26a39a4bb6413a53e299363ad184444ec66b99ab6cb95ababc23209dd",
+        "SATIN-SCHED-006": "sha256:1cde42c8c0e514cf680d32dfc4864612338ee9675f296b388c1f5068cd823d6d",
+        "SATIN-SCHED-012": "sha256:5a31bb4fc6f57d0e87a67db079a45b7c8cfebe104dd0f85de81b7eaa191e8b2b",
+        "SATIN-STOP-005": "sha256:bd61d8ac3ecb2d2e9b6404a8a5b1126e194d61da7bdd42be43f4b8377b816395",
+        "SATIN-STOP-014": "sha256:e84cea78ada7226c9d0db4106c4f48738dd391644baecc6f679ed919c3bc4cb4",
+        "SATIN-STOP-020": "sha256:e700a2f66a776bc0490cc690df894467f0089663b8c42a4a0cc4a98fc9539f81"
+      },
+      "spec": {
+        "commit": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
+        "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658"
+      }
+    },
+    "status": "candidate",
+    "transaction": {
+      "data": "0x",
+      "gasLimit": "0x1406f40",
+      "nonce": "0x0",
+      "sender": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+      "to": "0x00000000000000000000000000000000000c0de1",
+      "type": "0x0",
+      "value": "0x0"
+    }
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-002",
+    "SATIN-ACCT-012",
+    "SATIN-DET-001",
+    "SATIN-DET-003",
+    "SATIN-DET-009",
+    "SATIN-DET-011",
+    "SATIN-DET-012",
+    "SATIN-DET-013",
+    "SATIN-DET-014",
+    "SATIN-DET-015",
+    "SATIN-DET-016",
+    "SATIN-DET-017",
+    "SATIN-DET-019",
+    "SATIN-DET-021",
+    "SATIN-DET-023",
+    "SATIN-DET-024",
+    "SATIN-FWD-001",
+    "SATIN-FWD-002",
+    "SATIN-FWD-003",
+    "SATIN-HIST-002",
+    "SATIN-HIST-003",
+    "SATIN-HIST-004",
+    "SATIN-HIST-010",
+    "SATIN-HIST-022",
+    "SATIN-HIST-023",
+    "SATIN-ICPT-004",
+    "SATIN-LIM-001",
+    "SATIN-LIM-007",
+    "SATIN-LIM-017",
+    "SATIN-OUT-001",
+    "SATIN-POOL-005",
+    "SATIN-POOL-006",
+    "SATIN-POOL-007",
+    "SATIN-POOL-012",
+    "SATIN-POOL-017",
+    "SATIN-POOL-018",
+    "SATIN-POOL-019",
+    "SATIN-POOL-020",
+    "SATIN-SCHED-002",
+    "SATIN-SCHED-003",
+    "SATIN-SCHED-005",
+    "SATIN-SCHED-006",
+    "SATIN-SCHED-012",
+    "SATIN-STOP-005",
+    "SATIN-STOP-014",
+    "SATIN-STOP-020"
+  ],
+  "schemaVersion": "1.0",
+  "specRef": {
+    "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+    "name": "megaeth/Satin"
+  }
+}

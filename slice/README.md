@@ -1,13 +1,13 @@
 # The vertical slice
 
-140 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+193 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 63 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 20 for the
 edges of the charge-order principles, 5 for gas detention, 5 for the stops of a transaction's own
 frame and 2 that observe the gas pools at `5fb2688` (`specs/satin-5fb2688`), and 2 for the
-take-back page's worked examples and 28 for the destruction page's own rules at `cdded1e`
-(`specs/satin-cdded1e`), each case naming its own spec (decisions D-54, D-59, D-60, D-62, D-64,
-D-65, D-66, D-70). The cases whose expected `limit` is a stop are schema 1.1; every other case is
+take-back page's worked examples, 28 for the destruction page's own rules and 53 for gas detention's
+rules at `cdded1e` (`specs/satin-cdded1e`), each case naming its own spec (decisions D-54, D-59, D-60, D-62, D-64,
+D-65, D-66, D-67, D-70). The cases whose expected `limit` is a stop are schema 1.1; every other case is
 1.0. They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
@@ -45,7 +45,7 @@ derivation, and the two implementations run against it.
 | `authorizations` | 2 | an EIP-7702 authority present as an empty leaf exists (`SATIN-STATE-011`, `SATIN-AUTH-008`, `SATIN-ACCT-015`): the indicator's state gas alone; an absent one is new |
 | `call-order` | 9 | the order around a frame start (`SATIN-HIST-023`): a caller that cannot pay a funded value call's records halts in the opcode, before any interceptor answers or hint is admitted, one gas below the threshold and at it, forwarding all it may or nothing (`SATIN-HIST-009`, `SATIN-ICPT-007`); a value its caller cannot fund makes no record (`SATIN-HIST-015`), and the refused or answered start returns the child's whole regular gas, the stipend included (`SATIN-POOL-012`), which `GAS` shows (`SATIN-POOL-009`) |
 | `delegated-recipient` | 6 | the delegate's access before the first frame (`SATIN-SCHED-008` step 5): warm, cold, against the same account without its delegation, one gas short of the cold access (out of gas before the first frame, `SATIN-SCHED-009`, `-010`) and exactly at it, and a transaction to its own delegated sender |
-| `detention` | 5 | one charge under gas detention (`SATIN-DET-018`): a detained child frame whose spendable part cannot pay `BALANCE`'s static cost is stopped with `MegaLimitExceeded(2, limit)` when its whole regular gas can pay it and runs out of gas when it cannot (`SATIN-DET-020`); the spendable part one below the static cost and at it, the static cost staying spent once paid; a value `CALL` stopped at its value transfer after its static cost |
+| `detention` | 58 | one charge under gas detention (`SATIN-DET-018`): a detained child frame whose spendable part cannot pay `BALANCE`'s static cost is stopped with `MegaLimitExceeded(2, limit)` when its whole regular gas can pay it and runs out of gas when it cannot (`SATIN-DET-020`); the spendable part one below the static cost and at it, the static cost staying spent once paid; a value `CALL` stopped at its value transfer after its static cost. And gas detention's rules at `cdded1e` (D-67), each at its edge: what is volatile — `BLOCKHASH` whatever its operand (`SATIN-DET-004`), the other reads of the block environment and of the beneficiary's account (`SATIN-DET-001`), a call to the EIP-2935 history contract only where its code completes `NUMBER` (`SATIN-DET-005`), the beneficiary's own `SELFBALANCE` (`SATIN-DET-007`) — and what is not: `BLOBHASH` (`SATIN-DET-002`), other accounts, a creation onto the beneficiary (`SATIN-DET-006`); a transaction detained from its start by its sender, recipient or authority (`SATIN-DET-008`); the limit at the cap exactly, after a larger spend, under a second read, after a spill and after a give-back (`SATIN-DET-009`, `-012`, `-013`), and with a stipend's work (`SATIN-DET-010`); the readers of the whole regular gas, the settlement and the withheld part drawn first (`SATIN-DET-015` to `-017`); a precompile decided from its price, at and one past the allowance and the forward, with value, unfunded, ModExp over EIP-7823's bound and a BN254 pairing over its size limit (`SATIN-DET-021` to `-024`); a user's deposit (`SATIN-DET-026`) |
 | `limit-stops` | 5 | a stop of the transaction's own frame, its result (`SATIN-STOP-009`, `-021`), settled as a revert: gas detention's crossing at one memory expansion and at `BALANCE`'s static cost (kind 2); the fresh slot that takes the frame's state growth past its budget (kind 3, `SATIN-LIM-002`, `-010`); and, after hints used what the transaction had left, a log one byte past the transaction's data-size limit while the frame's budget holds it (kind 0, `SATIN-LIM-011`, `-012`), with the log that lands exactly on the limit |
 | `gas-pools` | 2 | the first frame's pools observed directly (`gasPools`, D-64): a plain transfer as the control, and a fresh slot whose state gas a small reservoir pays in part, regular gas paying the legacy share, the rest and the record (`SATIN-POOL-008`) |
 | `take-backs` | 2 | the worked examples of the take-back page (`SATIN-TAKE-005` to `-012`), one case each, of which these two gate: a list whose two entries for one absent authority delegate and then clear (`SATIN-TAKE-008`, `SATIN-AUTH-009`), and a value round trip whose earlier transfer turns the signs, the second start's records charged to a caller left too little regular gas, which runs out of gas (`SATIN-TAKE-006`, `SATIN-HIST-009`); the other fifteen are quarantined below |
@@ -57,11 +57,11 @@ empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and 
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-149 rules in 20 areas are cited. `index.json` lists each case with its area, rules and file digest.
+173 rules in 22 areas are cited. `index.json` lists each case with its area, rules and file digest.
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: forty-one cases the revm-based implementation fails against a decided rule it
+- `quarantine/`: forty-three cases the revm-based implementation fails against a decided rule it
   has not made yet, each passing on the evm2-based implementation:
   - four deposit cases. `SATIN-HIST-016` and `SATIN-DEP-001` make a deposit pay history gas for its
     body, its logs and its write records; the revm-based implementation charges none. The
@@ -112,6 +112,11 @@ system contracts a call can reach (D-55).
     it to the child, which burns it: its gas used is above the rule's, a difference no pool
     observation is needed to see.
 
+  - two of gas detention's cases (D-68): a user's deposit, detained as `SATIN-DET-026` has it but
+    charged no history gas for its body (`SATIN-HIST-016`); and a ModExp input over EIP-7823's bound
+    priced one past the allowance, which `SATIN-DET-023` and `-024` make the crossing and that
+    implementation runs, consuming its forward.
+
   The expectation is the rule's; the cases stay out of the gating slice until that implementation
   is fixed, and `tools/run-slice.sh` checks that each still fails exactly as `index.json` records
   (path and both values) and passes on the other implementation.
@@ -123,8 +128,11 @@ system contracts a call can reach (D-55).
 A stop's diagnostics (scope, call path, operation, phase and commit flags, which neither
 implementation's result carries, D-62), a stop of the KV-update limit (half a million write
 records cost more gas than a transaction holds; for the same reason the answer-stopped example's KV
-budget of 3 is pinned on the state-growth budget instead, D-65), gas detention beyond `TIMESTAMP`, a
-deposit's Oracle read, `BALANCE` and a destruction's read of the block beneficiary, frames and
+budget of 3 is pinned on the state-growth budget instead, D-65), gas detention's crossing at an
+intercepted answer that spends regular gas (`SATIN-DET-025`), a node's own precompiles
+(`SATIN-DET-027`), a system-originated transaction (`SATIN-DET-026`; the block resolves the system
+address), the precompiles beyond the identity's run and the prices of ModExp and an over-size BN254
+pairing (D-67) and a destruction's read of the block beneficiary, frames and
 creations beyond the shapes the take-back examples and the destruction page's cases build (D-65,
 D-70), a slot of an address the transaction accessed before creating onto it and a store after a
 destruction's mark that moves the refund counter (D-72), EIP-7702 lists beyond one accepted entry, two applied ones or one authority's
@@ -143,7 +151,7 @@ builds the format CLI and both adapters (fetching the evm2-based implementation 
 consumes `cases/` with each adapter plain and instrumented, and prints
 
 ```text
-SLICE cases=140 adapters=2 pass=280 fail=0 unsupported=0 error=0 digests=identical
-PARITY adapters=2 cases=140 mismatches=0
+SLICE cases=193 adapters=2 pass=386 fail=0 unsupported=0 error=0 digests=identical
+PARITY adapters=2 cases=193 mismatches=0
 NEGATIVE wrong-expected verdict=fail rewritten=no
 ```
