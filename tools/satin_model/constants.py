@@ -100,6 +100,20 @@ LEGACY_SELFDESTRUCT_SHARE = PRE_FORK_NEW_ACCOUNT_COST - SELFDESTRUCT_NEW_ACCOUNT
 BLOCK_ENV_ACCESS_COMPUTE_GAS = 20_000_000  # SATIN-DET-012: the cap after a read of the block environment
 ORACLE_ACCESS_COMPUTE_GAS = 20_000_000  # SATIN-DET-012: the cap after a read of the Oracle's storage
 DETENTION_STOP = 2  # SATIN-DET-018: the kind of MegaLimitExceeded a crossing stops a frame with
+# Gas detention's other volatile reads and the precompiles it prices (the specification at `cdded1e`).
+G_BLOCKHASH = 20  # inherited BLOCKHASH static gas, kept by SATIN-SCHED-002
+BLOCKHASH_WINDOW = 256  # inherited: BLOCKHASH answers the last 256 blocks
+HISTORY_STORAGE_ADDRESS = bytes.fromhex("0000f90827f1c53a10cb7a02335b175320002935")  # EIP-2935's history contract
+# The precompile set of SATIN-PCMP-001, warm from the transaction's start (SATIN-SCHED-012): Karst's 0x01 to 0x11
+# and P256VERIFY at 0x100.
+PRECOMPILE_SET = frozenset([i.to_bytes(20, "big") for i in range(1, 0x12)] + [(0x100).to_bytes(20, "big")])
+IDENTITY = (4).to_bytes(20, "big")
+MODEXP = (5).to_bytes(20, "big")
+BN254_PAIRING = (8).to_bytes(20, "big")
+IDENTITY_BASE, IDENTITY_WORD = 15, 3  # inherited identity price: 15 + 3 a word
+MODEXP_MIN_GAS = 500  # SATIN-PCMP-002: EIP-7883's minimum
+MODEXP_MAX_INPUT_SIZE = 1_024  # SATIN-PCMP-002: EIP-7823's bound on each length
+BN254_PAIRING_MAX_INPUT_SIZE = 57_600  # SATIN-PCMP-001, SATIN-PCMP-004
 # SATIN-STOP-002, SATIN-STOP-018: the kind of each dimension's stop, and the dimension the format names it by.
 DATA_SIZE_STOP, KV_UPDATE_STOP, STATE_GROWTH_STOP = 0, 1, 3
 STOP_DIMENSIONS = {DATA_SIZE_STOP: "data-size", KV_UPDATE_STOP: "kv-updates", DETENTION_STOP: "compute",

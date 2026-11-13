@@ -100,6 +100,10 @@ class Env:
     block_gas_limit: int
     buckets: dict[int, int]  # bucket id -> capacity (complete: unlisted buckets are minimal)
     timestamp: int = 0
+    number: int = 0
+    prev_randao: int = 0
+    blob_base_fee: int = 1
+    block_hashes: dict[int, bytes] = field(default_factory=dict)  # the hashes BLOCKHASH can answer, by number
 
 
 def bucket_multiplier(env: Env, bucket: int) -> int:
