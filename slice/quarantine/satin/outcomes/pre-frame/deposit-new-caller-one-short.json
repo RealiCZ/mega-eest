@@ -1,0 +1,158 @@
+{
+  "caseId": "satin/outcomes/pre-frame/deposit-new-caller-one-short",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x37257",
+      "floor": "0x0",
+      "gasUsed": "0x37257",
+      "history": "0x0",
+      "historyBytes": "0x136",
+      "refund": "0x0",
+      "regular": "0x37257",
+      "state": "0x0",
+      "total": "0x37257"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "failed-deposit"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": null
+    },
+    "receipt": {
+      "depositNonce": "0x0",
+      "depositReceiptVersion": "0x1",
+      "gasUsed": "0x37257",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x7e"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x703c4b2bd70c169f5717101caee543299fc946c7": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x00",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "deposit",
+      "raw": "0x7ef85ba0000000000000000000000000000000000000000000000000000000000000005d94703c4b2bd70c169f5717101caee543299fc946c79400000000000000000000000000000000000c0de1880de0b6b3a764000080830372578080"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the gas limit one below the new caller's state gas",
+      "intent": "a deposit from a sender empty under EIP-161, minting 1 ether, with a gas limit of 225,879: the intrinsic gas and the body's history leave 183,599 for the new caller's state gas, 183,600, one short: a failed deposit, which keeps the caller, counted and not charged (SATIN-OUT-006)"
+    },
+    "definition": "tools/make_slice.py::outcome_edge_cases",
+    "generator": "tools/make_slice.py",
+    "quarantine": {
+      "actual": "0x3a98",
+      "adapter": "mega-eest-adapter-revm",
+      "expected": "0x37257",
+      "path": "/expected/gasLedgers/blockGas",
+      "verdict": "SATIN-DEP-001 holds a deposit's gas limit to its intrinsic regular gas and its body's history gas, SATIN-HIST-016 charges a deposit its first frame's start record as any transaction, and a deposit that fails validation or cannot pay a charge made before its first frame is a failed deposit (SATIN-VAL-008, SATIN-DEP-004), whose block gas is its whole gas limit, 225,879 (SATIN-DEP-005); the revm-based implementation at 7110d87b charges a deposit no history gas, so it admits the deposit, runs its frame and counts its intrinsic regular gas alone, 15,000"
+    },
+    "specCommit": "c130558e2f38a913982dc17f0cd8eb8834967262",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:deposit",
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-DEP-001",
+    "SATIN-DEP-004",
+    "SATIN-DEP-005",
+    "SATIN-OUT-005",
+    "SATIN-OUT-006",
+    "SATIN-POOL-017",
+    "SATIN-VAL-008"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+    "name": "megaeth/Satin"
+  }
+}

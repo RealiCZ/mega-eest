@@ -9,11 +9,11 @@ rules at `cdded1e` (`specs/satin-cdded1e`), and for a precompile that halts at `
 (`specs/satin-c130558`), the arithmetic a `state-transition` case's observations follow, for the
 narrow class of transactions the slice uses:
 
-- the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`,
-  `ORIGIN`, `GASPRICE`, `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`, `LOG0`..`LOG4`, `RETURN`,
-  `REVERT` and `INVALID`, and the stack, arithmetic, calldata, jump, return-data and `KECCAK256`
-  opcodes a system contract's dispatcher and decoder use, and the `DELEGATECALL`, `CREATE` and
-  `SELFDESTRUCT` of the take-back examples, below; of the volatile reads only those below;
+- the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`, `ORIGIN`,
+  `GASPRICE`, `CHAINID`, `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`,
+  `LOG0`..`LOG4`, `RETURN`, `REVERT` and `INVALID`, and the stack, arithmetic, calldata, jump, return-data
+  and `KECCAK256` opcodes a system contract's dispatcher and decoder use, and the `DELEGATECALL`, `CREATE`
+  and `SELFDESTRUCT` of the take-back examples, below; of the volatile reads only those below;
 - a `CALL` from that frame to a system contract, decided in the order of `SATIN-ICPT-007`: an
   interceptor's `NonZeroTransfer()`, the `sendHint` admission and its data-size stop, the frame
   start that refuses a value the caller cannot fund, and a child frame that reverts or halts; the
@@ -44,7 +44,8 @@ narrow class of transactions the slice uses:
   delegate's access before the first frame;
 - a transaction that runs out of gas before its first frame, everything applied after validation's
   changes to its sender taken back, an authorization list's charges, applied entries and all, and a
-  delegate's access among the charges it cannot pay;
+  delegate's access among the charges it cannot pay; a creation's sender keeps the nonce bump the
+  creation would have made (`SATIN-SCHED-010`);
 - for the cases that ask, the `reads` group: what the transaction loads, as the stateless witness
   needs it, and the `gasPools` group: the first frame's pools at its start and end;
 - a stop of the transaction's own frame, its result: gas detention's crossing, and an `SSTORE`'s
@@ -64,6 +65,14 @@ narrow class of transactions the slice uses:
   price (the identity precompile, ModExp's price, a BN254 pairing over its size limit);
 - calls, value transfers, creation transactions and deposits, with or without a reservoir, and a
   deposit whose own frame halts (`SATIN-DEP-004`);
+- for the outcomes page and validation's order (D-85): `CREATE`'s and `CREATE2`'s operands, size check
+  and charges in the order of `SATIN-SIZE-005` (`CREATE2` as far as its salt), a creation's code over
+  `MAX_CONTRACT_SIZE` and its code deposit, each failure a halt; a precompile call that fails where no
+  limit is set, a BN254 pairing of points at infinity, and a value call to the identity precompile
+  whose start is held to the limits; a deposit that fails validation, cannot pay a charge before its
+  first frame, carries a value, or whose own frame reverts, and a failed deposit's reads; an empty
+  authorization list and a sender's nonce of 2^64 - 1; and the transactions from a live system
+  address the registry names, refused or promoted (D-87);
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check

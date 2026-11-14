@@ -10,10 +10,10 @@ from .constants import (
     G_HIGH, G_JUMPDEST, G_LOW, G_MID, G_VERYLOW, G_ZERO, GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR,
     INITCODE_WORD_COST, KECCAK_BASE,
     KECCAK_WORD, LEGACY_NEW_ACCOUNT_SHARE, LOG_BASE_SIZE, LOG_COST, LOG_DATA_COST, LOG_TOPIC_COST,
-    LOG_TOPIC_SIZE, ORACLE, ORACLE_ACCESS_COMPUTE_GAS, PRE_FORK_NEW_ACCOUNT_COST, VOLATILE_DATA_ACCESS_DISABLED,
-    WARM_READ, WRITE_RECORD_SIZE,
+    LOG_TOPIC_SIZE, MAX_INITCODE_SIZE, ORACLE, ORACLE_ACCESS_COMPUTE_GAS, PRE_FORK_NEW_ACCOUNT_COST,
+    VOLATILE_DATA_ACCESS_DISABLED, WARM_READ, WRITE_RECORD_SIZE,
 )
-from .records import Account, fmt, h, Halt, memory_cost, Unmodelled
+from .records import Account, fmt, h, Halt, memory_cost, Stopped, Unmodelled
 
 
 def jump_destinations(code: bytes) -> set[int]:
@@ -83,6 +83,10 @@ class InterpreterMixin:
                   f"anything, the frame reverting with VolatileDataAccessDisabled({access_type}) on the "
                   f"{fmt(frame['regular'])} of regular gas it held at the opcode; no read is marked",
                   "SATIN-MAC-003", "SATIN-MAC-004", "SATIN-MAC-005")
+            if self.outcomes:
+                d.add("outcome", f"the refusal is a revert of the frame that made the read, with its own error "
+                      f"VolatileDataAccessDisabled({access_type}): not a halt, so the frame's unspent regular gas returns "
+                      "to its caller, and not a limit stop", "SATIN-OUT-008")
             self.probe.setdefault("refused", frame["regular"])
             steps.append(f"{what.split()[0]} refused 0")
             return done("revert", VOLATILE_DATA_ACCESS_DISABLED + access_type.to_bytes(32, "big"))
@@ -150,6 +154,10 @@ class InterpreterMixin:
                 self.charge_regular(frame, G_BASE, "CALLVALUE")
                 stack.append(value_in)
                 steps.append(f"CALLVALUE {G_BASE}")
+            elif op == 0x46:  # CHAINID: the chain's id
+                self.charge_regular(frame, G_BASE, "CHAINID")
+                stack.append(self.env.chain_id)
+                steps.append(f"CHAINID {G_BASE}")
             elif op == 0x52:  # MSTORE
                 offset, value = pop(), pop()
                 self.charge_regular(frame, G_VERYLOW, "MSTORE")
@@ -639,17 +647,52 @@ class InterpreterMixin:
                     raise Unmodelled("a call that copies its output")
                 stack.append(1 if ok else 0)
                 steps.append(f"DELEGATECALL {fmt(opcode_charges + forward - left)} net")
-            elif op == 0xF0:  # CREATE
+            elif op in (0xF0, 0xF5):  # CREATE, and CREATE2 as far as its salt operand
+                name = "CREATE" if op == 0xF0 else "CREATE2"
+                if len(stack) < 3:
+                    # SATIN-SIZE-005 step 2: the operands are read before any charge, so a creation short of them fails
+                    # with nothing charged, a halt of its frame (SATIN-OUT-012).
+                    d.add("outcome", f"{name} finds {len(stack)} of its value, offset and size operands on the stack: it "
+                          "fails reading them, before any of its checks or charges, and halts its frame", "SATIN-OUT-012",
+                          "SATIN-SIZE-005")
+                    raise Halt(f"{name} short of its operands")
                 value, c_off, c_size = pop(), pop(), pop()
+                if c_size > MAX_INITCODE_SIZE:
+                    # SATIN-SIZE-005 step 3: the initcode's size is checked before EIP-3860's cost and the memory.
+                    d.add("outcome", f"{name} with {fmt(c_size)} bytes of initcode, over MAX_INITCODE_SIZE "
+                          f"{fmt(MAX_INITCODE_SIZE)}: the size check, made after the operands and before any charge, halts "
+                          "the creating frame at the opcode, Ethereum's check at MegaETH's size and no limit stop",
+                          "SATIN-SIZE-002", "SATIN-SIZE-003", "SATIN-SIZE-005", "SATIN-OUT-003")
+                    raise Halt(f"initcode of {fmt(c_size)} bytes, over MAX_INITCODE_SIZE")
+                if self.outcomes:
+                    d.add("outcome", f"{name} with {fmt(c_size)} bytes of initcode, within MAX_INITCODE_SIZE "
+                          f"{fmt(MAX_INITCODE_SIZE)}: the size check passes and the creation goes on to its charges",
+                          "SATIN-SIZE-002", "SATIN-SIZE-003", "SATIN-OUT-003")
                 words = (c_size + 31) // 32
                 before = self.regular_charges
+                # SATIN-SIZE-005 steps 4 to 6: EIP-3860's initcode cost, the memory the initcode is read from, then
+                # (CREATE2's salt, then) CREATE_ACCESS; each part is a charge of its own under gas detention.
+                try:
+                    self.charge_regular(frame, INITCODE_WORD_COST * words, f"{name}'s init code")
+                    expand(c_off, c_size, name)
+                except Stopped:
+                    if op == 0xF5 and not stack:
+                        d.add("outcome", "CREATE2 short of its salt makes its initcode and memory charges before the "
+                              "missing operand fails, and one of them is gas detention's crossing: the frame is stopped, "
+                              "a revert, where the missing salt would have halted it", "SATIN-OUT-012", "SATIN-SIZE-006")
+                    raise
+                if op == 0xF5:
+                    if not stack:
+                        d.add("outcome", f"CREATE2 has paid its initcode cost and its memory, {fmt(self.regular_charges - before)}, "
+                              "and finds no salt operand: it fails on the missing operand and halts its frame",
+                              "SATIN-OUT-012", "SATIN-SIZE-005", "SATIN-SIZE-006")
+                        raise Halt("CREATE2 short of its salt")
+                    raise Unmodelled("a CREATE2 with its salt")
                 self.charge_regular(frame, CREATE_ACCESS, "CREATE")
-                self.charge_regular(frame, INITCODE_WORD_COST * words, "CREATE's init code")
-                expand(c_off, c_size, "CREATE")
                 opcode_charges = self.regular_charges - before
-                d.add("gasLedgers", f"CREATE with {c_size} bytes of init code and {value} wei: regular CREATE_ACCESS "
-                      f"{fmt(CREATE_ACCESS)} + {words} words x {INITCODE_WORD_COST} + memory = {fmt(opcode_charges)}",
-                      "SATIN-SCHED-002", "SATIN-SCHED-003")
+                d.add("gasLedgers", f"CREATE with {c_size} bytes of init code and {value} wei: regular {words} words x "
+                      f"{INITCODE_WORD_COST} + memory, then CREATE_ACCESS {fmt(CREATE_ACCESS)} = {fmt(opcode_charges)}",
+                      "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-SIZE-005")
                 created, left, returndata = self.create(frame, address, value, bytes(memory[c_off:c_off + c_size]))
                 frame["regular"] += left
                 self.regular_charges -= left

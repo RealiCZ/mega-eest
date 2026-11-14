@@ -47,6 +47,10 @@ class InterceptionMixin:
         d.add("outcome", f"the transaction's own CALL to KeylessDeploy carries keylessDeploy's selector, and its arguments meet "
               f"the decoder's conditions (offset {offset}, {len(argument)} bytes of the first argument within the input): "
               "recognized, which is part of interception, before the frame start", "SATIN-ICPT-006", "SATIN-ICPT-007")
+        if self.outcomes:
+            d.add("outcome", f"a keyless deployment's steps refuse or halt as SATIN-KEY-004 states: step 1's overhead is a "
+                  f"regular charge on the {fmt(frame['regular'])} the frame holds, which halts it when it cannot be paid, "
+                  "and a later step refuses with KeylessDeploy's own error", "SATIN-OUT-009", "SATIN-KEY-004")
         self.charge_regular(frame, KEYLESS_DEPLOY_OVERHEAD_GAS, "KEYLESS_DEPLOY_OVERHEAD_GAS")
         d.add("gasLedgers", f"step 1: KEYLESS_DEPLOY_OVERHEAD_GAS {fmt(KEYLESS_DEPLOY_OVERHEAD_GAS)} regular gas; a refusal "
               "after it reverts the call, and the regular gas it spent stays spent", "SATIN-KEY-004", "SATIN-KEY-005")
