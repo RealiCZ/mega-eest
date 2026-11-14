@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from .constants import (
     ACCESS_TYPE_BENEFICIARY, ACCESS_TYPE_TIMESTAMP, ACCOUNT_STATE, BLOCK_ENV_ACCESS_COMPUTE_GAS, BLOCKHASH_WINDOW,
-    CALL_STIPEND, G_BLOCKHASH, HISTORY_STORAGE_ADDRESS, PRECOMPILE_SET,
+    CALL_STIPEND, delegate_of, G_BLOCKHASH, HISTORY_STORAGE_ADDRESS, PRECOMPILE_SET,
     CALL_VALUE_COST, COLD_ACCOUNT_SURCHARGE, COLD_SLOAD, COPY_WORD, COST_PER_HISTORY_BYTE, CREATE_ACCESS, ex, G_BASE,
     G_HIGH, G_JUMPDEST, G_LOW, G_MID, G_VERYLOW, G_ZERO, GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR,
     INITCODE_WORD_COST, KECCAK_BASE,
@@ -150,6 +150,9 @@ class InterpreterMixin:
                 steps.append(f"GASPRICE {G_BASE}")
                 d.add("outcome", f"GASPRICE pushes the transaction's effective gas price, {fmt(self.effective_price())}",
                       "SATIN-BASE-001")
+            elif 0x0C <= op <= 0x0F:  # undefined in Osaka, which Satin's base keeps: an exceptional halt
+                steps.append(f"undefined {op:#04x}")
+                raise Halt(f"the undefined opcode {op:#04x}")
             elif op == 0x34:  # CALLVALUE
                 self.charge_regular(frame, G_BASE, "CALLVALUE")
                 stack.append(value_in)
@@ -497,6 +500,22 @@ class InterpreterMixin:
                           "SATIN-DET-021")
                 self.load(target, "the CALL's target, once the opcode's access is paid", "SATIN-WIT-002", "SATIN-WIT-008")
                 callee = self.state.get(target)
+                delegate = delegate_of(callee.code) if callee is not None else None
+                if delegate is not None:
+                    # EIP-7702, kept by the base layer: a call to an account holding a delegation runs its delegate's
+                    # code, and pays the delegate's access with the opcode's other charges, before the forward.
+                    if int.from_bytes(delegate, "big") <= 0x100 or self.keyless_signer != target:
+                        raise Unmodelled("a CALL to a delegated account other than a keyless creation's signer")
+                    dcold = delegate not in self.warm_accounts
+                    self.charge_regular(frame, WARM_READ + (COLD_ACCOUNT_SURCHARGE if dcold else 0), "the delegate's access")
+                    self.warm_accounts.add(delegate)
+                    self.load(delegate, "the delegate of the CALL's target, once its access is paid", "SATIN-WIT-002",
+                              "SATIN-WIT-008")
+                    d.add("gasLedgers", f"the CALL's target {h(target)} holds an EIP-7702 delegation to {h(delegate)}: the "
+                          f"delegate's access, warm read {WARM_READ}" + (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}"
+                                                                          if dcold else "")
+                          + ", is one of the opcode's charges, and the delegate's code runs in the target's frame",
+                          "SATIN-BASE-001", "SATIN-SCHED-001", "SATIN-SCHED-003")
                 opcode_charges = self.regular_charges - before
                 new_account = 0
                 if value and (callee is None or callee.empty()):
@@ -551,7 +570,12 @@ class InterpreterMixin:
                 fundable = value <= balance
                 records = [a for a in (address, target)
                            if value and fundable and target != address and ("a", a) not in self.kv and a != tx.sender
-                           and a not in self.destroyed]
+                           and a not in self.destroyed and a != self.keyless_signer]
+                if value and fundable and self.keyless_signer in (address, target):
+                    d.add("gasLedgers", f"the keyless signer {h(self.keyless_signer)}, whose nonce the creation's start "
+                          "bumped, differs from what the transaction loaded already: the transfer makes no record of it, "
+                          "and its record is counted on the call when the creation has returned", "SATIN-KEY-012",
+                          "SATIN-KEY-013", "SATIN-HIST-009", "SATIN-ACCT-004")
                 if value and fundable and target in self.destroyed:
                     d.add("resources", f"the value sent to {h(target)}, which a destruction marked, is no rise and makes "
                           "no record for it", "SATIN-SD-015")
@@ -589,7 +613,8 @@ class InterpreterMixin:
                                                          child_gas, records, history, share)
                 else:
                     ok, out, left = self.call(frame, address, target, value, bytes(memory[a_off:a_off + a_size]),
-                                              child_gas, records, history, new_account, share)
+                                              child_gas, records, history, new_account, share,
+                                              code=self.state[delegate].code if delegate is not None else None)
                 frame["regular"] += left
                 self.regular_charges -= left
                 self.resume(frame, f"the CALL to {h(target)}")

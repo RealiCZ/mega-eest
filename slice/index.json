@@ -5675,6 +5675,2089 @@
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
         "name": "megaeth/Satin"
       }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/to-and-chain-id",
+      "file": "cases/satin/keyless/refusal/to-and-chain-id.json",
+      "fileDigest": "sha256:b03f95c01716e7b6be440c63fe52cddfd5364d016bc34c37ef452f9a977bc597",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/chain-id",
+      "file": "cases/satin/keyless/refusal/chain-id.json",
+      "fileDigest": "sha256:c0c218d1cc98dab93d29560193105be955546e551307acc3632c9cb11ffc4844",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/nonce-and-override",
+      "file": "cases/satin/keyless/refusal/nonce-and-override.json",
+      "fileDigest": "sha256:c8273267ddb909250c11a157ab4a11a676113f9ff86fc47450865e6dfefbbdcd",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/override-and-signer-nonce",
+      "file": "cases/satin/keyless/refusal/override-and-signer-nonce.json",
+      "fileDigest": "sha256:b75e9015c829998b73fdb3cba5f77384dca3fd48a9999d14ea3b44f677f74f24",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/signer-nonce-and-code",
+      "file": "cases/satin/keyless/refusal/signer-nonce-and-code.json",
+      "fileDigest": "sha256:3f3fca8d8a35c34642d6bad5d2e4962f3903355bdee141ad8bd794df7607de54",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/signer-has-code",
+      "file": "cases/satin/keyless/refusal/signer-has-code.json",
+      "fileDigest": "sha256:b7b2ce17fd912259c8bbbc6757c8ced1255da6127df9d358096bb659bc7ae27c",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/invalid-signature",
+      "file": "cases/satin/keyless/refusal/invalid-signature.json",
+      "fileDigest": "sha256:bd89dbc62affabffef5536560d42aa50373e55d144caf06b9f2673e3e48a2776",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/insufficient-balance",
+      "file": "cases/satin/keyless/refusal/insufficient-balance.json",
+      "fileDigest": "sha256:fe65975a96de8b15a029f7d551eee8f96cefda2109095e882be0444f761b9fd3",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/step-11-one-short",
+      "file": "cases/satin/keyless/refusal/step-11-one-short.json",
+      "fileDigest": "sha256:c9c2905da85312869e0ad55db17a5334eccbfcbbe5a7deec61063e62284b6917",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/step-15-one-short",
+      "file": "cases/satin/keyless/refusal/step-15-one-short.json",
+      "fileDigest": "sha256:c8f4af30b8dd1e0fe7fa50386a0bb65a6cc85c09692d449c4bfb564f9daea789",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/forward-at-signed-gas",
+      "file": "cases/satin/keyless/deploy/forward-at-signed-gas.json",
+      "fileDigest": "sha256:fb8f454b77af19b0f0008c45bf3a29021a4c09567f55bde09b418870b7c46f94",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/absent-signer",
+      "file": "cases/satin/keyless/deploy/absent-signer.json",
+      "fileDigest": "sha256:10bd7d9a599678ad844ab28909439461724698c8b140b3d98370b020a9fa5a03",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/signer-nonce-one",
+      "file": "cases/satin/keyless/deploy/signer-nonce-one.json",
+      "fileDigest": "sha256:f0ee02e3d833663c77fa340adcc0ea5d76174ff69acf5a84d3c1740e35273fc2",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/signer-nonce-one-reverts",
+      "file": "cases/satin/keyless/deploy/signer-nonce-one-reverts.json",
+      "fileDigest": "sha256:0e0d8c9258406f4122cc5dbf426f104aa8da9dda759cf914bec9d51eb2b22162",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/reverts-with-data",
+      "file": "cases/satin/keyless/deploy/reverts-with-data.json",
+      "fileDigest": "sha256:514c9cf750c5ce88a76e58abce96dc4464d52bf43ab28ccddd2d8c54d27845ff",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/fresh-slot-reverts",
+      "file": "cases/satin/keyless/deploy/fresh-slot-reverts.json",
+      "fileDigest": "sha256:329c7a8046f9e3f7f34a55615b9332bfc6843b2be95225917cf77758f59484fb",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/halts",
+      "file": "cases/satin/keyless/deploy/halts.json",
+      "fileDigest": "sha256:303869e100f0d8d35a950b6acce0a2186a0f71b9a3fd1073d86c718d5399f51d",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/empty-code",
+      "file": "cases/satin/keyless/deploy/empty-code.json",
+      "fileDigest": "sha256:2fa0217cc3a3271c60042341b2947b4379404a3ef7388dda618f8d73b73df054",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/destroyed-in-constructor",
+      "file": "cases/satin/keyless/deploy/destroyed-in-constructor.json",
+      "fileDigest": "sha256:ab537381f9deedeaa411d46f91fcc5728488b690f65023c5e0ac0e227b3aa690",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/inner-empty-creation",
+      "file": "cases/satin/keyless/deploy/inner-empty-creation.json",
+      "fileDigest": "sha256:ba59d887ac7852d7bbb746843888f4fdcd77bc0708ccd268dc7992740052f733",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/origin-gasprice-caller-gas",
+      "file": "cases/satin/keyless/deploy/origin-gasprice-caller-gas.json",
+      "fileDigest": "sha256:34f3b0fe3439cee3d56cfd2e83b0bbb8485b997f89a43b959777c52668251ced",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/balance-only-address",
+      "file": "cases/satin/keyless/deploy/balance-only-address.json",
+      "fileDigest": "sha256:dce69ac5582d5e9933fa723356b60a8cf2032de0952fa55819e35c5635a74d6d",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/with-reservoir",
+      "file": "cases/satin/keyless/deploy/with-reservoir.json",
+      "fileDigest": "sha256:5966664234ae59a2056566eb09c3e4e197b2f21ef2007a4989f2cf3d9f7a5fdb",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/high-s",
+      "file": "cases/satin/keyless/deploy/high-s.json",
+      "fileDigest": "sha256:0d77226ae7df6aa9abd74d05ea9940b4c48992b353e0021f180655d39389bc65",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/delegated-signer",
+      "file": "cases/satin/keyless/deploy/delegated-signer.json",
+      "fileDigest": "sha256:c734743212a936bf639d0be7d62323bd7bfeb30e03fff68fc7a37216d0603e53",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/carried-value",
+      "file": "cases/satin/keyless/deploy/carried-value.json",
+      "fileDigest": "sha256:57734fe244db366b0aa5e713299ecbcb3779a84315411fdcea35a219bb60e2b5",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/signer-nonce-one-with-value",
+      "file": "cases/satin/keyless/deploy/signer-nonce-one-with-value.json",
+      "fileDigest": "sha256:9a0ac5482bba92d00164a54d7cb70a65fac305161b99ea071225717043f24464",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/constructor-log",
+      "file": "cases/satin/keyless/deploy/constructor-log.json",
+      "fileDigest": "sha256:05c7b01a48a7d026fa472b12c3346766aa253bc7f3e05e70540fceaa4e629dff",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/buckets",
+      "file": "cases/satin/keyless/deploy/buckets.json",
+      "fileDigest": "sha256:22974ad8b4a3532e42e9f4b8ac86aa4b1b3ae00d1c2b67118ecb4e25840f3215",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/signer-is-sender",
+      "file": "cases/satin/keyless/deploy/signer-is-sender.json",
+      "fileDigest": "sha256:81642139c0ee64c6c9503ea9e4ecc814db0ce059d37d8d1a3aff9b239ed3d8e8",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/collision",
+      "file": "cases/satin/keyless/deploy/collision.json",
+      "fileDigest": "sha256:75c7867e1e76bc57310aafa50ab77942597ff2ccb77fa1b6180c35f8e49546f2",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/halt/step-10-one-short",
+      "file": "cases/satin/keyless/halt/step-10-one-short.json",
+      "fileDigest": "sha256:09f480c37c6ee91fe06a4d2aab36354ce07a033607515b67e77bbd5a1e954a21",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/halt/step-14-one-short",
+      "file": "cases/satin/keyless/halt/step-14-one-short.json",
+      "fileDigest": "sha256:cd9a900714b20b66433c836a2cca15a8b3f1e1526128e0d32a08ce5f9a1ac4d0",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/detention/signer-is-beneficiary",
+      "file": "cases/satin/keyless/detention/signer-is-beneficiary.json",
+      "fileDigest": "sha256:57f17cff26cc9eca7f930932d6eae326126f02a1f1b9bd461acf481df29c544c",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-010",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016",
+        "SATIN-KEY-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/detention/signer-not-beneficiary",
+      "file": "cases/satin/keyless/detention/signer-not-beneficiary.json",
+      "fileDigest": "sha256:67fc188bd581c68dbe13542dce2949ec018ad7b715ee79fddc72b9e780ec93e2",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/contract-call/no-value",
+      "file": "cases/satin/keyless/contract-call/no-value.json",
+      "fileDigest": "sha256:45f23119cbabb8fded837c8355e92aa15b9206a25304f4f7226c2616121b9655",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-KEY-003"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/contract-call/with-value",
+      "file": "cases/satin/keyless/contract-call/with-value.json",
+      "fileDigest": "sha256:e56891f08ac7235d91f33445723ce6a463c3798f12d2deb394b2a431bf25bf6e",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-KEY-003"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/recognition/held-code-unrecognized",
+      "file": "cases/satin/keyless/recognition/held-code-unrecognized.json",
+      "fileDigest": "sha256:73e41512e578bbf567a777b826775e8d84e2d17f43a4f38798f22ac8704ba4fc",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/recognition/held-code-other-selector",
+      "file": "cases/satin/keyless/recognition/held-code-other-selector.json",
+      "fileDigest": "sha256:ac30412f034f59bdb57b0fa88452e4f3fee2c117752ea7bb67ee3e5ae5a291d6",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/recognition/held-code-recognized",
+      "file": "cases/satin/keyless/recognition/held-code-recognized.json",
+      "fileDigest": "sha256:7c1837be5d59b643460aeeb9c75cd2173a26a277f933e71716c5ac01ab2a5bed",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/reservoir/share-49",
+      "file": "cases/satin/keyless/reservoir/share-49.json",
+      "fileDigest": "sha256:32be222333d39961d9a37ee1fa64a15e8ae0ef0bb6ae991eb51bf25a3384adf4",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/settlement/signer-record-fits",
+      "file": "cases/satin/keyless/settlement/signer-record-fits.json",
+      "fileDigest": "sha256:edc91389df91be7181fd30a980c059903d3fd9a245dc93f3520ed1954c7b32b3",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/settlement/signer-record-crosses",
+      "file": "cases/satin/keyless/settlement/signer-record-crosses.json",
+      "fileDigest": "sha256:60b785944634d29d48fee3282d07fe8e2fbb0d928c66954e2bd79b42a0b4a754",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/limits/log-after-hints-fits",
+      "file": "cases/satin/keyless/limits/log-after-hints-fits.json",
+      "fileDigest": "sha256:52cb41ad22a022ce1c543049a01436adf623651b3c9862d5bc26301571592dd6",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/limits/log-after-hints-crosses",
+      "file": "cases/satin/keyless/limits/log-after-hints-crosses.json",
+      "fileDigest": "sha256:9743425d1efe8054c80835236bb818ff4f4c2ee44a615660e3bc6304f39db679",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016",
+        "SATIN-KEY-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/budget/fresh-slots-979",
+      "file": "cases/satin/keyless/budget/fresh-slots-979.json",
+      "fileDigest": "sha256:0f65735af0705a3e1eee55b9df81e93587067641003cecd75c7d4416178f97dd",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/budget/fresh-slots-980",
+      "file": "cases/satin/keyless/budget/fresh-slots-980.json",
+      "fileDigest": "sha256:64d278ad28be1922823978c1ea4473b46137135eb1766f82cf02ca0a134ffaf6",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016",
+        "SATIN-KEY-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/budget/fresh-slots-980-signer-nonce-one",
+      "file": "cases/satin/keyless/budget/fresh-slots-980-signer-nonce-one.json",
+      "fileDigest": "sha256:c1a9609ad149fe8b0c73eb7371319785926aa2efe82e209ec4871fe4219d04e9",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016",
+        "SATIN-KEY-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/empty-code/with-effects",
+      "file": "cases/satin/keyless/empty-code/with-effects.json",
+      "fileDigest": "sha256:2a3fd265243d6abadeaefe7d998906e44f47b8546581063d8c18f7af40a2384d",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/empty-code/with-effects-and-value",
+      "file": "cases/satin/keyless/empty-code/with-effects-and-value.json",
+      "fileDigest": "sha256:5568193d5819ad1ff9e7f6cfadcbcdfe789029a5091cf52b43fb529aa6d1041e",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/empty-code/balance-only-address",
+      "file": "cases/satin/keyless/empty-code/balance-only-address.json",
+      "fileDigest": "sha256:8a24ababcdaec4f807de8bad0f8b5fd9c1f5315e23148713e88b895f2428e78a",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/destroyed/balance-only-address",
+      "file": "cases/satin/keyless/destroyed/balance-only-address.json",
+      "fileDigest": "sha256:5118671d01093c2142dd0c258698dfede78f603b4dc736e26e3d1ca9257aa51c",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/refund-not-in-gas-used",
+      "file": "cases/satin/keyless/deploy/refund-not-in-gas-used.json",
+      "fileDigest": "sha256:847e16dcef434b7e3ede62fb3e6f2bd545285331b83e00ded3b6855a9ebe1d81",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/detention/earlier-limit-stands",
+      "file": "cases/satin/keyless/detention/earlier-limit-stands.json",
+      "fileDigest": "sha256:9528b73675508b044fba654e876e445294f83b2ee94e3efb762f265ad08fd4eb",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-010",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016",
+        "SATIN-KEY-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/detention/withheld-forward",
+      "file": "cases/satin/keyless/detention/withheld-forward.json",
+      "fileDigest": "sha256:079680237828207b0f503026abf3a8c7558d2da50614b681dc0019a51ee8f94f",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-010",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/signed-gas/zero",
+      "file": "cases/satin/keyless/signed-gas/zero.json",
+      "fileDigest": "sha256:4e7ed9aba785e1cbfe0a460d6ff05d29e09c379d4dfea6864d0217b5a85ddf0d",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/signed-gas/zero-everything",
+      "file": "cases/satin/keyless/signed-gas/zero-everything.json",
+      "fileDigest": "sha256:90626e1443151fe0d67179815e2cfca3f650675940bfa79e1a93bd6956a4af66",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/step-10-paid-exactly",
+      "file": "cases/satin/keyless/refusal/step-10-paid-exactly.json",
+      "fileDigest": "sha256:a031443e9a21c945db372fed031de811a42cf8a59eeef5546a63cdef80b7f854",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/step-14-paid-exactly",
+      "file": "cases/satin/keyless/refusal/step-14-paid-exactly.json",
+      "fileDigest": "sha256:c900d77b13ace493241181a2913ab880619654b998eff32ccaf587b8685bd219",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/step-11-before-balance",
+      "file": "cases/satin/keyless/refusal/step-11-before-balance.json",
+      "fileDigest": "sha256:8e140d45fad44307376d9c746eb87bc7aa1ee3b42b5682770f9a8cb94f3474bc",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/override-and-invalid-signature",
+      "file": "cases/satin/keyless/refusal/override-and-invalid-signature.json",
+      "fileDigest": "sha256:69646830e8525412f28544dfe62bb51313c1a57c2a710d5d3fc87940b0f71cab",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/abi/override-2-64",
+      "file": "cases/satin/keyless/abi/override-2-64.json",
+      "fileDigest": "sha256:59c68f69558a410184ad188797d15e7d3691cc1443c1609ece4f85d45845b459",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/abi/trailing-byte",
+      "file": "cases/satin/keyless/abi/trailing-byte.json",
+      "fileDigest": "sha256:7b1c95c67d4b2289dfc9eaf23f631f0333aec1edf8082f069bc453b2244b5b7d",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/abi/unaligned-offset",
+      "file": "cases/satin/keyless/abi/unaligned-offset.json",
+      "fileDigest": "sha256:27c27b717eec839ad7455b994ecd5c6ef4c08542020375c039bb4fc00002a5e9",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/abi/head-63-bytes",
+      "file": "cases/satin/keyless/abi/head-63-bytes.json",
+      "fileDigest": "sha256:4cd07dc585da3644c4bfb43dd5bafbf8bb4aebb78de31696e676d5dc7c815534",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/abi/offset-2-64",
+      "file": "cases/satin/keyless/abi/offset-2-64.json",
+      "fileDigest": "sha256:fc25cb848c74d3116ca44786dbdb39223aafd3c6918b0843cc50169b67235fff",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/abi/offset-2-64-minus-1",
+      "file": "cases/satin/keyless/abi/offset-2-64-minus-1.json",
+      "fileDigest": "sha256:ae35682541724fd34778612c419a450459e538be3bc5e886832114ab7906d23a",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/abi/length-2-64",
+      "file": "cases/satin/keyless/abi/length-2-64.json",
+      "fileDigest": "sha256:3aa21c99c7b4f7eb6154f7984e5fd8b87a2ca2af489fc816f686f57fff61326d",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/rlp/trailing-byte",
+      "file": "cases/satin/keyless/rlp/trailing-byte.json",
+      "fileDigest": "sha256:c6fff55d64c4e4eba324b2c1ca6d734920b3a1dc320efc5e6f7659d809d3350e",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/rlp/eight-fields",
+      "file": "cases/satin/keyless/rlp/eight-fields.json",
+      "fileDigest": "sha256:6b91b3028c7e8a60f9f232b697cc9b574b6362d6ee97d5a005666f4aa1fb076a",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/rlp/nested-list",
+      "file": "cases/satin/keyless/rlp/nested-list.json",
+      "fileDigest": "sha256:8ba646e74dd08ed053358ed648ce4facfddc2d66ffa4fa10902761532fc651a8",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/rlp/leading-zero",
+      "file": "cases/satin/keyless/rlp/leading-zero.json",
+      "fileDigest": "sha256:80c800e83a0e774129ea50aa207efc88c1e3001aa76fbf2b7b7125a9be9782b9",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/signature/r-zero",
+      "file": "cases/satin/keyless/signature/r-zero.json",
+      "fileDigest": "sha256:14bbb6f3df62ee78ddaef832f881ff0e2765fa986a1af97ad7bca3ee574f25a1",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/signature/s-equal-n",
+      "file": "cases/satin/keyless/signature/s-equal-n.json",
+      "fileDigest": "sha256:6e0f2bd36d49926342db278d0d39c21943023eda3bc8672215bcbaa2da7d1dfa",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/warm-set/listed-account",
+      "file": "cases/satin/keyless/warm-set/listed-account.json",
+      "fileDigest": "sha256:223bf50c14c5961dfd8b1f73e8b9fffb29b52a6cfd9c378b8ac849812c414689",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/warm-set/unlisted-account",
+      "file": "cases/satin/keyless/warm-set/unlisted-account.json",
+      "fileDigest": "sha256:55104bcf3c215a268c9f5783ba70492858e4897d91a0175b986b5d71662080ab",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/recognition/ordinary-contract",
+      "file": "cases/satin/keyless/recognition/ordinary-contract.json",
+      "fileDigest": "sha256:ea4750075e72eff2e20a85d46b1a4525cec17ac0333d1fe31128eae2b96ed306",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/recognition/unknown-selector",
+      "file": "cases/satin/keyless/recognition/unknown-selector.json",
+      "fileDigest": "sha256:ae25d73821ee126280caa8385f106797068bdee2eae019f88fb04fb93845dfdd",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/contract-call/from-constructor",
+      "file": "cases/satin/keyless/contract-call/from-constructor.json",
+      "fileDigest": "sha256:618a8d65a7af6c633ea1c58af1c596e7b164386149683803f567e4329872e71b",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-003",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/contract-call/from-constructor-with-value",
+      "file": "cases/satin/keyless/contract-call/from-constructor-with-value.json",
+      "fileDigest": "sha256:430b689d14824cba1a471dd487fa76b5275a3d407f30cc876cc7a43bfe074ec2",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-003",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/authorizations/998-new-authorities",
+      "file": "cases/satin/keyless/authorizations/998-new-authorities.json",
+      "fileDigest": "sha256:9203b9bb23d6f137505878e6b4589bd02804a9c9ad0bbc7359288a34e5882bee",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/authorizations/999-new-authorities",
+      "file": "cases/satin/keyless/authorizations/999-new-authorities.json",
+      "fileDigest": "sha256:274f7dcdf59bdb56eda21370c6af824ef9861027ac4aaa940bdc2fc98abc8e29",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016",
+        "SATIN-KEY-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/authorizations/1000-new-authorities",
+      "file": "cases/satin/keyless/authorizations/1000-new-authorities.json",
+      "fileDigest": "sha256:26b104d0b1df0e7936b4494ae38f60aaf40a5d9fc1ff0ce7a0b89d3fa89c1fc3",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/authorizations/1001-new-authorities",
+      "file": "cases/satin/keyless/authorizations/1001-new-authorities.json",
+      "fileDigest": "sha256:4ed7bb95367e488daa4799dc03c1e38e4fff5a6ccbc9043ae3af0630d4fbc3c1",
+      "rules": [
+        "SATIN-ICPT-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/nonce-rule/delegate-spends-two",
+      "file": "cases/satin/keyless/nonce-rule/delegate-spends-two.json",
+      "fileDigest": "sha256:de1ce80f8ac5652ed2da81e0c71241c06e3c74e74717c7aa29331abcfe29067d",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/nonce-rule/delegate-spends-two-reverted",
+      "file": "cases/satin/keyless/nonce-rule/delegate-spends-two-reverted.json",
+      "fileDigest": "sha256:6d4dda580914e74bf046870b8be82783ee0d9c3b2d62a37b4fd912b5f1dca2cf",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/nonce-rule/delegate-spends-one-failed",
+      "file": "cases/satin/keyless/nonce-rule/delegate-spends-one-failed.json",
+      "fileDigest": "sha256:115c18bcb993027ecc97ceaa721b9a9955e864108725e19ca80534ac7c7e18d1",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/nonce-rule/value-sent-back",
+      "file": "cases/satin/keyless/nonce-rule/value-sent-back.json",
+      "fileDigest": "sha256:55d62833821276ee38410dca2e605ad95cfb6ea8960af356445ade626cdff7e1",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/nonce-rule/value-received",
+      "file": "cases/satin/keyless/nonce-rule/value-received.json",
+      "fileDigest": "sha256:3be12f5955654ae9cbf0b53d928d4ea5405f73c08be2d6f91d1a117ed984531d",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deposit/ef-byte",
+      "file": "cases/satin/keyless/deposit/ef-byte.json",
+      "fileDigest": "sha256:c145bfc291e9fa11d63540d5082b3704324c4f1dadd8a119011adadb8ab69447",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deposit/ee-byte",
+      "file": "cases/satin/keyless/deposit/ee-byte.json",
+      "fileDigest": "sha256:ae2e2dde738d61fe08285e9c11c00ab88d8862cde729f37195ea5627807d35ed",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deposit/history-one-short",
+      "file": "cases/satin/keyless/deposit/history-one-short.json",
+      "fileDigest": "sha256:a18db289937ff334fc38b2ba2da37036302c53e291ac48d70bc539c6b977826a",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/deposit/history-paid",
+      "file": "cases/satin/keyless/deposit/history-paid.json",
+      "fileDigest": "sha256:7a88abde41ed440426365526f2714d517775a4dec6818e30c473c41991114430",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/answer/revert-1-byte",
+      "file": "cases/satin/keyless/answer/revert-1-byte.json",
+      "fileDigest": "sha256:9389be44f779a479edc337a8d10d094266756e14ee83e669fc8fc4bab08f6c18",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/answer/revert-31-bytes",
+      "file": "cases/satin/keyless/answer/revert-31-bytes.json",
+      "fileDigest": "sha256:ce1125a21c63880b55eb1ccbd9501c64d9b76891d98da8bfd8ceb1a461f3efa7",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/answer/revert-33-bytes",
+      "file": "cases/satin/keyless/answer/revert-33-bytes.json",
+      "fileDigest": "sha256:c9432d5212c7cd2ec15007d57a6f35c6fe55ea8a9dd83e80c5569512c47212f1",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
     }
   ],
   "format": "mega-fixture-slice-index",
@@ -7331,6 +9414,276 @@
         "SATIN-OUT-005",
         "SATIN-OUT-013",
         "SATIN-POOL-017"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/signer-nonce-two",
+      "file": "quarantine/satin/keyless/refusal/signer-nonce-two.json",
+      "fileDigest": "sha256:1f87e76c4711dead1764b8d1b8260cfa234b711f4504107bf1b3e8eb14873afb",
+      "knownFail": {
+        "actual": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "adapter": "mega-eest-adapter-revm",
+        "expected": null,
+        "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference; its keyless reads are the rule's: the signer's account, read with its code once step 7 recovered the signer, and not the deploy address, which step 8's refusal leaves unread (SATIN-KEY-007, SATIN-WIT-008)"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/taken-and-unfunded",
+      "file": "quarantine/satin/keyless/refusal/taken-and-unfunded.json",
+      "fileDigest": "sha256:659f5c8e02281cf0d1210dac520b7cbd685b7b1af37d8b590b4ff5c3102d43db",
+      "knownFail": {
+        "actual": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "adapter": "mega-eest-adapter-revm",
+        "expected": null,
+        "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference; its keyless reads are the rule's: the signer's account, read with its code, and the deploy address's, read at step 12, before its refusal (SATIN-KEY-007, SATIN-WIT-008)"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006",
+        "SATIN-KEY-007",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/reservoir/share-50",
+      "file": "quarantine/satin/keyless/reservoir/share-50.json",
+      "fileDigest": "sha256:45b309b334a66714b86aa20e955d3dcdc6adf1fa9ae718949e57ba33ff3aa11e",
+      "knownFail": {
+        "actual": "0x1fda3",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x1f783",
+        "path": "/expected/gasLedgers/blockGas",
+        "verdict": "SATIN-STATE-012 and SATIN-KEY-005 take the legacy shares of steps 10 and 14 from regular gas, so the call keeps 51 of reservoir after step 14 and the creation's share is 51 - floor(51 x 2 / 100) = 50 (SATIN-POOL-011, SATIN-KEY-011), which pays the first 50 of its deposited byte's state gas and lets the forward of 1,589 pay the rest; the revm-based implementation at 7110d87b leaves the creation no share that pays it, as it would if the reservoir had paid the legacy shares, and the creation runs out of gas in its deposit: ExecutionHalted, the whole forward consumed, its regular ledger 1,568 above the rule's"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-011",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/reservoir/legacy-shares-from-regular",
+      "file": "quarantine/satin/keyless/reservoir/legacy-shares-from-regular.json",
+      "fileDigest": "sha256:0e598fb97f865894dd433dde651cf62a220d000660d158b6d23912715efeab24",
+      "knownFail": {
+        "actual": "0x1fb42",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x1fb2c",
+        "path": "/expected/gasLedgers/blockGas",
+        "verdict": "SATIN-STATE-012 and SATIN-KEY-005 take the legacy shares of steps 10 and 14, 25,000 and 20,000, from the call's regular gas before the reservoir pays any of a state charge, so above the execution cap the call holds one gas less than the signed gas limit at step 15 and is refused GasLimitTooLow; the revm-based implementation at 7110d87b holds enough at step 15 and deploys, as it would if the reservoir paid the shares, the defect the gas-pools record shows for a fresh slot (SATIN-POOL-008): its regular ledger is the creation's 22 of regular charges above the rule's"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-POOL-008",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/destroyed/log-and-value",
+      "file": "quarantine/satin/keyless/destroyed/log-and-value.json",
+      "fileDigest": "sha256:329f88152bb1c862e7f899094c6218a2843157ff6c7dae888983cece8e84a944",
+      "knownFail": {
+        "actual": "0x000000000000000000000000000000000000000000000000000000000000150500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000002456119d3c000000000000000000000000000000000000000000000000000000000000150500000000000000000000000000000000000000000000000000000000",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x000000000000000000000000000000000000000000000000000000000000200500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000060000000000000000000000000000000000000000000000000000000000000002456119d3c000000000000000000000000000000000000000000000000000000000000200500000000000000000000000000000000000000000000000000000000",
+        "path": "/expected/outcome/execution/output",
+        "verdict": "SATIN-KEY-015 makes gasUsed what the creation spent from both pools, its kept state and history among it, with the destruction table's give-back of step 14's charges added back; a constructor that logs and then destroys the deploy address keeps its LOG0 and that log's history, 32 x 88 = 2,816, so gasUsed is 8,197; the revm-based implementation at 7110d87b answers EmptyCodeDeployed(5,381), the creation's regular charges alone, leaving the log's history out"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/step-11-before-taken",
+      "file": "quarantine/satin/keyless/refusal/step-11-before-taken.json",
+      "fileDigest": "sha256:a7358c2211b1893b194d445854d4e231d441f16c232021adee952bcbe416c034",
+      "knownFail": {
+        "actual": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "adapter": "mega-eest-adapter-revm",
+        "expected": null,
+        "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference; its keyless reads are the rule's: the signer's account, and not the deploy address, which step 11's refusal leaves unread though it holds code (SATIN-KEY-007, SATIN-WIT-008)"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006",
+        "SATIN-KEY-007",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/reads/overhead-unpaid",
+      "file": "quarantine/satin/keyless/reads/overhead-unpaid.json",
+      "fileDigest": "sha256:46e448e3b43eb510a8f1272d9bba32ec760ad2d5866d7d80593e9c890f3f03ad",
+      "knownFail": {
+        "actual": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "adapter": "mega-eest-adapter-revm",
+        "expected": null,
+        "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference; its keyless reads are the rule's: neither the signer nor the deploy address, the call halting at step 1 (SATIN-KEY-007, SATIN-WIT-008)"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/reads/value-refused",
+      "file": "quarantine/satin/keyless/reads/value-refused.json",
+      "fileDigest": "sha256:b032794b98d1e2ca0c1dd878fcc61130497a613ad1a831c12ec66c79dec135f5",
+      "knownFail": {
+        "actual": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "adapter": "mega-eest-adapter-revm",
+        "expected": null,
+        "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference; its keyless reads are the rule's: neither the signer nor the deploy address, the value refused at step 2 (SATIN-KEY-007, SATIN-WIT-008)"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-018",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/reads/override-refused",
+      "file": "quarantine/satin/keyless/reads/override-refused.json",
+      "fileDigest": "sha256:b70646913770901e2ee19dc494c526156643ce64c89e429015f44fb260df5e19",
+      "knownFail": {
+        "actual": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "adapter": "mega-eest-adapter-revm",
+        "expected": null,
+        "path": "/expected/reads/accounts/0x6342000000000000000000000000000000000006",
+        "verdict": "SATIN-REG-002 has the block resolve the live system address once, before its transactions, and no transaction read the registry for its classification, so a transaction's reads hold neither the registry's account nor its slot 0; the revm-based implementation at 7110d87b reads both in every transaction's validation, so its reads hold the registry's account, the first difference; its keyless reads are the rule's: neither the signer nor the deploy address, step 6 refusing before step 7 recovers the signer (SATIN-KEY-007, SATIN-WIT-008)"
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",

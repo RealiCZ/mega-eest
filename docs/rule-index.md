@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-c130558], source commit `c130558e2f38a913982dc17f0
 (committed `2026-11-13T14:39:19+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **369** (307 gating, 62 quarantined).
-Cited rule IDs: **224**. Uncited rule IDs in that registry: **186**
-(176 active, 10 retired).
+Cases: **474** (403 gating, 71 quarantined).
+Cited rule IDs: **240**. Uncited rule IDs in that registry: **170**
+(160 active, 10 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -1639,16 +1639,133 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-ICPT-006
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/abi/head-63-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/length-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/offset-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/offset-2-64-minus-1] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-10-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-14-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reads/overhead-unpaid] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/override-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/value-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-other-selector] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-unrecognized] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/recognition/offset-into-head] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/one-byte-short] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/recognition/ordinary-contract] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/unknown-selector] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/refusal/chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/insufficient-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-has-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-and-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-10-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-taken] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-14-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-15-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/to-and-chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/legacy-shares-from-regular] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/eight-fields] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/leading-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/nested-list] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/r-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/s-equal-n] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-ICPT-007
 
@@ -1678,35 +1795,989 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-funded] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1001-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-10-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-14-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reads/overhead-unpaid] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/override-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/value-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/recognition/offset-into-head] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/refusal/chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/insufficient-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-has-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-and-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-10-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-taken] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-14-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-15-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/to-and-chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/legacy-shares-from-regular] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/eight-fields] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/leading-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/nested-list] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/r-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/s-equal-n] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
 | [satin/pre-frame/keyless-start-record-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/pre-frame/keyless-start-record-one-short] | gating | unqualified | [satin-5fb2688] |
+
+### SATIN-KEY-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reads/override-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/insufficient-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-has-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-and-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-10-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-taken] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-14-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-15-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/to-and-chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/legacy-shares-from-regular] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/eight-fields] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/leading-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/nested-list] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/r-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/s-equal-n] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-003
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/with-value] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-KEY-004
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-10-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-14-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reads/overhead-unpaid] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/override-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/value-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/recognition/offset-into-head] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/refusal/chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/insufficient-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-has-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-and-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-10-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-taken] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-14-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-15-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/to-and-chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/legacy-shares-from-regular] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/eight-fields] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/leading-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/nested-list] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/r-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/s-equal-n] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-KEY-005
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-10-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-14-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reads/overhead-unpaid] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/override-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/value-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/recognition/offset-into-head] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/offset-zero] | gating | unqualified | [satin-d334ef8] |
 | [satin/keyless/recognition/unpadded-bytes] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/refusal/chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/insufficient-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-has-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-and-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-10-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-taken] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-14-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-15-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/to-and-chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/legacy-shares-from-regular] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/eight-fields] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/leading-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/nested-list] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/r-zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signature/s-equal-n] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-006
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-and-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-taken] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/to-and-chain-id] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/rlp/trailing-byte] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-10-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/halt/step-14-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/insufficient-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-has-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-and-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-10-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-balance] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-taken] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-14-paid-exactly] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-15-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/legacy-shares-from-regular] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-008
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-009
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-011
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-012
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-013
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-014
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-015
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-1-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-31-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/forward-at-signed-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/fresh-slot-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/halts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/high-s] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/inner-empty-creation] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/origin-gasprice-caller-gas] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/refund-not-in-gas-used] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/reverts-with-data] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-is-sender] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-reverts] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/signer-nonce-one-with-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ee-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/ef-byte] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-one-short] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deposit/history-paid] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/destroyed/log-and-value] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-not-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/withheld-forward] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/balance-only-address] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/empty-code/with-effects-and-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-one-failed] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/delegate-spends-two-reverted] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-received] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/nonce-rule/value-sent-back] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/recognition/held-code-recognized] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-49] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-fits] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/signed-gas/zero-everything] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/listed-account] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/warm-set/unlisted-account] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-016
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/settlement/signer-record-crosses] | gating | unqualified | [satin-c130558] |
+
+### SATIN-KEY-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-KEY-018
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/interception/keyless/transaction-value] | gating | unqualified | [satin-d334ef8] |
+| [satin/keyless/reads/value-refused] | quarantined | unqualified | [satin-c130558] |
 
 ### SATIN-LIM-001
 
@@ -2298,6 +3369,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/keyless/reservoir/legacy-shares-from-regular] | quarantined | unqualified | [satin-c130558] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -2332,6 +3404,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/fresh-slot-restored] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
+
+### SATIN-POOL-011
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
 
 ### SATIN-POOL-012
 
@@ -3194,6 +4272,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/gas-pools/legacy-share-from-regular] | quarantined | unqualified | [satin-5fb2688] |
+| [satin/keyless/reservoir/legacy-shares-from-regular] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reservoir/share-50] | quarantined | unqualified | [satin-c130558] |
 | [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -3790,6 +4870,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/keyless/reads/overhead-unpaid] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/override-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/reads/value-refused] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/step-11-before-taken] | quarantined | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | quarantined | unqualified | [satin-c130558] |
 | [satin/reads/balance-cold-paid] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | quarantined | unqualified | [satin-5fb2688] |
 | [satin/reads/delegate-loaded] | quarantined | unqualified | [satin-5fb2688] |
@@ -3914,21 +5000,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-HPTS-002` | active | [system-contracts/high-precision-timestamp.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/high-precision-timestamp.md) |
 | `SATIN-ICPT-002` | active | [system-contracts/interception.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/interception.md) |
 | `SATIN-ICPT-005` | active | [system-contracts/interception.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/interception.md) |
-| `SATIN-KEY-001` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-002` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-003` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-006` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-007` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-008` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-009` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-010` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-011` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-012` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-013` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-014` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-015` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-016` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
-| `SATIN-KEY-017` | active | [system-contracts/keyless-deploy.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/system-contracts/keyless-deploy.md) |
 | `SATIN-LIM-009` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-014` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-016` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/resource-limits.md) |
@@ -3976,7 +5047,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-POOL-002` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-003` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-004` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/gas-model.md) |
-| `SATIN-POOL-011` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-013` | retired | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-016` | retired | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-021` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/c130558e2f38a913982dc17f0cd8eb8834967262/docs/spec/satin/evm/gas-model.md) |
@@ -4187,10 +5257,115 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/intrinsic/calldata/mixed-bytes]: ../slice/cases/satin/intrinsic/calldata/mixed-bytes.json
 [satin/intrinsic/calldata/non-zero-bytes]: ../slice/cases/satin/intrinsic/calldata/non-zero-bytes.json
 [satin/intrinsic/calldata/zero-bytes]: ../slice/cases/satin/intrinsic/calldata/zero-bytes.json
+[satin/keyless/abi/head-63-bytes]: ../slice/cases/satin/keyless/abi/head-63-bytes.json
+[satin/keyless/abi/length-2-64]: ../slice/cases/satin/keyless/abi/length-2-64.json
+[satin/keyless/abi/offset-2-64]: ../slice/cases/satin/keyless/abi/offset-2-64.json
+[satin/keyless/abi/offset-2-64-minus-1]: ../slice/cases/satin/keyless/abi/offset-2-64-minus-1.json
+[satin/keyless/abi/override-2-64]: ../slice/cases/satin/keyless/abi/override-2-64.json
+[satin/keyless/abi/trailing-byte]: ../slice/cases/satin/keyless/abi/trailing-byte.json
+[satin/keyless/abi/unaligned-offset]: ../slice/cases/satin/keyless/abi/unaligned-offset.json
+[satin/keyless/answer/revert-1-byte]: ../slice/cases/satin/keyless/answer/revert-1-byte.json
+[satin/keyless/answer/revert-31-bytes]: ../slice/cases/satin/keyless/answer/revert-31-bytes.json
+[satin/keyless/answer/revert-33-bytes]: ../slice/cases/satin/keyless/answer/revert-33-bytes.json
+[satin/keyless/authorizations/1000-new-authorities]: ../slice/cases/satin/keyless/authorizations/1000-new-authorities.json
+[satin/keyless/authorizations/1001-new-authorities]: ../slice/cases/satin/keyless/authorizations/1001-new-authorities.json
+[satin/keyless/authorizations/998-new-authorities]: ../slice/cases/satin/keyless/authorizations/998-new-authorities.json
+[satin/keyless/authorizations/999-new-authorities]: ../slice/cases/satin/keyless/authorizations/999-new-authorities.json
+[satin/keyless/budget/fresh-slots-979]: ../slice/cases/satin/keyless/budget/fresh-slots-979.json
+[satin/keyless/budget/fresh-slots-980]: ../slice/cases/satin/keyless/budget/fresh-slots-980.json
+[satin/keyless/budget/fresh-slots-980-signer-nonce-one]: ../slice/cases/satin/keyless/budget/fresh-slots-980-signer-nonce-one.json
+[satin/keyless/contract-call/from-constructor]: ../slice/cases/satin/keyless/contract-call/from-constructor.json
+[satin/keyless/contract-call/from-constructor-with-value]: ../slice/cases/satin/keyless/contract-call/from-constructor-with-value.json
+[satin/keyless/contract-call/no-value]: ../slice/cases/satin/keyless/contract-call/no-value.json
+[satin/keyless/contract-call/with-value]: ../slice/cases/satin/keyless/contract-call/with-value.json
+[satin/keyless/deploy/absent-signer]: ../slice/cases/satin/keyless/deploy/absent-signer.json
+[satin/keyless/deploy/balance-only-address]: ../slice/cases/satin/keyless/deploy/balance-only-address.json
+[satin/keyless/deploy/buckets]: ../slice/cases/satin/keyless/deploy/buckets.json
+[satin/keyless/deploy/carried-value]: ../slice/cases/satin/keyless/deploy/carried-value.json
+[satin/keyless/deploy/collision]: ../slice/cases/satin/keyless/deploy/collision.json
+[satin/keyless/deploy/constructor-log]: ../slice/cases/satin/keyless/deploy/constructor-log.json
+[satin/keyless/deploy/delegated-signer]: ../slice/cases/satin/keyless/deploy/delegated-signer.json
+[satin/keyless/deploy/destroyed-in-constructor]: ../slice/cases/satin/keyless/deploy/destroyed-in-constructor.json
+[satin/keyless/deploy/empty-code]: ../slice/cases/satin/keyless/deploy/empty-code.json
+[satin/keyless/deploy/forward-at-signed-gas]: ../slice/cases/satin/keyless/deploy/forward-at-signed-gas.json
+[satin/keyless/deploy/fresh-slot-reverts]: ../slice/cases/satin/keyless/deploy/fresh-slot-reverts.json
+[satin/keyless/deploy/halts]: ../slice/cases/satin/keyless/deploy/halts.json
+[satin/keyless/deploy/high-s]: ../slice/cases/satin/keyless/deploy/high-s.json
+[satin/keyless/deploy/inner-empty-creation]: ../slice/cases/satin/keyless/deploy/inner-empty-creation.json
+[satin/keyless/deploy/origin-gasprice-caller-gas]: ../slice/cases/satin/keyless/deploy/origin-gasprice-caller-gas.json
+[satin/keyless/deploy/refund-not-in-gas-used]: ../slice/cases/satin/keyless/deploy/refund-not-in-gas-used.json
+[satin/keyless/deploy/reverts-with-data]: ../slice/cases/satin/keyless/deploy/reverts-with-data.json
+[satin/keyless/deploy/signer-is-sender]: ../slice/cases/satin/keyless/deploy/signer-is-sender.json
+[satin/keyless/deploy/signer-nonce-one]: ../slice/cases/satin/keyless/deploy/signer-nonce-one.json
+[satin/keyless/deploy/signer-nonce-one-reverts]: ../slice/cases/satin/keyless/deploy/signer-nonce-one-reverts.json
+[satin/keyless/deploy/signer-nonce-one-with-value]: ../slice/cases/satin/keyless/deploy/signer-nonce-one-with-value.json
+[satin/keyless/deploy/with-reservoir]: ../slice/cases/satin/keyless/deploy/with-reservoir.json
+[satin/keyless/deposit/ee-byte]: ../slice/cases/satin/keyless/deposit/ee-byte.json
+[satin/keyless/deposit/ef-byte]: ../slice/cases/satin/keyless/deposit/ef-byte.json
+[satin/keyless/deposit/history-one-short]: ../slice/cases/satin/keyless/deposit/history-one-short.json
+[satin/keyless/deposit/history-paid]: ../slice/cases/satin/keyless/deposit/history-paid.json
+[satin/keyless/destroyed/balance-only-address]: ../slice/cases/satin/keyless/destroyed/balance-only-address.json
+[satin/keyless/destroyed/log-and-value]: ../slice/quarantine/satin/keyless/destroyed/log-and-value.json
+[satin/keyless/detention/earlier-limit-stands]: ../slice/cases/satin/keyless/detention/earlier-limit-stands.json
+[satin/keyless/detention/signer-is-beneficiary]: ../slice/cases/satin/keyless/detention/signer-is-beneficiary.json
+[satin/keyless/detention/signer-not-beneficiary]: ../slice/cases/satin/keyless/detention/signer-not-beneficiary.json
+[satin/keyless/detention/withheld-forward]: ../slice/cases/satin/keyless/detention/withheld-forward.json
+[satin/keyless/empty-code/balance-only-address]: ../slice/cases/satin/keyless/empty-code/balance-only-address.json
+[satin/keyless/empty-code/with-effects]: ../slice/cases/satin/keyless/empty-code/with-effects.json
+[satin/keyless/empty-code/with-effects-and-value]: ../slice/cases/satin/keyless/empty-code/with-effects-and-value.json
+[satin/keyless/halt/step-10-one-short]: ../slice/cases/satin/keyless/halt/step-10-one-short.json
+[satin/keyless/halt/step-14-one-short]: ../slice/cases/satin/keyless/halt/step-14-one-short.json
+[satin/keyless/limits/log-after-hints-crosses]: ../slice/cases/satin/keyless/limits/log-after-hints-crosses.json
+[satin/keyless/limits/log-after-hints-fits]: ../slice/cases/satin/keyless/limits/log-after-hints-fits.json
+[satin/keyless/nonce-rule/delegate-spends-one-failed]: ../slice/cases/satin/keyless/nonce-rule/delegate-spends-one-failed.json
+[satin/keyless/nonce-rule/delegate-spends-two]: ../slice/cases/satin/keyless/nonce-rule/delegate-spends-two.json
+[satin/keyless/nonce-rule/delegate-spends-two-reverted]: ../slice/cases/satin/keyless/nonce-rule/delegate-spends-two-reverted.json
+[satin/keyless/nonce-rule/value-received]: ../slice/cases/satin/keyless/nonce-rule/value-received.json
+[satin/keyless/nonce-rule/value-sent-back]: ../slice/cases/satin/keyless/nonce-rule/value-sent-back.json
+[satin/keyless/reads/overhead-unpaid]: ../slice/quarantine/satin/keyless/reads/overhead-unpaid.json
+[satin/keyless/reads/override-refused]: ../slice/quarantine/satin/keyless/reads/override-refused.json
+[satin/keyless/reads/value-refused]: ../slice/quarantine/satin/keyless/reads/value-refused.json
+[satin/keyless/recognition/held-code-other-selector]: ../slice/cases/satin/keyless/recognition/held-code-other-selector.json
+[satin/keyless/recognition/held-code-recognized]: ../slice/cases/satin/keyless/recognition/held-code-recognized.json
+[satin/keyless/recognition/held-code-unrecognized]: ../slice/cases/satin/keyless/recognition/held-code-unrecognized.json
 [satin/keyless/recognition/offset-into-head]: ../slice/cases/satin/keyless/recognition/offset-into-head.json
 [satin/keyless/recognition/offset-zero]: ../slice/cases/satin/keyless/recognition/offset-zero.json
 [satin/keyless/recognition/one-byte-short]: ../slice/cases/satin/keyless/recognition/one-byte-short.json
+[satin/keyless/recognition/ordinary-contract]: ../slice/cases/satin/keyless/recognition/ordinary-contract.json
+[satin/keyless/recognition/unknown-selector]: ../slice/cases/satin/keyless/recognition/unknown-selector.json
 [satin/keyless/recognition/unpadded-bytes]: ../slice/cases/satin/keyless/recognition/unpadded-bytes.json
+[satin/keyless/refusal/chain-id]: ../slice/cases/satin/keyless/refusal/chain-id.json
+[satin/keyless/refusal/insufficient-balance]: ../slice/cases/satin/keyless/refusal/insufficient-balance.json
+[satin/keyless/refusal/invalid-signature]: ../slice/cases/satin/keyless/refusal/invalid-signature.json
+[satin/keyless/refusal/nonce-and-override]: ../slice/cases/satin/keyless/refusal/nonce-and-override.json
+[satin/keyless/refusal/override-and-invalid-signature]: ../slice/cases/satin/keyless/refusal/override-and-invalid-signature.json
+[satin/keyless/refusal/override-and-signer-nonce]: ../slice/cases/satin/keyless/refusal/override-and-signer-nonce.json
+[satin/keyless/refusal/signer-has-code]: ../slice/cases/satin/keyless/refusal/signer-has-code.json
+[satin/keyless/refusal/signer-nonce-and-code]: ../slice/cases/satin/keyless/refusal/signer-nonce-and-code.json
+[satin/keyless/refusal/signer-nonce-two]: ../slice/quarantine/satin/keyless/refusal/signer-nonce-two.json
+[satin/keyless/refusal/step-10-paid-exactly]: ../slice/cases/satin/keyless/refusal/step-10-paid-exactly.json
+[satin/keyless/refusal/step-11-before-balance]: ../slice/cases/satin/keyless/refusal/step-11-before-balance.json
+[satin/keyless/refusal/step-11-before-taken]: ../slice/quarantine/satin/keyless/refusal/step-11-before-taken.json
+[satin/keyless/refusal/step-11-one-short]: ../slice/cases/satin/keyless/refusal/step-11-one-short.json
+[satin/keyless/refusal/step-14-paid-exactly]: ../slice/cases/satin/keyless/refusal/step-14-paid-exactly.json
+[satin/keyless/refusal/step-15-one-short]: ../slice/cases/satin/keyless/refusal/step-15-one-short.json
+[satin/keyless/refusal/taken-and-unfunded]: ../slice/quarantine/satin/keyless/refusal/taken-and-unfunded.json
+[satin/keyless/refusal/to-and-chain-id]: ../slice/cases/satin/keyless/refusal/to-and-chain-id.json
+[satin/keyless/reservoir/legacy-shares-from-regular]: ../slice/quarantine/satin/keyless/reservoir/legacy-shares-from-regular.json
+[satin/keyless/reservoir/share-49]: ../slice/cases/satin/keyless/reservoir/share-49.json
+[satin/keyless/reservoir/share-50]: ../slice/quarantine/satin/keyless/reservoir/share-50.json
+[satin/keyless/rlp/eight-fields]: ../slice/cases/satin/keyless/rlp/eight-fields.json
+[satin/keyless/rlp/leading-zero]: ../slice/cases/satin/keyless/rlp/leading-zero.json
+[satin/keyless/rlp/nested-list]: ../slice/cases/satin/keyless/rlp/nested-list.json
+[satin/keyless/rlp/trailing-byte]: ../slice/cases/satin/keyless/rlp/trailing-byte.json
+[satin/keyless/settlement/signer-record-crosses]: ../slice/cases/satin/keyless/settlement/signer-record-crosses.json
+[satin/keyless/settlement/signer-record-fits]: ../slice/cases/satin/keyless/settlement/signer-record-fits.json
+[satin/keyless/signature/r-zero]: ../slice/cases/satin/keyless/signature/r-zero.json
+[satin/keyless/signature/s-equal-n]: ../slice/cases/satin/keyless/signature/s-equal-n.json
+[satin/keyless/signed-gas/zero]: ../slice/cases/satin/keyless/signed-gas/zero.json
+[satin/keyless/signed-gas/zero-everything]: ../slice/cases/satin/keyless/signed-gas/zero-everything.json
+[satin/keyless/warm-set/listed-account]: ../slice/cases/satin/keyless/warm-set/listed-account.json
+[satin/keyless/warm-set/unlisted-account]: ../slice/cases/satin/keyless/warm-set/unlisted-account.json
 [satin/limit-stops/authorization-list/one-authority-over]: ../slice/cases/satin/limit-stops/authorization-list/one-authority-over.json
 [satin/limit-stops/child-budget/caller-crosses-its-budget]: ../slice/cases/satin/limit-stops/child-budget/caller-crosses-its-budget.json
 [satin/limit-stops/child-budget/caller-fills-its-budget]: ../slice/cases/satin/limit-stops/child-budget/caller-fills-its-budget.json

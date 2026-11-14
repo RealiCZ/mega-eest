@@ -11,6 +11,7 @@ from .detention import DetentionMixin
 from .frames import FramesMixin
 from .interception import InterceptionMixin
 from .interpreter import InterpreterMixin
+from .keyless import KeylessMixin
 from .limits import LimitsMixin
 from .precompiles import PrecompilesMixin
 from .pools import PoolsMixin
@@ -20,7 +21,7 @@ from .storage import StorageMixin
 from .transaction import TransactionMixin
 
 
-class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, InterpreterMixin, CallsMixin, FramesMixin, CreationMixin, InterceptionMixin, AuthorizationsMixin, StorageMixin, ReadsMixin, LimitsMixin,
+class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, InterpreterMixin, CallsMixin, FramesMixin, CreationMixin, InterceptionMixin, KeylessMixin, AuthorizationsMixin, StorageMixin, ReadsMixin, LimitsMixin,
           PrecompilesMixin):
     """One transaction against a complete pre-state."""
 
@@ -90,3 +91,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # The created accounts whose slots read zero from the creation on, the state having held storage there
         # (SATIN-SD-003, -016).
         self.zero_storage: set[bytes] = set()
+        # The deploy address of a keyless creation while its initcode runs, None otherwise (SATIN-KEY-009).
+        self.keyless_active: bytes | None = None
+        # Its signer while it runs: its account differs already, its record counted on the call (SATIN-KEY-012).
+        self.keyless_signer: bytes | None = None

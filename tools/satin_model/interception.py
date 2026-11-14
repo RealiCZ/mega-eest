@@ -4,7 +4,7 @@ deployment's first steps (`SATIN-KEY-005`)."""
 from __future__ import annotations
 
 from .constants import KEYLESS_DEPLOY_OVERHEAD_GAS, MALFORMED_ENCODING, MAX_U64, NO_ETHER_TRANSFER
-from .records import fmt, Unmodelled
+from .records import fmt, Halt
 
 
 def keyless_arguments(data: bytes):
@@ -35,6 +35,16 @@ def rlp_decodes_as_list(b: bytes) -> bool:
     return 1 + n + int.from_bytes(b[1:1 + n], "big") == len(b)
 
 
+def rlp_list_prefix(b: bytes) -> int | None:
+    """The length of the RLP list header plus payload that `b` starts with, or None when it starts with no list."""
+    if not b or b[0] < 0xC0:
+        return None
+    if b[0] <= 0xF7:
+        return 1 + b[0] - 0xC0
+    n = b[0] - 0xF7
+    return 1 + n + int.from_bytes(b[1:1 + n], "big") if len(b) >= 1 + n else None
+
+
 class InterceptionMixin:
     """The transaction's own `keylessDeploy` call: the decoder's conditions (`SATIN-ICPT-006`) and the"""
 
@@ -51,7 +61,13 @@ class InterceptionMixin:
             d.add("outcome", f"a keyless deployment's steps refuse or halt as SATIN-KEY-004 states: step 1's overhead is a "
                   f"regular charge on the {fmt(frame['regular'])} the frame holds, which halts it when it cannot be paid, "
                   "and a later step refuses with KeylessDeploy's own error", "SATIN-OUT-009", "SATIN-KEY-004")
-        self.charge_regular(frame, KEYLESS_DEPLOY_OVERHEAD_GAS, "KEYLESS_DEPLOY_OVERHEAD_GAS")
+        try:
+            self.charge_regular(frame, KEYLESS_DEPLOY_OVERHEAD_GAS, "KEYLESS_DEPLOY_OVERHEAD_GAS")
+        except Halt:
+            d.add("outcome", f"step 1: the call holds {fmt(frame['regular'])} of regular gas, short of "
+                  f"KEYLESS_DEPLOY_OVERHEAD_GAS {fmt(KEYLESS_DEPLOY_OVERHEAD_GAS)}: it halts out of gas, consuming its "
+                  "regular gas, before any later step reads anything", "SATIN-KEY-004", "SATIN-KEY-005")
+            raise
         d.add("gasLedgers", f"step 1: KEYLESS_DEPLOY_OVERHEAD_GAS {fmt(KEYLESS_DEPLOY_OVERHEAD_GAS)} regular gas; a refusal "
               "after it reverts the call, and the regular gas it spent stays spent", "SATIN-KEY-004", "SATIN-KEY-005")
         if tx.value:
@@ -59,7 +75,19 @@ class InterceptionMixin:
                   "moves and before any frame is built", "SATIN-KEY-005", "SATIN-KEY-018")
             return "revert", NO_ETHER_TRANSFER
         if rlp_decodes_as_list(argument):
-            raise Unmodelled("a keyless deployment past step 3's encoding check")
+            return self.keyless_deploy(frame, argument, int.from_bytes(tx.data[36:68], "big"))
         d.add("outcome", f"step 3: the first argument's {len(argument)} bytes are not the RLP encoding of a transaction: "
               "MalformedEncoding()", "SATIN-KEY-005")
+        listed = rlp_list_prefix(argument)
+        if listed is not None and listed < len(argument):
+            from .keyless import decode_carried, Malformed
+            try:
+                carried = decode_carried(argument[:listed])
+            except Malformed:
+                carried = None
+            if carried is not None and (carried["to"] or carried["chainId"] is not None or carried["nonce"]):
+                d.add("outcome", f"its first {listed} bytes are one RLP list that decodes as a legacy transaction, which "
+                      "step 3 and later steps would refuse for its own fields, but the trailing "
+                      f"{len(argument) - listed} byte{'s' if len(argument) - listed > 1 else ''} after it make the argument "
+                      "no encoding at all: MalformedEncoding() answers first", "SATIN-KEY-006")
         return "revert", MALFORMED_ENCODING

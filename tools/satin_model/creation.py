@@ -67,7 +67,12 @@ class CreationMixin:
         self.regular_charges += forward
         # The start's records, as the state stands: the created account, and the creator's nonce record when
         # the bump changes an account that did not differ yet (SATIN-HIST-009, SATIN-ACCT-008).
-        records = [target] + ([creator] if ("a", creator) not in self.kv and creator != tx.sender else [])
+        records = [target] + ([creator] if ("a", creator) not in self.kv and creator != tx.sender
+                              and creator != self.keyless_signer else [])
+        if creator == self.keyless_signer:
+            d.add("gasLedgers", f"the creator {h(creator)} is the keyless signer, whose nonce the keyless creation's start "
+                  "bumped: its account differs from what the transaction loaded already, so this bump makes no record of "
+                  "it, its record being counted on the keyless call", "SATIN-KEY-012", "SATIN-KEY-013", "SATIN-HIST-009")
         history = RECORD_HISTORY * len(records)
         if history > frame["reservoir"] + frame["regular"]:
             raise Unmodelled("a creation whose caller cannot pay its records")
@@ -140,7 +145,26 @@ class CreationMixin:
         status, out = self.run_child(child, init, {"address": target, "caller": creator, "value": value,
                                                    "calldata": b"", "name": name}, name, create=True)
         if status != "success":
-            raise Unmodelled("a creation that fails")
+            if status == "stop" or creator != self.keyless_signer:
+                raise Unmodelled("a creation that fails, other than its keyless signer's own")
+            # SATIN-TAKE-007 failed-create: the creation's rollback, then the created account's state gas and its record's
+            # history given back to the creator; the creator's nonce bump, made before the creation ran, stays.
+            left = self.end_child(frame, child, status, snap, name)
+            creator_acct = self.state.setdefault(creator, Account())
+            creator_acct.nonce += 1
+            self.give_back(frame, state + RECORD_HISTORY)
+            self.state_gas -= state
+            self.history_gas -= RECORD_HISTORY
+            self.history_bytes -= WRITE_RECORD_SIZE
+            d.add("gasLedgers", f"{name} {'reverts' if status == 'revert' else 'halts'}: nothing is created, and the "
+                  f"created account's {fmt(state)} of state gas and its record's {fmt(RECORD_HISTORY)} of history gas are "
+                  "given back into the creator's reservoir after the child's reservoir joined it; the creator's nonce "
+                  f"bump stays, now {creator_acct.nonce}", "SATIN-TAKE-007", "SATIN-POOL-015", "SATIN-HIST-012",
+                  "SATIN-LIM-008")
+            frame["regular"] += left
+            self.regular_charges -= left
+            self.creator_record(frame, creator, records)
+            return bytes(20), 0, out
         d.add("gasLedgers", f"{name} returns {fmt(child['regular'])} of regular gas to its creator", "SATIN-POOL-012")
         left = self.end_child(frame, child, status, snap, name)
         frame["regular"] += left

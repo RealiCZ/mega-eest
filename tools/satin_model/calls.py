@@ -4,8 +4,9 @@ what it returns (`SATIN-POOL-012`), the records a value start makes and takes ba
 from __future__ import annotations
 
 from .constants import (
-    COST_PER_HISTORY_BYTE, DISABLE_VOLATILE_DATA_ACCESS, INTERCEPTED, limit_exceeded, MEGA_ACCESS_CONTROL,
-    NON_ZERO_TRANSFER, ORACLE, SEND_HINT, SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
+    COST_PER_HISTORY_BYTE, DISABLE_VOLATILE_DATA_ACCESS, INTERCEPTED, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_ERRORS,
+    limit_exceeded, MEGA_ACCESS_CONTROL, NON_ZERO_TRANSFER, ORACLE, SEND_HINT, SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS,
+    TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     TX_DATA_LIMIT, WRITE_RECORD_SIZE,
 )
 from .records import Account, fmt, h, pad_address, Unmodelled
@@ -19,7 +20,7 @@ class CallsMixin:
     """A `CALL`, decided in the order of `SATIN-ICPT-007`: interception, then the frame start, the child frame and"""
 
     def call(self, frame, caller: bytes, target: bytes, value: int, data: bytes, child_gas: int,
-             records: list, history: int, new_account: int = 0, share: int = 0):
+             records: list, history: int, new_account: int = 0, share: int = 0, code: bytes | None = None):
         """A `CALL`, once the opcode's own charges, the forward, the history of the start's `records` and
         the child's reservoir `share` are made, decided in the order of SATIN-ICPT-007: interception, then
         the frame start. A start answered without a frame returns the share untouched (SATIN-POOL-012).
@@ -155,8 +156,15 @@ class CallsMixin:
                   "opcode charged for the start's records is given back into the caller's reservoir when the stopped "
                   "frame returns", "SATIN-POOL-012", "SATIN-HIST-014", "SATIN-HIST-012", "SATIN-STOP-005")
             return False, limit_exceeded(kind, crossed), child_gas
-        status, out = self.run_child(child, callee.code, {"address": target, "caller": caller, "value": value,
-                                                          "calldata": data}, name)
+        keyless = target == KEYLESS_DEPLOY and data[:4] == KEYLESS_DEPLOY_CALL
+        if keyless:
+            d.add("outcome", "a keylessDeploy call a contract makes is not recognized, the transaction's own frame alone "
+                  "being: it runs KeylessDeploy's bytecode, which reverts with " + ("empty data, the method not being "
+                  "payable" if value else "NotIntercepted()"), "SATIN-KEY-003", "SATIN-ICPT-006")
+        status, out = self.run_child(child, callee.code if code is None else code,
+                                     {"address": target, "caller": caller, "value": value, "calldata": data}, name)
+        if keyless and (status, out) != ("revert", b"" if value else KEYLESS_ERRORS["NotIntercepted()"]):
+            raise Unmodelled("KeylessDeploy's bytecode answering a contract's call otherwise than SATIN-KEY-003 states")
         if status == "success":
             d.add("gasLedgers", f"the child frame of {h(target)} returns {len(out)} bytes and {fmt(child['regular'])} of "
                   "regular gas to its caller", "SATIN-POOL-012", "SATIN-OUT-001")

@@ -11,9 +11,9 @@ narrow class of transactions the slice uses:
 
 - the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`, `ORIGIN`,
   `GASPRICE`, `CHAINID`, `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`,
-  `LOG0`..`LOG4`, `RETURN`, `REVERT` and `INVALID`, and the stack, arithmetic, calldata, jump, return-data
-  and `KECCAK256` opcodes a system contract's dispatcher and decoder use, and the `DELEGATECALL`, `CREATE`
-  and `SELFDESTRUCT` of the take-back examples, below; of the volatile reads only those below;
+  `LOG0`..`LOG4`, `RETURN`, `REVERT`, `INVALID` and the undefined `0x0c`..`0x0f`, and the stack, arithmetic,
+  calldata, jump, return-data and `KECCAK256` opcodes a system contract's dispatcher and decoder use, and the
+  `DELEGATECALL`, `CREATE` and `SELFDESTRUCT` of the take-back examples, below; of the volatile reads only those below;
 - a `CALL` from that frame to a system contract, decided in the order of `SATIN-ICPT-007`: an
   interceptor's `NonZeroTransfer()`, the `sendHint` admission and its data-size stop, the frame
   start that refuses a value the caller cannot fund, and a child frame that reverts or halts; the
@@ -35,7 +35,10 @@ narrow class of transactions the slice uses:
   reading zero (`SATIN-SD-003`, `-016`, `-017`); a mark a failed frame discards (`SATIN-SD-010`); and
   the read of a destruction's beneficiary that is the block beneficiary (`SATIN-SD-020`);
 - a transaction's own `keylessDeploy` call, recognized or not (`SATIN-ICPT-006`), as far as the
-  refusals of steps 2 and 3 or a halt at step 1;
+  refusals of steps 2 and 3 or a halt at step 1; and, at `c130558`, a deployment past step 3: the
+  carried transaction and its signer, steps 3 to 15, the creation it starts and how it ends, the
+  signer's nonce and records, `gasUsed` and the answer (KeylessDeploy's page, D-79); a contract's
+  `keylessDeploy` call, which runs the bytecode;
 - EIP-7702 lists whose entries are accepted, the authority present or absent, a second entry for
   one authority clearing the delegation the first set (`SATIN-AUTH-009`); entries skipped by their
   gates, by their authority's code or by their nonce, the sender's own entry, an authority holding

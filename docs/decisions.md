@@ -1077,6 +1077,162 @@ expansion, the first fill batch's clarifications, and that refusal's follow-ups.
   at the revm-based pin, `7110d87b`. Its integration tests, replay fixtures and deviation registry are
   byte-identical to `4e39cfd6`'s, so every count stands.
 
+**D-79. A keyless deployment past step 3 is derived, from KeylessDeploy's page at `c130558`.** The
+model restated a keyless deployment only as far as step 3's encoding check and the value refusal.
+It now runs the whole call, in `tools/satin_model/keyless.py`. 42 new cases under
+`satin/keyless/` cite `specs/satin-c130558`: 40 gate, and 2 are quarantined against the revm-based
+implementation. `satin/keyless/` is the `keyless` area, whose scope is `SATIN-KEY` and
+`SATIN-ICPT`. The model decodes the carried transaction as a legacy transaction's
+nine RLP strings, canonically encoded, and recovers its signer from the signature on the secp256k1
+curve, a high `s` included (step 7). A carried list of another shape, a non-canonical string or a
+`v` that is neither 27, 28 nor an EIP-155 value raises `Unmodelled`, so what a decoder does with
+them is no case's. Where the page leaves a reading open, the model takes these:
+
+- **The forward's checks.** Steps 11 and 15 read "available gas" as the call's whole regular gas,
+  its withheld part included, without the 98/100 cap: `SATIN-KEY-011` forbids the cap on the
+  forward that the two steps bound. The cases `refusal/step-11-one-short`,
+  `refusal/step-15-one-short` and `deploy/forward-at-signed-gas` sit on that edge, one gas short
+  and exactly at it.
+- **Which refusals answer.** Steps 3 to 13 are judged in the table's order, and the first refusal
+  answers. When a later step would refuse too, the derivation names it and cites
+  `SATIN-KEY-006`. Steps 10 and 11 are not judged that way: 10 is a charge, and 11 depends on the
+  gas the earlier steps leave.
+- **A failed creation is an ordinary failed creation.** A creation that reverts, halts, is
+  stopped, or is refused its empty deposit leaves the call what a failed `CREATE` leaves its
+  creator (`SATIN-KEY-011`, `-016`). Step 14's created-account state gas and the created account's
+  record history come back into the call's reservoir after the creation's reservoir joined it
+  (`SATIN-POOL-015`, `SATIN-TAKE-007` failed-create). The signer's bump, its nonce record and that
+  record's history stay. A creation that collides with a deploy address holding a nonce gives back
+  that record's history alone, since step 14 charged no state gas for a non-empty address
+  (`SATIN-TAKE-007` collision). The creation's whole forward is spent, its reservoir share comes
+  back, `gasUsed` is the forward, and the answer is `ExecutionHalted` (`SATIN-KEY-008`).
+- **`gasUsed`** is `SATIN-KEY-015`'s formula: the two pools netted together, plus the destruction
+  table's give-back of step 14's charges when the constructor destroyed the deploy address. The
+  page's two figures are checks a case must reproduce: 12,109 for the reverted fresh slot
+  (`deploy/fresh-slot-reverts`) and 5,002 for `ORIGIN; SELFDESTRUCT`
+  (`deploy/destroyed-in-constructor`).
+- **`SATIN-KEY-017`** is cited where a limit stops the creation (`detention/signer-is-beneficiary`):
+  the call answers `ExecutionReverted` with the stop's data, and none of the errors the interface
+  no longer declares. Its other clauses are reached by no transaction: a read the node fails to
+  make is a fault, and `AddressMismatch()` and `NoContractCreated()` answer a creation reported at
+  another address or at none.
+- **Recognition whatever code the state holds.** Three cases put the undefined opcode `0x0c` at
+  `KEYLESS_DEPLOY_ADDRESS` (`SATIN-ICPT-006`). A recognized call deploys there. An unrecognized
+  call, by its arguments or by another selector, runs that code and halts. The model now treats
+  Osaka's undefined `0x0c` to `0x0f` as exceptional halts.
+- **The reads cases.** `refusal/signer-nonce-two` and `refusal/taken-and-unfunded` carry the reads
+  group: the signer is read and the deploy address is not when step 8 refuses, and both are read
+  when step 12 refuses (`SATIN-KEY-007`). The revm-based implementation fails both for the
+  registry read alone, which every reads case records (D-61). Its keyless reads were checked
+  against the expectation with the registry's account, slot and code added: they are the rule's.
+  The two cases are quarantined at `7110d87b` with that verdict.
+- **Inputs that stay clear of the derived-text check.** `tools/check_derived_text.py` flags any
+  figure in a case's text that equals a figure some case moves under a mutated constant. The
+  keyless cases therefore sign at a gas limit of 90,000, not 100,000, which is
+  `KEYLESS_DEPLOY_OVERHEAD_GAS`. Where a constructor's own cost is free, it starts with sixteen
+  `JUMPDEST`s. The fresh-slot example is signed at the largest `u128` gas price, and the `0x32ff`
+  example passes its bytes unpadded (`SATIN-ICPT-006` condition 5), because both constructors'
+  bytes are the page's. Otherwise a 196-byte calldata gives a floor of 27,544, which is
+  `satin/creation/initcode-reverts`'s history ledger. None of these choices changes what a case
+  tests.
+
+The model added `ORIGIN` (`0x32`) and `GASPRICE` (`0x3a`), each the transaction's own in every
+frame (`SATIN-KEY-011`), and the halting `0x0c` to `0x0f`. Out of the model: a keyless creation
+whose start crosses a limit, or that a data-size, KV-update or state-growth limit stops; a signer's
+nonce record that crosses the call's budget; a signer whose own code spends a nonce during the
+creation; a deploy address the transaction changed or that holds storage; and a node
+configuration that disables EIP-3607 (docs/model.md).
+
+**D-80. The keyless edges a review found unpinned are filled; the model's keyless reach grows, and
+two survivors are equivalent.** An independent review of D-79's cases listed fifteen gaps, where no
+case's outcome distinguished a reading an implementation could get wrong. 63 cases under
+`satin/keyless/` fill them, all at the protocol's own constants and every one a single
+transaction. 56 gate, and 7 are quarantined against the revm-based implementation. The readings
+and choices:
+
+- **What the cases now observe.**
+  - The creation's reservoir share at its rounding edge, 50 and 51 left after step 14
+    (`reservoir/share-*`), and the legacy shares coming from regular gas above the execution cap,
+    the call then one gas short at step 15 (`reservoir/legacy-shares-from-regular`).
+  - The signer's record on the call, against the transaction's data-size limit after a
+    constructor's hints (`settlement/*`), and against the call's own state-growth budget after
+    998 to 1,001 new EIP-7702 authorities (`authorizations/*`), the last one skipped before the
+    frame (`SATIN-ICPT-007`).
+  - The creation's 980 state-growth budget (`budget/*`), its LOG held to the transaction's
+    data-size limit (`limits/*`), and its start stopped before its initcode.
+  - A delegated signer's own nonces kept or discarded with the creation (`nonce-rule/delegate-*`),
+    and the record decided on the whole account (`nonce-rule/value-*`).
+  - An empty deposit refused with effects to undo, against a destruction whose effects stand
+    (`empty-code/*`, `destroyed/*`).
+  - The refund outside `gasUsed`; an earlier detention limit standing, and the withheld part
+    forwarded (`detention/*`); signed gas 0.
+  - The exact-paying partners of the step-10 and step-14 halts, and the forward's refusals before
+    later steps.
+  - The uint64 clamp at 2^64, the ABI's accepted and refused shapes, RLP lists that are no legacy
+    transaction, signatures with r = 0 or s = n, the outer warm set, and the reads of the early
+    refusals.
+  - An ordinary contract holding `0x0c`, a keylessDeploy call from a keyless constructor, an
+    unknown selector, `0xEF` and `0xEE` deposits, a deposit one gas short of its history, and
+    revert data of 1, 31 and 33 bytes.
+- **A call to a delegated account.** The model runs a `CALL` to a keyless signer that holds an
+  EIP-7702 delegation as the base layer does (`SATIN-BASE-001`): the delegate's code runs in the
+  signer's frame. The delegate's access, a warm read and the cold surcharge, is charged with the
+  opcode's other charges, before the forward. No Satin rule places it further. The cases forward
+  less than the 98/100 cap, so the place moves no figure. Calls to other delegated accounts raise
+  `Unmodelled`.
+- **The signer while its creation runs.** The creation's start bumped the signer's nonce, so its
+  account differs from what the transaction loaded already. A start inside the creation that
+  changes the signer, a value call or the signer's own `CREATE`, therefore makes no record of it,
+  and charges no history for one (`SATIN-HIST-009`, `SATIN-ACCT-004`). The signer's one record is
+  counted on the call after the nonce rule, from its whole account (`SATIN-KEY-012`, `-013`).
+- **A `CREATE` by that signer whose initcode fails** is `SATIN-TAKE-007`'s failed-create. The
+  created account's state gas and its record's history come back to the creator, and the
+  creator's nonce bump stays: the signer's own code spent that nonce, so `SATIN-KEY-013` keeps
+  every bump.
+- **The keyless creation's start** is held to its budget and the transaction's limit as a
+  `CREATE`'s is (`SATIN-LIM-013`, `SATIN-STOP-013`, `-015`). A crossing stops it before its
+  initcode. The call answers `ExecutionReverted` with the stop, and the failed creation's step-14
+  charges come back.
+- **`MalformedEncoding()`** answers a first argument that is one RLP list but no legacy
+  transaction's canonical encoding: a field count other than nine, a list among the fields, an
+  integer with a leading zero byte or wider than its field, a non-canonical string, or a `to` of
+  another length. That is step 3's "an RLP encoding that does not decode". A `v` that is neither
+  27, 28 nor an EIP-155 value still raises `Unmodelled`. When the argument's leading list would
+  decode and be refused for its own fields, the derivation names `SATIN-KEY-006`.
+- **`0xEF` code.** An ordinary creation refuses deployed code that starts with `0xEF` (EIP-3541,
+  kept by the base layer, the check `SATIN-SCHED-011` places before the deposit charges), and so
+  does the keyless creation (`SATIN-KEY-011`).
+- **A destroyed deploy address the state held** gets nothing back from the destruction table
+  (`SATIN-SD-004`), and step 14 charged it no state gas, so `gasUsed` adds nothing back.
+- **Held code.** The three `held-code-*` cases test recognition whatever code the state holds
+  (`SATIN-ICPT-006`), in engine isolation. Their intents say they are not states a chain reaches.
+  `recognition/ordinary-contract` gives the same discrimination with the canonical code: an
+  ordinary contract holding `0x0c`, sent a keylessDeploy call's whole input, halts.
+- **Survivors.** The two padding mutations, 58:45 and 69:46, are equivalent under the wrapping
+  arithmetic a release build uses: `(32 - L + 32) mod 2^w mod 32 = (-L) mod 32`. D-79 counted the
+  debug build's overflow panic as a kill. 184:51 stays killed on `SATIN-ICPT-006`'s domain. Over
+  the states a chain reaches it is equivalent.
+- **The revm-based implementation's new keyless failures.**
+  - `reservoir/legacy-shares-from-regular` and `reservoir/share-50`: it holds the call more regular
+    gas at step 15, and leaves the creation no reservoir share, as it would if the reservoir paid
+    the legacy shares (`SATIN-STATE-012`, the gas-pools records' defect).
+  - `destroyed/log-and-value`: it leaves a kept log's history out of `gasUsed` when the constructor
+    destroys the deploy address (`SATIN-KEY-015`).
+  - Four more reads cases fail for the registry read alone (D-61). Their keyless reads were checked
+    as D-79's were.
+- **Inputs chosen against coincidences.** `tools/check_derived_text.py` takes any figure equal to
+  one that some case moves under a changed constant for a stale one. So the new cases avoid them:
+  - a canonical keyless input of 196 bytes, whose floor, 27,544, is another case's history ledger,
+    passes its bytes unpadded, or adds one byte after the encoding when they fill their words;
+  - the 980 slot keys start at 1,000,001;
+  - one carried transaction is signed at gas price 1, another carries 300 wei;
+  - the unknown selector's override is 2^64;
+  - the 63-byte head is sent by an EIP-2930 transaction whose access list names KeylessDeploy's
+    address, which the transaction warms anyway, since its body would otherwise hold 33,176 of
+    history, a figure another case's text shows.
+
+  None of this changes what a case tests.
+
 From the cases of the outcomes page and of validation's order:
 
 **D-85. The outcomes page and validation's order are pinned by cases that ask for them.** The outcomes
