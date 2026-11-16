@@ -1553,3 +1553,100 @@ of them pin fewer rules, and eight rules that only verdicts named are pinned by 
 `SATIN-DEP-005`, `-006`, `SATIN-HIST-022`, `SATIN-MST-005`, `-010`, `SATIN-POOL-011`, `-015` and
 `SATIN-REG-002`. Their figures are still derived in every case that applies them, and compared
 there; only the rule-to-case index no longer lists them, as D-76 has it.
+
+From the specification at `bcf260d`:
+
+**D-96. The specification at `bcf260d` is bundled; a precompile's halt, a failed deposit's step-4
+load and a promoted system transaction's receipt are read from it.** `specs/satin-bcf260d` is the
+specification's main after two merged changes. The first is its QI-36, five wordings; the second
+is its QI-37, two wordings on the Mega System Transaction page. The snapshot holds 411 ids, 401
+active: `SATIN-SYSC-005` is added, `SATIN-DEP-012`, `SATIN-DET-011`, `-019`, `SATIN-MST-004`,
+`-005` and `SATIN-REG-008` are reworded, and none is retired ([spec identity](spec-identity.md)).
+It is the snapshot new cases cite (`CURRENT_SPEC` in `tools/make_slice.py`); the cases that cite
+`c130558` name it as `FILL_SPEC`.
+
+- **A precompile's halt.** `SATIN-DET-011` now names a third halt of a precompile: an input over
+  its size limit, which fails the call before any gas check (`SATIN-PCMP-005`). Such a precompile
+  burns its whole forward, "its charged price, when it has charged one", and counts none of it as
+  compute. `SATIN-DET-019` now excepts a halting precompile's charged price from "paid work before
+  the halt still counts". That is the reading D-78 took from `SATIN-DET-011` alone.
+  - The model now tells the two failures apart (`tools/satin_model/precompiles.py`). An input over
+    a size limit fails before any gas check and charges no price. Its step cites `SATIN-PCMP-005`
+    and `SATIN-DET-021`. It no longer says that the pairing charges a price of zero and then fails
+    a check, and no longer cites ModExp's order (`SATIN-PCMP-007`). ModExp over EIP-7823's bound
+    still charges its price and then fails.
+  - For either failure, the ledger step cites `SATIN-DET-019` beside `SATIN-DET-009`, `-011` and
+    `-021`. No figure moves: the compute after either call is what D-78 derived.
+  - Where no limit is set, a precompile that fails a check after its gas charge is now
+    `Unmodelled`. No case makes that call, and the step would have described it as a size-limit
+    failure.
+- **A failed deposit's step-4 load.** `SATIN-DEP-012` now forbids the load for the first frame's
+  start only to a deposit that fails validation or cannot pay a charge of steps 1 to 3 of
+  `SATIN-SCHED-008`. A deposit that reaches step 4 makes that load, of its recipient or its created
+  address. It keeps the load when it then fails: at step 4, at step 5 or in its first frame.
+  - The model already loaded the recipient at step 4, and kept that load when the first frame
+    could not fund the value (D-85). A failed deposit's reads now cite `SATIN-DEP-012` for that
+    load, and say that a deposit failing validation or before step 4 makes none.
+  - No case observes the reads of a deposit that fails before step 4.
+  - The model derives no deposit that fails at step 4 or 5: a deposit's value to an account empty
+    under EIP-161, and a deposit to a delegated recipient, stay `Unmodelled`.
+- **A promoted system transaction's receipt.** `SATIN-MST-005` now says that promotion changes
+  execution only. The block holds a legacy transaction, so its receipt is a legacy (type `0x0`)
+  receipt, with no deposit fields, whose status and gas used follow the promoted execution. That is
+  D-87's reading, which the model already took. The receipt step for a Mega System Transaction
+  promoted to a failed deposit now cites `SATIN-MST-005` instead of D-87. `SATIN-MST-004` now says
+  that it does not decide system origin: `SATIN-MST-007` decides it, and `SATIN-MST-008`
+  overrides a system-originated transaction's pricing. The model derives no transaction from
+  `SYSTEM_CALLER` and no deposit carrying `MEGA_SYSTEM_TRANSACTION_SOURCE_HASH`, so no reading of
+  it moves.
+- **The registry's deployment.** `SATIN-REG-008` now keeps an account's storage where it used to
+  clear it. A `state-transition` case runs one transaction against its pre-state, with no pre-block
+  sequence (D-52, D-55). The model reads nothing of the deployment, so no reading moves. Under
+  `SATIN-SYSC-005`, no state within the specification tells the new text from the old (D-97).
+- **The cases that move.** Four derivations take a changed reading, and those four cases now cite
+  `specs/satin-bcf260d`. Each moves from `c130558`:
+  - `satin/detention/precompile/modexp/over-bound-at-allowance` and
+    `satin/detention/precompile/bn254-pairing-over-size-limit`, whose precompiles halt;
+  - `satin/outcomes/deposit/value-unfunded-reads`, whose reads keep the step-4 load;
+  - `satin/validation/system-address/system-tx-below-intrinsic-and-history`, whose receipt is the
+    promoted transaction's.
+
+  Every rule they pin is active at `bcf260d`. Their `input`, `expected` and pinned rules are
+  unchanged; only their `specRef` and `specCommit` move.
+- **Every other case keeps its snapshot.** Each rule added or reworded between `c130558` and
+  `bcf260d` was held against the cases that pin it, through the model. Every expected value still
+  holds under the new text.
+  - `SATIN-DET-011` is pinned by nine cases and `SATIN-DET-019` by nineteen. Of these, only the two
+    that move have a precompile that halts. In the others, a frame halts, a precompile runs out of
+    gas, a precompile is the crossing or a caller resumes, and those sentences did not change.
+  - No case pins `SATIN-DEP-012`, `SATIN-MST-004`, `-005`, `SATIN-REG-008` or `SATIN-SYSC-005`.
+    `SATIN-MST-005` is applied by five cases; four of them are refused before promotion and have no
+    receipt.
+  - One more case fails a precompile on its size limit: the BN254 pairing where no limit is set
+    (`satin/outcomes/precompile/bn254-pairing-over-size-limit`). It applies no rule of gas
+    detention, since no compute is counted there, so it keeps `c130558`.
+
+**D-97. A pre-state that `SATIN-SYSC-005` excludes is no case's.** Under `SATIN-SYSC-005`, a state
+a block starts from is an invalid prestate when it holds storage at a system contract's address in
+an account without code. Executing a block from such a state lies outside the specification,
+whether `SATIN-SYSC-003` or `SATIN-REG-008` deploys the contract. A case runs no pre-block sequence
+(D-52, D-55), so its pre-state stands for the state its block starts from. Nothing a case expects
+can be derived from such a state, and no case may hold one.
+
+- **The cases.** No case holds such a pre-state. At the six addresses `SATIN-SYSC-001` lists, a
+  case's pre-state holds:
+  - the Oracle, KeylessDeploy, MegaAccessControl and MegaLimitControl, with their code and no
+    storage (169 cases; D-55);
+  - the SequencerRegistry with the `0xfe` placeholder and no storage (468 cases), or with version
+    2.0.0's code and its slot 0 (6 cases; D-87);
+  - nothing at the High-Precision Timestamp's address.
+- **The model.** The model refuses such a pre-state. `Run.run()` raises `InvalidPrestate`, an
+  `Unmodelled`, before it derives anything, when the pre-state holds non-zero storage in an account
+  without code at one of the six addresses (`SYSTEM_CONTRACT_ADDRESSES`). `tools/make_slice.py` then
+  stops for that case.
+  - Before this change, the model took such a state as in scope: it read a registry without code as
+    naming no live system address (`SATIN-REG-002`).
+  - Storage in an account that holds code stays in scope, as the second sentence of
+    `SATIN-SYSC-005` says. The registry of the six D-87 cases is one.
+- **No case pins it.** `SATIN-SYSC-005` bounds the inputs, and no derivation step applies it. The
+  rule-to-case index lists it among the uncited rules.

@@ -9,10 +9,12 @@ existence cite `specs/satin-d334ef8`, decision D-54, and those for the edges of 
 principles, gas detention, the Oracle's reads, the refused volatile read, the reads group, the
 stops of the transaction's own frame and the gas pools `specs/satin-5fb2688`, D-59 to D-64, and
 those for the take-back page's worked examples, the destruction page's own rules and gas detention's
-rules `specs/satin-cdded1e`, D-65, D-70 and D-67, and the two whose derivation takes `SATIN-DET-011`'s
-halting precompile and those for the authorization page's own rules `specs/satin-c130558`, D-78 and
-D-88). No implementation is
-run: the filler's output is a candidate to compare with, never the source of these values
+rules `specs/satin-cdded1e`, D-65, D-70 and D-67, those for the outcomes page, the authorization
+page's own rules and KeylessDeploy's page `specs/satin-c130558`, D-79, D-80, D-85 and D-88, and the
+four whose derivation takes a reading the specification states from `bcf260d` on, a precompile's
+halt, a failed deposit's step-4 load and a promoted system transaction's receipt,
+`specs/satin-bcf260d`, D-96). No implementation is run: the filler's output is a candidate to
+compare with, never the source of these values
 (`tools/run-slice.sh` runs both implementations against them).
 
 A case file holds what a consumer compares and a pointer to where it came from (D-76): its `rules`
@@ -1099,12 +1101,14 @@ def detention_rule_cases() -> list[Case]:
     modexp_input = word(over_bound) + word(0) + word(0)
     modexp_price = model.modexp_price(modexp_input)[0]
     # A precompile that halts burns its whole forward and counts none of it as compute, its charged price included:
-    # `SATIN-DET-011` states it from `c130558` on, so the two cases whose precompile runs and halts cite that
-    # snapshot (D-78, superseding D-69's first reading).
+    # `SATIN-DET-011` states it from `c130558` on (D-78, superseding D-69's first reading). From `bcf260d` on it names
+    # the halt on an input over a size limit, which charges no price, and `SATIN-DET-019` excepts a halting
+    # precompile's charged price from the paid work that still counts, so the two cases whose precompile runs and
+    # halts cite that snapshot (D-96).
     for name, room, tail, intent, edge, snapshot in (
             ("modexp/over-bound-at-allowance", modexp_price, STOP, "the allowance exactly: it runs, charges its price, "
              "fails EIP-7823's bound and consumes its forward, as without the read", "the price at the allowance",
-             FILL_SPEC),
+             CURRENT_SPEC),
             ("modexp/over-bound-past-allowance", modexp_price - 1, RETURN_RETURNDATA, "one past the allowance and within "
              "its forward: an input that would fail a check made after the gas charge is the crossing too",
              "the price one past the allowance", spec)):
@@ -1119,7 +1123,7 @@ def detention_rule_cases() -> list[Case]:
     add(Case("satin/detention/precompile/bn254-pairing-over-size-limit", f"after TIMESTAMP, a BN254 pairing call of "
              f"{fmt(pairing)} bytes, one over its size limit, with an allowance of 100 and a forward past the pairing "
              "formula's price for that many bytes: priced at zero, it runs on its forward, fails before any gas check and "
-             "consumes the forward, as without the read", spec=FILL_SPEC, detention=True, gas=31_000_000,
+             "consumes the forward, as without the read", spec=CURRENT_SPEC, detention=True, gas=31_000_000,
              make=lambda words, pad: detained(words, pad) + call(MAX_GAS, model.BN254_PAIRING, 0, pairing) + STOP,
              params=dict(start), retune=[("precompile-room", 100, "pad", -1)]))
     # A user's deposit is detained as any transaction (SATIN-DET-026).
@@ -2749,10 +2753,12 @@ def outcome_edge_cases() -> list[Case]:
                  f"address, of the system shape, {intent}: the Mega System Transaction fails its own check before its "
                  "promotion and is refused", spec=spec, outcomes=True, system=True, to=model.ORACLE, code=None,
                  accounts=dict(live), **kw))
+    # `SATIN-MST-005` states from `bcf260d` on that the promoted transaction's receipt is a legacy one, whose status and
+    # gas used follow the promoted execution, D-87's reading: the case cites that snapshot (D-96).
     add(Case("satin/validation/system-address/system-tx-below-intrinsic-and-history", f"a Mega System Transaction with a gas "
              f"limit of {fmt(call_plain + body - 1)}, one below its intrinsic gas with its body's history: it passes its own "
              "checks and is promoted to a deposit, which that check makes a failed deposit, not a refusal (SATIN-VAL-008)",
-             boundary="one below the intrinsic gas with the body's history", spec=spec, outcomes=True, system=True,
+             boundary="one below the intrinsic gas with the body's history", spec=CURRENT_SPEC, outcomes=True, system=True,
              to=model.ORACLE, code=None, gas=call_plain + body - 1, accounts=dict(live)))
     add(Case("satin/validation/deposit/system-transaction-flag", "a deposit carrying the base layer's system-transaction "
              "flag, which the base layer refuses from Regolith on: a deposit is never rejected, so it is a failed deposit "
@@ -2772,10 +2778,12 @@ def outcome_edge_cases() -> list[Case]:
                  tune=("frame", overhead - (1 if short else 0))))
 
     # SATIN-OUT-005, -013, SATIN-WIT-002: a failed deposit keeps its reads; the unfunded value's recipient is loaded.
+    # `SATIN-DEP-012` states from `bcf260d` on that a deposit that reaches step 4 keeps the load made there when its
+    # first frame then fails, so the case cites that snapshot (D-96).
     add(Case("satin/outcomes/deposit/value-unfunded-reads", f"a deposit of 2 wei from a sender holding 1 wei, minting "
              f"nothing, with a gas limit of {fmt(call_value + body)}, its intrinsic gas with its body's history: no start "
              "record is charged for the value it cannot fund, its recipient is loaded before the frame's start fails, and "
-             "the failed deposit's reads keep that load (SATIN-OUT-013)", spec=spec, outcomes=True, reads=True,
+             "the failed deposit's reads keep that load (SATIN-OUT-013)", spec=CURRENT_SPEC, outcomes=True, reads=True,
              deposit=(0, call_value + body), sender_nonce=3, sender_balance=1, to=EOA, code=b"", value=2))
     return out
 

@@ -12,6 +12,11 @@ class Unmodelled(Exception):
     """The case uses something the model does not restate."""
 
 
+class InvalidPrestate(Unmodelled):
+    """The case starts from a state the specification excludes (SATIN-SYSC-005): no execution from it is specified,
+    so the model derives nothing from it and no case may hold it (D-97)."""
+
+
 class Halt(Exception):
     """An exceptional halt of the transaction's own frame."""
 

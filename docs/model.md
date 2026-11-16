@@ -61,7 +61,9 @@ specification's text and constants:
   `SSTORE` in a detained frame; and a call to a precompile decided from its price: the identity
   precompile, ModExp's EIP-7883 price over and under EIP-7823's bound, and the BN254 pairing over its
   size limit. A precompile that halts burns its whole forward and counts none of it as compute, its
-  charged price included (`SATIN-DET-011` at `c130558`, D-78).
+  charged price included (`SATIN-DET-011` at `c130558`, D-78); an input over a size limit fails before
+  any gas check and charges no price, and a halting precompile's charged price is no paid work that
+  still counts (`SATIN-DET-011`, `-019` at `bcf260d`, D-96).
 - **The outcomes page's classes and validation's order** (D-85): a child stopped by gas detention's
   limit or halting beyond its whole gas, a refused read in a child, a system contract's
   `NotIntercepted()`, KeylessDeploy's step 1 overhead unpaid; a precompile call that fails where no
@@ -74,11 +76,14 @@ specification's text and constants:
   and a legacy transaction without a chain id; a nonce of 2^64 - 1 and an empty authorization list;
   a deposit that fails validation, carries the base layer's system-transaction flag, cannot pay its
   empty caller or its start record, carries a value to an existing account or one its minted balance
-  cannot fund, or whose own frame reverts, and a failed deposit's reads; a creation transaction that
+  cannot fund, or whose own frame reverts, and a failed deposit's reads, which keep the load step 4
+  makes for its first frame's start and hold none when it fails earlier (`SATIN-DEP-012` at
+  `bcf260d`, D-96); a creation transaction that
   cannot pay a charge before its first frame, whose sender keeps the nonce bump the creation would
   have made (`SATIN-SCHED-010`); and a live system address resolved from a registry holding version
   2.0.0's code, from which a deposit is a failed deposit and a Mega System Transaction is refused for
-  its own checks or promoted to a deposit that fails validation (D-87).
+  its own checks or promoted to a deposit that fails validation (D-87), with a legacy receipt whose
+  status and gas used are the failed deposit's (`SATIN-MST-005` at `bcf260d`, D-96).
 - **A keyless deployment** (D-79): the transaction's own `keylessDeploy` call past step 3's
   encoding check, its carried transaction decoded as a legacy transaction's nine RLP strings and its
   signer recovered from the signature, high `s` included (`SATIN-KEY-005` step 7); steps 3 to 15 in
@@ -106,7 +111,9 @@ specification's text and constants:
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
-raises `Unmodelled` rather than guessing.
+raises `Unmodelled` rather than guessing. A pre-state the specification excludes raises
+`InvalidPrestate` before anything is derived: storage at a system contract's address in an account
+without code (`SATIN-SYSC-005`, D-97).
 
 ## Not in scope
 
@@ -115,6 +122,7 @@ raises `Unmodelled` rather than guessing.
 | A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's run and the prices of ModExp and of an over-size BN254 pairing; `CREATE2`, `CALLCODE` and `STATICCALL`; a creation that fails or collides other than at its start, or lands on an address with a balance, other than a keyless deployment's (D-79), and a failed `CREATE` other than a keyless signer's own (D-80); a `CALL` to an account that holds an EIP-7702 delegation, other than a keyless signer; a keyless deploy address the transaction changed already or that holds storage; a keyless creation stopped in KV updates, which the protocol's limits reach only after data size; and a node configuration that disables EIP-3607; a `SELFDESTRUCT` to itself of an account created in the transaction, or in a creation transaction's own frame; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
+| A pre-state outside the specification: storage at a system contract's address in an account without code (`SATIN-SYSC-005`); and the pre-block deployment of the system contracts that would run on it (`SATIN-SYSC-003`, `SATIN-REG-008`), which no single transaction runs | Nothing: no execution from such a state is specified, so no case holds one (D-97). The deployment from a valid state belongs to the block profiles |
 | An expectation two engines agree on but the model does not derive | Nothing, today. Such a case would be a different kind of expectation, an agreement rather than a derivation from the specification, and would have to be labelled apart from the spec-derived cases (its own provenance status and evidence) if it were ever added |
 
 The model is not the executable specification of Satin. A specification that runs is a direction the

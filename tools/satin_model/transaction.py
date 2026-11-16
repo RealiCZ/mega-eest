@@ -10,12 +10,12 @@ from .constants import (
     COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, ex, EXECUTION_CAP, FLOOR_PER_BYTE,
     INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_DEPLOY_CODE_HASH, limit_exceeded, MAX_CONTRACT_SIZE,
     MAX_U64, ORACLE, PER_AUTH_BASE_COST,
-    STOP_DIMENSIONS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT,
-    TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
+    STOP_DIMENSIONS, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_BASE_COST,
+    TX_BODY_SIZE, TX_DATA_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
 )
 from .records import (
-    Account, created_address, fmt, h, Halt, LimitStop, OutOfGasBeforeFrame, pad_address, refused, Result,
-    Stopped, Unmodelled,
+    Account, created_address, fmt, h, Halt, InvalidPrestate, LimitStop, OutOfGasBeforeFrame, pad_address, refused,
+    Result, Stopped, Unmodelled,
 )
 from .interception import keyless_arguments
 
@@ -128,8 +128,22 @@ class TransactionMixin:
               "its own: system-originated", "SATIN-MST-002", "SATIN-MST-005", "SATIN-MST-007", "SATIN-VAL-008")
         return None
 
+    def refuse_invalid_prestate(self) -> None:
+        """SATIN-SYSC-005: a state a block starts from that holds storage at a system contract's address, in an account
+        without code, is an invalid prestate, and executing a block from it lies outside the specification. A case runs
+        no pre-block sequence, so its pre-state stands for the state its block starts from, and the model derives
+        nothing from one (D-97). Storage at those addresses in an account that holds code, the registry's among them,
+        is not excluded."""
+        for address in sorted(SYSTEM_CONTRACT_ADDRESSES):
+            acct = self.pre.get(address)
+            if acct is not None and not acct.code and any(acct.storage.values()):
+                raise InvalidPrestate(f"the pre-state holds storage at the system contract address {h(address)} in an "
+                                      "account without code, an invalid prestate outside the specification "
+                                      "(SATIN-SYSC-005)")
+
     def run(self) -> Result:
         tx, env, d = self.tx, self.env, self.d
+        self.refuse_invalid_prestate()
         data = tx.data
         zeros = data.count(0)
         nonzeros = len(data) - zeros
