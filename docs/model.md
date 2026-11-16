@@ -212,6 +212,19 @@ specification's text and constants:
   initcode cost (step 5); `CREATE2`'s `CREATE_ACCESS` and the hashing of its initcode as one
   charge, as the base layer deducts them (`SATIN-DET-018`); and a keyless deployment's step 5 at
   the limit and over it.
+- **The gas pools', state gas's and gas schedule's own rules** (D-106, D-107): a case that sets
+  `pricing` cites the EIP-8037 profile, its execution cap and the total-gas cap it declines
+  (`SATIN-POOL-001`, `-003`), each of Satin's departures where it is applied (`SATIN-POOL-004`,
+  `-022`), a returned reservoir joining its caller's (`SATIN-POOL-002`), where each state charge is
+  made and what its multiplier scales (`SATIN-STATE-004`, `-005`), the bucket SALT maps a key to and
+  the one read of its capacity (`SATIN-STATE-006`, `-010`), a deposit's and a system-originated
+  transaction's pricing (`SATIN-STATE-009`), the forward's and the code deposit's departures from
+  Amsterdam (`SATIN-SCHED-001`), a regular charge past the regular gas with a reservoir left, a halt
+  that no compute limit makes a stop (`SATIN-POOL-021`), and why an account is warm from the
+  transaction's start (`SATIN-SCHED-012`, `-014`). Under it the interpreter runs `EXTCODESIZE`
+  (`0x3b`) and `EXTCODEHASH` (`0x3f`) of any account outside a detained frame, warm or cold, where
+  it ran them for the block beneficiary alone (`SATIN-SCHED-002`), and a `CALL` without value to an
+  account without code, a start answered without a frame. No opcode is added.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
