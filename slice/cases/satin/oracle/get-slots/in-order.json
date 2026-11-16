@@ -165,7 +165,11 @@
     "group:state"
   ],
   "rules": [
-    "SATIN-ORCL-001"
+    "SATIN-ORCL-001",
+    "SATIN-ORCL-002",
+    "SATIN-ORCL-003",
+    "SATIN-ORCL-004",
+    "SATIN-ORCL-005"
   ],
   "schemaVersion": "2.0",
   "specRef": {

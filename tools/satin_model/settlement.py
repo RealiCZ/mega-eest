@@ -5,7 +5,8 @@ from __future__ import annotations
 
 from .constants import (
     ACCOUNT_STATE, BASE_FEE_VAULT, COLD_ACCOUNT_SURCHARGE, COST_PER_HISTORY_BYTE, CURRENT_SYSTEM_ADDRESS_SLOT, delegate_of,
-    DETENTION_STOP, ex, limit_exceeded, MAX_CONTRACT_SIZE, MAX_U64, ORACLE, PRECOMPILE_SET, REFUND_QUOTIENT, SEND_HINT,
+    DETENTION_STOP, ex, INTERCEPTED, limit_exceeded, MAX_CONTRACT_SIZE, MAX_U64, MEGA_LIMIT_CONTROL, ORACLE,
+    PRECOMPILE_SET, REFUND_QUOTIENT, SEND_HINT,
     SEQUENCER_REGISTRY,
     SEQUENCER_REGISTRY_CODE_HASH, STOP_DIMENSIONS, WARM_READ,
     TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT,
@@ -354,10 +355,12 @@ class SettlementMixin:
             d.add("gasLedgers", "the deposit is a user's, not system-originated: priced by the SALT bucket its state lands "
                   "in, held to every per-transaction limit and frame budget, and detained after a read of volatile data, "
                   "as any transaction is", "SATIN-DEP-002", "SATIN-MST-010")
+        if self.unbumpable:
+            if tx.value > sender.balance:
+                raise Unmodelled("a creating deposit from MAX_NONCE whose value its sender cannot fund")
+            return self.unbumpable_creation(intrinsic, floor, nonce_before, recipient)
         if create and tx.value:
             raise Unmodelled("a creating deposit with an endowment")
-        if self.unbumpable:
-            return self.unbumpable_creation(intrinsic, floor, nonce_before, recipient)
         if tx.value > sender.balance:
             if create or to_self:
                 raise Unmodelled("a creating or self-addressed deposit whose value is unfunded")
@@ -483,13 +486,29 @@ class SettlementMixin:
         frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
         self.first_frame = frame
         self.frame_start_counts = (self.data_size, len(self.kv), self.growth)
+        # SATIN-DET-008, SATIN-DEP-002: a user's deposit whose sender or call recipient is the block beneficiary is
+        # detained from its start, as any transaction is; a creation onto the beneficiary is not (SATIN-DET-006).
+        parties = [name for name, who in (("sender", tx.sender), ("call recipient", None if create else recipient))
+                   if who == self.env.coinbase]
+        if delegate is not None and delegate == self.env.coinbase:
+            parties.append("call recipient's EIP-7702 delegate")
+        if parties:
+            self.detain_from_start(frame, parties)
+            if not self.exempt:
+                d.add("gasLedgers", "the deposit is a user's, so its detention from its start is any transaction's",
+                      "SATIN-DEP-002", "SATIN-DET-026")
         if not create and recipient == ORACLE and tx.data[:4] == SEND_HINT:
             self.own_hint(frame, tx.data)
+        limit_control = (not create and recipient == MEGA_LIMIT_CONTROL and not tx.value
+                         and tx.data[:4] in INTERCEPTED[MEGA_LIMIT_CONTROL])
         try:
-            status, output = self.execute(code, frame, create)
+            if limit_control:
+                status, output = self.own_limit_control(frame)
+            else:
+                status, output = self.execute(code, frame, create)
             if recipient == ORACLE and not create:
                 self.oracle_method(tx.sender, tx.data, status, output, "the deposit's own call of the Oracle")
-            if not create:
+            if not create and not limit_control:
                 self.contract_method(recipient, code, tx.data, status, output, "the deposit's own call")
             if create and status == "success":
                 if len(output) > MAX_CONTRACT_SIZE or output[:1] == b"\xef":
@@ -503,8 +522,8 @@ class SettlementMixin:
             return self.reverted_deposit(kept, intrinsic, floor, nonce_before, was_empty, output)
         if status != "success":
             raise Unmodelled("a deposit's frame ending in " + status)
-        return self.deposit_success(intrinsic, floor, nonce_before, b"" if create else output,
-                                    created=recipient if create else None)
+        # A creation's output is what its initcode returned, the code it deposited.
+        return self.deposit_success(intrinsic, floor, nonce_before, output, created=recipient if create else None)
 
     def unbumpable_creation(self, intrinsic: int, floor: int, nonce_before: int, recipient: bytes) -> Result:
         """SATIN-DEP-010: a creation from a sender at MAX_NONCE whose balance, its mint credited, funds the value succeeds
@@ -514,6 +533,10 @@ class SettlementMixin:
               "and its balance with the mint credited funds the value: it succeeds with nothing created and nothing "
               f"counted for the creation, no account at {h(recipient)}, no state gas, no record and no state growth, and "
               "its first frame's gas untouched", "SATIN-DEP-010")
+        if self.tx.value:
+            d.add("state", f"the value {fmt(self.tx.value)} is checked first and funded by the sender's balance with its "
+                  "mint credited, and it moves nowhere, nothing being created: the sender keeps it, and no transfer is "
+                  "logged", "SATIN-DEP-010")
         d.add("gasLedgers", "neither the first frame's start record nor the created account's state gas is kept: the "
               "deposit is billed its intrinsic gas and its body's history alone", "SATIN-DEP-010", "SATIN-HIST-005")
         return self.deposit_success(intrinsic, floor, nonce_before, b"")
@@ -615,7 +638,11 @@ class SettlementMixin:
                    "commit": {"status": "committed"}}
         observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
                         "resources": resources, "limit": None}
-        if self.reads or self.pools:
+        if self.reads and self.system_pages and not self.pools:
+            d.add("reads", "a reverted deposit takes back what its frame wrote, not what it loaded", "SATIN-WIT-002",
+                  "SATIN-DEP-012")
+            observations["reads"] = self.reads_observation()
+        elif self.reads or self.pools:
             raise Unmodelled("the reads or the pools of a reverted deposit")
         return Result(observations, d)
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 from .constants import (
     BLOCK_ENV_ACCESS_COMPUTE_GAS, COST_PER_HISTORY_BYTE, DATA_SIZE_STOP, delegate_of, DETENTION_STOP, FRAME_SHARE_DENOMINATOR, FRAME_SHARE_NUMERATOR,
     GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR, HISTORY_ALLOWANCE_BYTES, INTERCEPTED, KV_UPDATE_STOP,
-    limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, MEGA_LIMIT_CONTROL, ORACLE, PRECOMPILE_SET, SEND_HINT,
+    KEYLESS_DEPLOY, limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, MEGA_LIMIT_CONTROL, ORACLE, PRECOMPILE_SET, SEND_HINT,
     STATE_GROWTH_STOP, STOP_DIMENSIONS,
     SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT, WRITE_RECORD_SIZE,
 )
@@ -348,7 +348,7 @@ class FramesMixin:
         and the frame gets no history allowance (SATIN-HIST-018). Returns (success, return data, the regular gas
         the child returns)."""
         callee = self.state.get(target)
-        system_code = self.system_pages and target in (ORACLE, MEGA_LIMIT_CONTROL)
+        system_code = self.system_pages and target in (ORACLE, MEGA_LIMIT_CONTROL, KEYLESS_DEPLOY)
         if (((target in INTERCEPTED or target == ORACLE) and not system_code) or callee is None or not callee.code
                 or delegate_of(callee.code) is not None):
             raise Unmodelled("a DELEGATECALL to a system contract, an account without code or a delegated account")
@@ -390,7 +390,14 @@ class FramesMixin:
         if (self.system_pages and name == "STATICCALL" and target in INTERCEPTED
                 and data[:4] in INTERCEPTED[target] and target == MEGA_LIMIT_CONTROL):
             return self.limit_control_answer(frame, child_gas, share, "STATICCALL")
-        system_code = self.system_pages and target == ORACLE and data[:4] != SEND_HINT
+        static_system = self.system_pages and name == "STATICCALL" and target == ORACLE
+        callcode_system = (self.system_pages and name == "CALLCODE" and target in (ORACLE, MEGA_LIMIT_CONTROL, KEYLESS_DEPLOY)
+                           and not value)
+        system_code = static_system or callcode_system
+        if static_system and data[:4] == SEND_HINT:
+            self.admit_static_hint(frame, address, data, child_gas)
+        if callcode_system:
+            self.system_code_call("CALLCODE", address, target, data)
         if (((target in INTERCEPTED or target in SYSTEM_CONTRACTS) and not system_code) or target in PRECOMPILE_SET
                 or callee is None or not callee.code or delegate_of(callee.code) is not None):
             raise Unmodelled(f"a {name} of a system contract, a precompile, an account without code or a delegated "

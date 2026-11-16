@@ -1,0 +1,152 @@
+{
+  "caseId": "satin/deposits/creation/initcode-reverts-with-data",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x6000",
+      "floor": "0x6000",
+      "gasUsed": "0xcc0a",
+      "history": "0x6da8",
+      "historyBytes": "0x13f",
+      "refund": "0x0",
+      "regular": "0x5e62",
+      "state": "0x0",
+      "total": "0xcc0a"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000bad",
+        "status": "revert"
+      }
+    },
+    "receipt": {
+      "depositNonce": "0x3",
+      "depositReceiptVersion": "0x1",
+      "gasUsed": "0xcc0a",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x7e"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "319",
+        "reported": "0x13f"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x4",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x3",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "deposit",
+      "raw": "0x7ef848a0000000000000000000000000000000000000000000000000000000000000005d94a94f5374fce5edbc8e2a8697c15331677e6ebf0b808080830f42408089610bad5f5260205ffd"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a deposit creating a contract whose initcode reverts with one word: a revert, not a failed deposit, its mint and nonce kept and its REVERT data its output (SATIN-DEP-007)"
+    },
+    "definition": "tools/make_slice.py::system_pages_gap_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:deposit",
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-DEP-002",
+    "SATIN-DEP-004",
+    "SATIN-DEP-007",
+    "SATIN-DEP-009",
+    "SATIN-HIST-016"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

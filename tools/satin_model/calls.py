@@ -52,7 +52,9 @@ class CallsMixin:
             frame["reservoir"] += share
             self.give_back_start(frame, records, history, "the answer starts no frame")
             return False, NON_ZERO_TRANSFER, child_gas
-        if target == ORACLE and data[:4] == SEND_HINT:
+        if target == ORACLE and data[:4] == SEND_HINT and self.system_pages and (child_gas == 0 or frame.get("access_off")):
+            self.drop_hint(frame, child_gas, data)
+        elif target == ORACLE and data[:4] == SEND_HINT:
             if child_gas == 0:
                 raise Unmodelled("a sendHint call with no gas")
             if frame.get("access_off"):
@@ -85,6 +87,10 @@ class CallsMixin:
                   f"volatile-data access is on: admitted, before the frame start; its {fmt(len(data))} input bytes count as "
                   "data size on the transaction, on no frame's budget and with no history gas, and stay counted whatever the "
                   "call then does", "SATIN-ORCL-006", "SATIN-ORCL-009", "SATIN-ICPT-007", "SATIN-ACCT-001", "SATIN-ACCT-002")
+        if self.system_pages and any(data[:4] in sels for sels in INTERCEPTED.values()) and target not in INTERCEPTED:
+            d.add("outcome", f"the call carries the selector of an intercepted method, but to {h(target)}, which is no system "
+                  "contract with an interceptor: matching is on the address first, so nothing intercepts it and the code "
+                  "the state holds there runs", "SATIN-ICPT-001", "SATIN-MLC-001")
         # The frame start: the caller's funds are checked and the value moves (SATIN-LIM-013, -015).
         caller_acct = self.state.setdefault(caller, Account())
         callee = self.state.get(target)
@@ -301,8 +307,16 @@ class CallsMixin:
             return
         if target == MEGA_LIMIT_CONTROL:
             rules.append("SATIN-MLC-001")
+        if target == KEYLESS_DEPLOY and data[:4] == KEYLESS_DEPLOY_CALL:
+            d.add("outcome", f"{what} carries keylessDeploy's selector: recognition needs a CALL at depth 0, so it is not "
+                  "recognized, charged nothing, and the code the state holds at the address runs", "SATIN-ICPT-006",
+                  "SATIN-KEY-003")
         d.add("outcome", f"{what} is never intercepted, whatever its selector: the contract's bytecode runs in a frame of "
               "the caller's own context", *rules)
+        if target == ORACLE and data[:4] in (ORACLE_SELECTORS["getSlot(uint256)"], ORACLE_SELECTORS["getSlots(uint256[])"]):
+            d.add("outcome", f"the Oracle's read method runs on {h(address)}'s storage: its SLOAD is not in the Oracle's own "
+                  "frame, so it is no Oracle read: an ordinary SLOAD, cold then warm, that asks no service and marks "
+                  "nothing for gas detention", "SATIN-ORCL-002", "SATIN-ORCL-003")
 
     def hand_hint(self, sender: bytes, data: bytes, who: str) -> None:
         """SATIN-ORCL-007, -009: an admitted hint whose input decodes as sendHint(bytes32,bytes) is handed to the service
@@ -381,6 +395,32 @@ class CallsMixin:
                 d.add("outcome", f"{where}: the High-Precision Timestamp's accessor returns the constant of its interface, "
                       f"{len(out)} bytes, ABI-encoded: ORACLE_CONTRACT_ADDRESS, TIMESTAMP_BASE_SLOT {TIMESTAMP_BASE_SLOT} or "
                       f"TIMESTAMP_MAX_SLOTS {TIMESTAMP_MAX_SLOTS} as a uint32", "SATIN-HPTS-001")
+
+
+    def drop_hint(self, frame, child_gas: int, data: bytes) -> None:
+        """SATIN-ORCL-006: a sendHint call whose frame would start with no regular gas, or that a frame whose
+        volatile-data access is off makes, is not admitted: the hint is dropped and nothing counted, before any data-size
+        check (SATIN-ORCL-010 is a check at admission), and the call goes on to its frame start."""
+        why = ("its frame would start with no regular gas, the call forwarding none and carrying no value"
+               if child_gas == 0 else "the frame that makes it has its volatile-data access off")
+        over = self.data_size + len(data) > TX_DATA_LIMIT
+        self.d.add("resources", f"the sendHint call is not admitted: {why}; the hint is dropped and its {fmt(len(data))} "
+                   "input bytes are not counted" + (", so the data-size limit it would cross is never checked and nothing "
+                                                     "stops it" if over else "") + "; the call reaches its frame start and "
+                   "runs the Oracle's bytecode", "SATIN-ORCL-006", "SATIN-ORCL-010", "SATIN-ICPT-007")
+
+    def admit_static_hint(self, frame, caller: bytes, data: bytes, child_gas: int) -> None:
+        """A STATICCALL of sendHint is a sendHint call (SATIN-ORCL-008): admitted and handed as a CALL's, before the
+        frame start, the hint being no write of state."""
+        if child_gas == 0 or frame.get("access_off") or self.data_size + len(data) > TX_DATA_LIMIT:
+            raise Unmodelled("a STATICCALL of sendHint dropped or stopped")
+        self.data_size += len(data)
+        self.hint_bytes += len(data)
+        self.d.add("resources", f"interception: a STATICCALL of the Oracle with sendHint's selector is a sendHint call, its "
+                   f"gas limit {fmt(child_gas)} above zero and its frame's access on: admitted before the frame start, a hint "
+                   f"being no write of state; its {fmt(len(data))} input bytes count as data size on the transaction",
+                   "SATIN-ORCL-006", "SATIN-ORCL-008", "SATIN-ORCL-009", "SATIN-ICPT-001", "SATIN-ICPT-007")
+        self.hand_hint(caller, data, "the calling frame")
 
 
 def decode_hint(data: bytes):

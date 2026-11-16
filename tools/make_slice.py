@@ -487,7 +487,7 @@ def cases() -> list[Case]:
                   authorization_cases,
                   outcome_cases, outcome_edge_cases, keyless_cases,
                   keyless_gap_cases, forwarding_cases, system_tx_cases, deposit_page_cases, oracle_page_cases,
-                  system_contract_cases):
+                  system_contract_cases, system_pages_gap_cases):
         made = group()
         for c in made:
             c.definition = group.__name__
@@ -4678,6 +4678,374 @@ def system_contract_cases() -> list[Case]:
                  "constant its interface states, from the contract's own code (SATIN-HPTS-001)",
                  to=model.HIGH_PRECISION_TIMESTAMP, code=None, data=sel(method), accounts=dict(TIMESTAMP_CONTRACT), **pages))
     return out
+
+
+def callcode_with(gas: int, target: bytes, value: int, in_size: int) -> bytes:
+    """CALLCODE(gas, target, value, 0, in_size, 0, 0)."""
+    return push(0) + push(0) + push(in_size) + push(0) + push(value) + push(int.from_bytes(target, "big")) + push(gas) + b"\xf2"
+
+
+def returndata_to(offset: int) -> bytes:
+    """RETURNDATACOPY(offset, 0, RETURNDATASIZE)."""
+    return b"\x3d" + push(0) + push(offset) + b"\x3e"
+
+
+HINT_CHILD = bytes.fromhex("00000000000000000000000000000000000c0e20")  # a child that sends a hint, then reverts
+STATIC_RELAY = bytes.fromhex("00000000000000000000000000000000000c0e21")  # a frame a STATICCALL started that sends a hint
+ASKER = bytes.fromhex("00000000000000000000000000000000000c0e22")  # a child that asks remainingComputeGas()
+LIVE_CODE = bytes.fromhex("00000000000000000000000000000000000c0e23")  # code the live system address delegates to
+
+
+def system_pages_gap_cases() -> list[Case]:
+    """The edges an independent review of the deposits and system-contract cases found unpinned (D-109): a user's deposit detained from its start and its own remainingComputeGas() call; hints
+    dropped before any size check, at a child's gas of 0 and 1 and on a value call's stipend, malformed or unpadded,
+    sent by STATICCALL and CALLCODE, and kept in order through a failed deposit; the Oracle's write from delegated
+    live-system code, a read after a write, a repeated slot, and its code on another account's storage; a creation from
+    MAX_NONCE carrying a funded value; a creating deposit's bucket, its reverting initcode and its code deposit; dispatch
+    by address and four selector bytes; a transaction's own value call of an intercepted method; MegaLimitControl's
+    answer on a restricted forward, above the execution cap, in a nested frame and detained by an authority; multiCall's
+    failures, emitLog and setSlots of one slot twice; an existing sender empty under EIP-161; and the timestamp read
+    twice."""
+    out: list[Case] = []
+    add = out.append
+    sel = model.selector
+    pages = dict(spec=CURRENT_SPEC, system_pages=True)
+    sys_pages = dict(pages, system=True)
+    history = model.COST_PER_HISTORY_BYTE
+    body = model.TX_BODY_SIZE * history
+    record = model.WRITE_RECORD_SIZE * history
+    call_plain = model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    remaining = sel("remainingComputeGas()")
+    ask = mstore(0, int.from_bytes(remaining, "big") << 224)
+    hint = send_hint(7, b"\xaa")
+    oracle_code = system_contracts()[model.ORACLE]
+
+    # 1. A user's deposit detained from its start (SATIN-DET-008, SATIN-DEP-002), and its own remainingComputeGas().
+    burner = burn(words_within(cap) + 1) + STOP
+    for name, coinbase, what in (("sender", SENDER, "its sender is"), ("recipient", CONTRACT, "its recipient is")):
+        add(Case(f"satin/deposits/detained-from-start/{name}-is-beneficiary", f"a user's deposit with a gas limit of "
+                 f"{fmt(30_000_000)} whose {name} is the block beneficiary: detained from its start, as any transaction "
+                 f"whose {what} the beneficiary, its compute limit {fmt(cap)}, so its contract's one memory expansion past "
+                 "that limit is the crossing: the deposit is stopped, a revert and no failed deposit, its mint and nonce "
+                 "kept (SATIN-DEP-002)", deposit=(0, 30_000_000), sender_nonce=3, code=burner, coinbase=coinbase,
+                 **pages))
+    add(Case("satin/deposits/detained-from-start/no-party-is-beneficiary", "the same deposit with neither its sender nor "
+             "its recipient the block beneficiary: no limit is set, and the expansion is paid (SATIN-DEP-002)",
+             deposit=(0, 30_000_000), sender_nonce=3, code=burner, **pages))
+    for name, coinbase, what in (("own-call", COINBASE, "no limit set, so it hears its own frame's regular gas"),
+                                 ("own-call-detained", OTHER, f"its sender the block beneficiary, so it is detained from "
+                                  f"its start and hears {fmt(cap)}")):
+        add(Case(f"satin/deposits/limit-control/{name}", f"a deposit from an absent caller whose own call is "
+                 f"remainingComputeGas(), with a gas limit of {fmt(30_000_000)}: a CALL at depth 0, intercepted, {what} "
+                 "(SATIN-MLC-004)", deposit=(0, 30_000_000), absent_sender=True, to=model.MEGA_LIMIT_CONTROL, code=None,
+                 data=remaining, coinbase=coinbase, **sys_pages))
+
+    # 2. A dropped hint is never size-checked (SATIN-ORCL-006, -010): twelve admitted hints of 1 MiB, then a hint that
+    # would cross the data-size limit, from a frame whose access is off, or forwarded no gas.
+    big = 1 << 20
+    count = (model.TX_DATA_LIMIT - model.TX_BODY_SIZE) // big
+    helpers = b"".join(push(0) + push(0) + push(big) + push(0) + push(0) + push(int.from_bytes(model.ORACLE, "big"))
+                       + push(1) + b"\xf1\x50" for _ in range(count))
+    past = model.TX_DATA_LIMIT - model.TX_BODY_SIZE - count * big + 1
+    disable = (mstore(0, int.from_bytes(model.DISABLE_VOLATILE_DATA_ACCESS, "big") << 224)
+               + call(10_000, model.MEGA_ACCESS_CONTROL, 0, 4) + b"\x50")
+    hint_selector = mstore(0, int.from_bytes(model.SEND_HINT, "big") << 224)
+    for name, gas_op, prefix, what in (
+            ("access-off-past-limit", 100_000, disable, "the frame switches its volatile-data access off and"),
+            ("no-gas-past-limit", 0, b"", "the frame")):
+        add(Case(f"satin/oracle/send-hint/{name}", f"{NUMBERS.get(count, str(count))} admitted 1 MiB hints, then {what} "
+                 f"sends a hint of {fmt(past)} input bytes, one past what the data-size limit leaves, "
+                 + ("forwarding 100,000 gas" if gas_op else "forwarding no gas with no value") + ": not admitted, so "
+                 "dropped and never size-checked, no stop; the call runs the Oracle's bytecode (SATIN-ORCL-006)",
+                 gas=4_000_000, code=hint_selector + helpers + prefix + hint_selector + call(gas_op, model.ORACLE, 0, past)
+                 + record_result() + STOP, **sys_pages))
+
+    # 3. A child's regular gas of 0 and 1, and a value call's stipend (SATIN-ORCL-006, -007).
+    laid = bytes_to_memory(hint)
+    for name, gas_op, value, balance, what in (
+            ("gas-zero", 0, 0, 0, "forwarding no gas and no value: its frame would start with none, so the hint is "
+             "dropped, nothing counted or handed, and the frame runs out of gas at once"),
+            ("gas-one", 1, 0, 0, "forwarding one gas: admitted, counted and handed to the service, and then its frame runs "
+             "out of gas"),
+            ("stipend-funded", 0, 1, 10, "requesting no gas with 1 wei it can fund: its frame starts on the stipend, so "
+             "the hint is admitted and handed, and the bytecode refuses the value"),
+            ("stipend-unfunded", 0, 1, 0, "requesting no gas with 1 wei it cannot fund: admitted on the stipend and handed, "
+             "and then its frame start refuses the call")):
+        add(Case(f"satin/oracle/send-hint/{name}", f"a contract's CALL of sendHint {what} (SATIN-ORCL-006, "
+                 "SATIN-ORCL-007)", reads=True, contract_balance=balance,
+                 code=laid + call(gas_op, model.ORACLE, value, len(hint)) + record_result() + STOP, **sys_pages))
+
+    # 4. Malformed and noncanonical input (SATIN-ORCL-009).
+    unpadded = model.SEND_HINT + word(7) + word(0x40) + word(1) + b"\xaa"
+    for name, data, what in (
+            ("selector-only", model.SEND_HINT, "sendHint's selector alone, 4 bytes: admitted and counted, it decodes as no "
+             "hint and reaches no service, and the bytecode's decoder reverts"),
+            ("trailing-byte", hint + b"\xaa", f"a canonical input followed by one byte, {len(hint) + 1} bytes: all of them "
+             "counted, and the same topic and data handed as without the byte"),
+            ("unpadded", unpadded, f"a valid input whose data is not padded to a word, {len(unpadded)} bytes: counted and "
+             "handed, the decoder needing no padding")):
+        add(Case(f"satin/oracle/send-hint/{name}", f"a contract's CALL of the Oracle with {what} (SATIN-ORCL-009)",
+                 reads=True, code=bytes_to_memory(data) + call(100_000, model.ORACLE, 0, len(data)) + record_result() + STOP,
+                 **sys_pages))
+
+    # 5. The Oracle's write from code the live system address delegates to, in a user's deposit (SATIN-ORCL-011).
+    set_slot = sel("setSlot(uint256,bytes32)") + abi_words(3, 7)
+    writer = bytes_to_memory(set_slot) + call(200_000, model.ORACLE, 0, len(set_slot)) + b"\x50" + RETURN_RETURNDATA
+    live_delegated = {DELEGATED: model.Account(code=model.DELEGATION_PREFIX + LIVE_CODE),
+                      LIVE_CODE: model.Account(nonce=1, code=writer), **registry_naming(DELEGATED),
+                      model.ORACLE: model.Account(code=oracle_code)}
+    add(Case("satin/oracle/set-slot/delegated-live-address", "a user's deposit calls the live system address, which holds "
+             "an EIP-7702 delegation to code that calls the Oracle's setSlot(3, 7): the Oracle's immediate caller is the "
+             "live system address, whatever sent the transaction and whatever its type, so the write stands "
+             "(SATIN-ORCL-011)", deposit=(0, 1_000_000), sender_nonce=3, to=DELEGATED, code=None,
+             accounts=dict(live_delegated), **sys_pages))
+    add(Case("satin/oracle/set-slot/deposit-not-system-address", "the same deposit calling the Oracle's setSlot(3, 7) "
+             "itself: its immediate caller, the deposit's sender, is not the live system address, so the call reverts "
+             "with NotSystemAddress() (SATIN-ORCL-011)", deposit=(0, 1_000_000), sender_nonce=3, to=model.ORACLE, code=None,
+             data=set_slot, accounts=dict(live_delegated), **sys_pages))
+
+    # 6. A read after an authorized write, and a repeated slot (SATIN-ORCL-002, -003).
+    micros = BLOCK_TIMESTAMP * 1_000_000
+    stamped = {model.ORACLE: model.Account(code=oracle_code, storage={model.TIMESTAMP_BASE_SLOT: micros}),
+               **TIMESTAMP_CONTRACT}
+    update = sel("update(uint256)") + word(micros + 1)
+    timestamp = sel("timestamp()")
+    write_then_read = (bytes_to_memory(update) + call(MAX_GAS, model.HIGH_PRECISION_TIMESTAMP, 0, len(update)) + b"\x50"
+                       + mstore(0, int.from_bytes(timestamp, "big") << 224)
+                       + call(MAX_GAS, model.HIGH_PRECISION_TIMESTAMP, 0, 4) + b"\x50" + RETURN_RETURNDATA)
+    add(Case("satin/system-contracts/timestamp/update-then-read", "a deposit's contract updates the timestamp while the "
+             "registry names the timestamp contract, and then reads it: the Oracle's read pushes the slot's present "
+             "value, the write made earlier in the deposit, charged as a cold access (SATIN-HPTS-001, SATIN-ORCL-002)",
+             deposit=(0, 1_000_000), sender_nonce=3, code=write_then_read,
+             accounts={**stamped, **registry_naming(model.HIGH_PRECISION_TIMESTAMP)}, **sys_pages))
+    two_slots = {model.ORACLE: model.Account(code=oracle_code, storage={1: 0xAA, 2: 0xBB})}
+    add(Case("satin/oracle/get-slots/repeated-slot", "a deposit calls the Oracle's getSlots with slots 2, 2 and 1: the "
+             "values in that order, and the second read of slot 2 charged as a cold access again (SATIN-ORCL-003)",
+             deposit=(0, 1_000_000), sender_nonce=3, to=model.ORACLE, code=None,
+             data=sel("getSlots(uint256[])") + abi_words(0x20, 3, 2, 2, 1), accounts=dict(two_slots), **sys_pages))
+
+    # 7. The Oracle's code on another account's storage (SATIN-ORCL-002).
+    get_one = sel("getSlot(uint256)") + word(1)
+    elsewhere = (bytes_to_memory(get_one) + delegatecall_with(100_000, model.ORACLE, len(get_one)) + b"\x50"
+                 + delegatecall_with(100_000, model.ORACLE, len(get_one)) + b"\x50"
+                 + burn(words_within(model.ORACLE_ACCESS_COMPUTE_GAS) + 1) + RETURN_RETURNDATA)
+    add(Case("satin/oracle/get-slot/delegatecall-own-storage", "a deposit's contract, whose slot 1 holds 9, runs the "
+             "Oracle's getSlot(1) twice by DELEGATECALL, the Oracle's own slot 1 holding 7, and then expands its memory "
+             "past the Oracle's cap: the reads are its own slot's, 9, a cold and then a warm SLOAD, no Oracle read, so "
+             "nothing is marked and the expansion is paid (SATIN-ORCL-002)", deposit=(0, 22_000_000), sender_nonce=3,
+             code=elsewhere, storage={1: 9}, accounts={model.ORACLE: model.Account(code=oracle_code, storage={1: 7})},
+             **sys_pages))
+
+    # 8. A STATICCALL of sendHint is a sendHint call (SATIN-ORCL-008), and from a frame a STATICCALL started.
+    add(Case("satin/oracle/send-hint/staticcall", "a contract's STATICCALL of sendHint: a sendHint call, admitted, counted "
+             "and handed to the service with the contract's address, the hint being no write of state (SATIN-ORCL-008)",
+             reads=True, code=laid + staticcall_with(100_000, model.ORACLE, len(hint)) + record_result() + STOP,
+             **sys_pages))
+    relay = laid + staticcall_with(100_000, model.ORACLE, len(hint)) + b"\x50" + STOP
+    add(Case("satin/oracle/send-hint/staticcall-in-static-frame", "a contract's STATICCALL of a relay, which STATICCALLs "
+             "sendHint from its static frame: admitted, and handed with the relay's address (SATIN-ORCL-008)", reads=True,
+             code=staticcall_with(200_000, STATIC_RELAY, 0) + record_result() + STOP,
+             accounts={STATIC_RELAY: model.Account(nonce=1, code=relay)}, **sys_pages))
+
+    # 10. A creation from MAX_NONCE carrying a value its mint funds (SATIN-DEP-010).
+    add(Case("satin/deposits/max-nonce/creation-with-value", f"a deposit creating a contract from a sender at MAX_NONCE "
+             "holding no balance, minting 1 wei and carrying 1 wei: the value is checked first, against the balance with "
+             "the mint credited, which funds it exactly; the creation then creates nothing, and the value moves nowhere, "
+             "the sender keeping its minted wei (SATIN-DEP-010)", deposit=(1, 1_000_000), to=None,
+             data=sstore(0, 1) + sstore(1, 1) + STOP, value=1, **{**pages, "sender_nonce": model.MAX_U64, "sender_balance": 0}))
+
+    # 11. A creating deposit's bucket: the created address's, from the sender's nonce (SATIN-DEP-002, -012).
+    nonce_zero = model.created_address(SENDER, 0)
+    for name, salt, what in (
+            ("crowded-created-address", {("created", None): 4}, "the created address's bucket at four times the minimum "
+             "capacity"),
+            ("crowded-other-address", {(nonce_zero, None): 4}, "the bucket of the address nonce 0 would derive at four "
+             "times the minimum capacity, which is never read")):
+        add(Case(f"satin/deposits/creation/reverts-{name}", f"a deposit from a sender of nonce 3 whose initcode reverts, "
+                 f"{what}: the deposit reverts, not a failed deposit, its created account and its charges taken back; its "
+                 "reads keep the created address and its bucket's capacity (SATIN-DEP-012)", deposit=(0, 1_000_000),
+                 sender_nonce=3, to=None, data=revert(0, 0), salt=salt, reads=True, **pages))
+    add(Case("satin/deposits/creation/crowded-created-address", "a deposit creating an empty contract in a bucket of four "
+             "times the minimum capacity: its created account's state gas priced at m = 4 (SATIN-DEP-002)",
+             deposit=(0, 1_000_000), sender_nonce=3, to=None, data=b"", salt={("created", None): 4}, **pages))
+
+    # 12. Dispatch is the address and four selector bytes (SATIN-ICPT-001, SATIN-MLC-001).
+    trailing = remaining + b"\xaa"
+    add(Case("satin/system-contracts/limit-control/trailing-byte", "a contract's CALL of remainingComputeGas() followed by "
+             "one more byte: matched on the four selector bytes alone, intercepted and answered (SATIN-MLC-001)",
+             code=bytes_to_memory(trailing) + call(MAX_GAS, model.MEGA_LIMIT_CONTROL, 0, len(trailing)) + b"\x50"
+             + RETURN_RETURNDATA, **sys_pages))
+    add(Case("satin/system-contracts/limit-control/three-byte-input", "a contract's CALL of MegaLimitControl with the "
+             "selector's first three bytes: no selector, so not intercepted, and the bytecode reverts with "
+             "NotIntercepted() (SATIN-MLC-001)", code=ask + call(MAX_GAS, model.MEGA_LIMIT_CONTROL, 0, 3) + b"\x50"
+             + RETURN_RETURNDATA, **sys_pages))
+    add(Case("satin/system-contracts/limit-control/selector-elsewhere", "a contract's CALL of another contract, which "
+             "stops, with remainingComputeGas()'s selector: matching is on the address first, so nothing intercepts it "
+             "and its code runs (SATIN-MLC-001)", code=ask + call(MAX_GAS, PLAIN, 0, 4) + b"\x50" + RETURN_RETURNDATA,
+             accounts={PLAIN: model.Account(nonce=1, code=STOP)}, **sys_pages))
+    add(Case("satin/system-contracts/limit-control/other-code-at-address", "a contract's CALL of remainingComputeGas() at "
+             "MegaLimitControl's address, which holds a code that only stops: interception matches the address and the "
+             "selector, never the code, so the call is answered (SATIN-MLC-001)",
+             code=ask + call(MAX_GAS, model.MEGA_LIMIT_CONTROL, 0, 4) + b"\x50" + RETURN_RETURNDATA,
+             accounts={model.MEGA_LIMIT_CONTROL: model.Account(code=STOP)}, **sys_pages))
+
+    # 13. The transaction's own value call of an intercepted method (SATIN-ICPT-003).
+    add(Case("satin/system-contracts/limit-control/own-call-with-value", "the transaction's own call of "
+             "remainingComputeGas() carrying 1 wei: answered NonZeroTransfer() at depth 0 before any value moves, the "
+             "value staying with the sender and the start record's history given back (SATIN-MLC-001)",
+             to=model.MEGA_LIMIT_CONTROL, code=None, data=remaining, value=1, **sys_pages))
+    add(Case("satin/interception/access-control/own-call-with-value", "the transaction's own call of "
+             "disableVolatileDataAccess() carrying 1 wei: answered NonZeroTransfer() at depth 0 before any value moves, "
+             "the start record's history given back (SATIN-ICPT-003)", to=model.MEGA_ACCESS_CONTROL, code=None,
+             data=model.DISABLE_VOLATILE_DATA_ACCESS, value=1, **sys_pages))
+
+    # 14. A restricted forward and a reservoir (SATIN-MLC-002, -003).
+    for name, gas_op, what in (("forward-zero", 0, "forwarding no gas"), ("forward-one", 1, "forwarding one gas")):
+        add(Case(f"satin/system-contracts/limit-control/{name}", f"a contract's CALL of remainingComputeGas() {what}: the "
+                 "answer is the caller's own regular gas, the forward counted back (SATIN-MLC-002)",
+                 code=ask + call(gas_op, model.MEGA_LIMIT_CONTROL, 0, 4) + b"\x50" + RETURN_RETURNDATA, **sys_pages))
+    above = model.EXECUTION_CAP + 1_000_000
+    add(Case("satin/system-contracts/limit-control/contract-call-above-cap", f"a contract's CALL of remainingComputeGas() "
+             f"with a gas limit of {fmt(above)}: the caller holds a reservoir and gives the call its share, and the answer "
+             "is its regular gas alone (SATIN-MLC-003)", gas=above,
+             code=ask + call(MAX_GAS, model.MEGA_LIMIT_CONTROL, 0, 4) + b"\x50" + RETURN_RETURNDATA, **sys_pages))
+
+    # 15. The transaction's allowance across a nested frame, and an authority that is the beneficiary (SATIN-MLC-002, -004).
+    asker = ask + call(MAX_GAS, model.MEGA_LIMIT_CONTROL, 0, 4) + b"\x50" + RETURN_RETURNDATA
+    nested = b"\x42\x50" + burn(words_within(5_000_000)) + call(MAX_GAS, ASKER, 0, 0) + b"\x50" + RETURN_RETURNDATA
+    add(Case("satin/system-contracts/limit-control/nested-allowance", f"a contract reads TIMESTAMP with a gas limit of "
+             f"{fmt(30_000_000)}, spends compute, and calls a child that asks remainingComputeGas(): the answer is the "
+             "transaction's allowance, what the limit leaves its compute across both frames, below the child's own "
+             "regular gas (SATIN-MLC-002)", gas=30_000_000, code=nested, accounts={ASKER: model.Account(nonce=1, code=asker)},
+             **sys_pages))
+    add(Case("satin/system-contracts/limit-control/own-call-detained-by-authority", f"the transaction's own call of "
+             f"remainingComputeGas() with a gas limit of {fmt(30_000_000)} whose EIP-7702 list applies an authorization "
+             f"of the block beneficiary: detained from its start, it hears {fmt(cap)} (SATIN-MLC-004)", ty=4,
+             to=model.MEGA_LIMIT_CONTROL, code=None, data=remaining, gas=30_000_000,
+             authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 0)], coinbase=AUTHORITY, **sys_pages))
+
+    # 16. CALLCODE runs the bytecode (SATIN-ORCL-008, SATIN-MLC-001).
+    add(Case("satin/oracle/send-hint/callcode", "a contract's CALLCODE of the Oracle with sendHint's input: no sendHint "
+             "call, so the bytecode runs in the contract's context, nothing counted and nothing handed "
+             "(SATIN-ORCL-008)", reads=True, code=laid + callcode_with(100_000, model.ORACLE, 0, len(hint)) + record_result()
+             + STOP, **sys_pages))
+    add(Case("satin/system-contracts/limit-control/callcode", "a contract's CALLCODE of remainingComputeGas(): not "
+             "intercepted, so MegaLimitControl's bytecode runs and reverts with NotIntercepted(), which the contract returns "
+             "(SATIN-MLC-001)", code=ask + callcode_with(MAX_GAS, model.MEGA_LIMIT_CONTROL, 0, 4) + b"\x50"
+             + RETURN_RETURNDATA, **sys_pages))
+
+    # 17. Hints in order across a reverted child and a failed deposit (SATIN-DEP-006, SATIN-ORCL-007).
+    child_hint = send_hint(8, b"\xbb")
+    third = send_hint(9, b"\xcc")
+    child = bytes_to_memory(child_hint) + call(100_000, model.ORACLE, 0, len(child_hint)) + b"\x50" + revert(0, 0)
+    parent = (laid + call(100_000, model.ORACLE, 0, len(hint)) + b"\x50" + call(200_000, HINT_CHILD, 0, 0) + b"\x50"
+              + bytes_to_memory(third) + call(100_000, model.ORACLE, 0, len(third)) + b"\x50" + INVALID)
+    add(Case("satin/deposits/failed/three-hints-kept", "a deposit's contract sends a hint, calls a child that sends another "
+             "and reverts, sends a third and halts: a failed deposit, which keeps all three hints' bytes as data size, "
+             "and the service was handed the three in order, the second from the child (SATIN-DEP-006)", reads=True,
+             deposit=(0, 1_000_000), sender_nonce=3, code=parent, accounts={HINT_CHILD: model.Account(nonce=1, code=child)},
+             **sys_pages))
+
+    # 18. multiCall's failures, emitLog, and setSlots of one slot twice (SATIN-ORCL-001, -011).
+    oracle_plain = {model.ORACLE: model.Account(code=oracle_code)}
+    add(Case("satin/oracle/multicall/first-payload-fails", "a user's multiCall of setSlot(3, 7) and getSlot(3): the first "
+             "payload writes, then reverts with NotSystemAddress(), and multiCall reverts with that data at once, the "
+             "second payload never run (SATIN-ORCL-001)", to=model.ORACLE, code=None, gas=300_000,
+             data=multi_call(set_slot, sel("getSlot(uint256)") + word(3)),
+             accounts={**oracle_plain, **registry_naming(OTHER)}, **sys_pages))
+    add(Case("satin/oracle/multicall/empty-revert", "a user's multiCall of a payload whose selector the Oracle does not "
+             "declare, which reverts with empty data: multiCall reverts with Error(\"Multicall: call failed\") "
+             "(SATIN-ORCL-001)", to=model.ORACLE, code=None, gas=300_000, data=multi_call(OTHER_SELECTOR),
+             accounts={**oracle_plain, **registry_naming(OTHER)}, **sys_pages))
+    emit = sel("emitLog(bytes32,bytes)") + abi_words(5, 0x40, 1) + b"\xee".ljust(32, b"\x00")
+    add(Case("satin/oracle/emit-log/not-system-address", "a user's emitLog: the log is emitted and charged, then the call "
+             "reverts with NotSystemAddress(), taking the log back (SATIN-ORCL-001, SATIN-ORCL-011)", to=model.ORACLE,
+             code=None, gas=300_000, data=emit, accounts={**oracle_plain, **registry_naming(OTHER)}, **sys_pages))
+    add(Case("satin/oracle/emit-log/live-system-address", "a Mega System Transaction's emitLog: the log stands, emitted by "
+             "the Oracle (SATIN-ORCL-011)", to=model.ORACLE, code=None, data=emit, gas=1_000_000, sender_balance=0,
+             nonce=1, sender_nonce=1, system_tx=True, accounts={**oracle_plain, **registry_naming(SENDER)}, **sys_pages))
+    add(Case("satin/oracle/set-slots/same-slot-twice", "a Mega System Transaction's setSlots of slot 3 twice, to 7 and "
+             "then 8: the writes run in order and the last stands (SATIN-ORCL-001)", to=model.ORACLE, code=None,
+             data=sel("setSlots(uint256[],bytes32[])") + abi_words(0x40, 0xA0, 2, 3, 3, 2, 7, 8), gas=1_000_000,
+             sender_balance=0, nonce=1, sender_nonce=1, system_tx=True,
+             accounts={**oracle_plain, **registry_naming(SENDER)}, **sys_pages))
+
+    # 19. An existing sender empty under EIP-161 (SATIN-DEP-003, -005, -012).
+    least = call_plain + body + 2 * model.ACCOUNT_STATE
+    for name, gas, nonce, what in (
+            ("unpaid", least - 1, 0, f"one short of its new-account state gas at m = 2, {fmt(2 * model.ACCOUNT_STATE)}: a "
+             "failed deposit at step 1, the account counted as one unit of state growth with no state gas, its bucket's "
+             "capacity read and its recipient not loaded"),
+            ("paid", least, 0, "paying its new-account state gas at m = 2 exactly: the account created and charged once"),
+            ("nonce-one", least - 1, 1, "with a nonce of 1, so not empty: no new-account charge, and the deposit "
+             "succeeds")):
+        add(Case(f"satin/deposits/empty-caller/{name}", f"a deposit minting 1 wei from a sender the state holds with no "
+                 f"balance and no code, {what} (SATIN-DEP-003, SATIN-DEP-012)", deposit=(1, gas), sender_nonce=nonce,
+                 sender_balance=0, salt={("sender", None): 2}, reads=True, **pages))
+
+    # 21. A creating deposit's code deposit, and its initcode's revert with data (SATIN-DEP-004, -007).
+    one_byte = init_returning(b"\xee")
+    paid = least_paying(Case("probe", "", deposit=(0, 1_000_000), sender_nonce=3, to=None, data=one_byte, **pages))
+    for name, gas, what in (("code-deposit-one-short", paid - 1, "one gas short of its one byte's code deposit: the "
+                             "creation halts, a failed deposit"),
+                            ("code-deposit-paid", paid, "paying its one byte's code deposit exactly: deployed")):
+        add(Case(f"satin/deposits/creation/{name}", f"a deposit creating a contract whose initcode returns one byte, "
+                 f"with a gas limit of {fmt(gas)}, {what} (SATIN-DEP-004)", boundary=f"the gas limit {'one below' if gas < paid else 'at'} "
+                 "the code deposit's last charge", deposit=(0, gas), sender_nonce=3, to=None, data=one_byte, **pages))
+    add(Case("satin/deposits/creation/initcode-reverts-with-data", "a deposit creating a contract whose initcode reverts "
+             "with one word: a revert, not a failed deposit, its mint and nonce kept and its REVERT data its output "
+             "(SATIN-DEP-007)", deposit=(0, 1_000_000), sender_nonce=3, to=None, data=mstore(0, 0xBAD) + revert(0, 32),
+             **pages))
+
+    # 22. The timestamp read twice, its slot holding zero (SATIN-HPTS-001, -002).
+    twice = (mstore(0, int.from_bytes(timestamp, "big") << 224) + call(MAX_GAS, model.HIGH_PRECISION_TIMESTAMP, 0, 4)
+             + b"\x50" + returndata_to(32) + call(MAX_GAS, model.HIGH_PRECISION_TIMESTAMP, 0, 4) + b"\x50"
+             + returndata_to(64) + ret(32, 64))
+    add(Case("satin/system-contracts/timestamp/read-twice", "a deposit's contract reads the timestamp twice, its slot "
+             "holding zero, and returns both answers: the same word twice, each read an Oracle read charged as a cold "
+             "access (SATIN-HPTS-001, SATIN-HPTS-002)", deposit=(0, 1_000_000), sender_nonce=3, code=twice,
+             accounts={**oracle_plain, **TIMESTAMP_CONTRACT}, **sys_pages))
+
+    # 3, its own-call variant: a deposit's own sendHint on a first frame of 0 and of 1 regular gas (SATIN-ORCL-006).
+    zeros = hint.count(0)
+    paid_before = (call_plain + model.CALLDATA_ZERO * zeros + model.CALLDATA_NONZERO * (len(hint) - zeros)
+                   + (model.TX_BODY_SIZE + len(hint)) * history)
+    for left, what in ((0, "with no regular gas, so the hint is dropped, counted once as calldata only"),
+                       (1, "with one regular gas, so the hint is admitted, counted a second time and handed with the "
+                        "sender's address")):
+        add(Case(f"satin/deposits/own-hint/first-frame-gas-{'zero' if left == 0 else 'one'}", f"a deposit whose own call "
+                 f"is sendHint, its gas limit of {fmt(paid_before + left)} leaving its first frame {what}; the Oracle's "
+                 "bytecode then runs out of gas, so the deposit is a failed deposit, which keeps the data size of its "
+                 "body and of a hint it admitted (SATIN-DEP-006)", boundary=f"the first frame's regular gas at {left}",
+                 deposit=(0, paid_before + left), sender_nonce=3, to=model.ORACLE, code=None, data=hint, reads=True,
+                 **sys_pages))
+
+    # 23. A contract's DELEGATECALL or CALLCODE of KeylessDeploy with arguments that decode (SATIN-ICPT-006).
+    keyless_input = model.KEYLESS_DEPLOY_CALL + word(0x40) + word(1_000_000) + word(5) + bytes.fromhex("0102030405")
+    held = {model.KEYLESS_DEPLOY: model.Account(code=STOP)}
+    for name, op in (("delegatecall", delegatecall_with(MAX_GAS, model.KEYLESS_DEPLOY, len(keyless_input))),
+                     ("callcode", callcode_with(MAX_GAS, model.KEYLESS_DEPLOY, 0, len(keyless_input)))):
+        add(Case(f"satin/interception/keyless/{name}-runs-held-code", f"a contract's {name.upper()} of KeylessDeploy's "
+                 "address, which holds a code that only stops, with keylessDeploy's selector and arguments that decode: "
+                 "recognition needs a CALL at depth 0, so the held code runs and succeeds (SATIN-ICPT-006)",
+                 code=bytes_to_memory(keyless_input) + op + record_result() + STOP, accounts=dict(held), **sys_pages))
+    return out
+
+
+def least_paying(c: Case) -> int:
+    """The least gas limit at which a deposit's frame succeeds, from the model's own derivation (D-59): a search over
+    the gas limit, every charge before the frame fixed."""
+    lo, hi = 1, c.deposit[1]
+    while lo < hi:
+        mid = (lo + hi) // 2
+        c.deposit = (c.deposit[0], mid)
+        _, result, _ = build(c)
+        if result.observations["outcome"]["admission"]["status"] == "admitted":
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
 
 
 def account(nonce=0, balance=0, code=b"", storage=None) -> dict:
