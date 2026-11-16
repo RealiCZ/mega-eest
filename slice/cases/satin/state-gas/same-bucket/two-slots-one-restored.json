@@ -1,0 +1,217 @@
+{
+  "caseId": "satin/state-gas/same-bucket/two-slots-one-restored",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x9995",
+      "floor": "0x3a98",
+      "gasUsed": "0x86355",
+      "history": "0x7850",
+      "historyBytes": "0x15e",
+      "refund": "0x2710",
+      "regular": "0x9995",
+      "state": "0x77880",
+      "total": "0x88a65"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "reads": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "codeHash": "0x99ca64c946e3ae2121128d14f326b98f697b6232fb2ff165ae86c617f219c554",
+          "nonce": "0x1"
+        },
+        "0x4200000000000000000000000000000000000011": null,
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": null,
+        "0x420000000000000000000000000000000000001a": null,
+        "0x420000000000000000000000000000000000001b": null,
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        }
+      },
+      "blockHashes": {},
+      "buckets": {
+        "0x15eb4c": "0x500"
+      },
+      "codes": [
+        "0x99ca64c946e3ae2121128d14f326b98f697b6232fb2ff165ae86c617f219c554",
+        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b"
+      ],
+      "hints": [],
+      "oracle": [],
+      "storage": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "0x0000000000000000000000000000000000000000000000000000000000001245": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000001a5e": "0x0"
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "0x0000000000000000000000000000000000000000000000000000000000000001": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000003": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000005": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000007": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000008": "0x0"
+        }
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x86355",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "350",
+        "reported": "0x15e"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "1",
+        "reported": "0x1"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x6001611245556001611a5e555f611a5e5500",
+          "nonce": "0x1",
+          "storage": {
+            "0x0000000000000000000000000000000000000000000000000000000000001245": "0x1"
+          }
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x6001611245556001611a5e555f611a5e5500",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {
+        "0x15eb4c": "0x500"
+      },
+      "complete": false,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080832dc6c09400000000000000000000000000000000000c0de1808025a039b3c08939a9e690f3883fa6ac1f3ece53b9c274b20cf3a90377bad1a893db2ba05ab87e52694708729f3dd9fae579fa2d23a7c99c550c093385505cd27f604ac4"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "slots 4677 and 6750 of one contract, which SALT's mapping puts in one bucket, at five times the minimum capacity, are filled, and the second is restored: both charges and the give-back are priced at m = 5, 489,600 each, and the bucket's capacity, the one the incomplete SALT input lists, is read once (SATIN-STATE-006, SATIN-STATE-010)"
+    },
+    "definition": "tools/make_slice.py::pricing_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:reads",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-STATE-001",
+    "SATIN-STATE-002",
+    "SATIN-STATE-004",
+    "SATIN-STATE-005",
+    "SATIN-STATE-006",
+    "SATIN-STATE-008",
+    "SATIN-STATE-010",
+    "SATIN-STATE-012"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}
