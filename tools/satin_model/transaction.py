@@ -461,6 +461,8 @@ class TransactionMixin:
             self.growth += 1
             self.data_size += WRITE_RECORD_SIZE
             d.add("resources", "the created account: one write record and one unit of state growth", "SATIN-ACCT-005", "SATIN-ACCT-014")
+            if self.destruction and self.current:
+                self.created.add(recipient)  # the transaction's own creation, which its frame can destroy (SATIN-SD-001)
         self.history_gas += pre_frame_history
         self.history_bytes += WRITE_RECORD_SIZE if start_record else 0
         self.state_gas += pre_frame_state
@@ -476,6 +478,8 @@ class TransactionMixin:
                    if who == env.coinbase]
         if env.coinbase in self.applied_authorities:
             parties.append("applied EIP-7702 authority")
+        if delegate is not None and delegate == env.coinbase and self.current:
+            parties.append("call recipient's EIP-7702 delegate")
         if parties:
             self.detain_from_start(frame, parties)
         elif self.lists and tx.authorizations:

@@ -1240,6 +1240,22 @@ def detention_gap_cases() -> list[Case]:
              "transaction returns, shows", spec=spec, detention=True, gas=21_000_000, accounts=reporter,
              make=lambda words, pad: detained(words, pad) + call(asked, REPORTER, 0, 0) + RETURN_RETURNDATA,
              params=dict(start), retune=[("child-room", 100, "pad", -1)]))
+    # SHA-256's and ecrecover's prices decide the call the same way (SATIN-DET-021, -023): one word of input to SHA-256,
+    # and to ecrecover an input of zeros, whose v recovers nothing, so a call that runs returns empty output.
+    sha_price = model.SHA256_BASE + model.SHA256_WORD
+    for target, label, price, what in ((model.SHA256, "sha256", sha_price, "one word of input"),
+                                       (model.ECRECOVER, "ecrecover", model.ECRECOVER_GAS, "128 zero bytes of input")):
+        for name, room, tail, intent, edge in (
+                ("priced-at-allowance", price, STOP, f"priced {fmt(price)}, the allowance exactly: it runs on its whole "
+                 "forward, and the transaction completes at its limit", "the price at the allowance"),
+                ("priced-past-allowance", price - 1, RETURN_RETURNDATA, "priced one past the allowance and within its "
+                 "forward: it does not run and is the crossing, whose stop its caller catches and returns",
+                 "the price one past the allowance")):
+            add(Case(f"satin/detention/precompile/{label}/{name}", f"after TIMESTAMP, a call to the {label} precompile "
+                     f"forwarded {fmt(forward)} with {what}, " + intent, spec=spec, detention=True, gas=21_000_000,
+                     boundary=edge, make=lambda words, pad, target=target, tail=tail, size=32 if target == model.SHA256
+                     else 128: detained(words, pad) + call(forward, target, 0, size) + tail, params=dict(start),
+                     retune=[("precompile-room", room, "pad", -1)]))
     # A DELEGATECALL of a precompile moves no value: its inherited value is no transfer to check (SATIN-DET-024).
     words32 = 32 * 32
     identity_price = model.IDENTITY_BASE + model.IDENTITY_WORD * 32
@@ -1341,6 +1357,33 @@ def detention_gap_cases() -> list[Case]:
                  "on, a stack underflow that halts the frame, and is not refused (SATIN-MAC-003)", spec=spec,
                  detention=True, system=True, gas=1_000_000, accounts=to_beneficiary,
                  boundary="one operand short of the call", code=disable + six + op + STOP))
+    # More of the beneficiary's account (SATIN-DET-001, -003, -008): EXTCODECOPY of it in a child that completes and in
+    # one that runs out of gas at its copy, which marks nothing; a DELEGATECALL of it; a recipient delegating to it.
+    for name, size, child_gas, what in (
+            ("extcodecopy-completes", 32, 100_000, "completes: the read is marked, and the caller's memory expansion past "
+             "the cap is stopped with MegaLimitExceeded(2, limit)"),
+            ("extcodecopy-fails", 4_000_000, 100_000, "cannot pay its copy of 4,000,000 bytes and runs out of gas: a read "
+             "whose opcode fails marks nothing, so the caller's memory expansion past the cap completes")):
+        copier = {DETAINED: model.Account(nonce=1, code=push(size) + push(0) + push(0)
+                                          + push(int.from_bytes(COINBASE, "big")) + b"\x3c" + STOP)}
+        add(Case(f"satin/detention/beneficiary/{name}", f"a child does EXTCODECOPY of the block beneficiary's code, {size:,} "
+                 f"bytes, on {fmt(child_gas)} of regular gas: it " + what, spec=spec, detention=True, gas=21_000_000,
+                 accounts={**copier, COINBASE: model.Account(nonce=1, code=STOP)},
+                 code=call(child_gas, DETAINED, 0, 0) + b"\x50" + big + STOP,
+                 boundary="the read's opcode completed" if size == 32 else "the read's opcode failed at its copy"))
+    add(Case("satin/detention/beneficiary/delegatecall-target", "a contract DELEGATECALLs the block beneficiary, a contract "
+             "whose one memory expansion is past the cap, with all the gas it may forward: the read of the beneficiary's "
+             "account is marked when the start is decided, at a compute that leaves out the forward, so the child's "
+             "expansion is stopped with MegaLimitExceeded(2, limit), which the contract returns", spec=spec,
+             detention=True, gas=21_000_000, accounts={COINBASE: model.Account(nonce=1, code=big + STOP)},
+             code=push(7) + b"\x50" + delegatecall(MAX_GAS, COINBASE) + RETURN_RETURNDATA))
+    add(Case("satin/detention/beneficiary/recipient-delegates", "a transaction to an account whose EIP-7702 delegate is "
+             "the block beneficiary, a contract whose one memory expansion is past the cap: the transaction is detained "
+             "from its start at compute zero, its limit the cap exactly, though the delegate's access is charged before "
+             "its first frame, and the frame running the delegate's code is stopped with MegaLimitExceeded(2, limit)",
+             spec=spec, detention=True, gas=21_000_000, to=DELEGATED, code=None,
+             accounts={DELEGATED: model.Account(code=model.DELEGATION_PREFIX + COINBASE),
+                       COINBASE: model.Account(nonce=1, code=big + STOP)}))
     # The beneficiary's account through BALANCE and as a call's target (SATIN-DET-001, -003).
     add(Case("satin/detention/beneficiary/balance", "BALANCE of the block beneficiary is a read of its account: the memory "
              "expansion after it, past the cap, is stopped with MegaLimitExceeded(2, limit)", spec=spec, detention=True,
@@ -1975,6 +2018,109 @@ def selfdestruct_gap_cases() -> list[Case]:
              boundary="a destruction's rise at a budget of zero, " + ("with" if not present else "without") + " a fall",
              code=create(1, returning(selfdestruct_to(ABSENT))) + fill + call(MAX_GAS, first, 0, 0)
              + REVERT_RETURNDATA)
+    # SELFDESTRUCT's parts are charges of their own under gas detention (SATIN-DET-018, SATIN-SD-019 step 1): a detained
+    # child with 4,999 of spendable gas destroys itself to a cold address the state holds no account for. Its static
+    # cost alone crosses when the whole regular gas pays it, though its dynamic part would not fit; one gas below the
+    # static cost is an out-of-gas (SATIN-DET-020).
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    start = {"words": words_within(cap - 30_000), "pad": 0}
+    push_cost = model.G_VERYLOW
+    spendable = model.SELFDESTRUCT_COST - 1
+    destroyer = {DETAINED: model.Account(nonce=1, balance=10, code=selfdestruct_to(ABSENT))}
+    for name, whole, what in (
+            ("static-cost-crossing", 6_000, "the static cost is the crossing: the destruction is not made, the child is "
+             "stopped with MegaLimitExceeded(2, limit), its gas returned, and the caller returns the stop (SATIN-DET-018)"),
+            ("static-cost-out-of-gas", spendable, "the whole regular gas cannot pay the static cost either: the child "
+             "runs out of gas, as without the read, nothing of the destruction made (SATIN-DET-020)")):
+        add(Case(f"satin/selfdestruct/charges/{name}", f"after TIMESTAMP, a child holding 10 wei with {fmt(spendable)} of "
+                 f"spendable gas and {fmt(whole)} of regular gas in all destroys itself to a cold address the state holds "
+                 f"no account for, whose static cost {fmt(model.SELFDESTRUCT_COST)} is one charge and its cold access and new "
+                 "account another: " + what, spec=spec, destruction=True, detention=True, gas=21_000_000,
+                 accounts=destroyer, boundary=f"the static cost one past the spendable part, the whole regular gas "
+                 f"{'past' if whole > spendable else 'one below'} it",
+                 make=lambda words, pad, whole=whole: detained(words, pad) + call(whole + push_cost, DETAINED, 0, 0)
+                 + RETURN_RETURNDATA, params=dict(start), retune=[("child-room", spendable + push_cost, "pad", -1)]))
+    # The destruction's charges come before its table (SATIN-SD-009, -019): C, created with 1 wei and two fresh slots,
+    # destroys itself to an absent address, a new account whose state gas the child pays from regular gas; the table's
+    # large give-back would pay it, but comes after it.
+    regular = model.SELFDESTRUCT_COST + model.COLD_ACCOUNT_ACCESS + model.SELFDESTRUCT_NEW_ACCOUNT_COST
+    needs = push_cost + regular + model.ACCOUNT_STATE
+    two_slots = create(1, returning(selfdestruct_to(ABSENT), sstore(1, 1) + sstore(2, 1)))
+    for name, gas, what in (
+            ("new-beneficiary-state-one-short", needs - 1, "one gas short of the new account's state gas: the child halts "
+             "in the destruction's charges, before the table, whose give-back it never receives, and C survives with its "
+             "slots"),
+            ("new-beneficiary-state-paid", needs, "exactly its regular charges and the new account's state gas: the "
+             "destruction completes, and the table then gives back C's leaf, code and slots, which pay the beneficiary's "
+             "record history")):
+        case(f"charges/{name}", f"P creates C with 1 wei and two fresh slots, and calls C with {fmt(gas)} of regular gas; "
+             "C destroys itself to a cold address the state holds no account for, whose regular charges are "
+             f"{fmt(regular)} and whose new account's state gas, {fmt(model.ACCOUNT_STATE)}, regular gas pays, the "
+             f"transaction having no reservoir: " + what, code=two_slots + call(gas, first, 0, 0) + b"\x50" + STOP,
+             contract_balance=1, gas=4_000_000, boundary=f"the child's gas {'one below' if gas < needs else 'at'} the "
+             "destruction's charges")
+    # A destruction's read of the block beneficiary is marked only once every step that can fail has passed (SATIN-SD-020,
+    # SATIN-DET-003): after the table's take-backs, its beneficiary's record and the transfer log cross the transaction's
+    # data-size limit, or fit exactly. C is created with 1 wei, hints then leave the room, and P calls C, which destroys
+    # itself to the beneficiary; P then expands its memory past the cap.
+    to_coinbase = create(1, returning(selfdestruct_to(COINBASE)))
+    probe = Case("satin/selfdestruct/late-failure/probe", "the creation alone", spec=spec, destruction=True, system=True,
+                 code=to_coinbase + STOP, contract_balance=1, gas=4_000_000)
+    made = int(build(probe)[1].observations["resources"]["dataSize"]["net"]) - model.TX_BODY_SIZE
+    freed = model.WRITE_RECORD_SIZE + len(selfdestruct_to(COINBASE))  # C's leaf record and its code, taken back
+    effects = model.WRITE_RECORD_SIZE + model.TRANSFER_LOG_SIZE  # the beneficiary's record and the transfer log
+    hinted = (1 << 20) // 32  # the memory words the hints expanded P's memory to
+    over = burn(words_within(cap + model.memory_cost(hinted)) + 1)  # an expansion from there past the cap
+    for name, room, what in (
+            ("beneficiary-read-data-stopped", effects - 1 - freed, "one byte short of them: C is stopped with "
+             f"MegaLimitExceeded(0, {fmt(model.TX_DATA_LIMIT)}), its destruction discarded and its read of the "
+             "beneficiary not marked, so P's expansion past the cap completes"),
+            ("beneficiary-read-data-fits", effects - freed, "exactly them: the destruction completes, its read of the "
+             "beneficiary is marked last, and P's expansion past the cap is stopped with MegaLimitExceeded(2, limit)")):
+        case(f"late-failure/{name}", f"P creates C with 1 wei, and hints then leave the transaction {room} bytes of data "
+             f"size; C destroys itself to the block beneficiary, which the state holds no account for: the table gives "
+             f"back C's record and code, {freed} bytes, and the beneficiary's record and the transfer log need {effects}, "
+             + what, code=to_coinbase + hints_leaving(room, made) + call(MAX_GAS, first, 0, 0) + b"\x50" + over + STOP,
+             system=True, contract_balance=1, gas=30_000_000, boundary="the destruction's positive effects "
+             + ("one byte past" if "stopped" in name else "at") + " what the take-backs left")
+    # The transaction's own creation frame destroys the account it creates (SATIN-SD-001, -007, SATIN-HIST-005): the
+    # table gives back the charges made before the first frame for it, once, into that frame's reservoir.
+    own = model.created_address(SENDER, 0)
+    for name, init, what in (("destroyed", selfdestruct_to(HEIR), "destroys it at once"),
+                             ("destroyed-with-slot", sstore(1, 1) + selfdestruct_to(HEIR), "writes a fresh slot and "
+                              "destroys it")):
+        case(f"own-creation/{name}", f"a creation transaction's initcode {what}, to an existing account: the first "
+             "effective destruction's table gives back, into the first frame's reservoir and once, the created account's "
+             "state gas and its record's history, charged before the first frame" + (", and the slot's state gas and "
+             "record" if "slot" in name else "") + "; the account is removed at the transaction's end, and the "
+             "settlement gives nothing back again", to=None, data=init, accounts=heir, gas=3_000_000, pools=True)
+    # Its own end is a read when the created address is the block beneficiary (SATIN-SD-020, SATIN-DET-007): a
+    # DELEGATECALL frame on it destroys it, and the constructor's memory expansion past the cap after that is stopped.
+    library = {LIBRARY: model.Account(nonce=1, code=selfdestruct_to(HEIR))}
+    case("own-creation/own-end-read-binds", "a creation transaction whose created address is the block beneficiary, not "
+         "detained from its start, runs a library by DELEGATECALL that destroys the account it creates: that "
+         "SELFDESTRUCT's own end is the beneficiary's account, a read marked once it completes (SATIN-DET-007), so the "
+         "constructor's memory expansion past the cap after it is stopped with MegaLimitExceeded(2, limit)", to=None,
+         coinbase=own, detention=True, gas=22_000_000, accounts={**heir, **library},
+         data=delegatecall(MAX_GAS, LIBRARY) + b"\x50" + burn(words_within(cap) + 1) + ret(0, 0))
+    # A creation resets its address's storage (SATIN-BASE-001, the base layer's create transition): C is created onto
+    # a leaf the state holds with three slots and survives; its constructor writes slot 2 and writes slot 3 back to the
+    # value the state held, and never accesses slot 1.
+    over = {first: model.Account(storage={1: 5, 2: 9, 3: 5})}
+    init = sstore(2, 7) + sstore(3, 5) + returning(STOP)
+    case("creation-over-storage/survives", "P creates C at an address whose leaf the state holds with nonce 0, no "
+         "balance, no code and three slots, and C survives: the creation resets the address's storage as the base "
+         "layer's create transition does (SATIN-BASE-001), so slot 1, which the transaction never accesses, is zero "
+         "afterwards, slot 2 holds what the constructor wrote, and slot 3, written back to the value the state held, is "
+         "unchanged; each write is a fresh slot from an original of zero, and the reset itself makes no record",
+         code=create(0, init) + STOP, accounts=over, gas=3_000_000, boundary="a slot the creation reset and no one wrote")
+    held = model.created_address(WRAPPER, 1)
+    wrapper_create = {WRAPPER: model.Account(nonce=1, code=create(0, init) + revert(0, 0)),
+                      held: model.Account(storage={1: 5, 2: 9, 3: 5})}
+    case("creation-over-storage/creator-reverts", "the control: W creates C at an address whose leaf the state holds "
+         "with three slots, C's constructor writes two of them, and W then reverts: the creation is rolled back with "
+         "it, so the reset is too, and the leaf keeps its three slots, unchanged (SATIN-BASE-001)",
+         code=call(2_000_000, WRAPPER, 0, 0) + b"\x50" + STOP, accounts=wrapper_create, gas=3_000_000)
     # The same, C's destruction discarded by a wrapper that reverts: C survives with what it was charged, and D's table
     # still gives back D's slot.
     wrapper = {WRAPPER: model.Account(nonce=1, code=call(MAX_GAS, first, 0, 0) + b"\x50" + revert(0, 0))}
@@ -2296,6 +2442,39 @@ def limit_stop_gap_cases() -> list[Case]:
                  gas=reservoir_gas, accounts={STOPPED_CHILD: model.Account(nonce=1, code=logs(child_budget, int(crosses)))},
                  code=call(MAX_GAS, STOPPED_CHILD, 0, 0) + (REVERT_RETURNDATA if crosses else push(0) + b"\x52"
                                                            + revert(0, 32))))
+
+    # The hint exception on a creation's return (SATIN-STOP-006, -012, -015): P, holding its account's record from the
+    # transaction's value, writes two slots away from their originals, two records, then hints leave the 40 bytes its
+    # creation's start record takes. The initcode calls P back, which writes both slots back, taking the records back,
+    # and sends an 80-byte hint into the room that freed; the creation then fails, which puts the records back and keeps
+    # the hint, 40 bytes over the limit, or succeeds.
+    oracle = int.from_bytes(model.ORACLE, "big")
+    hint80 = mstore(0, int.from_bytes(model.SEND_HINT, "big") << 224) + push(0) + push(0) + push(2 * record) + push(0) \
+        + push(0) + push(oracle) + push(1) + b"\xf1\x50"
+    callback = sstore(1, 7) + sstore(2, 7) + hint80 + STOP
+    dirty = sstore(1, 8) + sstore(2, 8)
+    probe = Case("satin/limit-stops/hint-into-freed-room/probe", "the records before the hints", spec=spec, stops=True,
+                 system=True, value=1, storage={1: 7, 2: 7}, code=dirty + STOP, gas=8_000_000)
+    counted = int(build(probe)[1].observations["resources"]["dataSize"]["net"]) - model.TX_BODY_SIZE
+    for name, tail, what in (
+            ("creation-kept", ret(0, 0), "succeeds: the take-backs, the hint and the created account's record merge, the "
+             "transaction exactly at its limit, and P runs on"),
+            ("creation-reverted", revert(0, 0), "reverts"),
+            ("creation-halted", INVALID, "halts"),
+            ("creation-stopped", log(0, 0, 0, []) + STOP, f"emits an empty LOG0, {log0} bytes past the limit, and is "
+             "itself stopped")):
+        failed = name != "creation-kept"
+        init = call(MAX_GAS, CONTRACT, 0, 1) + b"\x50" + tail
+        add(Case(f"satin/limit-stops/hint-into-freed-room/{name}", "a transaction sends 1 wei to P, which therefore holds "
+                 f"its account's record; P writes its slots 1 and 2 away from their originals, two records, and hints "
+                 f"leave the transaction the {record} bytes its CREATE's start record takes; the initcode calls P back, "
+                 f"which writes both slots back, taking the two records back, and sends a hint of {2 * record} bytes into "
+                 f"the room that freed, and the creation {what}" + ("; its failure discards the created account's record "
+                 "and puts the two records back while the hint stays counted, over the limit, so P, whose nonce bump "
+                 "makes no record, returns the stop of the transaction's data-size limit before its next instruction"
+                 if failed else ""), system=True, spec=spec, stops=True, gas=8_000_000, value=1, storage={1: 7, 2: 7},
+                 boundary="the hint exception on the creator's resume" if failed else "",
+                 code=jump_if(b"\x36\x15", dirty + hints_leaving(record, counted) + create(0, init) + STOP, callback)))
 
     # The first frame's start counts on the transaction (SATIN-LIM-013, SATIN-STOP-013): a transaction carrying 1 wei
     # to a contract, whose hints then leave room for an empty LOG0 or one byte less.

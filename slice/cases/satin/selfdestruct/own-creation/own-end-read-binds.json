@@ -1,0 +1,177 @@
+{
+  "caseId": "satin/selfdestruct/own-creation/own-end-read-binds",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x8c15",
+      "floor": "0x6ac0",
+      "gasUsed": "0x10885",
+      "history": "0x7c70",
+      "historyBytes": "0x16a",
+      "refund": "0x0",
+      "regular": "0x8c15",
+      "state": "0x0",
+      "total": "0x10885"
+    },
+    "limit": {
+      "dimension": "compute",
+      "limit": "0x1315809",
+      "returnData": "0x84b9026700000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000001315809"
+    },
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x84b9026700000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000001315809",
+        "status": "revert"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x10885",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "362",
+        "reported": "0x16a"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x6295ee1b4f6dd65047762f924ecd367c17eabf8f",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000000e1": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0dec": {
+          "balance": "0x0",
+          "code": "0x60e1ff",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf881808084014fb1808080b45f5f5f5f620c0dec7ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff4506231096051505f5ff326a036b1985e36947bf0737a4a7149df7b1fc6f65627fcb487c19c4ab3fae7c822e3a035b56ba1544b480b99ef16bd772e7b9d3e965b01fbbe3601ea5d0cf1a3563112"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a creation transaction whose created address is the block beneficiary, not detained from its start, runs a library by DELEGATECALL that destroys the account it creates: that SELFDESTRUCT's own end is the beneficiary's account, a read marked once it completes (SATIN-DET-007), so the constructor's memory expansion past the cap after it is stopped with MegaLimitExceeded(2, limit)"
+    },
+    "definition": "tools/make_slice.py::selfdestruct_gap_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:limit-stop",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-DET-007",
+    "SATIN-SD-001",
+    "SATIN-SD-002",
+    "SATIN-SD-004",
+    "SATIN-SD-005",
+    "SATIN-SD-006",
+    "SATIN-SD-007",
+    "SATIN-SD-008",
+    "SATIN-SD-009",
+    "SATIN-SD-010",
+    "SATIN-SD-019",
+    "SATIN-SD-020",
+    "SATIN-STATE-001",
+    "SATIN-STATE-003"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

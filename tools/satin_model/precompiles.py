@@ -3,9 +3,12 @@ precompile, ModExp's EIP-7883 price over and under EIP-7823's bound, and the BN2
 
 from __future__ import annotations
 
+import hashlib
+
 from .constants import (
     BN254_PAIR_SIZE, BN254_PAIRING, BN254_PAIRING_BASE, BN254_PAIRING_MAX_INPUT_SIZE, BN254_PAIRING_PER_PAIR, DETENTION_STOP, IDENTITY, IDENTITY_BASE, IDENTITY_WORD,
-    limit_exceeded, MODEXP, MODEXP_MAX_INPUT_SIZE, MODEXP_MIN_GAS, RIPEMD160, RIPEMD160_BASE, RIPEMD160_WORD,
+    limit_exceeded, ECRECOVER, ECRECOVER_GAS, MODEXP, MODEXP_MAX_INPUT_SIZE, MODEXP_MIN_GAS, RIPEMD160, RIPEMD160_BASE,
+    RIPEMD160_WORD, SHA256, SHA256_BASE, SHA256_WORD,
     TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, WRITE_RECORD_SIZE,
 )
 from .records import Account, fmt, h, Halt, pad_address, Stopped, Unmodelled
@@ -56,6 +59,13 @@ def precompile_output(target: bytes, data: bytes) -> bytes:
         return data
     if target == RIPEMD160:
         return ripemd160(data).rjust(32, b"\x00")
+    if target == SHA256:
+        return hashlib.sha256(data).digest()
+    if target == ECRECOVER:
+        v = data[32:64].ljust(32, b"\x00")
+        if v[:31] != bytes(31) or v[31] not in (27, 28):
+            return b""  # a v other than 27 or 28 recovers nothing: an empty output, the call succeeding
+        raise Unmodelled("an ecrecover input whose v is 27 or 28")
     if target == MODEXP:
         base_len, exp_len, mod_len = modexp_lengths(data)
         body = data[96:].ljust(base_len + exp_len + mod_len, b"\x00")
@@ -104,6 +114,14 @@ class PrecompilesMixin:
             words = (len(data) + 31) // 32
             price = IDENTITY_BASE + IDENTITY_WORD * words
             return price, f"the identity precompile's {IDENTITY_BASE} + {IDENTITY_WORD} x {words} words = {fmt(price)}", None
+        if target == SHA256:
+            words = (len(data) + 31) // 32
+            price = SHA256_BASE + SHA256_WORD * words
+            return price, (f"SHA-256's {SHA256_BASE} + {SHA256_WORD} x {words} words = {fmt(price)}, the price Karst "
+                           "gives it, which it charges before it hashes"), None
+        if target == ECRECOVER:
+            return ECRECOVER_GAS, (f"ecrecover's fixed {fmt(ECRECOVER_GAS)}, the price Karst gives it, which it charges "
+                                   "before it reads its input"), None
         if target == RIPEMD160:
             words = (len(data) + 31) // 32
             price = RIPEMD160_BASE + RIPEMD160_WORD * words
@@ -346,7 +364,7 @@ class PrecompilesMixin:
         elif fails:
             d.add("outcome", f"the precompile at {h(target)} runs on its forward of {fmt(child_gas)}, charges its price "
                   f"{fmt(price)}, then fails its input's check and consumes the whole forward, as without the read",
-                  "SATIN-PCMP-005", "SATIN-PCMP-007", "SATIN-DET-021")
+                  "SATIN-PCMP-007", "SATIN-DET-021")
         if fails:
             # A halting precompile counts none of what it burns as compute: its charged price, when it charged one, is
             # part of the forward it burns and not paid work that still counts; only the crossing returns its forward
@@ -362,7 +380,7 @@ class PrecompilesMixin:
         self.compute += price
         d.add("outcome", f"the precompile at {h(target)} runs on its forward of {fmt(child_gas)}, charges its price "
               f"{fmt(price)} and returns " + (f"its {fmt(len(data))} input bytes" if target == IDENTITY else
-                                              f"the RIPEMD-160 digest of its {fmt(len(data))} input bytes, in a word"),
+                                              f"{fmt(len(out))} bytes, its output for {fmt(len(data))} input bytes"),
               "SATIN-DET-021", "SATIN-OUT-001")
         d.add("gasLedgers", f"the precompile's price is compute, now {fmt(self.compute)}; it returns "
               f"{fmt(child_gas - price)} to its caller", "SATIN-DET-009", "SATIN-POOL-012")

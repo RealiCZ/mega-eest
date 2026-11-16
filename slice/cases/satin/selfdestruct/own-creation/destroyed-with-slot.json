@@ -1,0 +1,180 @@
+{
+  "caseId": "satin/selfdestruct/own-creation/destroyed-with-slot",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xaccf",
+      "floor": "0x5fc0",
+      "gasUsed": "0x11a1f",
+      "history": "0x6d50",
+      "historyBytes": "0x13e",
+      "refund": "0x0",
+      "regular": "0xaccf",
+      "state": "0x0",
+      "total": "0x11a1f"
+    },
+    "gasPools": {
+      "regular": {
+        "final": "0x284571",
+        "initial": "0x2a203e"
+      },
+      "reservoir": {
+        "final": "0x46730",
+        "initial": "0x0"
+      },
+      "returned": "0x2caca1",
+      "spilled": "0x18c40"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": "0x6295ee1b4f6dd65047762f924ecd367c17eabf8f",
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x11a1f",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "318",
+        "reported": "0x13e"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000000e1": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8548080832dc6c0808088600160015560e1ff25a0a15ac027d1ff266f37ec69ab662359b8f8cfe1016a33255ad14d9684e4a44668a07135968cf5b2aeebc1d4d49394d4e9ad908bd749447decedeef0a4ea93685876"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a creation transaction's initcode writes a fresh slot and destroys it, to an existing account: the first effective destruction's table gives back, into the first frame's reservoir and once, the created account's state gas and its record's history, charged before the first frame, and the slot's state gas and record; the account is removed at the transaction's end, and the settlement gives nothing back again"
+    },
+    "definition": "tools/make_slice.py::selfdestruct_gap_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:gas-pools",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-SD-001",
+    "SATIN-SD-002",
+    "SATIN-SD-004",
+    "SATIN-SD-005",
+    "SATIN-SD-006",
+    "SATIN-SD-007",
+    "SATIN-SD-008",
+    "SATIN-SD-009",
+    "SATIN-SD-014",
+    "SATIN-SD-019",
+    "SATIN-STATE-001",
+    "SATIN-STATE-002",
+    "SATIN-STATE-003",
+    "SATIN-STATE-008",
+    "SATIN-STATE-012"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

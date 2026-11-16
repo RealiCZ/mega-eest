@@ -694,6 +694,10 @@
   ],
   "rules": [
     "SATIN-LIM-001",
+    "SATIN-LIM-002",
+    "SATIN-LIM-003",
+    "SATIN-LIM-004",
+    "SATIN-LIM-005",
     "SATIN-LIM-007"
   ],
   "schemaVersion": "2.0",
