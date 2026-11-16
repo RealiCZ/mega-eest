@@ -111,7 +111,9 @@ These definitions settle what an implementation's result means in the observatio
 adapter implements them on its own (decisions D-40, D-41):
 
 - `outcome.execution.output` of a creation is what its initcode returned, the code it deposited;
-  a halt's output is empty; a failed deposit has no execution.
+  a halt's output is empty; a failed deposit has no execution. A Mega System Transaction, which
+  runs as a deposit (`SATIN-MST-005`), fails as one: its admission is `failed-deposit` whatever its
+  envelope (D-94).
 - `gasLedgers`: `total` is what the transaction spent from both pools before the refund and the
   floor; `regular = total − state − history` (`SATIN-POOL-019`); `refund` is the refund the
   receipt's gas used applies, zero when the floor sets the gas used (`SATIN-POOL-018`); `floor` is
@@ -165,8 +167,10 @@ a case that does not require them (decision D-61).
   system address off the SequencerRegistry when it makes the EVM, as a block resolves it once
   before its transactions (`SATIN-REG-002`); its adapter records from the transaction's start, and
   adds an account or slot the factory loaded first only when the transaction's returned state
-  names it, which the EVM's cache served. The revm-based implementation reads the registry in each
-  transaction's validation; its adapter reports that read as made, never hiding a load.
+  names it, which the EVM's cache served. The revm-based adapter reads the live system address
+  off the case's pre-state outside its recording, as a node reads it for its block, and hands it
+  to the implementation's context (`MegaContext::new_with_system_address`), which then reads
+  nothing for it; the adapter records every load the run makes, never hiding one (D-94).
 - `reads` is compared as every other group: exactly, so a load the specification does not require,
   and a load it requires that is missing, are each a difference.
 
@@ -197,7 +201,7 @@ case that does not require it.
 
 | Adapter | Implementation | Pinned by | Build |
 | --- | --- | --- | --- |
-| `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `7110d87b`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
+| `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `1a981f4b`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
 | `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `353608b9` with `RealiCZ/evm2` at `390a3876`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
 Both declare `state-transition` with its mandatory groups, `group:gas-pools`, `group:limit-stop`,
@@ -211,6 +215,7 @@ Each hands its implementation the case's SALT input as the format defines it (a 
 its capacity; an unlisted one at the minimum when the input is complete, otherwise a missing
 input), through the revm-based implementation's SALT environment and the evm2-based
 implementation's SALT snapshot of the parent state. The evm2-based implementation resolves the live
-system address from the pre-state's SequencerRegistry when its EVM is made (D-52).
+system address from the pre-state's SequencerRegistry when its EVM is made (D-52); the revm-based
+adapter reads it from there and hands it to its implementation (D-94).
 Instrumented runs attach a recorder of every frame start and end; `tools/run-slice.sh` holds the
 plain and instrumented observations of every case to the same bytes.

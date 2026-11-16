@@ -1495,3 +1495,61 @@ own edge being the rule's there:
   caller is the rule's.
 
 The evm2-based implementation passes all forty-five cases.
+
+From the move of the revm-based pin to `1a981f4b`:
+
+**D-94. The revm-based pin moves to `1a981f4b`; every quarantined case gates.** The revm-based pin
+moved from `7110d87b` to `1a981f4b`. Its root manifest moves the revm fork from `a125b2c4` to
+`2b71cb61`, the fork revision that credits every give-back to a reservoir, and keeps the op-revm
+fork (`8c0db939`), the OP monorepo revision (`f67d87cd`), the crates.io versions and the toolchain.
+The adapter's manifest moves its twelve revm patches with it, and its lockfile moves those crates,
+mega-evm and mega-system-contracts, nothing else. The system contracts' versioned artifacts (D-55)
+and the SALT mapping's source (D-53) are byte-identical at both revisions, so
+`tools/system-contracts.json` and the SALT member keep the revision they were read at, as does the
+corpus inventory, read at `7110d87b` (D-78) and not read again here.
+
+The revision adopts the rules the quarantine was about:
+
+- a deposit and a system-originated transaction pay history gas as any transaction does
+  (`SATIN-HIST-016`, `SATIN-DEP-001`, `SATIN-MST-008`), so a Mega System Transaction short of its
+  body's history fails its promoted deposit's check (`SATIN-MST-005`);
+- every give-back credits a reservoir, never regular gas (`SATIN-HIST-012`), and a fresh state
+  charge takes its legacy share from regular gas (`SATIN-STATE-012`);
+- the live system address is resolved once for the block, outside every transaction
+  (`SATIN-REG-002`): a context built given the address reads nothing for it.
+
+Every record named one of these rules, or a figure that follows from one, but for a keyless
+constructor that logs and destroys the deploy address, whose kept log's history `SATIN-KEY-015`
+counts in `gasUsed`; it passes too.
+
+The adapter makes two changes, and keeps its protocol behaviour otherwise; the revision's API
+moved in no other way the adapter uses, and it builds with these alone:
+
+- **The live system address.** The revision reads the live system address when its context is
+  built (`MegaContext::new_with_external_envs`), a database read outside every transaction. The
+  adapter records reads at its database, so that read would put the registry's account in every
+  case's reads, and its slot 0 where it holds the registry's code, which `SATIN-REG-002` excludes.
+  The adapter reads the address off the case's pre-state through a view of the database that
+  records nothing, with the implementation's own `system::live_system_address`, and builds the
+  context with `MegaContext::new_with_system_address`, as a node hands in the address it resolved
+  for its block. Only the seventeen cases that carry `reads` move: the registry's account, and its
+  code hash where no other account holds that code, leave their reads, and nothing else does.
+- **The failed-deposit label.** The adapter reported a `FailedDeposit` halt as a failed deposit only
+  for a deposit envelope. A Mega System Transaction's envelope is legacy and its implementation
+  runs it as a deposit, so its failed deposit was reported as an admitted transaction whose
+  execution halted. op-revm halts with `FailedDeposit` only a transaction it runs as a deposit, so
+  every such halt is now a failed deposit. Only
+  `satin/validation/system-address/system-tx-below-intrinsic-and-history` moves.
+
+Every gating case passes on the revision, plain and instrumented, and so do the seventy-one
+quarantined cases, which pass on the evm2-based implementation too, with identical observations
+plain and instrumented. They gate, and `tools/make_slice.py` holds no quarantine record; its
+`QUARANTINE` table stays, empty, for the next one. The slice gates 474 cases, which pin 232 rules
+in 22 areas: `deposits`, `oracle` and `reads` are areas of the gating slice.
+
+No case's `input` or `expected` changes. A returned case pins the rules its derivation applied that
+its area's scope holds or its definition names; its verdict no longer names any (D-76). Sixty-four
+of them pin fewer rules, and eight rules that only verdicts named are pinned by no case now:
+`SATIN-DEP-005`, `-006`, `SATIN-HIST-022`, `SATIN-MST-005`, `-010`, `SATIN-POOL-011`, `-015` and
+`SATIN-REG-002`. Their figures are still derived in every case that applies them, and compared
+there; only the rule-to-case index no longer lists them, as D-76 has it.

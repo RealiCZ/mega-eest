@@ -77,8 +77,7 @@ cases on an adapter, read-only.
 
 ## Status
 
-Phases 0 to 2 of the suite's plan. The slice's 63 cases pass on both implementations, plain and
-instrumented, with identical input digests; three deposit cases are quarantined, the revm-based
-implementation charging deposits no history gas against `SATIN-HIST-016`. The expectations are
+Phases 0 to 2 of the suite's plan. The slice's 474 cases pass on both implementations, plain and
+instrumented, with identical input digests; none is quarantined (D-94). The expectations are
 candidates until the owner approves them. Next come the block and proof consumers. The
 specification is unstable; no stable release exists.
