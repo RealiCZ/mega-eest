@@ -632,9 +632,38 @@ struct Run {
     diagnostics: Value,
 }
 
+/// The live system address of the case's pre-state (SATIN-REG-002), read as a node reads it for
+/// its block: off the state, outside every transaction, so it is no read of the run. It goes
+/// through an unrecorded view of the database and is handed to the context, which then reads
+/// nothing for it.
+fn live_system_address(db: &FixtureDb) -> Res<Option<Address>> {
+    struct Unrecorded<'a>(&'a FixtureDb);
+    impl revm::DatabaseRef for Unrecorded<'_> {
+        type Error = MissingInput;
+        fn basic_ref(&self, address: Address) -> Result<Option<AccountInfo>, Self::Error> {
+            Ok(self.0.accounts.get(&address).cloned())
+        }
+        fn code_by_hash_ref(&self, code_hash: B256) -> Result<Bytecode, Self::Error> {
+            if code_hash == revm::primitives::KECCAK_EMPTY {
+                return Ok(Bytecode::default());
+            }
+            self.0.codes.get(&code_hash).cloned().ok_or_else(|| MissingInput(format!("code {code_hash}")))
+        }
+        fn storage_ref(&self, address: Address, index: U256) -> Result<U256, Self::Error> {
+            Ok(self.0.storage.get(&(address, index)).copied().unwrap_or_default())
+        }
+        fn block_hash_ref(&self, number: u64) -> Result<B256, Self::Error> {
+            self.0.block_hashes.get(&number).copied().ok_or_else(|| MissingInput(format!("block hash {number}")))
+        }
+    }
+    mega_evm::system::live_system_address(revm::database_interface::WrapDatabaseRef(Unrecorded(db)))
+        .map_err(|e| bad(format!("the live system address: {e}")))
+}
+
 fn context(input: &Value, db: FixtureDb) -> Res<MegaContext<FixtureDb, Envs>> {
     let envs = ExternalEnvs { salt_env: salt(input, &db.loaded)?, oracle_env: oracle(input, &db.loaded)? };
-    let ctx = MegaContext::new_with_external_envs(db, MegaSpecId::SATIN, envs);
+    let system_address = live_system_address(&db)?;
+    let ctx = MegaContext::new_with_system_address(db, MegaSpecId::SATIN, envs, system_address);
     let mut cfg = ctx.mega_cfg().clone();
     cfg.chain_id = parse_u64(text(member(input, "chain")?, "chainId")?)?;
     Ok(ctx.with_cfg(cfg).with_block(block_env(member(input, "block")?)?))
@@ -848,7 +877,9 @@ fn limit_observation(o: &MegaTransactionOutcome) -> Res<Value> {
 
 fn executed_observations(o: &MegaTransactionOutcome, facts: &TxFacts, pre: &BTreeMap<Address, PreAccount>) -> Res<Value> {
     let limit = limit_observation(o)?;
-    let failed_deposit = facts.deposit && format!("{:?}", o.result).contains("FailedDeposit");
+    // op-revm halts with `FailedDeposit` only a transaction it runs as a deposit: a deposit
+    // envelope, or a Mega System Transaction, whose legacy envelope the implementation promotes.
+    let failed_deposit = format!("{:?}", o.result).contains("FailedDeposit");
     let (admission, execution) = match &o.result {
         _ if failed_deposit => ("failed-deposit", Value::Null),
         ExecutionResult::Success { output, .. } => {
