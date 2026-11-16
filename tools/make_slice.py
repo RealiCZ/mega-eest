@@ -57,14 +57,16 @@ SPEC_COMMITS = {"satin-d34e626": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
                 "satin-d334ef8": "d334ef8748a6fb09dfcf1162704539fe22373aef",
                 "satin-5fb2688": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
                 "satin-cdded1e": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
-                "satin-c130558": "c130558e2f38a913982dc17f0cd8eb8834967262"}
+                "satin-c130558": "c130558e2f38a913982dc17f0cd8eb8834967262",
+                "satin-bcf260d": "bcf260d3de62c50cd1700e4f82f91560c4f8df48"}
 DEFAULT_SPEC = "satin-d34e626"
 INTERCEPTION_SPEC = "satin-d334ef8"  # interception before the frame start, SATIN-ICPT-007
 ORDERING_SPEC = "satin-5fb2688"  # the charge-order principles, SATIN-HIST-023
 TAKE_BACK_SPEC = "satin-cdded1e"  # one home for each rule, and the take-back page's worked examples as cases
-CURRENT_SPEC = "satin-c130558"  # the snapshot new cases cite (D-78)
+FILL_SPEC = "satin-c130558"  # the first fill batch's clarifications (D-78), and the cases of D-79, D-80, D-85, D-88
+CURRENT_SPEC = "satin-bcf260d"  # the snapshot new cases cite (D-96)
 # The snapshots that state the principles the model cites.
-PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC, CURRENT_SPEC}
+PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC, FILL_SPEC, CURRENT_SPEC}
 OUT = os.path.join(ROOT, "slice")
 
 KEY = ex.TEST_KEY
@@ -1102,7 +1104,7 @@ def detention_rule_cases() -> list[Case]:
     for name, room, tail, intent, edge, snapshot in (
             ("modexp/over-bound-at-allowance", modexp_price, STOP, "the allowance exactly: it runs, charges its price, "
              "fails EIP-7823's bound and consumes its forward, as without the read", "the price at the allowance",
-             CURRENT_SPEC),
+             FILL_SPEC),
             ("modexp/over-bound-past-allowance", modexp_price - 1, RETURN_RETURNDATA, "one past the allowance and within "
              "its forward: an input that would fail a check made after the gas charge is the crossing too",
              "the price one past the allowance", spec)):
@@ -1117,7 +1119,7 @@ def detention_rule_cases() -> list[Case]:
     add(Case("satin/detention/precompile/bn254-pairing-over-size-limit", f"after TIMESTAMP, a BN254 pairing call of "
              f"{fmt(pairing)} bytes, one over its size limit, with an allowance of 100 and a forward past the pairing "
              "formula's price for that many bytes: priced at zero, it runs on its forward, fails before any gas check and "
-             "consumes the forward, as without the read", spec=CURRENT_SPEC, detention=True, gas=31_000_000,
+             "consumes the forward, as without the read", spec=FILL_SPEC, detention=True, gas=31_000_000,
              make=lambda words, pad: detained(words, pad) + call(MAX_GAS, model.BN254_PAIRING, 0, pairing) + STOP,
              params=dict(start), retune=[("precompile-room", 100, "pad", -1)]))
     # A user's deposit is detained as any transaction (SATIN-DET-026).
@@ -1919,7 +1921,7 @@ def balance_of(address: bytes) -> bytes:
 
 def authorization_cases() -> list[Case]:
     out: list[Case] = []
-    spec = CURRENT_SPEC
+    spec = FILL_SPEC
 
     def add(name: str, intent: str, **kw) -> None:
         kw.setdefault("ty", 4)
@@ -2061,7 +2063,7 @@ SECOND_TARGET = PLAIN  # a second delegation target, besides DELEGATE
 
 def authorization_gap_cases() -> list[Case]:
     out: list[Case] = []
-    spec = CURRENT_SPEC
+    spec = FILL_SPEC
 
     def add(name: str, intent: str, **kw) -> None:
         kw.setdefault("ty", 4)
@@ -2369,7 +2371,7 @@ def least_gas(c: Case) -> int:
 def outcome_cases() -> list[Case]:
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = FILL_SPEC
     cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
     history = model.COST_PER_HISTORY_BYTE
     record = model.WRITE_RECORD_SIZE * history
@@ -2586,7 +2588,7 @@ def outcome_edge_cases() -> list[Case]:
     unpinned."""
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = FILL_SPEC
     history = model.COST_PER_HISTORY_BYTE
     record = model.WRITE_RECORD_SIZE * history
     body = model.TX_BODY_SIZE * history
@@ -2810,7 +2812,7 @@ def keyless_data(raw: bytes, override: int, padded: bool = True) -> bytes:
 def keyless_cases() -> list[Case]:
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = FILL_SPEC
     every = 2**256 - 1  # a gasLimitOverride above MAX_UINT64, which the deployment reads as MAX_UINT64
     code = init_returning(bytes(range(1, 33)))  # initcode that deploys 32 bytes of code
     pad = b"\x5b" * 16  # JUMPDESTs before a constructor whose own cost the case leaves free
@@ -2969,7 +2971,7 @@ def keyless_gap_cases() -> list[Case]:
     """The edges a review of the first keyless cases found unpinned (D-80)."""
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = FILL_SPEC
     every = 2**256 - 1
     code = init_returning(bytes(range(1, 33)))
     one = init_returning(b"\x00")  # PUSH0 PUSH0 MSTORE PUSH1 1 PUSH0 RETURN: deploys one zero byte
