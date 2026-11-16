@@ -157,6 +157,11 @@ class FramesMixin:
         drew for state and history is no regular charge unless the frame halts (SATIN-POOL-019, D-51)."""
         d = self.d
         shown = child["received"] or child["net_charged"] or child["drawn"] or child["reservoir"]
+        merged = tuple(n - c for n, c in zip(self.counts(), child["counts"]))
+        d.add("resources", f"{name} {'succeeds: its records and bytes merge' if status == 'success' else 'fails: its records and bytes are discarded'}"
+              f" ({fmt(merged[0])} bytes of data size, {fmt(merged[1])} KV updates and {fmt(merged[2])} of state growth net"
+              + (", into its caller's" if status == "success" else ", the records it took back standing again") + ")",
+              "SATIN-ACCT-011")
         if status == "success":
             if self.destruction and child.get("give_back"):
                 frame["give_back"] = frame.get("give_back", 0) + child["give_back"]
@@ -297,7 +302,10 @@ class FramesMixin:
         remaining = self.frame_remaining(frame)
         rises = (WRITE_RECORD_SIZE * len(records) + TRANSFER_LOG_SIZE, len(records), 1 if new_account else 0)
         frame["reservoir"] += share  # a start answered without a frame returns its share (SATIN-POOL-012)
-        for kind, rise, b, rem, used, limit in zip(KINDS, rises, budget, remaining, self.counts(), LIMITS):
+        # The transaction's counts hold its admitted hints, which are on no frame's budget and on the transaction
+        # (SATIN-LIM-012): the start is held to the transaction's limit with them.
+        for kind, rise, b, rem, used, limit in zip(KINDS, rises, budget, remaining,
+                                                   (self.data_size, len(self.kv), self.growth), LIMITS):
             if not rise or (rise <= b and used + rise <= limit):
                 continue
             name = STOP_DIMENSIONS[kind]

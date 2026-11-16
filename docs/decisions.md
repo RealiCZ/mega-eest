@@ -1985,6 +1985,127 @@ response to every run request of the slice, its 611 gating cases and the negativ
 instrumented, is byte-identical at `353608b9` and at `ccbdb23e`. No case, model rule or tool
 changes.
 
+From the history page's and the resource-accounting page's uncited rules:
+
+**D-100. Two areas pin the history page and the resource-accounting page, whole, at `bcf260d`.**
+Every transaction's derivation applies the history page (`SATIN-HIST`) and the resource-accounting
+page (`SATIN-ACCT`), and the areas that cite them name single rules (D-76), so twenty-four of their
+rules were applied by many cases and pinned by none. Two areas now take the pages whole: `history`,
+whose scope is `SATIN-HIST`, and `accounting`, whose scope is `SATIN-ACCT`. Their seventy-seven cases
+cite `specs/satin-bcf260d` and sit at the rules' edges, with a control where one is cheap. Forty
+were written first; an independent review then named the edges they left unpinned, and thirty-seven
+more fill them.
+
+- `history` (39): history unscaled in buckets of m = 2 and 4 (`SATIN-HIST-001`); an `SSTORE` and a
+  `SELFDESTRUCT` one gas short of a regular charge after their load, one short of their records'
+  history, and paying it (`SATIN-HIST-008`, `-013`); a log crossing the data-size limit while its
+  frame cannot pay its history, a stop, against one that fits, a halt (`SATIN-HIST-013`); a value
+  call's start under a crossing limit, its caller one gas short of the records' history, which
+  halts first, and paying it, which is stopped and given the charge back (`SATIN-HIST-014`); a
+  `SELFDESTRUCT` one gas short of its beneficiary's cold access, which loads nothing; a value call to a
+  new account
+  whose caller keeps one gas short of the records' history after a forward computed past the new
+  account's state gas, and exactly it (`SATIN-HIST-010`); the forward a constructor reads, by
+  `CREATE` and `CREATE2`, its created account's state gas paid from regular gas or from the
+  reservoir before it (`SATIN-HIST-011`); the history allowance, spent by one log and by five, one
+  log past it, a log past it one gas short of its rest and paying it, a record's history, a fresh
+  slot's state gas and computation it does not pay, two sibling value calls each with its own, and
+  the starts that grant none: a call without value, also from a frame holding one, a `DELEGATECALL`
+  in a frame entered with value, an endowed creation and the transaction's own frame
+  (`SATIN-HIST-018` to `-021`); the specification's two examples of the history bytes
+  (`SATIN-HIST-022`); a descendant's give-back paying its next record (`SATIN-HIST-007`); and a
+  regular ledger one below and one above the floor, and a deposit's (`SATIN-HIST-017`);
+- `accounting` (38): a value `CALLCODE` and a value call to the calling account itself
+  (`SATIN-ACCT-007`); value to the sender, also from the sender's own delegated frame, whose storage
+  is recorded (`SATIN-ACCT-008`), and to an applied authority, also one that is the block
+  beneficiary (`SATIN-ACCT-009`); value to the base fee vault from a call and as the transaction's
+  own value to the vault the state does not hold, a destruction to it, and the sender as the block
+  beneficiary, the settlement's credits no rise (`SATIN-ACCT-010`, `-017`); account records across
+  transfers: two to one recipient, one to each of two, a failed transfer followed by a sibling or
+  by a retry, a partial return, a pass-on of exactly what was received, a destruction that returns
+  one or both accounts to what was loaded, in a frame kept and in one that fails, and a creation
+  onto an address the transaction funded, against its unfunded control (`SATIN-ACCT-004` to `-006`);
+  a creator's nonce record surviving one and two failed creations, a creation refused for an
+  endowment its creator cannot fund, a destruction's mark surviving a failed sibling, and a child's
+  log merging after a large one of its caller's (`SATIN-ACCT-011`, `-012`); an access list's entries,
+  one and the same one twice, counted as body bytes and as no record; the transaction's whole
+  state-growth limit, a fall at it and the rise it made room for, and a second rise that crosses,
+  in the first frame and in a child whose signed net goes below zero; and a child's remaining
+  clamped to its budget, its callee's share at it and one past it (`SATIN-ACCT-016`, `-018`, `-019`);
+  and a failed deposit from an empty leaf and from a caller of nonce 1 (`SATIN-ACCT-020`).
+
+No existing case changes: no other area's scope holds either page whole. Every new case passes on
+both implementations, plain and instrumented.
+
+**D-101. The model cites the two pages where they decide, and grows where the cases need.**
+The derivations cite the rules at the steps where they decide: the bucket's m beside an unscaled
+history charge (`SATIN-HIST-001`), an `SSTORE` or a `SELFDESTRUCT` that fails at a regular charge
+after its load (`SATIN-HIST-008`), a log held to the limits before its history and a record's or a
+log's history the frame cannot pay (`SATIN-HIST-013`), the floor where it is above the regular
+ledger (`SATIN-HIST-017`), a log in a frame no value start granted an allowance and a record's
+history in one that holds an allowance (`SATIN-HIST-018`, `-019`), a value start's transfer log
+(`SATIN-HIST-021`), value to the sender, to an applied authority and to a fee account
+(`SATIN-ACCT-008` to `-010`), a child's end and a failed creation's creator record
+(`SATIN-ACCT-011`), a marked account's store (`SATIN-ACCT-016`), the settlement's credits to an
+empty fee account (`SATIN-ACCT-017`), a slot's fall (`SATIN-ACCT-018`) and a state-growth crossing
+(`SATIN-ACCT-019`). No opcode is added. Two paths no case had run are corrected:
+
+- A value `CALL` to the calling account itself moved the value and emitted a transfer log. It now
+  moves nothing, makes no record and logs nothing, as `SATIN-ACCT-007` and `SATIN-LOG-003` state,
+  and still grants its child the allowance.
+- A value start answered without a frame was held to the transaction's limit with the admitted
+  hints left out. A hint is on no frame's budget and on the transaction (`SATIN-LIM-012`), so the
+  start is now held to the transaction's limit with them, as a start with a frame already was.
+
+Four shapes the model refused now derive:
+
+- A `SELFDESTRUCT` of an account the transaction did not create that returns an account to what the
+  transaction loaded takes its record back where it completed, giving the record's history into the
+  destroying frame's reservoir before what it makes is held and charged (`SATIN-ACCT-004`, `-006`,
+  `SATIN-HIST-006`, `-007`). Each end's record is decided on the balances the move leaves it.
+- A `CREATE` or `CREATE2` whose endowment its creator cannot fund is refused before any charge for
+  the start and before the created address is read: no nonce bump, no record, nothing charged but
+  the opcode's regular gas (`SATIN-HIST-015`, `-023`).
+- A creation onto an address a transfer of the transaction funded, which holds a balance and nothing
+  else: not empty under EIP-161, so no leaf charge and no rise, and changed already, so no record
+  (`SATIN-ACCT-005`, `-014`, `-015`). Its failure and its stop are not modelled.
+
+Two checks the model lacked are added, which no earlier case reached:
+
+- `SATIN-VAL-003` step 4: a gas limit above `EXECUTION_CAP` while the larger of the intrinsic regular
+  gas and the floor exceeds it is refused, `floor-exceeds-gas-limit`.
+- A `SELFDESTRUCT` whose frame pays its static cost and not its beneficiary's cold access halts before
+  the beneficiary is loaded (`SATIN-WIT-012`); the model loaded it first.
+
+**D-102. What the two pages leave to no transaction-level case.**
+
+- **The floor never raises a Satin transaction's gas used.** Let `B` be the floor's base (12,000 to
+  the sender itself, 15,000 for a call, 21,000 for a value call, 24,000 for a creation), `C` the
+  calldata bytes and `A` the access-list bytes. The body's history and the intrinsic charges are
+  never refunded or given back, so the spend before the refund is `S >= B + 88 x 310 + 92 x C + 88 x A`,
+  a zero byte being the cheapest calldata (4 and 88 of history); the access list's and the
+  authorizations' regular charges and all execution only add to it. The refund is at most `S / 5`,
+  and the floor is `F = B + 64 x (C + A)`, so `S - refund - F >= 4/5 x S - F >= 21,824 - B / 5 +
+  48/5 x C + 32/5 x A >= 17,024 > 0`. The branch of `SATIN-HIST-017` and `SATIN-POOL-018` where the
+  gas used is the floor is therefore not reachable at these constants, for a creation, all-zero
+  calldata and access-list tokens included. A failed deposit settles at its whole gas limit apart
+  from this (D-66). Its cases pin the block's figure, `max(regular, floor)`, on either side of the
+  floor, and a deposit's.
+- **`SATIN-ACCT-012`'s KV check.** At these constants `TX_KV_UPDATE_LIMIT` records weigh more than
+  `TX_DATA_LIMIT` bytes, so the data-size limit stops a transaction first. The KV check is made,
+  and no transaction can show it.
+- **A hint admitted before the transaction's own start never makes that start cross.** The one hint
+  counted before the first frame's start is the transaction's own call to the Oracle's `sendHint`,
+  whose input is its calldata, `L` bytes. The start crosses only if the body, the authorities'
+  records and the hint, `310 + 2 x L + A + 141 x N` bytes with `A` access-list bytes and `N`
+  authorizations, come within the start's 200 bytes of `TX_DATA_LIMIT`. Validation bounds them: the
+  floor, `21,000 + 64 x (L + A)`, and the intrinsic regular gas, `21,000 + 4 x L + 7,816 x N` and
+  more, must not exceed `EXECUTION_CAP` (`SATIN-VAL-002`, `SATIN-VAL-003` steps 3 and 4), and a
+  deposit failing them is a failed deposit (`SATIN-VAL-008`). So `L + A <= 3,124,671`, and with that
+  `L`, `N <= 23,986`: at most `310 + 6,249,342 + 3,382,026 = 9,631,678` bytes, short of the limit by
+  more than 3.4 MB. A transaction of 6.5 MB of calldata, which the crossing would need, has a floor of
+  over 419,000,000 and is refused at step 4.
+
 From the deposits page, the Oracle and the small system contracts:
 
 **D-109. The deposits page, the Oracle's, MegaLimitControl's and the High-Precision Timestamp's

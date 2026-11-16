@@ -92,6 +92,11 @@ the slice uses:
   synthetic message from `SYSTEM_CALLER`, of any type, and a deposit from it), priced at m = 1, not
   detained and held to no limit; and the forward of `CALLCODE`, `STATICCALL` and `CREATE2`, and a
   creation whose initcode fails (D-84);
+- for the history page and the resource-accounting page (D-100, D-101): a value `CALL` to the calling account
+  itself, which moves nothing, makes no record and logs nothing (`SATIN-ACCT-007`, `SATIN-LOG-003`), and a value start
+  without a frame held to the transaction's limit with the admitted hints counted (`SATIN-LIM-012`); a `SELFDESTRUCT`
+  that returns an account to what the transaction loaded (`SATIN-ACCT-006`); a creation its creator cannot endow,
+  refused (`SATIN-HIST-015`); and a successful creation onto an address the transaction funded (`SATIN-ACCT-005`);
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check

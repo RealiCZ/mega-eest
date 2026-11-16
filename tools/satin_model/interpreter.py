@@ -14,7 +14,7 @@ from .constants import (
     LOG_TOPIC_SIZE, MAX_INITCODE_SIZE, ORACLE, ORACLE_ACCESS_COMPUTE_GAS, PRE_FORK_NEW_ACCOUNT_COST,
     VOLATILE_DATA_ACCESS_DISABLED, WARM_READ, WRITE_RECORD_SIZE,
 )
-from .records import Account, fmt, h, Halt, memory_cost, Stopped, Unmodelled
+from .records import Account, fmt, h, Halt, LimitStop, memory_cost, Stopped, Unmodelled
 
 
 def jump_destinations(code: bytes) -> set[int]:
@@ -235,8 +235,14 @@ class InterpreterMixin:
                 payload = bytes(memory[offset:offset + size])
                 log_bytes = LOG_BASE_SIZE + LOG_TOPIC_SIZE * n + size
                 # The log's bytes pass the limits before its history is charged (SATIN-TAKE-009).
-                self.hold_to_limits(log_bytes, 0, 0, f"LOG{n} of {fmt(size)} data bytes", frame)
                 history = log_bytes * COST_PER_HISTORY_BYTE
+                try:
+                    self.hold_to_limits(log_bytes, 0, 0, f"LOG{n} of {fmt(size)} data bytes", frame)
+                except LimitStop:
+                    d.add("gasLedgers", f"LOG{n}'s {log_bytes} bytes are held to the limits before its history, "
+                          f"{fmt(history)}, is charged: a limit refuses them, so that history is not charged, whatever "
+                          f"the frame's {fmt(frame['regular'])} of regular gas could pay", "SATIN-HIST-013")
+                    raise
                 # SATIN-HIST-019, -020: a value call's frame draws its history allowance first, which is no gas
                 # and on no gas ledger; its bytes still count.
                 allowance = min(history, frame.get("allowance", 0))
@@ -246,7 +252,19 @@ class InterpreterMixin:
                           f"{fmt(allowance)} from the allowance, which is not gas and is on no gas ledger, and "
                           f"{fmt(history - allowance)} from the frame's gas; its {log_bytes} bytes still count",
                           "SATIN-HIST-019", "SATIN-HIST-020", "SATIN-TAKE-009")
-                self.charge_state(frame, history - allowance, 0, f"LOG{n}'s history")
+                elif "allowance" not in frame:
+                    d.add("gasLedgers", f"LOG{n}'s frame holds no history allowance: "
+                          + ("the transaction's own frame is granted none, whatever value it carries" if not ctx else
+                             "no value-transferring CALL or CALLCODE started it")
+                          + f", so its gas pays the log's {fmt(history)} of history", "SATIN-HIST-018")
+                try:
+                    self.charge_state(frame, history - allowance, 0, f"LOG{n}'s history")
+                except Halt:
+                    d.add("gasLedgers", f"LOG{n}'s bytes passed the limits, and its frame, holding {fmt(frame['reservoir'])} "
+                          f"of reservoir and {fmt(frame['regular'])} of regular gas, cannot pay the {fmt(history - allowance)} "
+                          "of its history the allowance left: it halts out of gas, keeping neither the log nor its bytes",
+                          "SATIN-HIST-013", "SATIN-HIST-008")
+                    raise
                 self.history_gas += history - allowance
                 self.history_bytes += log_bytes
                 self.data_size += log_bytes
@@ -676,6 +694,20 @@ class InterpreterMixin:
                 if value and fundable and target in self.destroyed:
                     d.add("resources", f"the value sent to {h(target)}, which a destruction marked, is no rise and makes "
                           "no record for it", "SATIN-SD-015")
+                if value and fundable and target == tx.sender and target != address:
+                    d.add("resources", f"the value goes to the transaction's sender {h(target)}, whose account is one of the "
+                          "body's fixed records and differs from what the transaction loaded already, by its nonce: the "
+                          "transfer makes no record of it, and only the caller's account is recorded", "SATIN-ACCT-008",
+                          "SATIN-HIST-003")
+                if value and fundable and target in getattr(self, "applied_authorities", ()) and ("a", target) in self.kv:
+                    d.add("resources", f"the value goes to {h(target)}, an EIP-7702 authority the list applied, which its "
+                          "nonce and delegation changed when it was applied: the write adds no record for it",
+                          "SATIN-ACCT-009", "SATIN-ACCT-004")
+                if value and fundable and target != tx.sender and target in self.fee_accounts():
+                    d.add("resources", f"the value goes to {h(target)}, one of the four accounts the settlement credits fees "
+                          "to, which the body covers only for those credits: execution's write to it is recorded like a "
+                          "write to any other account" + ("" if ("a", target) in self.kv else ", one record"),
+                          "SATIN-ACCT-010", "SATIN-ACCT-004")
                 history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE * len(records)
                 if value and not fundable:
                     d.add("gasLedgers", f"the caller's balance {balance} cannot fund the value {value}: as the state stands, "

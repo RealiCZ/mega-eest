@@ -134,7 +134,12 @@ class CallsMixin:
                       "do not count them again", "SATIN-LIM-002", "SATIN-LIM-005")
         snap = self.frame_snapshot()
         takes = []
-        if value:
+        if value and caller == target:
+            d.add("resources", f"frame start: the value {value} goes from the calling account to itself, which moves "
+                  "nothing to another account: no account changes, no record is made and no transfer log is emitted; "
+                  "the start still grants the child a history allowance, which enters no gas", "SATIN-ACCT-007",
+                  "SATIN-ACCT-015", "SATIN-LOG-003", "SATIN-HIST-018")
+        elif value:
             caller_acct.balance -= value
             callee.balance += value
             for a in records:
@@ -155,13 +160,14 @@ class CallsMixin:
                       f"{-len(takes) + len(records):+} KV updates and {-WRITE_RECORD_SIZE * len(takes) + WRITE_RECORD_SIZE * len(records):+} "
                       f"bytes of data size for the records, and +{TRANSFER_LOG_SIZE} for its transfer log",
                       "SATIN-ACCT-004", "SATIN-ACCT-006", "SATIN-LIM-013", "SATIN-LOG-006", "SATIN-TAKE-006")
-                d.add("gasLedgers", "the start grants the child a history allowance, which enters no gas; the price of "
-                      "the records it takes back is given to the caller once the started frame returned with its start "
-                      "kept", "SATIN-HIST-018", "SATIN-HIST-009", "SATIN-HIST-007")
+                d.add("gasLedgers", "the start grants the child a history allowance, which enters no gas, and its "
+                      "transfer log draws nothing on it; the price of the records it takes back is given to the caller "
+                      "once the started frame returned with its start kept", "SATIN-HIST-018", "SATIN-HIST-021",
+                      "SATIN-HIST-009", "SATIN-HIST-007")
             else:
                 d.add("gasLedgers", f"frame start: the value moves and makes the {len(records)} records the opcode charged; "
-                      "the start grants the child a history allowance, which enters no gas", "SATIN-HIST-018",
-                      "SATIN-ACCT-004", "SATIN-ACCT-005")
+                      "the start grants the child a history allowance, which enters no gas, and the value's transfer log "
+                      "draws nothing on it", "SATIN-HIST-018", "SATIN-HIST-021", "SATIN-ACCT-004", "SATIN-ACCT-005")
                 d.add("resources", f"the start's {len(records)} records ({WRITE_RECORD_SIZE} bytes each) and its transfer log "
                       f"({TRANSFER_LOG_SIZE} bytes)", "SATIN-LIM-013", "SATIN-ACCT-002", "SATIN-LOG-006")
         child["name"] = name
