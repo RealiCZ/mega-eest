@@ -197,14 +197,21 @@ specification's text and constants:
   versioned-hash checks; `P256VERIFY` (`p256_verify`, EIP-7951's checks and ECDSA over P-256,
   written out from the curve); EIP-2537's MSM and pairing prices from 128 pairs on, and the BN254
   and BLS12-381 precompiles on points at infinity, at and over their size limits; and ModExp's
-  lengths too large to price.
+  lengths too large to price. After a review's edges: a KZG point or value outside the scalar field
+  as a failure; Karst's BN254 addition and multiplication and BLS12-381 G1 and G2 additions on
+  points at infinity at their prices; and a `CALL` to a precompile's address that holds an
+  EIP-7702 indicator, which pays the delegate's access and runs the precompile, or, in a frame
+  whose access is off with the beneficiary as the delegate, is refused at the delegate's load and
+  settled on its static cost and memory (`SATIN-MAC-007`, `-004`).
 - **The contract-limits page's own rules** (D-104): a creation transaction's initcode over
   `MAX_INITCODE_SIZE`, refused at validation (`initcode-too-large`), and a deposit's, a failed
   deposit (`SATIN-SIZE-004`; no case holds it yet, D-105); a creation's deposited code over
   `MAX_CONTRACT_SIZE` from `CREATE` or `CREATE2`, which halts the creation; a creation in a frame a
   `STATICCALL` started, which halts it before its operands and charges (`SATIN-SIZE-005` step 1,
-  `-006`); and the offset of empty initcode left unchecked, a non-empty one's checked after its
-  initcode cost (step 5).
+  `-006`); the offset of empty initcode left unchecked, a non-empty one's checked after its
+  initcode cost (step 5); `CREATE2`'s `CREATE_ACCESS` and the hashing of its initcode as one
+  charge, as the base layer deducts them (`SATIN-DET-018`); and a keyless deployment's step 5 at
+  the limit and over it.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -216,7 +223,7 @@ without code (`SATIN-SYSC-005`, D-97).
 
 | Not in the model | Where it is covered instead |
 | --- | --- |
-| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's, RIPEMD-160's, SHA-256's and ecrecover's prices and runs, ModExp's prices and output, KZG point evaluation on commitments and proofs at the point at infinity, `P256VERIFY`, and the BN254 and BLS12-381 precompiles on points at infinity (an MSM's price below 128 pairs among the rest); a `CALLCODE` of a system contract and a `STATICCALL` of one other than the Oracle's reads, the SequencerRegistry and MegaLimitControl's answer (D-109), a precompile, an account without code or a delegated account, a `CALLCODE` its caller cannot fund, and any state change, call or creation in a frame a `STATICCALL` started, but a creation, which halts it; a creation that collides, is stopped other than at its start or in a limit-stop case (D-91), or lands on an address with a balance, other than a keyless deployment's (D-79); a `CALL` to an account that holds an EIP-7702 delegation, other than a keyless signer; a keyless deploy address the transaction changed already or that holds storage; a keyless creation stopped in KV updates, which the protocol's limits reach only after data size; and a node configuration that disables EIP-3607; a repeated `SELFDESTRUCT` to itself of an account created in the transaction; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
+| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's, RIPEMD-160's, SHA-256's and ecrecover's prices and runs, ModExp's prices and output, KZG point evaluation on commitments and proofs at the point at infinity, `P256VERIFY`, and the BN254 and BLS12-381 precompiles on points at infinity (an MSM's price below 128 pairs among the rest); a `CALLCODE` of a system contract and a `STATICCALL` of one other than the Oracle's reads, the SequencerRegistry and MegaLimitControl's answer (D-109), a precompile, an account without code or a delegated account, a `CALLCODE` its caller cannot fund, and any state change, call or creation in a frame a `STATICCALL` started, but a creation, which halts it; a creation that collides, is stopped other than at its start or in a limit-stop case (D-91), or lands on an address with a balance, other than a keyless deployment's (D-79); a `CALL` to an account that holds an EIP-7702 delegation, other than a keyless signer or a precompile's address; a keyless deploy address the transaction changed already or that holds storage; a keyless creation stopped in KV updates, which the protocol's limits reach only after data size; and a node configuration that disables EIP-3607; a repeated `SELFDESTRUCT` to itself of an account created in the transaction; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | A pre-state outside the specification: storage at a system contract's address in an account without code (`SATIN-SYSC-005`); and the pre-block deployment of the system contracts that would run on it (`SATIN-SYSC-003`, `SATIN-REG-008`), which no single transaction runs | Nothing: no execution from such a state is specified, so no case holds one (D-97). The deployment from a valid state belongs to the block profiles |
