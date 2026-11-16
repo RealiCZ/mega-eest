@@ -108,7 +108,7 @@ G_BLOCKHASH = 20  # inherited BLOCKHASH static gas, kept by SATIN-SCHED-002
 BLOCKHASH_WINDOW = 256  # inherited: BLOCKHASH answers the last 256 blocks
 HISTORY_STORAGE_ADDRESS = bytes.fromhex("0000f90827f1c53a10cb7a02335b175320002935")  # EIP-2935's history contract
 # The precompile set of SATIN-PCMP-001, warm from the transaction's start (SATIN-SCHED-012): Karst's 0x01 to 0x11
-# and P256VERIFY at 0x100.
+# and P256VERIFY at 0x100. The precompile page's own constants are below, with the BN254 pairing's.
 PRECOMPILE_SET = frozenset([i.to_bytes(20, "big") for i in range(1, 0x12)] + [(0x100).to_bytes(20, "big")])
 IDENTITY = (4).to_bytes(20, "big")
 ECRECOVER = (1).to_bytes(20, "big")
@@ -124,6 +124,46 @@ MODEXP_MIN_GAS = 500  # SATIN-PCMP-002: EIP-7883's minimum
 MODEXP_MAX_INPUT_SIZE = 1_024  # SATIN-PCMP-002: EIP-7823's bound on each length
 BN254_PAIRING_MAX_INPUT_SIZE = 57_600  # SATIN-PCMP-001, SATIN-PCMP-004
 BN254_PAIRING_BASE, BN254_PAIRING_PER_PAIR, BN254_PAIR_SIZE = 45_000, 34_000, 192  # inherited EIP-1108 price, 192-byte pairs
+# The precompile page's own rules (the specification at `bcf260d`, D-103): KZG point evaluation at its fixed price,
+# P256VERIFY at EIP-7951's, and the BLS12-381 precompiles under the OP input size limits.
+KZG_POINT_EVALUATION = (0x0A).to_bytes(20, "big")
+P256VERIFY = (0x100).to_bytes(20, "big")
+BLS12_G1_MSM = (0x0C).to_bytes(20, "big")
+BLS12_G2_MSM = (0x0E).to_bytes(20, "big")
+BLS12_PAIRING = (0x0F).to_bytes(20, "big")
+KZG_POINT_EVALUATION_GAS = 100_000  # SATIN-PCMP-001, SATIN-PCMP-006
+P256VERIFY_GAS = 6_900  # SATIN-PCMP-003
+BLS12_G1_MSM_MAX_INPUT_SIZE = 288_960  # SATIN-PCMP-001, SATIN-PCMP-004
+BLS12_G2_MSM_MAX_INPUT_SIZE = 278_784  # SATIN-PCMP-001, SATIN-PCMP-004
+BLS12_PAIRING_MAX_INPUT_SIZE = 156_672  # SATIN-PCMP-001, SATIN-PCMP-004
+# EIP-4844's point evaluation, as Karst defines it but for its price (SATIN-PCMP-001): a 192-byte input, the versioned
+# hash's version byte, the scalar field's modulus and the two words a successful evaluation returns.
+KZG_INPUT_SIZE = 192
+VERSIONED_HASH_VERSION_KZG = 0x01
+BLS_MODULUS = 0x73EDA753299D7D483339D80809A1D80553BDA402FFFE5BFEFFFFFFFF00000001
+FIELD_ELEMENTS_PER_BLOB = 4_096
+# EIP-2537's BLS12-381 operations, as Karst defines them (SATIN-PCMP-001): each pair's bytes, the multiplication cost
+# each MSM is priced from, the largest discount of its table, which applies from 128 pairs on, and the pairing's price.
+BLS12_G1_MSM_PAIR_SIZE, BLS12_G2_MSM_PAIR_SIZE, BLS12_PAIRING_PAIR_SIZE = 160, 288, 384
+BLS12_G1_MUL_GAS, BLS12_G2_MUL_GAS = 12_000, 22_500
+BLS12_G1_MSM_MAX_DISCOUNT, BLS12_G2_MSM_MAX_DISCOUNT, BLS12_MSM_MULTIPLIER, BLS12_MSM_TABLE_PAIRS = 519, 524, 1_000, 128
+BLS12_PAIRING_BASE, BLS12_PAIRING_PER_PAIR = 37_700, 32_600
+# EIP-7951's curve, secp256r1 (P-256), at the revision SATIN-PCMP-003 pins: its field, coefficients, order and generator.
+P256_P = 0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFF
+P256_A = 0xFFFFFFFF00000001000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFC
+P256_B = 0x5AC635D8AA3A93E7B3EBBD55769886BC651D06B0CC53B0F63BCE3C3E27D2604B
+P256_N = 0xFFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC632551
+P256_G = (0x6B17D1F2E12C4247F8BCE6E563A440F277037D812DEB33A0F4A13945D898C296,
+          0x4FE342E2FE1A7F9B8EE7EB4A7C0F9E162BCE33576B315ECECBB6406837BF51F5)
+P256VERIFY_INPUT_SIZE = 160
+# Karst's simplest arithmetic precompiles (SATIN-PCMP-001, as Karst defines them), run here on points at infinity: the
+# BN254 addition and multiplication at their Istanbul prices (EIP-1108), and EIP-2537's G1 and G2 additions; each
+# address, its input size, its price and its answer's size.
+BN254_ADD, BN254_MUL = (0x06).to_bytes(20, "big"), (0x07).to_bytes(20, "big")
+BLS12_G1_ADD, BLS12_G2_ADD = (0x0B).to_bytes(20, "big"), (0x0D).to_bytes(20, "big")
+BN254_ADD_GAS, BN254_MUL_GAS, BLS12_G1_ADD_GAS, BLS12_G2_ADD_GAS = 150, 6_000, 375, 600
+INFINITY_ARITHMETIC = {BN254_ADD: (128, BN254_ADD_GAS, 64), BN254_MUL: (96, BN254_MUL_GAS, 64),
+                       BLS12_G1_ADD: (256, BLS12_G1_ADD_GAS, 128), BLS12_G2_ADD: (512, BLS12_G2_ADD_GAS, 256)}
 # SATIN-STOP-002, SATIN-STOP-018: the kind of each dimension's stop, and the dimension the format names it by.
 DATA_SIZE_STOP, KV_UPDATE_STOP, STATE_GROWTH_STOP = 0, 1, 3
 STOP_DIMENSIONS = {DATA_SIZE_STOP: "data-size", KV_UPDATE_STOP: "kv-updates", DETENTION_STOP: "compute",

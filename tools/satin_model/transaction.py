@@ -9,7 +9,7 @@ from .constants import (
     AUTHORIZATION_SIZE, CALLDATA_NONZERO, CALLDATA_ZERO, COLD_ACCOUNT_ACCESS, COLD_ACCOUNT_SURCHARGE,
     COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, ex, EXECUTION_CAP, FLOOR_PER_BYTE,
     INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_DEPLOY_CODE_HASH, limit_exceeded, MAX_CONTRACT_SIZE,
-    MAX_U64, MEGA_LIMIT_CONTROL, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, ORACLE, PER_AUTH_BASE_COST,
+    MAX_INITCODE_SIZE, MAX_U64, MEGA_LIMIT_CONTROL, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, ORACLE, PER_AUTH_BASE_COST,
     PRECOMPILE_SET, INTERCEPTED, NON_ZERO_TRANSFER, SEND_HINT,
     STOP_DIMENSIONS, SYSTEM_CALLER, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
@@ -72,6 +72,14 @@ class TransactionMixin:
             return ("inclusion", "gas-limit-exceeds-block", ("SATIN-BLK-009", "SATIN-BLK-013", "SATIN-BASE-002"),
                     f"gas limit {fmt(tx.gas_limit)} > the {fmt(env.block_gas_limit)} the block's gas limit has left: "
                     "skipped for the block, a refusal at inclusion in engine isolation")
+        if tx.to is None and len(tx.data) > MAX_INITCODE_SIZE:
+            return ("validation", "initcode-too-large", ("SATIN-SIZE-002", "SATIN-SIZE-004"),
+                    f"a creation transaction whose initcode is {fmt(len(tx.data))} bytes, over MAX_INITCODE_SIZE "
+                    f"{fmt(MAX_INITCODE_SIZE)}: rejected at validation (EIP-3860's check at MegaETH's size)")
+        if tx.to is None and self.size_page and len(tx.data) == MAX_INITCODE_SIZE:
+            self.d.add("outcome", f"the creation transaction's initcode is {fmt(len(tx.data))} bytes, within "
+                       f"MAX_INITCODE_SIZE {fmt(MAX_INITCODE_SIZE)}: validation's initcode check passes",
+                       "SATIN-SIZE-002", "SATIN-SIZE-004")
         if tx.ty == 4 and not tx.authorizations:
             return ("validation", "invalid-authorization-list", "SATIN-VAL-007",
                     "an EIP-7702 transaction with an empty authorization list (a base-layer check)")
@@ -564,6 +572,10 @@ class TransactionMixin:
                           "the deposit's charges, Ethereum's check at MegaETH's size and no limit stop", "SATIN-SIZE-001",
                           "SATIN-SIZE-003", "SATIN-OUT-003")
                     raise Halt(f"deployed code of {fmt(len(output))} bytes, over MAX_CONTRACT_SIZE")
+                if create and status == "success" and len(output) == MAX_CONTRACT_SIZE and self.size_page:
+                    d.add("outcome", f"the initcode returns {fmt(len(output))} bytes of code to deposit, within "
+                          f"MAX_CONTRACT_SIZE {fmt(MAX_CONTRACT_SIZE)}: the size check passes and the deposit is made",
+                          "SATIN-SIZE-001", "SATIN-SIZE-003")
                 if create and status == "success":
                     # The code's deposit is the creation's, in its frame: a charge of it the frame cannot pay halts the
                     # creation (SATIN-SCHED-011, SATIN-OUT-007).

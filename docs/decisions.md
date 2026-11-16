@@ -2106,6 +2106,167 @@ Two checks the model lacked are added, which no earlier case reached:
   more than 3.4 MB. A transaction of 6.5 MB of calldata, which the crossing would need, has a floor of
   over 419,000,000 and is refused at step 4.
 
+From the precompile page's and the contract-limits page's uncited rules:
+
+**D-103. The precompile page's own rules are cases at `bcf260d`, and the model runs KZG point
+evaluation, `P256VERIFY` and the BLS12-381 precompiles for them.** No case pinned
+`SATIN-PCMP-001` to `-007`. The precompile cases so far sat in the detention and outcomes areas,
+whose scopes leave the page's rules out (D-76). Twenty-four cases under `satin/precompiles/`, at
+`bcf260d` (`CURRENT_SPEC`), now pin all seven. Each makes a contract call a precompile where no
+limit is set, mostly in pairs one gas or one pair apart. The detention side of these
+precompiles stays in `satin/detention/precompile/`, which no new case repeats. Every one passes on
+both implementations.
+
+- **KZG point evaluation (6).** The input verifies: its commitment and proof are both G1's point at
+  infinity, the zero polynomial's proof, with `y = 0`. Forwarded one below
+  `KZG_POINT_EVALUATION_GAS`, it fails out of gas before any verification. Forwarded the price and
+  three times it, it is charged exactly the price and returns `FIELD_ELEMENTS_PER_BLOB` and the
+  modulus. Given three times the price, an input one byte short, a versioned hash that does not
+  match and a proof that does not verify (`y = 1`) each consume the whole forward
+  (`SATIN-PCMP-001`, `-006`).
+- **`P256VERIFY` (3).** An ECDSA signature over P-256 that verifies, forwarded one below
+  `P256VERIFY_GAS` and at it. One that does not verify, forwarded twice the price, is a success with
+  empty output charged the same price (`SATIN-PCMP-003`, EIP-7951 at the pinned revision).
+- **ModExp (7).** One-byte operands at `MODEXP_MIN_GAS` and one below it. Operands of 33 bytes, past
+  which EIP-7883 doubles the complexity's words and multiplies the exponent's length by 16, at their
+  formula price and one below. A modulus at EIP-7823's bound, which runs, and one byte over, which is
+  charged its whole formula price and then fails. A base length of `2^256 − 1`, too large to price,
+  which no forward pays (`SATIN-PCMP-002`, `-007`).
+- **The OP size limits (8).** Zero bytes are pairs of points at infinity, valid at any length the pair
+  size divides. The BN254 pairing at its limit, forwarded one below its price and at it. The
+  BLS12-381 G1 MSM, G2 MSM and pairing at their limits and one pair over, each forwarded the price of
+  its input: at the limit the precompile runs and answers the point at infinity or the word 1; one
+  pair over, the call fails before any gas check and consumes the forward (`SATIN-PCMP-004`, `-005`).
+- **The model's reach** (`docs/model.md`). `Run.precompile_page` decides such a call by the page's
+  own rules. KZG point evaluation runs on commitments and proofs at the point at infinity, where the
+  pairing check reduces to `y = 0`, with its length and versioned-hash checks. `P256VERIFY` runs
+  EIP-7951's checks and ECDSA over P-256, written out from the curve. The model has EIP-2537's MSM
+  prices from 128 pairs on and its pairing price, the answers for points at infinity, and ModExp's
+  lengths too large to price. No opcode is added.
+- **Mutations.** In the evm2-based implementation's OP precompile set, four mutations that its own
+  suite does not kill are killed: each OP limit's `>` made `>=`, for the BN254 pairing and for the
+  BLS12-381 G1 MSM, G2 MSM and pairing.
+- **What no transaction-level case pins.** `SATIN-PCMP-005`'s call forwarded no gas fails whether
+  the size check or the gas check comes first, so the order cannot be observed there. The page's
+  orders matter under gas detention, where the price read before a call decides it:
+  `SATIN-PCMP-007`'s charge before the bound is pinned there by the ModExp cases of
+  `satin/detention/precompile/modexp/` (D-91).
+- **The edges a review found (34 more).** An independent review listed the edges the first 24 left
+  unpinned. In its rank order:
+  - **`SATIN-PCMP-008`.** A precompile's address holding an EIP-7702 indicator: the call pays the
+    delegate's access with its other charges, and dispatch runs the identity, which returns its
+    input and not the delegate's word. Under gas detention, such a call is decided by the
+    identity's price, one past the allowance, and is the crossing. The same indicator naming the
+    beneficiary in a frame whose access is off has no case yet (D-105).
+  - **The BLS12-381 size limits under gas detention.** Each over-limit input, whose pairs would be
+    priced one past the allowance, is priced at zero: no crossing, a failure that consumes the
+    forward (`SATIN-PCMP-004`, `-005`).
+  - **`P256VERIFY`.** A key whose x is the order plus 3, for which R's x verifies only reduced
+    modulo n. Eleven inputs EIP-7951 rejects before verification: 159 and 161 bytes, r and s at 0
+    and n, a key at (0, 0), off the curve, or with x or y at p, and an R at infinity. Each is a
+    success with empty output charged `P256VERIFY_GAS`; the case returns the call's success flag
+    with the output.
+  - **ModExp.** The exponent's length at EIP-7823's bound and one byte over, and the base's at it.
+    EIP-7883's thresholds one at a time, with a 32-byte exponent of top bit alone: widths 32 one
+    below and at the price, a base of 33, and widths 40 and 41, the last one below and at the
+    price. The long exponents are all bytes 0x01, so the first 32 bytes and the low 256 bits that
+    EIP-7883's text and its implementations read for the iteration count are the same; an
+    exponent whose head is zero would set the two readings apart.
+  - **KZG point evaluation.** An input one byte long, z and y at the scalar field's modulus, and z
+    one below it at the price.
+  - **`SATIN-PCMP-001`.** Karst's BN254 addition and multiplication and BLS12-381 G1 and G2 additions
+    on points at infinity, each at its price.
+
+  The model gained a `CALL` to a precompile's address holding an indicator, with its refusal at a
+  beneficiary delegate in a frame whose access is off (`SATIN-MAC-007`, and `SATIN-MAC-004`'s
+  settlement on the static cost and the memory); scalars outside the field as KZG's failure; and
+  the four arithmetic precompiles on points at infinity at their prices.
+
+**D-104. The contract-limits page's own rules are cases at `bcf260d`.** Thirteen cases under
+`satin/contract-limits/` pin `SATIN-SIZE-001` to `-006`, which the outcomes area's size cases
+(D-85) applied without pinning. Every one passes on both implementations.
+
+- **The limits at their exact bytes.**
+  - A creation transaction's initcode at `MAX_INITCODE_SIZE` runs, and one byte over is refused
+    with `initcode-too-large` (`SATIN-SIZE-002`, `-004`).
+  - Deployed code at `MAX_CONTRACT_SIZE` is deposited, from a creation transaction and from
+    `CREATE`, the creation transaction's one byte over being `satin/outcomes/size/`'s.
+  - `CREATE`'s code one byte over halts the creation, its regular gas consumed and the created
+    account's charges given back, while its creator runs on and returns zero (`SATIN-SIZE-001`,
+    `-003`).
+  - A child's `CREATE` of initcode at the limit creates; one byte over halts the child at the opcode,
+    and its caller resumes with no stop's return data.
+- **The order of a creation's checks and charges** (`SATIN-SIZE-005`, `-006`).
+  - Empty initcode at an offset of `2^256 − 1`, for `CREATE` and for `CREATE2`, creates: its offset is
+    not checked. One byte there halts after its initcode cost (step 5).
+  - Under gas detention, a child left 1 of spendable gas halts at a `CREATE2` of initcode over the
+    limit and at a `CREATE` in a frame a `STATICCALL` started: the size check and the static context
+    come before every charge, any of which would have been the crossing and stopped it.
+  - A `CREATE2` short of its salt pays its initcode cost, and then its memory is the crossing: the
+    memory comes before the salt (`SATIN-SIZE-006`). D-85's cases put the crossing at the initcode
+    cost and let both charges be paid.
+- **The model's reach.**
+  - A creation transaction's initcode over `MAX_INITCODE_SIZE` is refused at validation.
+  - A creating deposit's is a failed deposit (D-105).
+  - A creation's code over `MAX_CONTRACT_SIZE` from `CREATE` or `CREATE2` halts the creation.
+  - A creation in a static frame halts it before its operands, where the model raised `Unmodelled`.
+  - With `Run.size_page`, the derivation cites the size checks and the offset rule where a run passes
+    them. No opcode is added.
+- **The edges a review found (11 more).**
+  - **`CREATE2`, salt present:** initcode at `MAX_INITCODE_SIZE`, and deployed code at
+    `MAX_CONTRACT_SIZE` and one byte over.
+  - **A `CREATE` whose code is one byte over, under gas detention.** The creation is left 1 of
+    spendable gas after its `RETURN`, below its deposit's hashing, and halts on the size check.
+  - **`CREATE2`'s `CREATE_ACCESS` and hashing.** With the spendable part one short of them and at
+    them, they are one charge.
+  - **One byte of initcode at an out-of-range offset, under gas detention, for `CREATE` and
+    `CREATE2`.** Its initcode cost is the crossing, a stop: that cost comes before the offset's
+    range.
+  - **`CREATE2` in a static frame.**
+  - **A keyless deployment's initcode at the limit and one byte over.** Step 5 passes, and step 6
+    answers; or step 5 refuses with `InitCodeTooLarge` (`SATIN-SIZE-004`'s keyless clause).
+- **The review's premise corrected: one charge, not two.** The review proposed `CREATE2`'s
+  `CREATE_ACCESS` and hashing as two charges under gas detention, and the model had made them two.
+  `SATIN-DET-018` makes each part an inherited opcode deducts one charge "as the base layer has
+  them". The base layer deducts `CREATE2`'s access and its hashing together, after the salt, and
+  both implementations do the same. The model now charges them as one.
+- **Narrower pins.** A size check is cited as `SATIN-SIZE-001` to `-004` only where the code or
+  initcode sits at its limit. Elsewhere it is cited as `SATIN-SIZE-005`'s step 3, so a 32-byte
+  creation no longer pins the size limits.
+- **The other surviving mutations.** The evm2-based implementation's other surviving mutations in
+  its OP precompile set change no outcome these pages define. The Isthmus functions are replaced in
+  the Karst set Satin builds on, and the OP provider wrapper is a type the Satin engine never
+  builds. Its FastLZ estimate's survivors belong to the base layer's L1 fee and data-availability
+  footprint (`SATIN-BASE-009`, `-010`), which the model leaves at zero.
+
+**D-105. Two cases wait: a deposit whose initcode is over `MAX_INITCODE_SIZE`, and a call refused at
+a precompile address's beneficiary delegate.**
+`SATIN-SIZE-004` at `bcf260d` says that "a deposit is never rejected, and one that fails this check
+is a failed deposit". `SATIN-VAL-008` and `SATIN-DEP-004` say the same of any validation check. A
+case was derived for it: a deposit minting 1 ether that creates with `MAX_INITCODE_SIZE + 1` zero
+bytes, its gas limit paying its intrinsic gas and its body's history. The derivation makes it a
+failed deposit that uses its whole gas limit and creates nothing.
+
+Both implementations instead admit the deposit and run its creation. It succeeds, creates an
+account, and reports the gas it used. The two return identical observations. The evm2-based
+implementation's deposit preparation skips the initcode-size check, as op-revm's deposit validation
+does, and the revm-based implementation builds on op-revm. So their agreement is not independent
+evidence against the text.
+
+The case stays out of the slice until the owner decides between fixing both implementations and
+changing the text. The model keeps the rule, so the case can be derived again unchanged.
+
+The second case waits for the evm2-based pin. The identity precompile's address holds an indicator
+naming the block beneficiary, and a contract whose volatile-data access is off calls it. By
+`SATIN-MAC-007` the call is refused at its delegate's load and never reaches dispatch. By
+`SATIN-MAC-004` it is then charged its static cost and its memory, and nothing else.
+
+The revm-based implementation at `1a981f4b` gives exactly that. The evm2-based implementation at
+`ccbdb23e` gives the same revert but refuses the call before charging anything, 100 gas less. That
+revision predates its implementation of the delegate-refusal settlement, which lands at
+`acdd9d62`. The evm2-based adapter built against `acdd9d62`, whose evm2 fork is the same, passes the
+case. The case enters the slice when the evm2-based pin moves past it; the model keeps the path.
+
 From the deposits page, the Oracle and the small system contracts:
 
 **D-109. The deposits page, the Oracle's, MegaLimitControl's and the High-Precision Timestamp's

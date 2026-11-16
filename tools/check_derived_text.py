@@ -5,9 +5,9 @@ The slice's human-readable text — each case's intent and boundary, its derivat
 `tools/make_slice.py --explain` prints and no case file stores), the quarantine verdicts, the
 negative case's note, and `slice/README.md` — must write every figure that
 depends on a constant of the specification from that constant (`tools/satin_model/constants.py`), never as a
-typed number. This check changes one constant at a time, regenerates the slice from a copy of the
-tools into a temporary directory, and fails if any text there still shows a figure computed from
-the constant's old value.
+typed number. This check changes one constant at a time, with the constants of the same value
+moved with it, regenerates the slice from a copy of the tools into a temporary directory, and fails
+if any text there still shows a figure computed from an old value.
 
 The old figures of a constant are:
 
@@ -52,9 +52,12 @@ def kept_threshold(m, history: int) -> list[int]:
     return [at, at - 1]
 
 
-# constant -> (the value it is changed to, the figures it feeds at its old value). A figure
-# function takes the model's old constants. A constant is moved by more than one where a case sits one
-# below a threshold it sets, so that the figure one below the new value is not the old value itself.
+# constant -> (the value it is changed to, the figures it feeds at its old value[, the other constants of the
+# same value, each with the value it is changed to in the same regeneration]). A figure function takes the
+# model's old constants. A constant is moved by more than one where a case sits one below a threshold it sets,
+# so that the figure one below the new value is not the old value itself. Constants of one value move
+# together, so that a figure one of them writes is not taken for another's stale one, and a figure either
+# leaves unmoved is stale; each companion's old value and the figure one below it are sought as well.
 MUTATIONS = {
     "COST_PER_HISTORY_BYTE": (
         89,
@@ -72,15 +75,16 @@ MUTATIONS = {
     "KEYLESS_DEPLOY_OVERHEAD_GAS": (
         100_007,
         lambda m: [m.KEYLESS_DEPLOY_OVERHEAD_GAS, m.KEYLESS_DEPLOY_OVERHEAD_GAS - 1],
+        {"KZG_POINT_EVALUATION_GAS": 100_003},
     ),
 }
 
 NUMBER = re.compile(r"(?<![\w.\-])(\d{1,3}(?:,\d{3})+|\d+)(?![\w])")
 
 
-def generate(out: str, constant: str | None = None, value: int | None = None) -> tuple[dict[str, str], dict]:
-    """The slice `tools/make_slice.py` writes, and each case's explanation, from a copy of the tools with
-    `constant` set to `value`."""
+def generate(out: str, changes: dict[str, int] | None = None) -> tuple[dict[str, str], dict]:
+    """The slice `tools/make_slice.py` writes, and each case's explanation, from a copy of the tools with each
+    constant of `changes` set to its value."""
     tools = os.path.join(out, "tools")
     os.makedirs(tools)
     for name in TOOLS:
@@ -89,13 +93,14 @@ def generate(out: str, constant: str | None = None, value: int | None = None) ->
                     ignore=shutil.ignore_patterns("__pycache__"))
     shutil.copy(os.path.join(ROOT, "tools", "system-contracts.json"), tools)
     os.symlink(os.path.join(ROOT, "specs"), os.path.join(out, "specs"))  # read only
-    if constant is not None:
+    if changes:
         path = os.path.join(tools, MODEL, "constants.py")
         with open(path, encoding="utf-8") as f:
             text = f.read()
-        text, n = re.subn(rf"^{constant} = [\d_]+", f"{constant} = {value}", text, flags=re.M)
-        if n != 1:
-            raise SystemExit(f"check_derived_text: {constant} is not assigned once by a plain number in the model")
+        for constant, value in changes.items():
+            text, n = re.subn(rf"^{constant} = [\d_]+", f"{constant} = {value}", text, flags=re.M)
+            if n != 1:
+                raise SystemExit(f"check_derived_text: {constant} is not assigned once by a plain number in the model")
         with open(path, "w", encoding="utf-8") as f:
             f.write(text)
     slice_dir = os.path.join(out, "slice")
@@ -198,12 +203,17 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="check-derived-text-") as tmp:
         baseline, _ = generate(os.path.join(tmp, "baseline"))
         base_figures = figures(baseline)
-        for constant, (value, fed) in MUTATIONS.items():
+        for constant, (value, fed, *rest) in MUTATIONS.items():
             old = getattr(model, constant)
-            mutated, explained = generate(os.path.join(tmp, constant.lower()), constant, value)
+            companions = rest[0] if rest else {}
+            for other in companions:
+                if getattr(model, other) != old:
+                    raise SystemExit(f"check_derived_text: {other} is not of {constant}'s value")
+            mutated, explained = generate(os.path.join(tmp, constant.lower()), {constant: value, **companions})
             now = figures(mutated)
             moved = {v for k, v in base_figures.items() if k in now and now[k] != v}
-            stale = set(fed(model)) | moved
+            stale = set(fed(model)) | moved | {f for other in companions for f in (getattr(model, other),
+                                                                                  getattr(model, other) - 1)}
             found = []
             scanned = 0
             for where, text, own in texts(mutated, explained):
@@ -215,7 +225,8 @@ def main() -> int:
                     context = text[max(0, m.start() - 40):m.end() + 40]
                     found.append((where, m.group(1), context.replace("\n", " ")))
             changed = sum(1 for k in now if k in base_figures and now[k] != base_figures[k])
-            print(f"check_derived_text: {constant} {fmt(old)} -> {fmt(value)}: {len(mutated)} files regenerated, "
+            also = "".join(f" (with {other} -> {fmt(v)})" for other, v in companions.items())
+            print(f"check_derived_text: {constant} {fmt(old)} -> {fmt(value)}{also}: {len(mutated)} files regenerated, "
                   f"{scanned} texts scanned, {len(stale)} old figures sought ({changed} expected figures moved): "
                   f"{'ok' if not found else f'{len(found)} stale'}")
             for where, figure, context in found:

@@ -1,0 +1,162 @@
+{
+  "caseId": "satin/contract-limits/create/initcode-over-limit-in-child",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x4c91af",
+      "floor": "0x3a98",
+      "gasUsed": "0x4cfc3f",
+      "history": "0x6a90",
+      "historyBytes": "0x136",
+      "refund": "0x0",
+      "regular": "0x4c91af",
+      "state": "0x0",
+      "total": "0x4cfc3f"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x4cfc3f",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x5f5f5f5f5f620c0e20624c4b40f1503d5f5f3e3d5ff3",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0e20": {
+          "balance": "0x0",
+          "code": "0x621000015f5ff000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080837a12009400000000000000000000000000000000000c0de1808025a02daf9d8e474357010a0410b3200b507e384389159275a396442216665d78dbe1a01061896ff61faad8e2c7b1ac95895e592fe4aa491a809893ab4f72424e2002c3"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the initcode one byte over MAX_INITCODE_SIZE",
+      "intent": "a contract calls a child, forwarding 5,000,000, that CREATEs with 1,048,577 zero bytes of initcode and stops, and returns what the call returned: one byte over MAX_INITCODE_SIZE, so the size check halts the child at the opcode, consuming its regular gas; it is no limit stop, and the caller resumes with empty return data"
+    },
+    "definition": "tools/make_slice.py::size_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-SIZE-002",
+    "SATIN-SIZE-003",
+    "SATIN-SIZE-005"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

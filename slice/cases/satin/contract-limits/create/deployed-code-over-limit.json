@@ -1,0 +1,162 @@
+{
+  "caseId": "satin/contract-limits/create/deployed-code-over-limit",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xbae6e97",
+      "floor": "0x3a98",
+      "gasUsed": "0xbaee6e7",
+      "history": "0x7850",
+      "historyBytes": "0x15e",
+      "refund": "0x0",
+      "regular": "0xbae6e97",
+      "state": "0x0",
+      "total": "0xbaee6e7"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xbaee6e7",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "350",
+        "reported": "0x15e"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "1",
+        "reported": "0x1"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f620800015ff300000000000000000000000000000000000000000000000000005f5260065f5ff05f5260205ff3",
+          "nonce": "0x2",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f620800015ff300000000000000000000000000000000000000000000000000005f5260065f5ff05f5260205ff3",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8618080843b9aca009400000000000000000000000000000000000c0de1808026a03782612d345f7259e5c5a6aef4175039146fac28085df7781e2fd50a444b60bca0216a0064876dd95535d8a07f35acec5dff93512b15149af1c8c55fbb2fce2078"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the deployed code one byte over MAX_CONTRACT_SIZE",
+      "intent": "a contract CREATEs with initcode that returns 524,289 zero bytes, with a gas limit of 1,000,000,000, which could pay a deposit of MAX_CONTRACT_SIZE's code, 848,396,288, and returns the created address: one byte over MAX_CONTRACT_SIZE, so the size check halts the creation before its deposit, consuming its regular gas; the created account's charges are given back, and the creator, which is not halted, returns zero"
+    },
+    "definition": "tools/make_slice.py::size_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-SIZE-001",
+    "SATIN-SIZE-003",
+    "SATIN-SIZE-005"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

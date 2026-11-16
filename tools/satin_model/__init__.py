@@ -97,6 +97,16 @@ the slice uses:
   without a frame held to the transaction's limit with the admitted hints counted (`SATIN-LIM-012`); a `SELFDESTRUCT`
   that returns an account to what the transaction loaded (`SATIN-ACCT-006`); a creation its creator cannot endow,
   refused (`SATIN-HIST-015`); and a successful creation onto an address the transaction funded (`SATIN-ACCT-005`);
+- for the precompile page's and the contract-limits page's own rules at `bcf260d` (D-103, D-104): a call
+  to a precompile where no limit is set, decided by `SATIN-PCMP-001` to `-007`, with KZG point evaluation
+  on commitments and proofs at the point at infinity, `P256VERIFY`, ModExp's lengths too large to price
+  and the BN254 and BLS12-381 precompiles on points at infinity, at and over their size limits; a
+  creation transaction's initcode over `MAX_INITCODE_SIZE`, refused, and a deposit's, a failed deposit;
+  a creation's code over `MAX_CONTRACT_SIZE` from `CREATE` or `CREATE2`; a creation in a static frame;
+  the offset of empty initcode, unchecked; and after a review's edges, a KZG scalar outside the field,
+  Karst's BN254 and BLS12-381 additions and the BN254 multiplication on points at infinity, a `CALL` to a
+  precompile's address holding an EIP-7702 indicator, refused at a beneficiary delegate when access is
+  off, and `CREATE2`'s access and hashing as one charge;
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check
@@ -123,5 +133,5 @@ from .constants import *  # noqa: F401,F403
 from .records import *  # noqa: F401,F403
 from .interception import keyless_arguments, rlp_decodes_as_list  # noqa: F401
 from .interpreter import jump_destinations, to_signed  # noqa: F401
-from .precompiles import modexp_price  # noqa: F401
+from .precompiles import bls12_price, G1_INFINITY_COMPRESSED, modexp_price, p256_mul  # noqa: F401
 from .run import Run  # noqa: F401

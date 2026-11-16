@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from .constants import (
     ACCOUNT_STATE, BASE_FEE_VAULT, COLD_ACCOUNT_SURCHARGE, COST_PER_HISTORY_BYTE, CURRENT_SYSTEM_ADDRESS_SLOT, delegate_of,
-    DETENTION_STOP, ex, INTERCEPTED, L1_FEE_VAULT, limit_exceeded, MAX_CONTRACT_SIZE, MAX_U64, MEGA_LIMIT_CONTROL,
+    DETENTION_STOP, ex, INTERCEPTED, L1_FEE_VAULT, limit_exceeded, MAX_CONTRACT_SIZE, MAX_INITCODE_SIZE, MAX_U64, MEGA_LIMIT_CONTROL,
     OPERATOR_FEE_VAULT, ORACLE, PRECOMPILE_SET, REFUND_QUOTIENT, SEND_HINT,
     SEQUENCER_REGISTRY,
     SEQUENCER_REGISTRY_CODE_HASH, STOP_DIMENSIONS, WARM_READ,
@@ -232,6 +232,16 @@ class SettlementMixin:
                       "system address: system-originated, and a deposit from that address all the same, so a failed "
                       "deposit; no promotion is made for it, so none of a Mega System Transaction's checks runs",
                       "SATIN-MST-003", "SATIN-MST-007")
+            if was_empty:
+                self.growth += 1
+            return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
+        if tx.to is None and len(tx.data) > MAX_INITCODE_SIZE:
+            # SATIN-SIZE-004, SATIN-VAL-008: a deposit is never rejected; one whose initcode fails EIP-3860's check at
+            # MegaETH's size is a failed deposit, which runs no creation.
+            d.add("outcome", f"the deposit is a creation whose initcode is {fmt(len(tx.data))} bytes, over "
+                  f"MAX_INITCODE_SIZE {fmt(MAX_INITCODE_SIZE)}: it fails that validation check, and a deposit is never "
+                  "rejected, so it is included as a failed deposit, which creates nothing", "SATIN-SIZE-002",
+                  "SATIN-SIZE-004", "SATIN-VAL-008", "SATIN-DEP-004")
             if was_empty:
                 self.growth += 1
             return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")

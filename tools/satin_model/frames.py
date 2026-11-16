@@ -7,7 +7,7 @@ from __future__ import annotations
 from .constants import (
     BLOCK_ENV_ACCESS_COMPUTE_GAS, COST_PER_HISTORY_BYTE, DATA_SIZE_STOP, delegate_of, DETENTION_STOP, FRAME_SHARE_DENOMINATOR, FRAME_SHARE_NUMERATOR,
     GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR, HISTORY_ALLOWANCE_BYTES, INTERCEPTED, KV_UPDATE_STOP,
-    KEYLESS_DEPLOY, limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, MEGA_LIMIT_CONTROL, ORACLE, PRECOMPILE_SET, SEND_HINT,
+    KEYLESS_DEPLOY, limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, MAX_CONTRACT_SIZE, MEGA_LIMIT_CONTROL, ORACLE, PRECOMPILE_SET, SEND_HINT,
     STATE_GROWTH_STOP, STOP_DIMENSIONS,
     SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT, WRITE_RECORD_SIZE,
 )
@@ -116,6 +116,16 @@ class FramesMixin:
                           "kept by the base layer) before any deposit charge, and halts", "SATIN-BASE-001", "SATIN-SCHED-011",
                           *(("SATIN-KEY-011",) if ctx.get("keyless") else ()))
                     raise Halt("deployed code that starts with 0xEF (EIP-3541)")
+                if len(out) > MAX_CONTRACT_SIZE and not ctx.get("keyless"):
+                    d.add("outcome", f"{name} returns {fmt(len(out))} bytes of code to deposit, over MAX_CONTRACT_SIZE "
+                          f"{fmt(MAX_CONTRACT_SIZE)}: the size check halts the creation before any of the deposit's "
+                          "charges, consuming the creation's regular gas, Ethereum's check at MegaETH's size and no "
+                          "limit stop", "SATIN-SIZE-001", "SATIN-SIZE-003", "SATIN-OUT-003")
+                    raise Halt(f"deployed code of {fmt(len(out))} bytes, over MAX_CONTRACT_SIZE")
+                if self.size_page and len(out) == MAX_CONTRACT_SIZE and not ctx.get("keyless"):
+                    d.add("outcome", f"{name} returns {fmt(len(out))} bytes of code to deposit, within MAX_CONTRACT_SIZE "
+                          f"{fmt(MAX_CONTRACT_SIZE)}: the size check passes and the deposit is made", "SATIN-SIZE-001",
+                          "SATIN-SIZE-003")
                 keyless = getattr(self, "keyless_active", None)
                 if not out and keyless is not None and ctx["address"] != keyless:
                     d.add("outcome", f"{name}, inside the keyless creation of {h(keyless)}, returns empty code for "

@@ -27,6 +27,11 @@ def jump_destinations(code: bytes) -> set[int]:
     return out
 
 
+def big(v: int) -> str:
+    """A figure as text, 2^k - 1 written so."""
+    return f"2^{v.bit_length()} - 1" if v > 2**64 and v == 2**v.bit_length() - 1 else fmt(v)
+
+
 def to_signed(v: int) -> int:
     return v - 2**256 if v >> 255 else v
 
@@ -117,6 +122,14 @@ class InterpreterMixin:
         while pc < len(code):
             op = code[pc]
             pc += 1
+            if ctx and ctx.get("static") and op in (0xF0, 0xF5) and self.size_page:
+                # SATIN-SIZE-005 step 1, SATIN-SIZE-006: the static context is checked first, before the operands are
+                # read and before any charge, so a creation in a static frame halts it with nothing charged.
+                d.add("outcome", f"{'CREATE' if op == 0xF0 else 'CREATE2'} in a frame a STATICCALL started: the static "
+                      "context is the creation's first check, made before its operands are read and before any of its "
+                      "charges, so the frame halts there, its regular gas consumed, with no charge that could have been "
+                      "gas detention's crossing", "SATIN-SIZE-005", "SATIN-SIZE-006")
+                raise Halt("a creation in a static frame")
             if ctx and ctx.get("static") and op in STATIC_UNMODELLED and not (op == 0xFA and self.system_pages):
                 raise Unmodelled(f"opcode {op:#x} in a frame a STATICCALL started")
             if op == 0x00:  # STOP
@@ -618,18 +631,46 @@ class InterpreterMixin:
                 if delegate is not None:
                     # EIP-7702, kept by the base layer: a call to an account holding a delegation runs its delegate's
                     # code, and pays the delegate's access with the opcode's other charges, before the forward.
-                    if int.from_bytes(delegate, "big") <= 0x100 or self.keyless_signer != target:
+                    if target in PRECOMPILE_SET:
+                        # SATIN-PCMP-008: a precompile's address holding an indicator; the call makes the opcode's
+                        # charges as any delegated call, and then dispatch runs the precompile.
+                        if value:
+                            raise Unmodelled("a value call to a precompile's address that holds a delegation")
+                        if frame.get("access_off") and delegate == self.env.coinbase:
+                            # SATIN-MAC-007, -004: the delegation guard, then the delegate's load refused as the
+                            # beneficiary's account, the call settled on its static cost and memory, never dispatched.
+                            if frame["regular"] < WARM_READ:
+                                d.add("outcome", f"the delegation guard: the {fmt(frame['regular'])} of regular gas left "
+                                      f"does not cover the delegate's access, {WARM_READ}, the target being warm: the call "
+                                      "halts out of gas before the delegate's load", "SATIN-MAC-007")
+                                raise Halt("the delegation guard")
+                            d.add("outcome", f"the CALL's target {h(target)}, a precompile's address and warm from the "
+                                  f"transaction's start, holds an EIP-7702 delegation to {h(delegate)}, the block "
+                                  "beneficiary, in a frame whose volatile-data access is off: the call makes its static "
+                                  "cost, its memory and its target's load, passes the delegation guard, and its delegate's "
+                                  "load is refused as the beneficiary's account, before anything else on the call's path, "
+                                  "so it never reaches precompile dispatch: the frame reverts with "
+                                  f"VolatileDataAccessDisabled({ACCESS_TYPE_BENEFICIARY}), charged its static cost and its "
+                                  "memory and nothing else, the delegate's access never charged", "SATIN-MAC-003",
+                                  "SATIN-MAC-004", "SATIN-MAC-005", "SATIN-MAC-007", "SATIN-PCMP-008")
+                            steps.append(f"CALL {fmt(self.regular_charges - before)} refused at the delegate")
+                            return done("revert", VOLATILE_DATA_ACCESS_DISABLED + ACCESS_TYPE_BENEFICIARY.to_bytes(32, "big"))
+                    elif int.from_bytes(delegate, "big") <= 0x100 or self.keyless_signer != target:
                         raise Unmodelled("a CALL to a delegated account other than a keyless creation's signer")
                     dcold = delegate not in self.warm_accounts
-                    self.charge_regular(frame, WARM_READ + (COLD_ACCOUNT_SURCHARGE if dcold else 0), "the delegate's access")
+                    delegate_access = WARM_READ + (COLD_ACCOUNT_SURCHARGE if dcold else 0)
+                    self.charge_regular(frame, delegate_access, "the delegate's access")
                     self.warm_accounts.add(delegate)
                     self.load(delegate, "the delegate of the CALL's target, once its access is paid", "SATIN-WIT-002",
                               "SATIN-WIT-008")
                     d.add("gasLedgers", f"the CALL's target {h(target)} holds an EIP-7702 delegation to {h(delegate)}: the "
                           f"delegate's access, warm read {WARM_READ}" + (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}"
                                                                           if dcold else "")
-                          + ", is one of the opcode's charges, and the delegate's code runs in the target's frame",
-                          "SATIN-BASE-001", "SATIN-SCHED-001", "SATIN-SCHED-003")
+                          + ", is one of the opcode's charges, and "
+                          + ("dispatch then runs the precompile at the address, not the delegate's code"
+                             if target in PRECOMPILE_SET else "the delegate's code runs in the target's frame"),
+                          "SATIN-BASE-001", "SATIN-SCHED-001", "SATIN-SCHED-003",
+                          *(("SATIN-PCMP-008",) if target in PRECOMPILE_SET else ()))
                 opcode_charges = self.regular_charges - before
                 new_account = 0
                 if value and (callee is None or callee.empty()):
@@ -666,11 +707,13 @@ class InterpreterMixin:
                 self.regular_charges += forward
                 child_gas = forward + (CALL_STIPEND if value else 0)
                 operand = fmt(gas_req) if gas_req < 2**256 - 1 else "the gas operand 2^256 - 1"
+                shown_delegate = delegate_access if delegate is not None and target in PRECOMPILE_SET else 0
                 d.add("gasLedgers", f"CALL to {h(target)} with value {value}: the opcode's own charges {fmt(opcode_charges)} = "
                       f"warm read {WARM_READ}" + (f" + value transfer {fmt(CALL_VALUE_COST)}" if value else "") +
                       (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}" if cold else "") +
+                      (f" + the delegate's access {fmt(shown_delegate)}" if shown_delegate else "") +
                       (" + input memory" if opcode_charges > WARM_READ + (CALL_VALUE_COST if value else 0) +
-                       (COLD_ACCOUNT_SURCHARGE if cold else 0) else "") +
+                       (COLD_ACCOUNT_SURCHARGE if cold else 0) + shown_delegate else "") +
                       f"; forward min({operand}, {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
                       f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}"
                       + (f", the child's gas {fmt(forward)} + CALL_STIPEND {CALL_STIPEND} = {fmt(child_gas)}" if value else ""),
@@ -739,7 +782,8 @@ class InterpreterMixin:
                 self.history_number = False
                 if target in PRECOMPILE_SET:
                     if callee is not None and callee.code:
-                        d.add("outcome", f"the precompile's address {h(target)} holds code: the call reaches precompile "
+                        held = "code" if delegate is None else "an EIP-7702 delegation indicator"
+                        d.add("outcome", f"the precompile's address {h(target)} holds {held}: the call reaches precompile "
                               "dispatch and runs the precompile, priced by it, whatever code the state holds there",
                               "SATIN-PCMP-008")
                     ok, out, left = self.precompile_call(frame, address, target, value, bytes(memory[a_off:a_off + a_size]),
@@ -902,12 +946,31 @@ class InterpreterMixin:
                     d.add("outcome", f"{name} with {fmt(c_size)} bytes of initcode, within MAX_INITCODE_SIZE "
                           f"{fmt(MAX_INITCODE_SIZE)}: the size check passes and the creation goes on to its charges",
                           "SATIN-SIZE-002", "SATIN-SIZE-003", "SATIN-OUT-003")
+                elif self.size_page:
+                    # The size check is step 3, after the operands and before every charge; it is the limit's own
+                    # edge only for initcode of MAX_INITCODE_SIZE bytes.
+                    edge = c_size == MAX_INITCODE_SIZE
+                    d.add("outcome", f"{name} with {fmt(c_size)} byte{'s' if c_size != 1 else ''} of initcode, "
+                          + (f"MAX_INITCODE_SIZE exactly, which the limit admits" if edge else
+                             f"within MAX_INITCODE_SIZE {fmt(MAX_INITCODE_SIZE)}")
+                          + ": the size check, step 3, after the operands and before any charge, passes, and the "
+                          "creation goes on to its charges", "SATIN-SIZE-005",
+                          *(("SATIN-SIZE-002", "SATIN-SIZE-003") if edge else ()))
+                if self.size_page and not c_size:
+                    d.add("outcome", f"{name}'s initcode is empty: its offset, {big(c_off)}, is not checked, and no memory "
+                          "is read for it, so the creation goes on to its access charge", "SATIN-SIZE-005")
                 words = (c_size + 31) // 32
                 before = self.regular_charges
                 # SATIN-SIZE-005 steps 4 to 6: EIP-3860's initcode cost, the memory the initcode is read from, then
                 # (CREATE2's salt, then) CREATE_ACCESS; each part is a charge of its own under gas detention.
                 try:
                     self.charge_regular(frame, INITCODE_WORD_COST * words, f"{name}'s init code")
+                    if self.size_page and c_size and c_off + c_size > 2**64:
+                        d.add("outcome", f"{name} has paid its initcode cost, {fmt(INITCODE_WORD_COST * words)}; its "
+                              f"initcode is not empty, so its offset's range is checked next, and {big(c_off)} is out of "
+                              "it: the frame halts before any memory is charged, its regular gas consumed",
+                              "SATIN-SIZE-005")
+                        raise Halt(f"{name}'s initcode offset out of range")
                     expand(c_off, c_size, name)
                 except Stopped:
                     if op == 0xF5 and not stack:
@@ -922,13 +985,15 @@ class InterpreterMixin:
                               "SATIN-OUT-012", "SATIN-SIZE-005", "SATIN-SIZE-006")
                         raise Halt("CREATE2 short of its salt")
                     salt = pop()
-                self.charge_regular(frame, CREATE_ACCESS, name)
+                # SATIN-SIZE-005 step 6: CREATE's CREATE_ACCESS; CREATE2's, after its salt, with the hashing of the
+                # initcode, which the base layer deducts together, one charge under gas detention (SATIN-DET-018).
+                self.charge_regular(frame, CREATE_ACCESS + (KECCAK_WORD * words if op == 0xF5 else 0),
+                                    name if op == 0xF0 else "CREATE2's CREATE_ACCESS and the hashing of its init code")
                 init = bytes(memory[c_off:c_off + c_size])
                 target = None
                 if op == 0xF5:
-                    # SATIN-SIZE-005 step 6: the salt, then CREATE_ACCESS and the hashing of the initcode; the address is
-                    # keccak256(0xff ++ creator ++ salt ++ keccak256(initcode))[12:], EIP-1014's, kept by the base layer.
-                    self.charge_regular(frame, KECCAK_WORD * words, "CREATE2's hashing of its init code")
+                    # The address is keccak256(0xff ++ creator ++ salt ++ keccak256(initcode))[12:], EIP-1014's, kept by
+                    # the base layer.
                     target = ex.keccak256(b"\xff" + address + salt.to_bytes(32, "big") + ex.keccak256(init))[12:]
                 opcode_charges = self.regular_charges - before
                 d.add("gasLedgers", f"{name} with {c_size} bytes of init code and {value} wei: regular {words} words x "

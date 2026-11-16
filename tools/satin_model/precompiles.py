@@ -1,17 +1,123 @@
 """A call to a precompile, decided under gas detention from its price (`SATIN-DET-021` to `-024`): the identity
-precompile, ModExp's EIP-7883 price over and under EIP-7823's bound, and the BN254 pairing over its size limit."""
+precompile, ModExp's EIP-7883 price over and under EIP-7823's bound, and the BN254 pairing over its size limit; and,
+for the precompile page's own cases (D-103), KZG point evaluation, `P256VERIFY`, ModExp, and the BN254 and BLS12-381
+precompiles at their size limits, where no limit is set."""
 
 from __future__ import annotations
 
 import hashlib
 
 from .constants import (
+    BLS12_G1_MSM, BLS12_G1_MSM_MAX_DISCOUNT, BLS12_G1_MSM_MAX_INPUT_SIZE, BLS12_G1_MSM_PAIR_SIZE, BLS12_G1_MUL_GAS,
+    BLS12_G2_MSM, BLS12_G2_MSM_MAX_DISCOUNT, BLS12_G2_MSM_MAX_INPUT_SIZE, BLS12_G2_MSM_PAIR_SIZE, BLS12_G2_MUL_GAS,
+    BLS12_MSM_MULTIPLIER, BLS12_MSM_TABLE_PAIRS, BLS12_PAIRING, BLS12_PAIRING_BASE, BLS12_PAIRING_MAX_INPUT_SIZE,
+    BLS12_PAIRING_PAIR_SIZE, BLS12_PAIRING_PER_PAIR, BLS_MODULUS, FIELD_ELEMENTS_PER_BLOB, KZG_INPUT_SIZE,
+    INFINITY_ARITHMETIC, BLS12_G1_ADD, BLS12_G2_ADD, BN254_ADD, BN254_MUL,
+    KZG_POINT_EVALUATION, KZG_POINT_EVALUATION_GAS, P256_A, P256_B, P256_G, P256_N, P256_P, P256VERIFY, P256VERIFY_GAS,
+    P256VERIFY_INPUT_SIZE, VERSIONED_HASH_VERSION_KZG,
     BN254_PAIR_SIZE, BN254_PAIRING, BN254_PAIRING_BASE, BN254_PAIRING_MAX_INPUT_SIZE, BN254_PAIRING_PER_PAIR, DETENTION_STOP, IDENTITY, IDENTITY_BASE, IDENTITY_WORD,
     limit_exceeded, ECRECOVER, ECRECOVER_GAS, MODEXP, MODEXP_MAX_INPUT_SIZE, MODEXP_MIN_GAS, RIPEMD160, RIPEMD160_BASE,
     RIPEMD160_WORD, SHA256, SHA256_BASE, SHA256_WORD,
     TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, WRITE_RECORD_SIZE,
 )
 from .records import Account, fmt, h, Halt, pad_address, Stopped, Unmodelled
+
+# SATIN-PCMP-001, -004: the OP precompiles' input size limits, by address.
+SIZE_LIMITS = {BN254_PAIRING: BN254_PAIRING_MAX_INPUT_SIZE, BLS12_G1_MSM: BLS12_G1_MSM_MAX_INPUT_SIZE,
+               BLS12_G2_MSM: BLS12_G2_MSM_MAX_INPUT_SIZE, BLS12_PAIRING: BLS12_PAIRING_MAX_INPUT_SIZE}
+NAMES = {KZG_POINT_EVALUATION: "KZG point evaluation", P256VERIFY: "P256VERIFY", MODEXP: "ModExp",
+         BN254_PAIRING: "the BN254 pairing", BLS12_G1_MSM: "the BLS12-381 G1 MSM", BLS12_G2_MSM: "the BLS12-381 G2 MSM",
+         BLS12_PAIRING: "the BLS12-381 pairing", BN254_ADD: "the BN254 addition", BN254_MUL: "the BN254 multiplication",
+         BLS12_G1_ADD: "the BLS12-381 G1 addition", BLS12_G2_ADD: "the BLS12-381 G2 addition"}
+# The infinity point of BLS12-381's G1 in the compressed encoding a KZG commitment and proof use: the compression and
+# infinity flags, and nothing else.
+G1_INFINITY_COMPRESSED = b"\xc0" + bytes(47)
+
+
+def p256_add(p, q):
+    """The sum of two points of P-256 in affine coordinates, None the point at infinity."""
+    if p is None:
+        return q
+    if q is None:
+        return p
+    (x1, y1), (x2, y2) = p, q
+    if x1 == x2 and (y1 + y2) % P256_P == 0:
+        return None
+    if p == q:
+        slope = (3 * x1 * x1 + P256_A) * pow(2 * y1, -1, P256_P) % P256_P
+    else:
+        slope = (y2 - y1) * pow(x2 - x1, -1, P256_P) % P256_P
+    x3 = (slope * slope - x1 - x2) % P256_P
+    return x3, (slope * (x1 - x3) - y1) % P256_P
+
+
+def p256_mul(k: int, p):
+    """k times the point p of P-256, by double-and-add."""
+    out = None
+    while k:
+        if k & 1:
+            out = p256_add(out, p)
+        p = p256_add(p, p)
+        k >>= 1
+    return out
+
+
+def p256_verify(data: bytes) -> tuple[bool, str]:
+    """EIP-7951's verification at the revision SATIN-PCMP-003 pins: the input is the message hash, r, s and the public
+    key's two coordinates, each a 32-byte word; whether the signature verifies, and why not."""
+    if len(data) != P256VERIFY_INPUT_SIZE:
+        return False, f"its input is {fmt(len(data))} bytes, not {P256VERIFY_INPUT_SIZE}"
+    e, r, s, qx, qy = (int.from_bytes(data[i:i + 32], "big") for i in range(0, P256VERIFY_INPUT_SIZE, 32))
+    if not (0 < r < P256_N and 0 < s < P256_N):
+        return False, "its r or s is not in (0, n)"
+    if qx >= P256_P or qy >= P256_P or (qx, qy) == (0, 0) or (qy * qy - qx ** 3 - P256_A * qx - P256_B) % P256_P:
+        return False, "its public key is no point of the curve"
+    w = pow(s, -1, P256_N)
+    point = p256_add(p256_mul(e * w % P256_N, P256_G), p256_mul(r * w % P256_N, (qx, qy)))
+    if point is None or point[0] % P256_N != r:
+        return False, "its signature does not verify"
+    return True, "its signature verifies"
+
+
+def kzg_evaluation(data: bytes) -> tuple[bool, str]:
+    """EIP-4844's point evaluation (SATIN-PCMP-001, -006) on an input whose commitment and proof are both G1's point at
+    infinity: whether it succeeds, and why not. With both at infinity, the pairing check
+    e(commitment - [y]G1, -G2) * e(proof, [tau - z]G2) = 1 is e([y]G1, G2) = 1, which holds exactly when y is zero."""
+    if len(data) != KZG_INPUT_SIZE:
+        return False, f"its input is {fmt(len(data))} bytes, not {KZG_INPUT_SIZE}"
+    versioned, z, y = data[:32], int.from_bytes(data[32:64], "big"), int.from_bytes(data[64:96], "big")
+    commitment, proof = data[96:144], data[144:192]
+    if versioned != bytes([VERSIONED_HASH_VERSION_KZG]) + hashlib.sha256(commitment).digest()[1:]:
+        return False, "its versioned hash is not the commitment's, 0x01 followed by the last 31 bytes of its SHA-256"
+    if z >= BLS_MODULUS or y >= BLS_MODULUS:
+        return False, (f"its {'z' if z >= BLS_MODULUS else 'y'} is not below the scalar field's modulus, so it is no "
+                       "canonical field element and is not reduced: the input fails")
+    if commitment != G1_INFINITY_COMPRESSED or proof != G1_INFINITY_COMPRESSED:
+        raise Unmodelled("a KZG commitment or proof other than the point at infinity")
+    if y:
+        return False, (f"its commitment and proof are both the point at infinity and its y is {y}, not zero, so the "
+                       "pairing check, which reduces to e([y]G1, G2) = 1, fails: the proof does not verify")
+    return True, ("its versioned hash is its commitment's, and its commitment and proof are both the point at infinity "
+                  "with y zero, the zero polynomial's proof at any point, so the pairing check, which reduces to "
+                  "e([y]G1, G2) = 1, holds")
+
+
+def bls12_price(target: bytes, pairs: int) -> int:
+    """EIP-2537's price for `pairs` pairs (SATIN-PCMP-001, as Karst defines it): an MSM's
+    pairs x multiplication cost x discount / 1000, at its table's largest discount from 128 pairs on, and the pairing's
+    37,700 + 32,600 a pair."""
+    if target == BLS12_PAIRING:
+        return BLS12_PAIRING_BASE + BLS12_PAIRING_PER_PAIR * pairs
+    if pairs < BLS12_MSM_TABLE_PAIRS:
+        raise Unmodelled("an MSM of fewer pairs than its discount table's last entry")
+    mul, discount = ((BLS12_G1_MUL_GAS, BLS12_G1_MSM_MAX_DISCOUNT) if target == BLS12_G1_MSM else
+                     (BLS12_G2_MUL_GAS, BLS12_G2_MSM_MAX_DISCOUNT))
+    return pairs * mul * discount // BLS12_MSM_MULTIPLIER
+
+
+def pair_size(target: bytes) -> int:
+    return {BN254_PAIRING: BN254_PAIR_SIZE, BLS12_G1_MSM: BLS12_G1_MSM_PAIR_SIZE, BLS12_G2_MSM: BLS12_G2_MSM_PAIR_SIZE,
+            BLS12_PAIRING: BLS12_PAIRING_PAIR_SIZE}[target]
 
 
 def ripemd160(data: bytes) -> bytes:
@@ -54,7 +160,9 @@ def ripemd160(data: bytes) -> bytes:
 
 
 def precompile_output(target: bytes, data: bytes) -> bytes:
-    """What a precompile the model runs returns: the identity its input, RIPEMD-160 its digest left-padded to a word."""
+    """What a precompile the model runs returns: the identity its input, RIPEMD-160 its digest left-padded to a word;
+    for the precompile page's cases, KZG point evaluation's two words, P256VERIFY's word 1 or nothing, and an MSM's or a
+    pairing's answer for points at infinity."""
     if target == IDENTITY:
         return data
     if target == RIPEMD160:
@@ -66,13 +174,27 @@ def precompile_output(target: bytes, data: bytes) -> bytes:
         if v[:31] != bytes(31) or v[31] not in (27, 28):
             return b""  # a v other than 27 or 28 recovers nothing: an empty output, the call succeeding
         raise Unmodelled("an ecrecover input whose v is 27 or 28")
+    if target == KZG_POINT_EVALUATION:
+        if not kzg_evaluation(data)[0]:
+            raise Unmodelled("the output of a KZG evaluation that fails")
+        return FIELD_ELEMENTS_PER_BLOB.to_bytes(32, "big") + BLS_MODULUS.to_bytes(32, "big")
+    if target == P256VERIFY:
+        return (1).to_bytes(32, "big") if p256_verify(data)[0] else b""
+    if target in INFINITY_ARITHMETIC:  # a sum or a multiple of points at infinity is the point at infinity
+        return bytes(INFINITY_ARITHMETIC[target][2])
+    if target in (BLS12_G1_MSM, BLS12_G2_MSM):  # an MSM of points at infinity is the point at infinity, all zero bytes
+        return bytes(128 if target == BLS12_G1_MSM else 256)
+    if target in (BN254_PAIRING, BLS12_PAIRING):  # a pairing of points at infinity is the identity: the word 1
+        return (1).to_bytes(32, "big")
     if target == MODEXP:
         base_len, exp_len, mod_len = modexp_lengths(data)
+        if max(base_len, exp_len, mod_len) > MODEXP_MAX_INPUT_SIZE:
+            raise Unmodelled("the output of a ModExp input over EIP-7823's bound")
         body = data[96:].ljust(base_len + exp_len + mod_len, b"\x00")
         base, exp, mod = (int.from_bytes(body[a:b], "big") for a, b in
                           ((0, base_len), (base_len, base_len + exp_len), (base_len + exp_len, base_len + exp_len + mod_len)))
         return (pow(base, exp, mod) if mod else 0).to_bytes(mod_len, "big")
-    raise Unmodelled("the output of a precompile other than the identity, RIPEMD-160 and ModExp")
+    raise Unmodelled("the output of a precompile the model does not run")
 
 
 def modexp_lengths(data: bytes) -> tuple[int, int, int]:
@@ -131,15 +253,22 @@ class PrecompilesMixin:
             base_len, exp_len, mod_len = modexp_lengths(data)
             price, complexity, iterations = modexp_price(data)
             over = max(base_len, exp_len, mod_len) > MODEXP_MAX_INPUT_SIZE
+            over_length = ("base" if base_len > MODEXP_MAX_INPUT_SIZE else "exponent" if exp_len > MODEXP_MAX_INPUT_SIZE
+                           else "modulus")
+            if price >= 2**64:  # SATIN-PCMP-007: lengths too large to price
+                return price, (f"ModExp's EIP-7883 price for lengths too large to price, whose largest is "
+                               f"{max(base_len, exp_len, mod_len).bit_length()} bits long: past any gas a call can hold"), \
+                    (AFTER_CHARGE if over else None)
             return price, (f"ModExp's EIP-7883 price for a base of {fmt(base_len)} bytes, an exponent of {fmt(exp_len)} and "
                            f"a modulus of {fmt(mod_len)}: max({MODEXP_MIN_GAS}, multiplication complexity {fmt(complexity)} "
                            f"x iteration count {fmt(iterations)}) = {fmt(price)}"
-                           + (f", whatever the lengths: the base is over EIP-7823's bound of {fmt(MODEXP_MAX_INPUT_SIZE)} "
-                              "bytes, which ModExp checks after it charges that price" if over else "")), \
+                           + (f", whatever the lengths: the {over_length} is over EIP-7823's bound of "
+                              f"{fmt(MODEXP_MAX_INPUT_SIZE)} bytes, which ModExp checks after it charges that price"
+                              if over else "")), \
                 (AFTER_CHARGE if over else None)
         if target == BN254_PAIRING:
             if len(data) <= BN254_PAIRING_MAX_INPUT_SIZE:
-                if any(data) or len(data) % BN254_PAIR_SIZE or not self.outcomes:
+                if any(data) or len(data) % BN254_PAIR_SIZE or not (self.outcomes or self.precompile_page):
                     raise Unmodelled("a BN254 pairing within its size limit other than of points at infinity")
                 pairs = len(data) // BN254_PAIR_SIZE
                 price = BN254_PAIRING_BASE + BN254_PAIRING_PER_PAIR * pairs
@@ -147,6 +276,44 @@ class PrecompilesMixin:
                                f"{fmt(BN254_PAIRING_PER_PAIR)} x {pairs} = {fmt(price)}"), None
             return 0, (f"zero: the BN254 pairing's {fmt(len(data))} input bytes are over its size limit of "
                        f"{fmt(BN254_PAIRING_MAX_INPUT_SIZE)}, refused before any gas check"), SIZE_LIMIT
+        if self.precompile_page:
+            return self.page_price(target, data)
+        raise Unmodelled(f"the precompile at {h(target)}")
+
+    def page_price(self, target: bytes, data: bytes) -> tuple[int, str, str | None]:
+        """The price of a precompile only the precompile page's cases call (D-103), read as precompile_price reads
+        one: KZG point evaluation's fixed price, P256VERIFY's, and a BLS12-381 MSM's or pairing's, or none over its
+        size limit."""
+        if target == KZG_POINT_EVALUATION:
+            ok, why = kzg_evaluation(data)
+            return KZG_POINT_EVALUATION_GAS, (f"KZG point evaluation's fixed KZG_POINT_EVALUATION_GAS, "
+                                              f"{fmt(KZG_POINT_EVALUATION_GAS)}, whatever its input; {why}"), \
+                (None if ok else AFTER_CHARGE)
+        if target == P256VERIFY:
+            _, why = p256_verify(data)
+            return P256VERIFY_GAS, (f"P256VERIFY's P256VERIFY_GAS, {fmt(P256VERIFY_GAS)}, whatever its input; {why}"), None
+        if target in INFINITY_ARITHMETIC:
+            size, price, answer = INFINITY_ARITHMETIC[target]
+            if len(data) != size or any(data):
+                raise Unmodelled("an addition or a multiplication other than of points at infinity")
+            return price, (f"{NAMES[target]}'s fixed price as Karst defines it, {fmt(price)}, for its {size}-byte input "
+                           f"of points at infinity, whose answer is the point at infinity, {answer} zero bytes"), None
+        if target in (BLS12_G1_MSM, BLS12_G2_MSM, BLS12_PAIRING):
+            limit, size = SIZE_LIMITS[target], pair_size(target)
+            if len(data) > limit:
+                return 0, (f"zero: {NAMES[target]}'s {fmt(len(data))} input bytes are over its size limit of "
+                           f"{fmt(limit)}, refused before any gas check"), SIZE_LIMIT
+            if not data or len(data) % size or any(data):
+                raise Unmodelled("a BLS12-381 input other than pairs of points at infinity")
+            pairs = len(data) // size
+            price = bls12_price(target, pairs)
+            how = (f"EIP-2537's pairing price for {pairs} pairs, {fmt(BLS12_PAIRING_BASE)} + "
+                   f"{fmt(BLS12_PAIRING_PER_PAIR)} x {pairs} = {fmt(price)}" if target == BLS12_PAIRING else
+                   f"EIP-2537's MSM price for {pairs} pairs, {pairs} x "
+                   f"{fmt(BLS12_G1_MUL_GAS if target == BLS12_G1_MSM else BLS12_G2_MUL_GAS)} x the largest discount "
+                   f"{BLS12_G1_MSM_MAX_DISCOUNT if target == BLS12_G1_MSM else BLS12_G2_MSM_MAX_DISCOUNT}, its table's from "
+                   f"{BLS12_MSM_TABLE_PAIRS} pairs on, / {fmt(BLS12_MSM_MULTIPLIER)} = {fmt(price)}")
+            return price, how, None
         raise Unmodelled(f"the precompile at {h(target)}")
 
     def own_precompile(self, frame, target: bytes, data: bytes) -> tuple[str, bytes]:
@@ -279,6 +446,10 @@ class PrecompilesMixin:
                   "and charges nothing beyond the opcode's", "SATIN-POOL-012", "SATIN-DET-024")
             return False, b"", child_gas
         price, how, fails = self.precompile_price(target, data)
+        if self.precompile_page and self.limit is None:
+            if value or inherited is not None:
+                raise Unmodelled("a precompile page's call that carries a value or is a DELEGATECALL")
+            return self.page_call(target, data, child_gas, price, how, fails)
         if self.limit is not None:
             allowance = max(0, self.limit - self.compute)
             if child_gas > allowance:
@@ -360,7 +531,8 @@ class PrecompilesMixin:
         if fails == SIZE_LIMIT:
             d.add("outcome", f"the precompile at {h(target)} is given {fmt(len(data))} input bytes, over its size limit: "
                   f"the call fails before any gas check, charging no price, and consumes its whole forward of "
-                  f"{fmt(child_gas)}, as without the read", "SATIN-PCMP-005", "SATIN-DET-021")
+                  f"{fmt(child_gas)}, as without the read", "SATIN-PCMP-005", "SATIN-DET-021",
+                  *(("SATIN-PCMP-001", "SATIN-PCMP-004") if self.precompile_page else ()))
         elif fails:
             d.add("outcome", f"the precompile at {h(target)} runs on its forward of {fmt(child_gas)}, charges its price "
                   f"{fmt(price)}, then fails its input's check and consumes the whole forward, as without the read",
@@ -384,4 +556,63 @@ class PrecompilesMixin:
               "SATIN-DET-021", "SATIN-OUT-001")
         d.add("gasLedgers", f"the precompile's price is compute, now {fmt(self.compute)}; it returns "
               f"{fmt(child_gas - price)} to its caller", "SATIN-DET-009", "SATIN-POOL-012")
+        return True, out, child_gas - price
+
+    def page_call(self, target: bytes, data: bytes, child_gas: int, price: int, how: str, fails: str | None):
+        """A call to a precompile in a case of the precompile page's own rules (D-103), where no limit is set: an input
+        over a size limit fails before any gas check (SATIN-PCMP-005); a price the forward cannot pay fails out of gas,
+        KZG point evaluation's before any verification (SATIN-PCMP-006) and ModExp's in the order of SATIN-PCMP-007; a
+        check made after the charge fails; and otherwise the precompile charges its price and answers. A failure
+        consumes all the gas forwarded to it. Returns (success, return data, the regular gas the call returns)."""
+        d = self.d
+        name = NAMES.get(target, f"the precompile at {h(target)}")
+        own = {KZG_POINT_EVALUATION: ("SATIN-PCMP-001", "SATIN-PCMP-006"), P256VERIFY: ("SATIN-PCMP-001", "SATIN-PCMP-003"),
+               MODEXP: ("SATIN-PCMP-001", "SATIN-PCMP-002")}.get(
+            target, ("SATIN-PCMP-001", "SATIN-PCMP-004") if target in SIZE_LIMITS else ("SATIN-PCMP-001",))
+        if fails == SIZE_LIMIT:
+            d.add("outcome", f"{name} is given {fmt(len(data))} input bytes, over its size limit of "
+                  f"{fmt(SIZE_LIMITS[target])}: the call fails before any gas check, charging no price, and consumes all "
+                  f"the gas forwarded to it, {fmt(child_gas)}, a halt of the call; its caller resumes on what it kept",
+                  "SATIN-PCMP-001", "SATIN-PCMP-004", "SATIN-PCMP-005", "SATIN-OUT-004")
+            return False, b"", 0
+        if target in SIZE_LIMITS:
+            d.add("outcome", f"{name} is given {fmt(len(data))} input bytes, within its size limit of "
+                  f"{fmt(SIZE_LIMITS[target])}: the limit lets the call go on to its price", "SATIN-PCMP-001",
+                  "SATIN-PCMP-004")
+        if price > child_gas:
+            if target == KZG_POINT_EVALUATION:
+                why = (f"less than KZG_POINT_EVALUATION_GAS: it fails out of gas before any verification runs",
+                       ("SATIN-PCMP-006",))
+            elif target == MODEXP and child_gas < MODEXP_MIN_GAS:
+                why = (f"less than its minimum MODEXP_MIN_GAS, {fmt(MODEXP_MIN_GAS)}: it fails out of gas before its "
+                       "lengths are read", ("SATIN-PCMP-002", "SATIN-PCMP-007"))
+            elif target == MODEXP:
+                over = max(modexp_lengths(data)) > MODEXP_MAX_INPUT_SIZE
+                why = (f"enough for its minimum MODEXP_MIN_GAS, {fmt(MODEXP_MIN_GAS)}, and not for the rest of its "
+                       "formula price: it fails out of gas" + (" before EIP-7823's bound is checked" if over else ""),
+                       ("SATIN-PCMP-002", "SATIN-PCMP-007"))
+            else:
+                why = "less than its price: it fails out of gas", ()
+            priced = f"{fmt(price)}" if price < 2**64 else "past any gas a call can hold, its lengths too large to price"
+            d.add("outcome", f"{name} is priced {priced} ({how}) and forwarded {fmt(child_gas)}, {why[0]}, and consumes "
+                  f"all the gas forwarded to it; its caller resumes on what it kept", *own, *why[1], "SATIN-OUT-011")
+            return False, b"", 0
+        if fails:
+            if target == MODEXP:
+                d.add("outcome", f"ModExp's forward {fmt(child_gas)} pays its minimum and then the rest of its formula "
+                      f"price, {fmt(price)} in all ({how}); only then is EIP-7823's bound checked, which the input is over: "
+                      f"the call fails after its whole formula price is charged and consumes all the gas forwarded to it",
+                      "SATIN-PCMP-001", "SATIN-PCMP-002", "SATIN-PCMP-007", "SATIN-OUT-011")
+            else:
+                d.add("outcome", f"{name}'s forward {fmt(child_gas)} pays its price, {how}: given at least its price, the "
+                      f"call fails otherwise and consumes all the gas forwarded to it, {fmt(child_gas)}", *own,
+                      "SATIN-OUT-011")
+            return False, b"", 0
+        out = precompile_output(target, data)
+        self.compute += price
+        answer = ("the word 1" if out == (1).to_bytes(32, "big") else
+                  f"{fmt(len(out))} byte{'s' if len(out) > 1 else ''}" if out else "no bytes, a success with empty output")
+        d.add("outcome", f"{name} is priced {fmt(price)} ({how}) and forwarded {fmt(child_gas)}, which pays it: it is "
+              f"charged exactly its price, answers {answer}, and returns the {fmt(child_gas - price)} it did not charge",
+              *own, *(("SATIN-PCMP-007",) if target == MODEXP else ()), "SATIN-POOL-012")
         return True, out, child_gas - price

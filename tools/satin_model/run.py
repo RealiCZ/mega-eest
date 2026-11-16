@@ -28,8 +28,16 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
                  stops: bool = False, lists: bool = False, outcomes: bool = False, system_tx: bool = False,
-                 current: bool = False, system_pages: bool = False):
+                 current: bool = False, system_pages: bool = False, precompile_page: bool = False,
+                 size_page: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
+        # A case of the precompile page's own rules (decision D-103): a call to a precompile where no limit is set is
+        # decided by SATIN-PCMP-001 to -007, and the model runs KZG point evaluation, P256VERIFY and the BLS12-381
+        # precompiles for it.
+        self.precompile_page = precompile_page
+        # A case of the contract-limits page's own rules (decision D-104): its derivation cites the size checks and the
+        # order of a creation's checks and charges where the run passes them (SATIN-SIZE-001 to -006).
+        self.size_page = size_page
         # A case citing the snapshot `c130558`, which retires SATIN-STOP-016: a value precompile's crossing is held to the
         # price by SATIN-STOP-014 and SATIN-DET-022 there (D-78).
         self.current = current
