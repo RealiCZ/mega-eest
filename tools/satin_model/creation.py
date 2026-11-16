@@ -64,9 +64,13 @@ class CreationMixin:
                   f"{existing.balance} wei: not empty under EIP-161, so the creation charges no state gas for its leaf "
                   "and makes no rise, before the forward or after", "SATIN-HIST-011", "SATIN-ACCT-014", "SATIN-ACCT-015")
         else:
-            m = self.multiplier(self.salt_bucket(target, None))
+            m = self.multiplier(self.salt_bucket(target, None), f"the account {op} creates at {h(target)}")
             state = ACCOUNT_STATE * m
             legacy = min(state, LEGACY_CREATE_SHARE)
+            if self.pricing:
+                d.add("gasLedgers", f"the created account is added by the {op}, its address empty under EIP-161: the {op} "
+                      f"makes the charge, and m = {m} scales its state gas alone, not the legacy share {fmt(legacy)}, "
+                      "CREATE_ACCESS or the records' history", "SATIN-STATE-004", "SATIN-STATE-005")
             reservoir = frame["reservoir"]
             self.charge_state(frame, state, legacy, "the created account")
             self.state_gas += state
@@ -205,6 +209,11 @@ class CreationMixin:
                   f"bump stays, now {creator_acct.nonce}, and its nonce record is the creating frame's and survives the "
                   "creation's failure", "SATIN-TAKE-007", "SATIN-POOL-015", "SATIN-HIST-012", "SATIN-LIM-008",
                   "SATIN-ACCT-011")
+            if self.pricing and not funded:
+                d.add("gasLedgers", f"the give-back of the created account's state gas is {fmt(state)}, its charge at the "
+                      f"same m = {m}, its legacy share {fmt(legacy)} included: it cancels the charge exactly, and lands in "
+                      "the creator's reservoir, not its regular gas, which paid the legacy share", "SATIN-POOL-015",
+                      "SATIN-STATE-006")
             frame["regular"] += left
             self.regular_charges -= left
             self.creator_record(frame, creator, records)
@@ -316,6 +325,12 @@ class CreationMixin:
                       "SATIN-WIT-012")
             raise Halt(f"out of gas at SELFDESTRUCT's cold access, {fmt(COLD_ACCOUNT_ACCESS)}, with "
                        f"{fmt(frame['regular'])} regular gas left")
+        if self.pricing and not cold:
+            why = self.warm_from_start(beneficiary)
+            d.add("gasLedgers", f"the SELFDESTRUCT's beneficiary {h(beneficiary)} is "
+                  + (why[0] if why else "warm, accessed earlier in the transaction") + ": its first access as a "
+                  f"SELFDESTRUCT beneficiary is charged as warm, the static cost {fmt(SELFDESTRUCT_COST)} without "
+                  f"COLD_ACCOUNT_ACCESS {fmt(COLD_ACCOUNT_ACCESS)}", "SATIN-SCHED-003", *(why[1] if why else ()))
         self.load(beneficiary, "the SELFDESTRUCT's beneficiary", "SATIN-WIT-002")
         ben = self.state.get(beneficiary)
         new_ben = bool(balance) and (ben is None or ben.empty())
@@ -381,7 +396,7 @@ class CreationMixin:
         d = self.d
         # Step 2: the destruction table, by each part's value at the transaction's start (SATIN-SD-004).
         refills, history, fall, takes, data = [], 0, 0, [], 0
-        m = self.multiplier(self.salt_bucket(address, None))
+        m = self.multiplier(self.salt_bucket(address, None), f"the destruction table's give-back for {h(address)}")
         if address not in self.pre:
             refills.append(("the absent leaf", ACCOUNT_STATE * m))
             fall += 1

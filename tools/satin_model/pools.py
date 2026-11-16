@@ -24,6 +24,12 @@ class PoolsMixin:
             raise Stopped(self.limit, f"{what}: {fmt(amount)} of regular gas, which the spendable part {fmt(spendable)} "
                                       f"cannot pay and the frame's whole {fmt(frame['regular'])} can")
         if amount > frame["regular"]:
+            if self.pricing and frame.get("reservoir"):
+                self.d.add("gasLedgers", f"{what} needs {fmt(amount)} of regular gas and the frame holds "
+                           f"{fmt(frame['regular'])}, with {fmt(frame['reservoir'])} of reservoir: a regular charge draws "
+                           "the frame's regular gas alone, and computation is held by no compute limit or ledger of its "
+                           "own, so the frame runs out of gas, a halt and no limit stop", "SATIN-POOL-007",
+                           "SATIN-POOL-021")
             raise Halt(f"out of gas at {what}: {fmt(amount)} regular gas needed, {fmt(frame['regular'])} left")
         frame["regular"] -= amount
         if spendable is not None:
@@ -51,6 +57,10 @@ class PoolsMixin:
             raise Halt(f"out of gas paying the state gas of {what}")
         self.draw_regular(frame, rest - r)
         self.spilled += legacy + rest - r  # regular gas paid for a state or history charge, never credited back
+        if self.pricing and legacy:
+            self.d.add("gasLedgers", f"{what}: its legacy share, {fmt(legacy)}, is taken from regular gas before the "
+                       "reservoir pays any of it, one of the departures from EIP-8037 that Satin makes in its own words, "
+                       "the profile being frozen at dbc6d457cb", "SATIN-POOL-022", "SATIN-POOL-004")
         # SATIN-POOL-014: what a failed frame's rollback gives back; and the regular gas the frame drew for state and
         # history, which is no regular charge of the transaction unless the frame halts (SATIN-POOL-019).
         frame["net_charged"] = frame.get("net_charged", 0) + amount
@@ -70,6 +80,10 @@ class PoolsMixin:
                    "SATIN-POOL-024")
         self.d.add("gasPools", f"regular gas paid {fmt(self.spilled)} of the frame's state and history charges, legacy "
                    "shares and spills, which no give-back credits back to it", "SATIN-POOL-008", "SATIN-HIST-012")
+        if self.pricing and frame["regular"] == 0:
+            self.d.add("gasPools", f"the first frame spent the whole of its regular gas and ends with none, its "
+                       f"{fmt(frame['reservoir'])} of reservoir untouched by its computation: no compute limit or ledger of "
+                       "its own holds computation, which regular gas pays", "SATIN-POOL-021", "SATIN-POOL-007")
         self.d.add("gasPools", f"returned to the sender: gas limit {fmt(tx.gas_limit)} - gas used {fmt(gas_used)} = "
                    f"{fmt(returned)}, the unspent regular gas and the reservoir left", "SATIN-POOL-017")
         return {"regular": {"initial": q(frame["regular_at_start"]), "final": q(frame["regular"])},
@@ -77,5 +91,9 @@ class PoolsMixin:
                 "spilled": q(self.spilled), "returned": q(returned)}
 
     def give_back(self, frame, amount: int) -> None:
+        if self.pricing and amount:
+            self.d.add("gasLedgers", f"a give-back of {fmt(amount)} credits the frame's reservoir, never its regular gas, "
+                       "whatever the frame's regular gas paid of state before: Satin's give-back rule, a departure from "
+                       "EIP-8037 at dbc6d457cb, which would credit regular gas first", "SATIN-POOL-022", "SATIN-POOL-004")
         frame["reservoir"] += amount  # SATIN-HIST-012: into the frame's reservoir
         frame["net_charged"] = frame.get("net_charged", 0) - amount  # SATIN-POOL-014: net of the give-backs received
