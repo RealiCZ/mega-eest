@@ -27,6 +27,11 @@ def jump_destinations(code: bytes) -> set[int]:
     return out
 
 
+def big(v: int) -> str:
+    """A figure as text, 2^k - 1 written so."""
+    return f"2^{v.bit_length()} - 1" if v > 2**64 and v == 2**v.bit_length() - 1 else fmt(v)
+
+
 def to_signed(v: int) -> int:
     return v - 2**256 if v >> 255 else v
 
@@ -117,6 +122,14 @@ class InterpreterMixin:
         while pc < len(code):
             op = code[pc]
             pc += 1
+            if ctx and ctx.get("static") and op in (0xF0, 0xF5) and self.size_page:
+                # SATIN-SIZE-005 step 1, SATIN-SIZE-006: the static context is checked first, before the operands are
+                # read and before any charge, so a creation in a static frame halts it with nothing charged.
+                d.add("outcome", f"{'CREATE' if op == 0xF0 else 'CREATE2'} in a frame a STATICCALL started: the static "
+                      "context is the creation's first check, made before its operands are read and before any of its "
+                      "charges, so the frame halts there, its regular gas consumed, with no charge that could have been "
+                      "gas detention's crossing", "SATIN-SIZE-005", "SATIN-SIZE-006")
+                raise Halt("a creation in a static frame")
             if ctx and ctx.get("static") and op in STATIC_UNMODELLED and not (op == 0xFA and self.system_pages):
                 raise Unmodelled(f"opcode {op:#x} in a frame a STATICCALL started")
             if op == 0x00:  # STOP
@@ -898,16 +911,26 @@ class InterpreterMixin:
                           "the creating frame at the opcode, Ethereum's check at MegaETH's size and no limit stop",
                           "SATIN-SIZE-002", "SATIN-SIZE-003", "SATIN-SIZE-005", "SATIN-OUT-003")
                     raise Halt(f"initcode of {fmt(c_size)} bytes, over MAX_INITCODE_SIZE")
-                if self.outcomes:
-                    d.add("outcome", f"{name} with {fmt(c_size)} bytes of initcode, within MAX_INITCODE_SIZE "
+                if self.outcomes or self.size_page:
+                    d.add("outcome", f"{name} with {fmt(c_size)} byte{'s' if c_size != 1 else ''} of initcode, within "
+                          "MAX_INITCODE_SIZE "
                           f"{fmt(MAX_INITCODE_SIZE)}: the size check passes and the creation goes on to its charges",
-                          "SATIN-SIZE-002", "SATIN-SIZE-003", "SATIN-OUT-003")
+                          "SATIN-SIZE-002", "SATIN-SIZE-003", *(("SATIN-OUT-003",) if self.outcomes else ()))
+                if self.size_page and not c_size:
+                    d.add("outcome", f"{name}'s initcode is empty: its offset, {big(c_off)}, is not checked, and no memory "
+                          "is read for it, so the creation goes on to its access charge", "SATIN-SIZE-005")
                 words = (c_size + 31) // 32
                 before = self.regular_charges
                 # SATIN-SIZE-005 steps 4 to 6: EIP-3860's initcode cost, the memory the initcode is read from, then
                 # (CREATE2's salt, then) CREATE_ACCESS; each part is a charge of its own under gas detention.
                 try:
                     self.charge_regular(frame, INITCODE_WORD_COST * words, f"{name}'s init code")
+                    if self.size_page and c_size and c_off + c_size > 2**64:
+                        d.add("outcome", f"{name} has paid its initcode cost, {fmt(INITCODE_WORD_COST * words)}; its "
+                              f"initcode is not empty, so its offset's range is checked next, and {big(c_off)} is out of "
+                              "it: the frame halts before any memory is charged, its regular gas consumed",
+                              "SATIN-SIZE-005")
+                        raise Halt(f"{name}'s initcode offset out of range")
                     expand(c_off, c_size, name)
                 except Stopped:
                     if op == 0xF5 and not stack:
