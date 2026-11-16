@@ -247,9 +247,16 @@ class KeylessMixin:
             return self.keyless_refusal(4, keyless_error("NonZeroTxNonce(uint64)", carried["nonce"]),
                                         f"the carried transaction's nonce is {carried['nonce']}, not 0", predicates)
         if len(init) > MAX_INITCODE_SIZE:
+            if self.size_page:
+                d.add("outcome", f"the carried initcode is {fmt(len(init))} bytes, over MAX_INITCODE_SIZE "
+                      f"{fmt(MAX_INITCODE_SIZE)}: a keyless deployment's initcode over the limit is refused by its own "
+                      "rule, step 5, and not as a creation transaction is", "SATIN-SIZE-002", "SATIN-SIZE-004")
             return self.keyless_refusal(5, keyless_error("InitCodeTooLarge(uint64,uint64)", len(init), MAX_INITCODE_SIZE),
                                         f"the initcode's {fmt(len(init))} bytes exceed MAX_INITCODE_SIZE "
                                         f"{fmt(MAX_INITCODE_SIZE)}", predicates)
+        if self.size_page and len(init) == MAX_INITCODE_SIZE:
+            d.add("outcome", f"step 5: the carried initcode is {fmt(len(init))} bytes, MAX_INITCODE_SIZE exactly, which "
+                  "the deployment's own rule admits", "SATIN-SIZE-002", "SATIN-SIZE-004", "SATIN-KEY-005")
         read = min(override, MAX_U64)
         shown = fmt(override) if override <= MAX_U64 else "a value above MAX_UINT64, read as MAX_UINT64"
         if read < gas:

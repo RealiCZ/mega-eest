@@ -103,7 +103,10 @@ the slice uses:
   and the BN254 and BLS12-381 precompiles on points at infinity, at and over their size limits; a
   creation transaction's initcode over `MAX_INITCODE_SIZE`, refused, and a deposit's, a failed deposit;
   a creation's code over `MAX_CONTRACT_SIZE` from `CREATE` or `CREATE2`; a creation in a static frame;
-  and the offset of empty initcode, unchecked;
+  the offset of empty initcode, unchecked; and after a review's edges, a KZG scalar outside the field,
+  Karst's BN254 and BLS12-381 additions and the BN254 multiplication on points at infinity, a `CALL` to a
+  precompile's address holding an EIP-7702 indicator, refused at a beneficiary delegate when access is
+  off, and `CREATE2`'s access and hashing as one charge;
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check

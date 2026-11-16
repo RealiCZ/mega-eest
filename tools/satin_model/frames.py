@@ -122,7 +122,7 @@ class FramesMixin:
                           "charges, consuming the creation's regular gas, Ethereum's check at MegaETH's size and no "
                           "limit stop", "SATIN-SIZE-001", "SATIN-SIZE-003", "SATIN-OUT-003")
                     raise Halt(f"deployed code of {fmt(len(out))} bytes, over MAX_CONTRACT_SIZE")
-                if self.size_page and out and not ctx.get("keyless"):
+                if self.size_page and len(out) == MAX_CONTRACT_SIZE and not ctx.get("keyless"):
                     d.add("outcome", f"{name} returns {fmt(len(out))} bytes of code to deposit, within MAX_CONTRACT_SIZE "
                           f"{fmt(MAX_CONTRACT_SIZE)}: the size check passes and the deposit is made", "SATIN-SIZE-001",
                           "SATIN-SIZE-003")

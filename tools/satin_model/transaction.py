@@ -76,7 +76,7 @@ class TransactionMixin:
             return ("validation", "initcode-too-large", ("SATIN-SIZE-002", "SATIN-SIZE-004"),
                     f"a creation transaction whose initcode is {fmt(len(tx.data))} bytes, over MAX_INITCODE_SIZE "
                     f"{fmt(MAX_INITCODE_SIZE)}: rejected at validation (EIP-3860's check at MegaETH's size)")
-        if tx.to is None and self.size_page:
+        if tx.to is None and self.size_page and len(tx.data) == MAX_INITCODE_SIZE:
             self.d.add("outcome", f"the creation transaction's initcode is {fmt(len(tx.data))} bytes, within "
                        f"MAX_INITCODE_SIZE {fmt(MAX_INITCODE_SIZE)}: validation's initcode check passes",
                        "SATIN-SIZE-002", "SATIN-SIZE-004")
@@ -572,7 +572,7 @@ class TransactionMixin:
                           "the deposit's charges, Ethereum's check at MegaETH's size and no limit stop", "SATIN-SIZE-001",
                           "SATIN-SIZE-003", "SATIN-OUT-003")
                     raise Halt(f"deployed code of {fmt(len(output))} bytes, over MAX_CONTRACT_SIZE")
-                if create and status == "success" and output and self.size_page:
+                if create and status == "success" and len(output) == MAX_CONTRACT_SIZE and self.size_page:
                     d.add("outcome", f"the initcode returns {fmt(len(output))} bytes of code to deposit, within "
                           f"MAX_CONTRACT_SIZE {fmt(MAX_CONTRACT_SIZE)}: the size check passes and the deposit is made",
                           "SATIN-SIZE-001", "SATIN-SIZE-003")

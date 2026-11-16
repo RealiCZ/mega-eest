@@ -12,6 +12,7 @@ from .constants import (
     BLS12_G2_MSM, BLS12_G2_MSM_MAX_DISCOUNT, BLS12_G2_MSM_MAX_INPUT_SIZE, BLS12_G2_MSM_PAIR_SIZE, BLS12_G2_MUL_GAS,
     BLS12_MSM_MULTIPLIER, BLS12_MSM_TABLE_PAIRS, BLS12_PAIRING, BLS12_PAIRING_BASE, BLS12_PAIRING_MAX_INPUT_SIZE,
     BLS12_PAIRING_PAIR_SIZE, BLS12_PAIRING_PER_PAIR, BLS_MODULUS, FIELD_ELEMENTS_PER_BLOB, KZG_INPUT_SIZE,
+    INFINITY_ARITHMETIC, BLS12_G1_ADD, BLS12_G2_ADD, BN254_ADD, BN254_MUL,
     KZG_POINT_EVALUATION, KZG_POINT_EVALUATION_GAS, P256_A, P256_B, P256_G, P256_N, P256_P, P256VERIFY, P256VERIFY_GAS,
     P256VERIFY_INPUT_SIZE, VERSIONED_HASH_VERSION_KZG,
     BN254_PAIR_SIZE, BN254_PAIRING, BN254_PAIRING_BASE, BN254_PAIRING_MAX_INPUT_SIZE, BN254_PAIRING_PER_PAIR, DETENTION_STOP, IDENTITY, IDENTITY_BASE, IDENTITY_WORD,
@@ -26,7 +27,8 @@ SIZE_LIMITS = {BN254_PAIRING: BN254_PAIRING_MAX_INPUT_SIZE, BLS12_G1_MSM: BLS12_
                BLS12_G2_MSM: BLS12_G2_MSM_MAX_INPUT_SIZE, BLS12_PAIRING: BLS12_PAIRING_MAX_INPUT_SIZE}
 NAMES = {KZG_POINT_EVALUATION: "KZG point evaluation", P256VERIFY: "P256VERIFY", MODEXP: "ModExp",
          BN254_PAIRING: "the BN254 pairing", BLS12_G1_MSM: "the BLS12-381 G1 MSM", BLS12_G2_MSM: "the BLS12-381 G2 MSM",
-         BLS12_PAIRING: "the BLS12-381 pairing"}
+         BLS12_PAIRING: "the BLS12-381 pairing", BN254_ADD: "the BN254 addition", BN254_MUL: "the BN254 multiplication",
+         BLS12_G1_ADD: "the BLS12-381 G1 addition", BLS12_G2_ADD: "the BLS12-381 G2 addition"}
 # The infinity point of BLS12-381's G1 in the compressed encoding a KZG commitment and proof use: the compression and
 # infinity flags, and nothing else.
 G1_INFINITY_COMPRESSED = b"\xc0" + bytes(47)
@@ -88,7 +90,8 @@ def kzg_evaluation(data: bytes) -> tuple[bool, str]:
     if versioned != bytes([VERSIONED_HASH_VERSION_KZG]) + hashlib.sha256(commitment).digest()[1:]:
         return False, "its versioned hash is not the commitment's, 0x01 followed by the last 31 bytes of its SHA-256"
     if z >= BLS_MODULUS or y >= BLS_MODULUS:
-        raise Unmodelled("a KZG evaluation point or value outside the scalar field")
+        return False, (f"its {'z' if z >= BLS_MODULUS else 'y'} is not below the scalar field's modulus, so it is no "
+                       "canonical field element and is not reduced: the input fails")
     if commitment != G1_INFINITY_COMPRESSED or proof != G1_INFINITY_COMPRESSED:
         raise Unmodelled("a KZG commitment or proof other than the point at infinity")
     if y:
@@ -177,6 +180,8 @@ def precompile_output(target: bytes, data: bytes) -> bytes:
         return FIELD_ELEMENTS_PER_BLOB.to_bytes(32, "big") + BLS_MODULUS.to_bytes(32, "big")
     if target == P256VERIFY:
         return (1).to_bytes(32, "big") if p256_verify(data)[0] else b""
+    if target in INFINITY_ARITHMETIC:  # a sum or a multiple of points at infinity is the point at infinity
+        return bytes(INFINITY_ARITHMETIC[target][2])
     if target in (BLS12_G1_MSM, BLS12_G2_MSM):  # an MSM of points at infinity is the point at infinity, all zero bytes
         return bytes(128 if target == BLS12_G1_MSM else 256)
     if target in (BN254_PAIRING, BLS12_PAIRING):  # a pairing of points at infinity is the identity: the word 1
@@ -287,6 +292,12 @@ class PrecompilesMixin:
         if target == P256VERIFY:
             _, why = p256_verify(data)
             return P256VERIFY_GAS, (f"P256VERIFY's P256VERIFY_GAS, {fmt(P256VERIFY_GAS)}, whatever its input; {why}"), None
+        if target in INFINITY_ARITHMETIC:
+            size, price, answer = INFINITY_ARITHMETIC[target]
+            if len(data) != size or any(data):
+                raise Unmodelled("an addition or a multiplication other than of points at infinity")
+            return price, (f"{NAMES[target]}'s fixed price as Karst defines it, {fmt(price)}, for its {size}-byte input "
+                           f"of points at infinity, whose answer is the point at infinity, {answer} zero bytes"), None
         if target in (BLS12_G1_MSM, BLS12_G2_MSM, BLS12_PAIRING):
             limit, size = SIZE_LIMITS[target], pair_size(target)
             if len(data) > limit:
@@ -520,7 +531,8 @@ class PrecompilesMixin:
         if fails == SIZE_LIMIT:
             d.add("outcome", f"the precompile at {h(target)} is given {fmt(len(data))} input bytes, over its size limit: "
                   f"the call fails before any gas check, charging no price, and consumes its whole forward of "
-                  f"{fmt(child_gas)}, as without the read", "SATIN-PCMP-005", "SATIN-DET-021")
+                  f"{fmt(child_gas)}, as without the read", "SATIN-PCMP-005", "SATIN-DET-021",
+                  *(("SATIN-PCMP-001", "SATIN-PCMP-004") if self.precompile_page else ()))
         elif fails:
             d.add("outcome", f"the precompile at {h(target)} runs on its forward of {fmt(child_gas)}, charges its price "
                   f"{fmt(price)}, then fails its input's check and consumes the whole forward, as without the read",
@@ -555,7 +567,8 @@ class PrecompilesMixin:
         d = self.d
         name = NAMES.get(target, f"the precompile at {h(target)}")
         own = {KZG_POINT_EVALUATION: ("SATIN-PCMP-001", "SATIN-PCMP-006"), P256VERIFY: ("SATIN-PCMP-001", "SATIN-PCMP-003"),
-               MODEXP: ("SATIN-PCMP-001", "SATIN-PCMP-002")}.get(target, ("SATIN-PCMP-001", "SATIN-PCMP-004"))
+               MODEXP: ("SATIN-PCMP-001", "SATIN-PCMP-002")}.get(
+            target, ("SATIN-PCMP-001", "SATIN-PCMP-004") if target in SIZE_LIMITS else ("SATIN-PCMP-001",))
         if fails == SIZE_LIMIT:
             d.add("outcome", f"{name} is given {fmt(len(data))} input bytes, over its size limit of "
                   f"{fmt(SIZE_LIMITS[target])}: the call fails before any gas check, charging no price, and consumes all "
