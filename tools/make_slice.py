@@ -284,7 +284,8 @@ class Case:
                  params=None, retune=None, reads=False, pools=False, destruction=False, coinbase=COINBASE,
                  detention=False, block_hashes=None, stops=False, lists=False, outcomes=False, chain=CHAIN_ID,
                  system_flag=False, gas_used_check=None, system_tx=False, source_hash=None, synthetic=False,
-                 sender=None, block_number=BLOCK_NUMBER, system_pages=False):
+                 sender=None, block_number=BLOCK_NUMBER, system_pages=False, precompile_page=False,
+                 size_page=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -331,6 +332,8 @@ class Case:
         self.sender = sender  # the sender of a synthetic message
         self.block_number = block_number  # the block's number, which NUMBER and BLOCKHASH read
         self.system_pages = system_pages  # a case of the deposits page or of a system contract's page (D-109)
+        self.precompile_page = precompile_page  # a case of the precompile page's own rules (D-103)
+        self.size_page = size_page  # a case of the contract-limits page's own rules (D-104)
         self.definition = ""  # the function of this file that defines the case, set by cases()
         if make:
             self.code = make(**self.params)
@@ -487,7 +490,8 @@ def cases() -> list[Case]:
                   authorization_cases,
                   outcome_cases, outcome_edge_cases, keyless_cases,
                   keyless_gap_cases, forwarding_cases, system_tx_cases, deposit_page_cases, oracle_page_cases,
-                  system_contract_cases, system_pages_gap_cases, history_cases, accounting_cases):
+                  system_contract_cases, system_pages_gap_cases, history_cases, accounting_cases, precompile_cases,
+                  size_cases):
         made = group()
         for c in made:
             c.definition = group.__name__
@@ -5577,6 +5581,308 @@ def accounting_cases() -> list[Case]:
     return out
 
 
+# --- The precompile page's and the contract-limits page's own rules (D-103, D-104) ----------------------------
+
+POP_RETURN = b"\x50" + RETURN_RETURNDATA  # POP the call's success flag, then return what the call returned
+
+
+def precompile_call(forward: int, target: bytes, data: bytes, size: int | None = None) -> bytes:
+    """`data` laid out in memory from offset 0 (zero bytes need no store), a CALL of `target` with `size` input bytes
+    (all of `data` by default) forwarding `forward`, then a return of what it returned."""
+    size = len(data) if size is None else size
+    return (bytes_to_memory(data) if any(data) else b"") + call(forward, target, 0, size) + POP_RETURN
+
+
+def generous(forward: int) -> int:
+    """A gas limit whose first frame can forward `forward` and pay the memory of a large input."""
+    return forward + forward // 40 + 1_000_000
+
+
+def kzg_input(y: int = 0) -> bytes:
+    """An EIP-4844 point evaluation input whose commitment and proof are both G1's point at infinity, its versioned hash
+    the commitment's, at the evaluation point z = 1 with the value `y`."""
+    infinity = model.G1_INFINITY_COMPRESSED
+    versioned = bytes([model.VERSIONED_HASH_VERSION_KZG]) + hashlib.sha256(infinity).digest()[1:]
+    return versioned + word(1) + word(y) + infinity + infinity
+
+
+P256_KEY, P256_NONCE = 0x5EED_C0FFEE, 0xBEEF_F00D  # the signer's key and the signature's nonce
+P256_MESSAGE = int.from_bytes(hashlib.sha256(b"Satin P256VERIFY").digest(), "big")
+
+
+def p256_input(valid: bool = True) -> bytes:
+    """A P256VERIFY input: a message hash, a signature of it by P256_KEY with the nonce P256_NONCE (ECDSA over P-256), and
+    the key's public point; with `valid` false, s is one more, so the signature no longer verifies."""
+    n = model.P256_N
+    qx, qy = model.p256_mul(P256_KEY, model.P256_G)
+    r = model.p256_mul(P256_NONCE, model.P256_G)[0] % n
+    s = pow(P256_NONCE, -1, n) * (P256_MESSAGE + r * P256_KEY) % n
+    return word(P256_MESSAGE) + word(r) + word(s if valid else s + 1) + word(qx) + word(qy)
+
+
+def modexp_input(base: bytes, exponent: bytes, modulus: bytes) -> bytes:
+    return word(len(base)) + word(len(exponent)) + word(len(modulus)) + base + exponent + modulus
+
+
+def precompile_cases() -> list[Case]:
+    """The precompile page's own rules (D-103): KZG point evaluation at its fixed price, P256VERIFY at EIP-7951's,
+    ModExp on the Osaka schedule, and the OP input size limits, each at its edge, where no limit is set."""
+    out: list[Case] = []
+    add = out.append
+    spec = CURRENT_SPEC
+    page = {"spec": spec, "precompile_page": True}
+
+    # SATIN-PCMP-001, -006: KZG point evaluation at KZG_POINT_EVALUATION_GAS, charged exactly; a forward one short fails
+    # out of gas before any verification, and a forward that pays it, given an input that fails, is consumed whole.
+    kzg = model.KZG_POINT_EVALUATION_GAS
+    for name, forward, intent in (
+            ("forward-one-short-of-price", kzg - 1, "one short of it: the call fails out of gas before any verification "
+             "runs and consumes its forward, though the input verifies"),
+            ("forward-at-price", kzg, "exactly: the input verifies, the call is charged that price and returns "
+             "FIELD_ELEMENTS_PER_BLOB and the scalar field's modulus"),
+            ("forward-above-price", 3 * kzg, "three times over: the input verifies and the call is charged exactly the "
+             "price, returning the rest of its forward")):
+        add(Case(f"satin/precompiles/kzg/{name}", f"a contract calls KZG point evaluation with a 192-byte input whose "
+                 "commitment and proof are the point at infinity, the zero polynomial's proof at z = 1 with y = 0, which "
+                 f"verifies, forwarding {fmt(forward)} against KZG_POINT_EVALUATION_GAS {fmt(kzg)}: {intent}",
+                 boundary=f"the forward {'one below' if forward < kzg else 'at' if forward == kzg else 'above'} the price",
+                 gas=generous(forward), code=precompile_call(forward, model.KZG_POINT_EVALUATION, kzg_input()), **page))
+    mismatched = bytearray(kzg_input())
+    mismatched[31] ^= 0x01
+    for name, data, size, intent in (
+            ("input-one-byte-short", kzg_input(), model.KZG_INPUT_SIZE - 1, "the verifying input less its last byte, "
+             "an input of the wrong length"),
+            ("versioned-hash-mismatch", bytes(mismatched), None, "the verifying input with the last byte of its versioned "
+             "hash flipped, a versioned hash that does not match the commitment"),
+            ("proof-does-not-verify", kzg_input(1), None, "the verifying input with y = 1, a proof that does not verify")):
+        add(Case(f"satin/precompiles/kzg/{name}", f"a contract calls KZG point evaluation with {intent}, forwarding "
+                 f"{fmt(3 * kzg)}, which pays KZG_POINT_EVALUATION_GAS: the call fails and consumes all the gas forwarded "
+                 "to it, not only the price", gas=generous(3 * kzg),
+                 code=precompile_call(3 * kzg, model.KZG_POINT_EVALUATION, data, size), **page))
+
+    # SATIN-PCMP-003: P256VERIFY costs P256VERIFY_GAS, verified or not.
+    p256 = model.P256VERIFY_GAS
+    for name, forward, valid, intent in (
+            ("valid-signature-one-short-of-price", p256 - 1, True, "one short of P256VERIFY_GAS: the call fails out of gas "
+             "and consumes its forward"),
+            ("valid-signature-at-price", p256, True, "P256VERIFY_GAS exactly: the signature verifies and the call returns "
+             "the word 1"),
+            ("invalid-signature-twice-price", 2 * p256, False, "twice P256VERIFY_GAS: the signature does not verify, so "
+             "the call succeeds with empty output, charged P256VERIFY_GAS as a verified one is, and returns the rest")):
+        add(Case(f"satin/precompiles/p256verify/{name}", "a contract calls P256VERIFY with a 160-byte input, an ECDSA "
+                 "signature over P-256 of a message hash " + ("by its public key" if valid else "with its s one more, "
+                                                                 "which does not verify")
+                 + f", forwarding {fmt(forward)}, {intent}", gas=generous(forward),
+                 boundary=f"the forward {'one below' if forward < p256 else 'at' if forward == p256 else 'above'} the "
+                          "price", code=precompile_call(forward, model.P256VERIFY, p256_input(valid)), **page))
+
+    # SATIN-PCMP-002, -007: ModExp's minimum, EIP-7883's formula past 32 bytes, EIP-7823's bound, and lengths too large
+    # to price.
+    small = modexp_input(b"\x03", b"\x05", b"\x07")
+    floor = model.MODEXP_MIN_GAS
+    for short in (True, False):
+        forward = floor - (1 if short else 0)
+        add(Case(f"satin/precompiles/modexp/minimum-price-{'one-short' if short else 'paid'}",
+                 f"a contract calls ModExp for 3^5 mod 7, one-byte operands whose formula price is below the minimum "
+                 f"MODEXP_MIN_GAS {fmt(floor)}, forwarding {fmt(forward)}: " +
+                 ("one short of the minimum, so the call fails out of gas and consumes its forward" if short else
+                  "the minimum exactly, so the call succeeds and returns 5"),
+                 boundary=f"the forward {'one below' if short else 'at'} the minimum", gas=generous(forward),
+                 code=precompile_call(forward, model.MODEXP, small), **page))
+    width = 33  # one byte past the 32 at which EIP-7883's complexity and its exponent's multiplier change
+    long = modexp_input((2).to_bytes(width, "big"), b"\x01" * width, (1000).to_bytes(width, "big"))
+    price, complexity, iterations = model.modexp_price(long)
+    for short in (True, False):
+        forward = price - (1 if short else 0)
+        add(Case(f"satin/precompiles/modexp/long-operands-{'one-short-of-price' if short else 'at-price'}",
+                 f"a contract calls ModExp with a base, an exponent and a modulus of {width} bytes each, priced by "
+                 f"EIP-7883 at its multiplication complexity {fmt(complexity)} times its iteration count "
+                 f"{fmt(iterations)}, {fmt(price)}, forwarding {fmt(forward)}: " +
+                 ("one short, so the call fails out of gas and consumes its forward" if short else
+                  "its price exactly, so the call succeeds and returns the power modulo 1000"),
+                 boundary=f"the forward {'one below' if short else 'at'} the formula price", gas=generous(forward),
+                 code=precompile_call(forward, model.MODEXP, long), **page))
+    bound = model.MODEXP_MAX_INPUT_SIZE
+    forward = 50_000
+    for over in (False, True):
+        data = word(0) + word(0) + word(bound + (1 if over else 0))
+        price = model.modexp_price(data)[0]
+        add(Case(f"satin/precompiles/modexp/modulus-{'over' if over else 'at'}-bound",
+                 f"a contract calls ModExp with no base and no exponent and a zero modulus of {fmt(bound + over)} bytes, "
+                 f"priced {fmt(price)}, forwarding {fmt(forward)}: " +
+                 ("one byte over EIP-7823's bound, so the call is charged its whole formula price and then fails the "
+                  "bound, consuming its forward" if over else
+                  "at EIP-7823's bound, so the call is charged its price and returns the zero modulus's bytes"),
+                 boundary=f"the modulus length {'one over' if over else 'at'} EIP-7823's bound", gas=generous(forward),
+                 code=precompile_call(forward, model.MODEXP, data), **page))
+    forward = 1_000_000
+    add(Case("satin/precompiles/modexp/lengths-too-large-to-price", f"a contract calls ModExp whose base length is "
+             f"2^256 - 1, forwarding {fmt(forward)}: lengths too large to price are priced past any gas a call can hold, "
+             "so the call fails out of gas and consumes its forward", gas=generous(forward),
+             code=precompile_call(forward, model.MODEXP, word(2**256 - 1) + word(0) + word(0)), **page))
+
+    # SATIN-PCMP-004, -005: the OP input size limits at their exact bytes, zero bytes being pairs of points at infinity:
+    # at the limit the precompile runs on its price, one pair over it fails before any gas check and consumes its
+    # forward, though the forward pays the price that input would have.
+    bn = model.BN254_PAIRING_MAX_INPUT_SIZE
+    pairs = bn // model.BN254_PAIR_SIZE
+    price = model.BN254_PAIRING_BASE + model.BN254_PAIRING_PER_PAIR * pairs
+    for short in (True, False):
+        forward = price - (1 if short else 0)
+        add(Case(f"satin/precompiles/bn254-pairing/at-size-limit-{'one-short-of-price' if short else 'at-price'}",
+                 f"a contract calls the BN254 pairing with {fmt(bn)} zero bytes, its size limit, {pairs} pairs of points "
+                 f"at infinity priced {fmt(price)}, forwarding {fmt(forward)}: " +
+                 ("one short of the price the limit lets it reach, so the call fails out of gas and consumes its forward"
+                  if short else "the price exactly: the pairing runs and returns the word 1"),
+                 boundary=f"the input at the size limit, the forward {'one below' if short else 'at'} its price",
+                 gas=generous(forward), code=precompile_call(forward, model.BN254_PAIRING, b"", bn), **page))
+    for target, label, limit, size in (
+            (model.BLS12_G1_MSM, "bls12-g1-msm", model.BLS12_G1_MSM_MAX_INPUT_SIZE, model.BLS12_G1_MSM_PAIR_SIZE),
+            (model.BLS12_G2_MSM, "bls12-g2-msm", model.BLS12_G2_MSM_MAX_INPUT_SIZE, model.BLS12_G2_MSM_PAIR_SIZE),
+            (model.BLS12_PAIRING, "bls12-pairing", model.BLS12_PAIRING_MAX_INPUT_SIZE, model.BLS12_PAIRING_PAIR_SIZE)):
+        what = {"bls12-g1-msm": "BLS12-381 G1 MSM", "bls12-g2-msm": "BLS12-381 G2 MSM",
+                "bls12-pairing": "BLS12-381 pairing"}[label]
+        for over in (False, True):
+            pairs = limit // size + (1 if over else 0)
+            price = model.bls12_price(target, pairs)
+            add(Case(f"satin/precompiles/{label}/{'over' if over else 'at'}-size-limit",
+                     f"a contract calls the {what} with {fmt(pairs * size)} zero bytes, {pairs} pairs of points at infinity "
+                     f"and " + ("zero scalars" if target != model.BLS12_PAIRING else "their pairs") +
+                     f", forwarding {fmt(price)}, their price: " +
+                     (f"one pair over its size limit of {fmt(limit)} bytes, so the call fails before any gas check and "
+                      "consumes all the gas forwarded to it" if over else
+                      f"its size limit exactly, so the precompile runs on its forward and answers "
+                      + ("the point at infinity" if target != model.BLS12_PAIRING else "the word 1")),
+                     boundary=f"the input {'one pair over' if over else 'at'} the size limit", gas=generous(price),
+                     code=precompile_call(price, target, b"", pairs * size), **page))
+    return out
+
+
+CREATOR = bytes.fromhex("00000000000000000000000000000000000c0e20")  # a child whose CREATE is its creating frame's
+STATIC_CREATOR = bytes.fromhex("00000000000000000000000000000000000c0e21")  # a child a STATICCALL starts, which creates
+RETURN_TOP = push(0) + b"\x52" + ret(0, 32)  # MSTORE(0, the stack's top), RETURN(0, 32)
+
+
+def creating(init: bytes, opcode: bytes = b"\xf0", salt: int = 0) -> bytes:
+    """`init` laid out in memory from offset 0, a CREATE (or, with opcode 0xf5, a CREATE2 with `salt`) of it with no value,
+    and a return of the created address, zero when the creation failed."""
+    return (bytes_to_memory(init) + (push(salt) if opcode == b"\xf5" else b"") + push(len(init)) + push(0) + push(0)
+            + opcode + RETURN_TOP)
+
+
+def size_cases() -> list[Case]:
+    """The contract-limits page's own rules (D-104): the code and initcode limits at their exact bytes, from a creation
+    transaction and a creation opcode, and the order of a creation's checks and charges, under gas detention
+    where a charge made out of order would be the crossing."""
+    out: list[Case] = []
+    add = out.append
+    page = {"spec": CURRENT_SPEC, "size_page": True}
+    code_max, init_max = model.MAX_CONTRACT_SIZE, model.MAX_INITCODE_SIZE
+    history = model.COST_PER_HISTORY_BYTE
+
+    # SATIN-SIZE-002, -004: a creation transaction's initcode at MAX_INITCODE_SIZE runs; one byte over is rejected at
+    # validation. Zero bytes of initcode stop at once. A deposit one byte over has no case yet (D-105).
+    gas = 150_000_000
+    for over in (False, True):
+        size = init_max + (1 if over else 0)
+        add(Case(f"satin/contract-limits/creation-tx/initcode-{'over' if over else 'at'}-limit",
+                 f"a creation transaction whose initcode is {fmt(size)} zero bytes, with a gas limit of {fmt(gas)}, which "
+                 "pays its intrinsic gas and its body's history: " +
+                 ("one byte over MAX_INITCODE_SIZE, so the transaction is rejected at validation" if over else
+                  "MAX_INITCODE_SIZE exactly, so it passes validation, its initcode stops at once and it creates an "
+                  "account without code"),
+                 boundary=f"the initcode {'one byte over' if over else 'at'} MAX_INITCODE_SIZE", to=None, data=bytes(size),
+                 gas=gas, **page))
+
+    # SATIN-SIZE-001, -003: deployed code at MAX_CONTRACT_SIZE is deposited; one byte over halts the creation, a creation
+    # transaction's (satin/outcomes/size/deployed-code-over-limit) or a CREATE's, consuming the creation's regular gas.
+    gas = 1_000_000_000
+    deposit_gas = model.CODE_STATE_PER_BYTE * code_max + history * code_max + model.KECCAK_WORD * (code_max // 32)
+    add(Case("satin/contract-limits/creation-tx/deployed-code-at-limit", f"a creation transaction whose initcode returns "
+             f"{fmt(code_max)} zero bytes, MAX_CONTRACT_SIZE exactly, with a gas limit of {fmt(gas)}, which pays that "
+             f"code's deposit, {fmt(deposit_gas)}: the size check passes and the code is deposited",
+             boundary="the deployed code at MAX_CONTRACT_SIZE", to=None, gas=gas, data=push(code_max) + push(0) + b"\xf3",
+             **page))
+    for over in (False, True):
+        size = code_max + (1 if over else 0)
+        add(Case(f"satin/contract-limits/create/deployed-code-{'over' if over else 'at'}-limit",
+                 f"a contract CREATEs with initcode that returns {fmt(size)} zero bytes, with a gas limit of {fmt(gas)}, "
+                 f"which could pay a deposit of MAX_CONTRACT_SIZE's code, {fmt(deposit_gas)}, and returns the created "
+                 "address: " +
+                 ("one byte over MAX_CONTRACT_SIZE, so the size check halts the creation before its deposit, consuming "
+                  "its regular gas; the created account's charges are given back, and the creator, which is not halted, "
+                  "returns zero" if over else "MAX_CONTRACT_SIZE exactly, so the code is deposited and the creator "
+                  "returns the created address"),
+                 boundary=f"the deployed code {'one byte over' if over else 'at'} MAX_CONTRACT_SIZE", gas=gas,
+                 code=creating(push(size) + push(0) + b"\xf3"), **page))
+
+    # SATIN-SIZE-002, -003: initcode over MAX_INITCODE_SIZE halts the creating frame at the opcode, here a child, which
+    # consumes its regular gas; its caller resumes, with no stop's return data.
+    forward = 5_000_000
+    for over in (False, True):
+        size = init_max + (1 if over else 0)
+        add(Case(f"satin/contract-limits/create/initcode-{'over' if over else 'at'}-limit-in-child",
+                 f"a contract calls a child, forwarding {fmt(forward)}, that CREATEs with {fmt(size)} zero bytes of "
+                 "initcode and stops, and returns what the call returned: " +
+                 ("one byte over MAX_INITCODE_SIZE, so the size check halts the child at the opcode, consuming its "
+                  "regular gas; it is no limit stop, and the caller resumes with empty return data" if over else
+                  "MAX_INITCODE_SIZE exactly, so the child creates an account without code and stops"),
+                 boundary=f"the initcode {'one byte over' if over else 'at'} MAX_INITCODE_SIZE", gas=8_000_000,
+                 accounts={CREATOR: model.Account(nonce=1, code=push(size) + push(0) + push(0) + b"\xf0" + STOP)},
+                 code=call(forward, CREATOR, 0, 0) + POP_RETURN, **page))
+
+    # SATIN-SIZE-005 step 5: the offset of empty initcode is not checked, a non-empty one's is.
+    top = 2**256 - 1
+    for opcode, name in ((b"\xf0", "create"), (b"\xf5", "create2")):
+        add(Case(f"satin/contract-limits/{name}/empty-initcode-offset-out-of-range",
+                 f"a contract runs {name.upper()} with no value, an offset of 2^256 - 1 and a size of zero"
+                 + (" and a salt of zero" if name == "create2" else "") + ", and returns the created address: the offset "
+                 "of empty initcode is not checked, so the creation runs and creates an account without code",
+                 boundary="an out-of-range offset with empty initcode",
+                 code=(push(0) if name == "create2" else b"") + push(0) + push(top) + push(0) + opcode + RETURN_TOP,
+                 **page))
+    add(Case("satin/contract-limits/create/one-byte-initcode-offset-out-of-range", "a contract runs CREATE with no value, "
+             "an offset of 2^256 - 1 and a size of one: the initcode is not empty, so after its initcode cost its offset's "
+             "range is checked, which fails, and the frame halts, using the whole gas limit",
+             boundary="an out-of-range offset with one byte of initcode", gas=100_000,
+             code=push(1) + push(top) + push(0) + b"\xf0" + RETURN_TOP, **page))
+
+    # SATIN-SIZE-005, -006 under gas detention: a child left 1 of spendable gas at a creation, where any charge made
+    # before the check that halts it would be the crossing and stop it instead; and CREATE2 short of its salt, whose
+    # memory is the crossing once its initcode cost is paid.
+    cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
+    start = {"words": words_within(cap - 6_000), "pad": 0}
+    detained_call = lambda words, pad: detained(words, pad) + call(100_000, DETAINED, 0, 0) + STOP  # noqa: E731
+    oversize = push(0) + push(init_max + 1) + push(0) + push(0) + b"\xf5" + STOP
+    operands = model.G_VERYLOW + 3 * model.G_BASE
+    add(Case("satin/contract-limits/create2/initcode-over-limit-detained", f"a detained child with 1 of spendable gas at a "
+             f"CREATE2 of {fmt(init_max + 1)} bytes of initcode, one over MAX_INITCODE_SIZE, with its salt: the size check "
+             "comes before the initcode cost, the memory and the salt's charges, so the child halts there and burns its "
+             "regular gas, where an initcode cost charged first would have been the crossing",
+             boundary="1 of spendable gas at the opcode", gas=21_000_000,
+             accounts={DETAINED: model.Account(nonce=1, code=oversize)}, make=detained_call, params=dict(start),
+             retune=[("child-room", 1 + operands, "pad", -1)], **page))
+    salt_short = push(32) + push(0) + push(0) + b"\xf5" + STOP
+    initcode, memory = model.INITCODE_WORD_COST, model.memory_cost(1)
+    spendable = initcode + memory - 1
+    add(Case("satin/contract-limits/create2/short-of-salt-memory-crossing", f"a detained child with {spendable} of "
+             f"spendable gas at a CREATE2 holding its value, offset and size but no salt: it pays its initcode cost, "
+             f"{initcode}, and then its memory, {memory}, is gas detention's crossing, so the child is stopped, a revert "
+             "whose regular gas returns, before the missing salt is read, where reading the salt before the memory would "
+             "have halted it", boundary="the spendable part one below the charges before the salt", gas=21_000_000,
+             accounts={DETAINED: model.Account(nonce=1, code=salt_short)}, make=detained_call, params=dict(start),
+             retune=[("child-room", spendable + model.G_VERYLOW + 2 * model.G_BASE, "pad", -1)], **page))
+    static_create = push(32) + push(0) + push(0) + b"\xf0" + STOP
+    add(Case("satin/contract-limits/static-frame/create-detained", "a detained child that a STATICCALL started, with 1 of "
+             "spendable gas at a CREATE of 32 bytes of initcode: the static context is checked before the operands and "
+             "every charge, so the child halts and burns its regular gas, where an initcode cost charged first would "
+             "have been the crossing and stopped it", boundary="1 of spendable gas at the opcode", gas=21_000_000,
+             accounts={STATIC_CREATOR: model.Account(nonce=1, code=static_create)},
+             make=lambda words, pad: detained(words, pad) + staticcall(100_000, STATIC_CREATOR) + STOP, params=dict(start),
+             retune=[("child-room", 1 + model.G_VERYLOW + 2 * model.G_BASE, "pad", -1)], **page))
+    return out
+
+
 def account(nonce=0, balance=0, code=b"", storage=None) -> dict:
     return {"nonce": q(nonce), "balance": q(balance), "code": h(code),
             "storage": {"0x" + k.to_bytes(32, "big").hex(): q(v) for k, v in sorted((storage or {}).items())}}
@@ -5658,7 +5964,7 @@ def build(c: Case):
     run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
                     destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists,
                     outcomes=c.outcomes, system_tx=c.system_tx, current=c.spec == CURRENT_SPEC,
-                    system_pages=c.system_pages)
+                    system_pages=c.system_pages, precompile_page=c.precompile_page, size_page=c.size_page)
     result = run.run()
     result.probe = run.probe
 
@@ -5789,6 +6095,8 @@ AREA_SCOPE = {
     "system-contracts": ("SATIN-MLC", "SATIN-HPTS", "SATIN-SYSC"),
     "history": ("SATIN-HIST",),
     "accounting": ("SATIN-ACCT",),
+    "precompiles": ("SATIN-PCMP",),
+    "contract-limits": ("SATIN-SIZE",),
 }
 RULE_ID = re.compile(r"SATIN-[A-Z]+-[0-9]{3}")
 

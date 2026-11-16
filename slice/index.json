@@ -14783,6 +14783,547 @@
         "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
         "name": "megaeth/Satin"
       }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/kzg/forward-one-short-of-price",
+      "file": "cases/satin/precompiles/kzg/forward-one-short-of-price.json",
+      "fileDigest": "sha256:0eb9719cd8314dee5b03e33bfdf2a4decdb07954f88bbc858fc84a5730e03cff",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/kzg/forward-at-price",
+      "file": "cases/satin/precompiles/kzg/forward-at-price.json",
+      "fileDigest": "sha256:7c98e50d7f788a958f3b5cf9679228b8359a3ac3cfe62d5b5486d80302dc54d6",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/kzg/forward-above-price",
+      "file": "cases/satin/precompiles/kzg/forward-above-price.json",
+      "fileDigest": "sha256:2bb21fb08607b124914a7fd16e6a38f40ccbb5463913d0849f4403dc73de19fc",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/kzg/input-one-byte-short",
+      "file": "cases/satin/precompiles/kzg/input-one-byte-short.json",
+      "fileDigest": "sha256:cbaaeecb1136bdc3118679725fc787f69462e6f3561645760e30af6d28f6ff3f",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/kzg/versioned-hash-mismatch",
+      "file": "cases/satin/precompiles/kzg/versioned-hash-mismatch.json",
+      "fileDigest": "sha256:9e06f9ec972fcec8a58684b3da7a00f2c02931f7bb1f3dea1492e52f02aacea2",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/kzg/proof-does-not-verify",
+      "file": "cases/satin/precompiles/kzg/proof-does-not-verify.json",
+      "fileDigest": "sha256:a50fbb3fbc2dc3c39ee7a2547393ad1913492113cdaa5aef91fa26b458afebaa",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/p256verify/valid-signature-one-short-of-price",
+      "file": "cases/satin/precompiles/p256verify/valid-signature-one-short-of-price.json",
+      "fileDigest": "sha256:792f4b5629c4a8ca4a73982004c0451e9f8668b30cee68b5cca4c60ff28d195a",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-003"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/p256verify/valid-signature-at-price",
+      "file": "cases/satin/precompiles/p256verify/valid-signature-at-price.json",
+      "fileDigest": "sha256:2f2ae743568633330c90e7f36c2d72ec7a75d496ddf486fae8c4b3080e7ec3af",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-003"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/p256verify/invalid-signature-twice-price",
+      "file": "cases/satin/precompiles/p256verify/invalid-signature-twice-price.json",
+      "fileDigest": "sha256:0dfb809c4f9e9155391192a2022b19c7c5578bae309476120cbd222f4d81ddab",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-003"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/modexp/minimum-price-one-short",
+      "file": "cases/satin/precompiles/modexp/minimum-price-one-short.json",
+      "fileDigest": "sha256:c85caaca6916bcd1b1f9c7e6b0c15fec075bf950e2b12656a40d076b3596c8c8",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-002",
+        "SATIN-PCMP-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/modexp/minimum-price-paid",
+      "file": "cases/satin/precompiles/modexp/minimum-price-paid.json",
+      "fileDigest": "sha256:3169b45c9edd31d0634afb61dd65c9e002fbde3e3d49313a13ab545c2d3f0fc0",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-002",
+        "SATIN-PCMP-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/modexp/long-operands-one-short-of-price",
+      "file": "cases/satin/precompiles/modexp/long-operands-one-short-of-price.json",
+      "fileDigest": "sha256:c09d5d99bc309a449f7245961c2837ef38450c7bc6b3c685b08eeb96f4eec956",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-002",
+        "SATIN-PCMP-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/modexp/long-operands-at-price",
+      "file": "cases/satin/precompiles/modexp/long-operands-at-price.json",
+      "fileDigest": "sha256:13661bec55354a7b53242ee50b1222b40e70590e3d8be939cbf29db9187cc4ea",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-002",
+        "SATIN-PCMP-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/modexp/modulus-at-bound",
+      "file": "cases/satin/precompiles/modexp/modulus-at-bound.json",
+      "fileDigest": "sha256:b34b52dfc6125e756a17cfce8374c5326baccdfaa4232d72190321d4fb422e71",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-002",
+        "SATIN-PCMP-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/modexp/modulus-over-bound",
+      "file": "cases/satin/precompiles/modexp/modulus-over-bound.json",
+      "fileDigest": "sha256:1489e2c3a3eb5dddf625be80a24e207821179467c3c4fc9a78d5906b6cffe6fb",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-002",
+        "SATIN-PCMP-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/modexp/lengths-too-large-to-price",
+      "file": "cases/satin/precompiles/modexp/lengths-too-large-to-price.json",
+      "fileDigest": "sha256:c296709050a460850ea871801d247aa4bdc112598d249602fffcf8af0730fe04",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-002",
+        "SATIN-PCMP-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/bn254-pairing/at-size-limit-one-short-of-price",
+      "file": "cases/satin/precompiles/bn254-pairing/at-size-limit-one-short-of-price.json",
+      "fileDigest": "sha256:2e4d7b85a27d2b9e5f6f5d6e19482b9e3b8dc544e5ce3c5cafa67d606f9fc020",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/bn254-pairing/at-size-limit-at-price",
+      "file": "cases/satin/precompiles/bn254-pairing/at-size-limit-at-price.json",
+      "fileDigest": "sha256:f13e33ffa5bd88d015cdd49471a76539527ed78b3fcb63459f75cc237a103619",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/bls12-g1-msm/at-size-limit",
+      "file": "cases/satin/precompiles/bls12-g1-msm/at-size-limit.json",
+      "fileDigest": "sha256:1229dca920da5ab45f2e3592ecf974ea4cb61b8ca22cd0e5865c34d10b68cbc4",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/bls12-g1-msm/over-size-limit",
+      "file": "cases/satin/precompiles/bls12-g1-msm/over-size-limit.json",
+      "fileDigest": "sha256:d10695253c39f64910cffaa1100edc21d911b4ce2daee576bce3a7219a73fcfb",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-004",
+        "SATIN-PCMP-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/bls12-g2-msm/at-size-limit",
+      "file": "cases/satin/precompiles/bls12-g2-msm/at-size-limit.json",
+      "fileDigest": "sha256:85b4506e22837a34f45c3ea564dd202d0fa7ad6430599d8327ff7240c59b3664",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/bls12-g2-msm/over-size-limit",
+      "file": "cases/satin/precompiles/bls12-g2-msm/over-size-limit.json",
+      "fileDigest": "sha256:6a51d963a7def7a811f10f7fa0a389192fbaa939a212798b060648fc24d29518",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-004",
+        "SATIN-PCMP-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/bls12-pairing/at-size-limit",
+      "file": "cases/satin/precompiles/bls12-pairing/at-size-limit.json",
+      "fileDigest": "sha256:f3c37d4c52cf687754f3621191c905e34e7f4285197cb30d97a852068f6a7548",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/bls12-pairing/over-size-limit",
+      "file": "cases/satin/precompiles/bls12-pairing/over-size-limit.json",
+      "fileDigest": "sha256:70292d2ddfe41f4bbf1aa38063634d628f6ef68e71b054611598c91977ac7d1b",
+      "rules": [
+        "SATIN-PCMP-001",
+        "SATIN-PCMP-004",
+        "SATIN-PCMP-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/creation-tx/initcode-at-limit",
+      "file": "cases/satin/contract-limits/creation-tx/initcode-at-limit.json",
+      "fileDigest": "sha256:9255e26655e23c4119deaf9054241d34a614aa7ea9b39dfe03c038beb56a64cf",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/creation-tx/initcode-over-limit",
+      "file": "cases/satin/contract-limits/creation-tx/initcode-over-limit.json",
+      "fileDigest": "sha256:e8220e5c133a010782c406c756d6621fab2dc8aa05a9668be0ca505c5150d759",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/creation-tx/deployed-code-at-limit",
+      "file": "cases/satin/contract-limits/creation-tx/deployed-code-at-limit.json",
+      "fileDigest": "sha256:3b833f5d1e9fae299215e51303ec40003fe3578578b1423a4e656708692a7b03",
+      "rules": [
+        "SATIN-SIZE-001",
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create/deployed-code-at-limit",
+      "file": "cases/satin/contract-limits/create/deployed-code-at-limit.json",
+      "fileDigest": "sha256:3cad5dc796b954cb48fd6c18159cc49b1872bbd5d715eca4924e7cd36f5daeda",
+      "rules": [
+        "SATIN-SIZE-001",
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create/deployed-code-over-limit",
+      "file": "cases/satin/contract-limits/create/deployed-code-over-limit.json",
+      "fileDigest": "sha256:0eb8ac3d90d9f89ee02966fe86ce13126bd5d685edb97c04914c4d8666b58604",
+      "rules": [
+        "SATIN-SIZE-001",
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create/initcode-at-limit-in-child",
+      "file": "cases/satin/contract-limits/create/initcode-at-limit-in-child.json",
+      "fileDigest": "sha256:de5363f2cc5abfcf7988f6d2dbaaf8f1b6c37030282dac6e100c95934b964121",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create/initcode-over-limit-in-child",
+      "file": "cases/satin/contract-limits/create/initcode-over-limit-in-child.json",
+      "fileDigest": "sha256:5136156bb6cf860099cb6cd1f75018fe94782d5203a61202d60e41c50f72ade3",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create/empty-initcode-offset-out-of-range",
+      "file": "cases/satin/contract-limits/create/empty-initcode-offset-out-of-range.json",
+      "fileDigest": "sha256:9fe1538a2786c7708d3e1d27dc4b098f4ef45f9c6bf95061d9a70544442160c4",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create2/empty-initcode-offset-out-of-range",
+      "file": "cases/satin/contract-limits/create2/empty-initcode-offset-out-of-range.json",
+      "fileDigest": "sha256:b98fc140e488740b83a77acbe240a6bf1f51df35b2b3860412a01121f7c6fd7c",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create/one-byte-initcode-offset-out-of-range",
+      "file": "cases/satin/contract-limits/create/one-byte-initcode-offset-out-of-range.json",
+      "fileDigest": "sha256:afc62ca81ecf8e40b3187766132d24c0bb4128e3d4b552a2e9180a91298e38b8",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create2/initcode-over-limit-detained",
+      "file": "cases/satin/contract-limits/create2/initcode-over-limit-detained.json",
+      "fileDigest": "sha256:952431d465088c54b8ad8aad0751cc791e32dd4cd326bc349edd6c35950d90cc",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/create2/short-of-salt-memory-crossing",
+      "file": "cases/satin/contract-limits/create2/short-of-salt-memory-crossing.json",
+      "fileDigest": "sha256:e55356c9f0e06b89db0342d788f56b3bd776a9f82b1bfcbd736fa3c31d4318bf",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-003",
+        "SATIN-SIZE-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
+      "caseId": "satin/contract-limits/static-frame/create-detained",
+      "file": "cases/satin/contract-limits/static-frame/create-detained.json",
+      "fileDigest": "sha256:d9ea162ac078a6073ba4e9d400182efac6d0e818996dc9d31acfbe536a3d61a5",
+      "rules": [
+        "SATIN-SIZE-005",
+        "SATIN-SIZE-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
     }
   ],
   "format": "mega-fixture-slice-index",

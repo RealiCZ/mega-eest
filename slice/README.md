@@ -1,6 +1,6 @@
 # The vertical slice
 
-789 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+826 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 66 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 27 for the
 edges of the charge-order principles, 5 for gas detention, 3 for the Oracle's reads, 2 for the
@@ -13,10 +13,11 @@ page at `c130558` (`specs/satin-c130558`), and 4 whose derivation takes a readin
 states from `bcf260d` on (2 for gas detention's rules whose precompile halts, a failed deposit's
 reads and a promoted system transaction's receipt), 73 for the system-transaction page and gas
 forwarding, 64 for the edges two reviews of the first batch found unpinned, 101 for the deposits
-page, the Oracle and the small system contracts and 77 for the history page and the resource-accounting
-page at `bcf260d` (`specs/satin-bcf260d`, the snapshot new cases cite), each case naming its own spec
+page, the Oracle and the small system contracts, 77 for the history page and the resource-accounting
+page, and 24 for the precompile page's and 13 for the contract-limits page's own rules at `bcf260d`
+(`specs/satin-bcf260d`, the snapshot new cases cite), each case naming its own spec
 (decisions D-54, D-59, D-60, D-61, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78, D-79,
-D-80, D-82, D-83, D-84, D-85, D-88, D-91, D-93, D-94, D-96, D-100, D-109). Every
+D-80, D-82, D-83, D-84, D-85, D-88, D-91, D-93, D-94, D-96, D-100, D-103, D-104, D-109). Every
 case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
@@ -81,13 +82,15 @@ to the exact rule text, the decoded transaction, and the case's pins and its are
 | `system-contracts` | 30 | MegaLimitControl's and the High-Precision Timestamp's pages (D-109): `remainingComputeGas()` as the transaction's own call, below the execution cap, above it and detained from its start (`SATIN-MLC-003`, `-004`), as a contract's `CALL` and `STATICCALL`, with no limit set and after a `TIMESTAMP` with the allowance below and above the caller's own gas (`SATIN-MLC-002`), and its bytecode's `NotIntercepted()` for a `DELEGATECALL` and another selector (`SATIN-MLC-001`); the timestamp read through the Oracle's `getSlot`, marked for gas detention and refused with access off (`SATIN-HPTS-002`), its `update` reverted and committed by the Oracle's check, and its accessors (`SATIN-HPTS-001`); and a review's edges: dispatch by the address and the four selector bytes, a transaction's own value call answered `NonZeroTransfer()`, forwards of 0 and 1 gas, a call above the execution cap, the allowance across a nested frame, detention by an applied authority, a `CALLCODE`, the timestamp updated and then read, and read twice |
 | `history` | 39 | the history page whole (D-100): history unscaled by the buckets of m = 2 and 4 its state charges land in (`SATIN-HIST-001`); an `SSTORE` one gas short of its regular charge after its load, one short of its record's history, and paying it, and a `SELFDESTRUCT` one short of its new beneficiary's charge after its load, of its records' history, and paying it, against one short of its beneficiary's cold access, which loads nothing (`SATIN-HIST-008`, `-013`); an empty log whose frame cannot pay its history, crossing the data-size limit (a stop) and fitting it (a halt) (`SATIN-HIST-013`); a value call's start under a crossing limit, its caller one gas short of the records' history (a halt) and paying it (a stop, the charge given back) (`SATIN-HIST-014`); a value call to a new account forwarding all it may, its caller keeping one gas short of the records' history and exactly it (`SATIN-HIST-010`); a constructor storing the forward its `CREATE` or `CREATE2` received, the created account's state gas paid from regular gas or from a reservoir (`SATIN-HIST-011`); the history allowance: one empty log, five that spend it, six, two sibling value calls each with its own, a log past it one gas short of its rest and paying it, a reset slot's record, a fresh slot's state gas and computation it does not pay, and the starts that grant none, a call without value, also from a frame holding one, a `DELEGATECALL` in a frame entered with value, an endowed creation and the transaction's own frame (`SATIN-HIST-018` to `-021`); the specification's two examples of the history bytes (`SATIN-HIST-022`); a descendant's give-back paying its next record (`SATIN-HIST-007`); and a regular ledger one below and one above the floor, and a deposit's (`SATIN-HIST-017`) |
 | `accounting` | 38 | the resource-accounting page whole (D-100): a value `CALLCODE` and a value call to the calling account itself, no record and no transfer log (`SATIN-ACCT-007`); value to the sender, also from the sender's own delegated frame, whose storage is recorded (`SATIN-ACCT-008`), and to an applied authority, also one that is the block beneficiary (`SATIN-ACCT-009`); value to the base fee vault from a call and as the transaction's own value to the vault the state does not hold, a destruction to it, and the sender as the block beneficiary, the settlement's credits no rise (`SATIN-ACCT-010`, `-017`); account records across two transfers to one recipient, one to each of two, a failed transfer and a sibling or a retry, a partial return, a pass-on of exactly what was received, a destruction returning one or both accounts to what was loaded, kept and discarded, and a creation onto an address the transaction funded, against its control (`SATIN-ACCT-004` to `-006`); a creator's nonce record surviving one and two failed creations, a creation refused for an endowment it cannot fund, a destruction's mark surviving a failed sibling, and a child's log merging after a large one (`SATIN-ACCT-011`, `-012`); an access list's entries, one and one twice, body bytes and no record; the transaction's whole state-growth limit, a fall at it and the rise it made room for, and a second rise that crosses, in the first frame and in a child whose signed net goes below zero, and a child's clamped remaining, its callee at it and one past (`SATIN-ACCT-016`, `-018`, `-019`); and a failed deposit from an empty leaf and from a caller of nonce 1 (`SATIN-ACCT-020`) |
+| `precompiles` | 24 | the precompile page's own rules (D-103), where no limit is set: KZG point evaluation at `KZG_POINT_EVALUATION_GAS` on an input that verifies, forwarded one below the price (out of gas before any verification), the price and three times it (charged exactly the price), and given at least the price an input one byte short, a versioned hash that does not match and a proof that does not verify, each consuming its forward (`SATIN-PCMP-001`, `-006`); `P256VERIFY` at `P256VERIFY_GAS` on a signature that verifies, one below and at the price, and on one that does not, a success with empty output charged the same price (`SATIN-PCMP-003`); ModExp at `MODEXP_MIN_GAS` one below and at it, EIP-7883's price for 33-byte operands one below and at it, a modulus at EIP-7823's bound and one byte over, charged its whole formula price before it fails, and lengths too large to price (`SATIN-PCMP-002`, `-007`); and the OP input size limits at their exact bytes, zero bytes being pairs of points at infinity: the BN254 pairing at its limit one below and at its price, and the BLS12-381 G1 MSM, G2 MSM and pairing at their limits and one pair over, forwarded the price (`SATIN-PCMP-004`, `-005`) |
+| `contract-limits` | 13 | the contract-limits page's own rules (D-104): a creation transaction's initcode at `MAX_INITCODE_SIZE` and one byte over, refused (`SATIN-SIZE-002`, `-004`); deployed code at `MAX_CONTRACT_SIZE` from a creation transaction and from `CREATE`, and one byte over from `CREATE`, which halts the creation and not its creator (`SATIN-SIZE-001`, `-003`); a `CREATE` of initcode at the limit and one byte over in a child, which halts the child, no stop; empty initcode at an out-of-range offset for `CREATE` and `CREATE2`, which creates, against one byte there, which halts (`SATIN-SIZE-005` step 5); and under gas detention, a child left 1 of spendable gas at a `CREATE2` over the initcode limit and at a `CREATE` in a static frame, each a halt where a charge made first would have been the crossing, and a `CREATE2` short of its salt whose memory is the crossing (`SATIN-SIZE-005`, `-006`) |
 
 The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
 empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and `authorizations`
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-The gating cases pin 295 rules in 27 areas of the specification. `index.json` lists each case with
+The gating cases pin 308 rules in 29 areas of the specification. `index.json` lists each case with
 its area, the rules it pins, its file and its file digest.
 
 ## Quarantine and the wrong expectation
@@ -114,8 +117,11 @@ budget of 3 is pinned on the state-growth budget instead, D-65), gas detention's
 intercepted answer that spends regular gas (`SATIN-DET-025`), a node's own precompiles
 (`SATIN-DET-027`), the source hash a promotion stamps (`SATIN-MST-006`, which no observation
 carries) and a system-originated transaction's counts on the block (`SATIN-MST-009`, D-82), the
-precompiles beyond the identity's and RIPEMD-160's runs, ModExp's price and output and an over-size
-BN254 pairing (D-67, D-91) and a destruction's read of the block beneficiary, frames and
+precompiles beyond the identity's, RIPEMD-160's, SHA-256's and ecrecover's prices and runs, ModExp's
+price and output, KZG point evaluation on an input at the point at infinity, `P256VERIFY`, and the
+BN254 and BLS12-381 precompiles on points at infinity (D-67, D-91, D-103), a deposit whose initcode
+is over `MAX_INITCODE_SIZE`, which both implementations run where `SATIN-SIZE-004` makes it a failed
+deposit (D-105), and a destruction's read of the block beneficiary, frames and
 creations beyond the shapes the take-back examples and the destruction page's cases build (D-65,
 D-70), a slot of an address the transaction accessed before creating onto it and a store after a
 destruction's mark that moves the refund counter (D-72), EIP-7702 lists beyond the shapes the

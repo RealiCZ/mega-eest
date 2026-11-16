@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-bcf260d], source commit `bcf260d3de62c50cd1700e4f8
 (committed `2026-11-16T12:04:00+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **789** (789 gating, 0 quarantined).
-Cited rule IDs: **295**. Uncited rule IDs in that registry: **116**
-(106 active, 10 retired).
+Cases: **826** (826 gating, 0 quarantined).
+Cited rule IDs: **308**. Uncited rule IDs in that registry: **103**
+(93 active, 10 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -5219,6 +5219,99 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/outcomes/size/create-initcode-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
 
+### SATIN-PCMP-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/precompiles/bls12-g1-msm/at-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-g1-msm/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-g2-msm/at-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-g2-msm/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-pairing/at-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-pairing/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bn254-pairing/at-size-limit-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bn254-pairing/at-size-limit-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/forward-above-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/forward-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/forward-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/input-one-byte-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/proof-does-not-verify] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/versioned-hash-mismatch] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/lengths-too-large-to-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/long-operands-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/long-operands-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/minimum-price-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/minimum-price-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/modulus-at-bound] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/modulus-over-bound] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/p256verify/invalid-signature-twice-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/p256verify/valid-signature-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/p256verify/valid-signature-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-PCMP-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/precompiles/modexp/lengths-too-large-to-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/long-operands-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/long-operands-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/minimum-price-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/minimum-price-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/modulus-at-bound] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/modulus-over-bound] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-PCMP-003
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/precompiles/p256verify/invalid-signature-twice-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/p256verify/valid-signature-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/p256verify/valid-signature-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-PCMP-004
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/precompiles/bls12-g1-msm/at-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-g1-msm/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-g2-msm/at-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-g2-msm/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-pairing/at-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-pairing/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bn254-pairing/at-size-limit-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bn254-pairing/at-size-limit-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-PCMP-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/precompiles/bls12-g1-msm/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-g2-msm/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/bls12-pairing/over-size-limit] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-PCMP-006
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/precompiles/kzg/forward-above-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/forward-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/forward-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/input-one-byte-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/proof-does-not-verify] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/kzg/versioned-hash-mismatch] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-PCMP-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/precompiles/modexp/lengths-too-large-to-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/long-operands-at-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/long-operands-one-short-of-price] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/minimum-price-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/minimum-price-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/modulus-at-bound] | gating | unqualified | [satin-bcf260d] |
+| [satin/precompiles/modexp/modulus-over-bound] | gating | unqualified | [satin-bcf260d] |
+
 ### SATIN-PCMP-008
 
 | Case | Status | Citation | Registry |
@@ -6109,6 +6202,75 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/charges/new-beneficiary-state-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/late-failure/beneficiary-read-data-fits] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/own-creation/own-end-read-binds] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-SIZE-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/contract-limits/create/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/deployed-code-over-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-SIZE-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/contract-limits/create/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/deployed-code-over-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/empty-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/initcode-at-limit-in-child] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/initcode-over-limit-in-child] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/one-byte-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/empty-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/initcode-over-limit-detained] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/short-of-salt-memory-crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/initcode-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/initcode-over-limit] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-SIZE-003
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/contract-limits/create/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/deployed-code-over-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/empty-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/initcode-at-limit-in-child] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/initcode-over-limit-in-child] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/one-byte-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/empty-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/initcode-over-limit-detained] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/short-of-salt-memory-crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-SIZE-004
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/contract-limits/creation-tx/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/initcode-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/initcode-over-limit] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-SIZE-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/contract-limits/create/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/deployed-code-over-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/empty-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/initcode-at-limit-in-child] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/initcode-over-limit-in-child] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create/one-byte-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/empty-initcode-offset-out-of-range] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/initcode-over-limit-detained] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/static-frame/create-detained] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-SIZE-006
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/contract-limits/create2/short-of-salt-memory-crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/static-frame/create-detained] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-STATE-001
 
@@ -7138,13 +7300,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-PBLK-004` | active | [block/system-calls.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/block/system-calls.md) |
 | `SATIN-PBLK-005` | retired | [block/system-calls.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/block/system-calls.md) |
 | `SATIN-PBLK-006` | active | [block/system-calls.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/block/system-calls.md) |
-| `SATIN-PCMP-001` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-002` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-003` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-004` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-005` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-006` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-007` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-POOL-001` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-002` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-003` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
@@ -7167,12 +7322,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-SCHED-012` | active | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-schedule.md) |
 | `SATIN-SCHED-013` | retired | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-schedule.md) |
 | `SATIN-SCHED-014` | active | [evm/gas-schedule.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-schedule.md) |
-| `SATIN-SIZE-001` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/contract-limits.md) |
-| `SATIN-SIZE-002` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/contract-limits.md) |
-| `SATIN-SIZE-003` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/contract-limits.md) |
-| `SATIN-SIZE-004` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/contract-limits.md) |
-| `SATIN-SIZE-005` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/contract-limits.md) |
-| `SATIN-SIZE-006` | active | [evm/contract-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/contract-limits.md) |
 | `SATIN-STATE-004` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/state-gas.md) |
 | `SATIN-STATE-005` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/state-gas.md) |
 | `SATIN-STATE-006` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/state-gas.md) |
@@ -7298,6 +7447,19 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/call-order/unfunded/contract-refused]: ../slice/cases/satin/call-order/unfunded/contract-refused.json
 [satin/call-order/unfunded/empty-account]: ../slice/cases/satin/call-order/unfunded/empty-account.json
 [satin/call-order/unfunded/limit-control]: ../slice/cases/satin/call-order/unfunded/limit-control.json
+[satin/contract-limits/create/deployed-code-at-limit]: ../slice/cases/satin/contract-limits/create/deployed-code-at-limit.json
+[satin/contract-limits/create/deployed-code-over-limit]: ../slice/cases/satin/contract-limits/create/deployed-code-over-limit.json
+[satin/contract-limits/create/empty-initcode-offset-out-of-range]: ../slice/cases/satin/contract-limits/create/empty-initcode-offset-out-of-range.json
+[satin/contract-limits/create/initcode-at-limit-in-child]: ../slice/cases/satin/contract-limits/create/initcode-at-limit-in-child.json
+[satin/contract-limits/create/initcode-over-limit-in-child]: ../slice/cases/satin/contract-limits/create/initcode-over-limit-in-child.json
+[satin/contract-limits/create/one-byte-initcode-offset-out-of-range]: ../slice/cases/satin/contract-limits/create/one-byte-initcode-offset-out-of-range.json
+[satin/contract-limits/create2/empty-initcode-offset-out-of-range]: ../slice/cases/satin/contract-limits/create2/empty-initcode-offset-out-of-range.json
+[satin/contract-limits/create2/initcode-over-limit-detained]: ../slice/cases/satin/contract-limits/create2/initcode-over-limit-detained.json
+[satin/contract-limits/create2/short-of-salt-memory-crossing]: ../slice/cases/satin/contract-limits/create2/short-of-salt-memory-crossing.json
+[satin/contract-limits/creation-tx/deployed-code-at-limit]: ../slice/cases/satin/contract-limits/creation-tx/deployed-code-at-limit.json
+[satin/contract-limits/creation-tx/initcode-at-limit]: ../slice/cases/satin/contract-limits/creation-tx/initcode-at-limit.json
+[satin/contract-limits/creation-tx/initcode-over-limit]: ../slice/cases/satin/contract-limits/creation-tx/initcode-over-limit.json
+[satin/contract-limits/static-frame/create-detained]: ../slice/cases/satin/contract-limits/static-frame/create-detained.json
 [satin/creation/code-bucket-x2]: ../slice/cases/satin/creation/code-bucket-x2.json
 [satin/creation/empty-code]: ../slice/cases/satin/creation/empty-code.json
 [satin/creation/initcode-reverts]: ../slice/cases/satin/creation/initcode-reverts.json
@@ -7788,6 +7950,30 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/pre-frame/authorities-first-halt]: ../slice/cases/satin/pre-frame/authorities-first-halt.json
 [satin/pre-frame/keyless-start-record-exact]: ../slice/cases/satin/pre-frame/keyless-start-record-exact.json
 [satin/pre-frame/keyless-start-record-one-short]: ../slice/cases/satin/pre-frame/keyless-start-record-one-short.json
+[satin/precompiles/bls12-g1-msm/at-size-limit]: ../slice/cases/satin/precompiles/bls12-g1-msm/at-size-limit.json
+[satin/precompiles/bls12-g1-msm/over-size-limit]: ../slice/cases/satin/precompiles/bls12-g1-msm/over-size-limit.json
+[satin/precompiles/bls12-g2-msm/at-size-limit]: ../slice/cases/satin/precompiles/bls12-g2-msm/at-size-limit.json
+[satin/precompiles/bls12-g2-msm/over-size-limit]: ../slice/cases/satin/precompiles/bls12-g2-msm/over-size-limit.json
+[satin/precompiles/bls12-pairing/at-size-limit]: ../slice/cases/satin/precompiles/bls12-pairing/at-size-limit.json
+[satin/precompiles/bls12-pairing/over-size-limit]: ../slice/cases/satin/precompiles/bls12-pairing/over-size-limit.json
+[satin/precompiles/bn254-pairing/at-size-limit-at-price]: ../slice/cases/satin/precompiles/bn254-pairing/at-size-limit-at-price.json
+[satin/precompiles/bn254-pairing/at-size-limit-one-short-of-price]: ../slice/cases/satin/precompiles/bn254-pairing/at-size-limit-one-short-of-price.json
+[satin/precompiles/kzg/forward-above-price]: ../slice/cases/satin/precompiles/kzg/forward-above-price.json
+[satin/precompiles/kzg/forward-at-price]: ../slice/cases/satin/precompiles/kzg/forward-at-price.json
+[satin/precompiles/kzg/forward-one-short-of-price]: ../slice/cases/satin/precompiles/kzg/forward-one-short-of-price.json
+[satin/precompiles/kzg/input-one-byte-short]: ../slice/cases/satin/precompiles/kzg/input-one-byte-short.json
+[satin/precompiles/kzg/proof-does-not-verify]: ../slice/cases/satin/precompiles/kzg/proof-does-not-verify.json
+[satin/precompiles/kzg/versioned-hash-mismatch]: ../slice/cases/satin/precompiles/kzg/versioned-hash-mismatch.json
+[satin/precompiles/modexp/lengths-too-large-to-price]: ../slice/cases/satin/precompiles/modexp/lengths-too-large-to-price.json
+[satin/precompiles/modexp/long-operands-at-price]: ../slice/cases/satin/precompiles/modexp/long-operands-at-price.json
+[satin/precompiles/modexp/long-operands-one-short-of-price]: ../slice/cases/satin/precompiles/modexp/long-operands-one-short-of-price.json
+[satin/precompiles/modexp/minimum-price-one-short]: ../slice/cases/satin/precompiles/modexp/minimum-price-one-short.json
+[satin/precompiles/modexp/minimum-price-paid]: ../slice/cases/satin/precompiles/modexp/minimum-price-paid.json
+[satin/precompiles/modexp/modulus-at-bound]: ../slice/cases/satin/precompiles/modexp/modulus-at-bound.json
+[satin/precompiles/modexp/modulus-over-bound]: ../slice/cases/satin/precompiles/modexp/modulus-over-bound.json
+[satin/precompiles/p256verify/invalid-signature-twice-price]: ../slice/cases/satin/precompiles/p256verify/invalid-signature-twice-price.json
+[satin/precompiles/p256verify/valid-signature-at-price]: ../slice/cases/satin/precompiles/p256verify/valid-signature-at-price.json
+[satin/precompiles/p256verify/valid-signature-one-short-of-price]: ../slice/cases/satin/precompiles/p256verify/valid-signature-one-short-of-price.json
 [satin/reads/balance-cold-paid]: ../slice/cases/satin/reads/balance-cold-paid.json
 [satin/reads/balance-cold-unpaid]: ../slice/cases/satin/reads/balance-cold-unpaid.json
 [satin/reads/delegate-loaded]: ../slice/cases/satin/reads/delegate-loaded.json
