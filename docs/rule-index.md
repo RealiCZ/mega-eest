@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-bcf260d], source commit `bcf260d3de62c50cd1700e4f8
 (committed `2026-11-16T12:04:00+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **547** (547 gating, 0 quarantined).
-Cited rule IDs: **250**. Uncited rule IDs in that registry: **161**
-(151 active, 10 retired).
+Cases: **588** (588 gating, 0 quarantined).
+Cited rule IDs: **255**. Uncited rule IDs in that registry: **156**
+(146 active, 10 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -718,11 +718,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/access-off/call-short-of-an-operand] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/access-off/callcode-short-of-an-operand] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/balance-static-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/balance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -735,8 +739,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/first-too-old] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/last-in-range] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
@@ -750,11 +756,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/not-volatile/other-accounts] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -763,9 +777,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
@@ -779,6 +803,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/not-volatile/blobhash] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/not-volatile/blobhash-access-off] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DET-003
 
@@ -789,6 +814,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/balance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -801,8 +828,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/first-too-old] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/last-in-range] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
@@ -816,12 +845,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/input-refused] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/short-of-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -830,9 +867,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
@@ -846,8 +893,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/first-too-old] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/last-in-range] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DET-005
 
@@ -864,6 +913,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/creation/create-at-beneficiary-access-off] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/creation/created-at-beneficiary] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/creation/creator-at-beneficiary-access-off] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DET-007
 
@@ -882,6 +932,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DET-009
 
@@ -892,11 +945,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/sender] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
@@ -906,9 +965,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/state-gas-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -926,14 +995,26 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DET-012
 
@@ -944,6 +1025,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/balance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -956,8 +1039,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/first-too-old] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/last-in-range] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
@@ -971,10 +1056,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -983,9 +1076,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
@@ -999,6 +1102,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/balance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -1011,8 +1116,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/first-too-old] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/last-in-range] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -1025,10 +1132,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -1037,9 +1152,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
@@ -1057,6 +1182,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/balance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -1069,8 +1196,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/first-too-old] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/last-in-range] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
@@ -1084,10 +1213,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -1096,9 +1233,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
@@ -1111,12 +1258,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/history-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
@@ -1126,9 +1278,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
@@ -1142,6 +1304,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/balance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -1154,8 +1318,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/first-too-old] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/last-in-range] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/cap/after-larger-spend-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -1168,9 +1334,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -1179,9 +1351,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
@@ -1195,6 +1377,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
@@ -1204,9 +1388,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
@@ -1221,6 +1415,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/beneficiary/authority] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/beneficiary/balance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/beneficiary/extcodehash] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/extcodesize] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/beneficiary/recipient-one-past-limit] | gating | unqualified | [satin-cdded1e] |
@@ -1232,8 +1428,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/block-environment/prevrandao] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/block-environment/slotnum] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/current-block] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/first-too-old] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/blockhash/future-block] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/blockhash/in-range] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/blockhash/last-in-range] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/cap/after-larger-spend-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/history-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
@@ -1243,10 +1441,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cap/state-refill-after-read-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/state-refill-after-read-one-past-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/cap/timestamp-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/gas-sees-whole] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/refund-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/withheld/sstore-check-sees-whole] | gating | unqualified | [satin-cdded1e] |
@@ -1261,10 +1467,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/balance-static-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/beneficiary/call-target] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/call-value-crossing] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -1273,9 +1485,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/stipend/spun-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/stipend/spun-one-past-limit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/withheld/finite-forward-sees-whole] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/withheld/forward-sees-whole] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-DET-020
@@ -1283,14 +1505,25 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/balance-static-out-of-gas] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/completed-read/child-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/history-contract/at-number] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-past-forward] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/stipend/spun-then-halted-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/stipend/spun-then-halted-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/unpaid-start/caller-computes-one-past-limit] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DET-021
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -1299,7 +1532,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DET-022
 
@@ -1311,7 +1549,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/own-precompile/modexp-priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-past-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/own-precompile/modexp-priced-within-allowance] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/bn254-pairing-over-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/priced-at-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-at-forward] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/priced-past-allowance] | gating | unqualified | [satin-cdded1e] |
@@ -1319,12 +1561,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/precompile/identity/value-crossing] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/identity/value-within-allowance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/precompile/ripemd160/priced-at-allowance] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/precompile/ripemd160/priced-past-allowance] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DET-024
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/precompile/identity/delegatecall-inherited-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/precompile/identity/value-unfunded] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/precompile/modexp/over-bound-past-allowance] | gating | unqualified | [satin-cdded1e] |
 
@@ -1333,6 +1579,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-FWD-001
 
@@ -2873,14 +3121,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/first-frame-value/log-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-at-budget] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame-growth/two-authorities-then-child] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-answer-stopped] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept-code-at-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
@@ -2895,6 +3153,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 
 ### SATIN-LIM-003
@@ -2904,6 +3163,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-LIM-004
 
@@ -2912,6 +3172,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-budget/caller-crosses-its-budget] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-budget/caller-fills-its-budget] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 
 ### SATIN-LIM-005
@@ -2923,6 +3185,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
 
@@ -2936,6 +3199,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/frame-budget/child-logs-at-budget] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -2959,14 +3224,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/data-size-at-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-at-budget] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/pre-frame-growth/two-authorities-then-child] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/pre-frame/start-record-unpaid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-answer-stopped] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept-code-at-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
@@ -2995,8 +3270,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 
@@ -3013,6 +3292,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -3029,6 +3311,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
 
@@ -3038,8 +3321,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-answer-stopped] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept-code-at-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/start-crossing/value-call-at-limit] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-LIM-014
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/precompile-start/identity-failure-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept-code-at-address] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-LIM-015
 
@@ -3048,6 +3341,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/send-hint/one-byte-over-data-size-limit] | gating | unqualified | [satin-5fb2688] |
 | [satin/interception/send-hint/over-data-size-limit] | gating | unqualified | [satin-d334ef8] |
 | [satin/interception/send-hint/value-unfunded] | gating | unqualified | [satin-d334ef8] |
+
+### SATIN-LIM-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-LOG-001
 
@@ -3095,6 +3394,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/new-caller/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | gating | unqualified | [satin-d34e626] |
 
+### SATIN-LOG-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+
 ### SATIN-LOG-006
 
 | Case | Status | Citation | Registry |
@@ -3128,6 +3433,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/refused-read] | gating | unqualified | [satin-5fb2688] |
 | [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
+| [satin/detention/access-off/call-short-of-an-operand] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/access-off/callcode-short-of-an-operand] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-MAC-004
 
@@ -3319,6 +3626,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
+| [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/read-at-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-warm-base] | gating | unqualified | [satin-5fb2688] |
@@ -3549,6 +3858,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/outcomes/size/code-deposit-one-short] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/create-initcode-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
+
+### SATIN-PCMP-008
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/precompile-start/identity-failure-kept-code-at-address] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-POOL-005
 
@@ -3991,7 +4306,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4000,6 +4317,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4021,7 +4340,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4030,6 +4351,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4043,13 +4366,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-SD-004
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4058,6 +4385,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4071,7 +4400,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4080,6 +4412,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4093,7 +4427,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4102,6 +4439,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4115,7 +4454,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4124,6 +4466,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4137,7 +4481,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4146,6 +4493,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4159,7 +4508,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4168,6 +4520,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4181,7 +4535,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4190,6 +4546,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4249,12 +4607,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-SD-017
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-SD-018
@@ -4263,6 +4623,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/not-created/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
@@ -4278,7 +4641,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4287,6 +4653,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4321,9 +4689,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4332,6 +4703,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4361,8 +4734,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4370,6 +4746,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -4392,9 +4769,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4403,6 +4783,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4421,8 +4803,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4430,6 +4815,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -4483,6 +4869,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/authorizations/sender/own-entry-not-detained] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/start-record/reservoir-pays-one] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/warmth/target-not-warmed] | gating | unqualified | [satin-c130558] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
 | [satin/value-transfer/empty-leaf-recipient] | gating | unqualified | [satin-d334ef8] |
 
@@ -4493,9 +4880,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/reverted-then-kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/absent-leaf] | gating | unqualified | [satin-cdded1e] |
@@ -4504,6 +4894,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/first-effective/give-back-as-reservoir] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/first-effective/slot-restored-before] | gating | unqualified | [satin-cdded1e] |
+| [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/first-effective/two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
@@ -4544,6 +4936,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -4567,12 +4962,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/deposit/out-of-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-short] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-answer-stopped] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
@@ -4584,6 +4983,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -4607,6 +5008,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -4627,7 +5031,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-006
@@ -4640,6 +5046,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-stopped/caller-log-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -4660,6 +5067,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-budget/depth-three] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/child-stopped/caller-log-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-answer-stopped] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-STOP-009
@@ -4674,6 +5082,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -4701,6 +5111,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -4717,6 +5129,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -4729,7 +5142,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-answer-stopped] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-STOP-014
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/limit-stops/precompile-start/identity-answer-stopped] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept-code-at-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-STOP-015
 
@@ -4761,6 +5184,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -4784,11 +5210,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/creation-stopped/creator-record-fits] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/log-over-limit/regular-charge-paid] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/pre-frame/start-record-paid] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/precompile-start/identity-answer-stopped] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/reservoir/compute-stop-above-cap] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 
@@ -4797,6 +5227,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/limit-stops/child-stopped/caller-re-raises] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/frame-budget/child-logs-at-budget] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-failure-kept-code-at-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/revert-with-stop-bytes/kind-0] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/revert-with-stop-bytes/kind-1] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/revert-with-stop-bytes/kind-2] | gating | unqualified | [satin-cdded1e] |
@@ -4815,6 +5250,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/creation-stopped/creator-record-crosses] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/data-size-one-byte-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/deposit/stopped] | gating | unqualified | [satin-cdded1e] |
+| [satin/limit-stops/first-frame-value/log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-at-budget] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/child-logs-one-byte-over] | gating | unqualified | [satin-bcf260d] |
+| [satin/limit-stops/frame-budget/own-frame-log-one-byte-over] | gating | unqualified | [satin-bcf260d] |
 | [satin/limit-stops/hint-into-freed-room/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/hint-into-freed-room/stopped] | gating | unqualified | [satin-cdded1e] |
@@ -5213,11 +5652,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-ICPT-002` | active | [system-contracts/interception.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/interception.md) |
 | `SATIN-ICPT-005` | active | [system-contracts/interception.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/interception.md) |
 | `SATIN-LIM-009` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-limits.md) |
-| `SATIN-LIM-014` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-016` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-limits.md) |
-| `SATIN-LIM-017` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-limits.md) |
 | `SATIN-LIM-018` | retired | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-limits.md) |
-| `SATIN-LOG-005` | active | [evm/transfer-logs.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/transfer-logs.md) |
 | `SATIN-LOG-007` | active | [evm/transfer-logs.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/transfer-logs.md) |
 | `SATIN-MAC-006` | active | [system-contracts/mega-access-control.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/mega-access-control.md) |
 | `SATIN-MAC-007` | active | [system-contracts/mega-access-control.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/mega-access-control.md) |
@@ -5247,7 +5683,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-PCMP-005` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-PCMP-006` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-PCMP-007` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
-| `SATIN-PCMP-008` | active | [evm/precompiles.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/precompiles.md) |
 | `SATIN-POOL-001` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-002` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-003` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
@@ -5282,7 +5717,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-STATE-007` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/state-gas.md) |
 | `SATIN-STATE-009` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/state-gas.md) |
 | `SATIN-STATE-010` | active | [evm/state-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/state-gas.md) |
-| `SATIN-STOP-014` | active | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-STOP-016` | retired | [evm/limit-stops.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/limit-stops.md) |
 | `SATIN-SYSC-001` | active | [system-contracts/overview.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/overview.md) |
 | `SATIN-SYSC-002` | active | [system-contracts/overview.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/overview.md) |
@@ -5380,11 +5814,15 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/deposits/existing-caller/one-log]: ../slice/cases/satin/deposits/existing-caller/one-log.json
 [satin/deposits/new-caller/bucket-x2]: ../slice/cases/satin/deposits/new-caller/bucket-x2.json
 [satin/deposits/new-caller/minimum-bucket]: ../slice/cases/satin/deposits/new-caller/minimum-bucket.json
+[satin/detention/access-off/call-short-of-an-operand]: ../slice/cases/satin/detention/access-off/call-short-of-an-operand.json
+[satin/detention/access-off/callcode-short-of-an-operand]: ../slice/cases/satin/detention/access-off/callcode-short-of-an-operand.json
 [satin/detention/balance-static-crossing]: ../slice/cases/satin/detention/balance-static-crossing.json
 [satin/detention/balance-static-one-short]: ../slice/cases/satin/detention/balance-static-one-short.json
 [satin/detention/balance-static-out-of-gas]: ../slice/cases/satin/detention/balance-static-out-of-gas.json
 [satin/detention/balance-static-paid]: ../slice/cases/satin/detention/balance-static-paid.json
 [satin/detention/beneficiary/authority]: ../slice/cases/satin/detention/beneficiary/authority.json
+[satin/detention/beneficiary/balance]: ../slice/cases/satin/detention/beneficiary/balance.json
+[satin/detention/beneficiary/call-target]: ../slice/cases/satin/detention/beneficiary/call-target.json
 [satin/detention/beneficiary/extcodehash]: ../slice/cases/satin/detention/beneficiary/extcodehash.json
 [satin/detention/beneficiary/extcodesize]: ../slice/cases/satin/detention/beneficiary/extcodesize.json
 [satin/detention/beneficiary/recipient-at-limit]: ../slice/cases/satin/detention/beneficiary/recipient-at-limit.json
@@ -5397,8 +5835,10 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/detention/block-environment/prevrandao]: ../slice/cases/satin/detention/block-environment/prevrandao.json
 [satin/detention/block-environment/slotnum]: ../slice/cases/satin/detention/block-environment/slotnum.json
 [satin/detention/blockhash/current-block]: ../slice/cases/satin/detention/blockhash/current-block.json
+[satin/detention/blockhash/first-too-old]: ../slice/cases/satin/detention/blockhash/first-too-old.json
 [satin/detention/blockhash/future-block]: ../slice/cases/satin/detention/blockhash/future-block.json
 [satin/detention/blockhash/in-range]: ../slice/cases/satin/detention/blockhash/in-range.json
+[satin/detention/blockhash/last-in-range]: ../slice/cases/satin/detention/blockhash/last-in-range.json
 [satin/detention/call-value-crossing]: ../slice/cases/satin/detention/call-value-crossing.json
 [satin/detention/cap/after-larger-spend-at-limit]: ../slice/cases/satin/detention/cap/after-larger-spend-at-limit.json
 [satin/detention/cap/after-larger-spend-one-past-limit]: ../slice/cases/satin/detention/cap/after-larger-spend-one-past-limit.json
@@ -5412,16 +5852,26 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/detention/cap/state-refill-after-read-one-past-limit]: ../slice/cases/satin/detention/cap/state-refill-after-read-one-past-limit.json
 [satin/detention/cap/timestamp-at-limit]: ../slice/cases/satin/detention/cap/timestamp-at-limit.json
 [satin/detention/cap/timestamp-one-past-limit]: ../slice/cases/satin/detention/cap/timestamp-one-past-limit.json
+[satin/detention/completed-read/child-halts]: ../slice/cases/satin/detention/completed-read/child-halts.json
+[satin/detention/completed-read/child-reverts]: ../slice/cases/satin/detention/completed-read/child-reverts.json
 [satin/detention/creation/beneficiary-selfbalance]: ../slice/cases/satin/detention/creation/beneficiary-selfbalance.json
 [satin/detention/creation/create-at-beneficiary-access-off]: ../slice/cases/satin/detention/creation/create-at-beneficiary-access-off.json
 [satin/detention/creation/created-at-beneficiary]: ../slice/cases/satin/detention/creation/created-at-beneficiary.json
+[satin/detention/creation/creator-at-beneficiary-access-off]: ../slice/cases/satin/detention/creation/creator-at-beneficiary-access-off.json
 [satin/detention/deposit/user-deposit]: ../slice/cases/satin/detention/deposit/user-deposit.json
 [satin/detention/history-contract/at-number]: ../slice/cases/satin/detention/history-contract/at-number.json
 [satin/detention/history-contract/input-refused]: ../slice/cases/satin/detention/history-contract/input-refused.json
 [satin/detention/history-contract/short-of-number]: ../slice/cases/satin/detention/history-contract/short-of-number.json
 [satin/detention/not-volatile/blobhash]: ../slice/cases/satin/detention/not-volatile/blobhash.json
+[satin/detention/not-volatile/blobhash-access-off]: ../slice/cases/satin/detention/not-volatile/blobhash-access-off.json
 [satin/detention/not-volatile/other-accounts]: ../slice/cases/satin/detention/not-volatile/other-accounts.json
+[satin/detention/oracle/read-charge-at-whole-gas]: ../slice/cases/satin/detention/oracle/read-charge-at-whole-gas.json
+[satin/detention/oracle/read-charge-one-short]: ../slice/cases/satin/detention/oracle/read-charge-one-short.json
+[satin/detention/own-precompile/modexp-priced-past-allowance]: ../slice/cases/satin/detention/own-precompile/modexp-priced-past-allowance.json
+[satin/detention/own-precompile/modexp-priced-past-gas]: ../slice/cases/satin/detention/own-precompile/modexp-priced-past-gas.json
+[satin/detention/own-precompile/modexp-priced-within-allowance]: ../slice/cases/satin/detention/own-precompile/modexp-priced-within-allowance.json
 [satin/detention/precompile/bn254-pairing-over-size-limit]: ../slice/cases/satin/detention/precompile/bn254-pairing-over-size-limit.json
+[satin/detention/precompile/identity/delegatecall-inherited-value]: ../slice/cases/satin/detention/precompile/identity/delegatecall-inherited-value.json
 [satin/detention/precompile/identity/priced-at-allowance]: ../slice/cases/satin/detention/precompile/identity/priced-at-allowance.json
 [satin/detention/precompile/identity/priced-at-forward]: ../slice/cases/satin/detention/precompile/identity/priced-at-forward.json
 [satin/detention/precompile/identity/priced-past-allowance]: ../slice/cases/satin/detention/precompile/identity/priced-past-allowance.json
@@ -5430,9 +5880,19 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/detention/precompile/identity/value-unfunded]: ../slice/cases/satin/detention/precompile/identity/value-unfunded.json
 [satin/detention/precompile/identity/value-within-allowance]: ../slice/cases/satin/detention/precompile/identity/value-within-allowance.json
 [satin/detention/precompile/modexp/over-bound-at-allowance]: ../slice/cases/satin/detention/precompile/modexp/over-bound-at-allowance.json
+[satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest]: ../slice/cases/satin/detention/precompile/modexp/over-bound-at-allowance-then-jumpdest.json
 [satin/detention/precompile/modexp/over-bound-past-allowance]: ../slice/cases/satin/detention/precompile/modexp/over-bound-past-allowance.json
+[satin/detention/precompile/modexp/over-bound-then-compute-at-limit]: ../slice/cases/satin/detention/precompile/modexp/over-bound-then-compute-at-limit.json
+[satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit]: ../slice/cases/satin/detention/precompile/modexp/over-bound-then-compute-one-past-limit.json
+[satin/detention/precompile/ripemd160/priced-at-allowance]: ../slice/cases/satin/detention/precompile/ripemd160/priced-at-allowance.json
+[satin/detention/precompile/ripemd160/priced-past-allowance]: ../slice/cases/satin/detention/precompile/ripemd160/priced-past-allowance.json
 [satin/detention/stipend/spun-at-limit]: ../slice/cases/satin/detention/stipend/spun-at-limit.json
 [satin/detention/stipend/spun-one-past-limit]: ../slice/cases/satin/detention/stipend/spun-one-past-limit.json
+[satin/detention/stipend/spun-then-halted-at-limit]: ../slice/cases/satin/detention/stipend/spun-then-halted-at-limit.json
+[satin/detention/stipend/spun-then-halted-one-past-limit]: ../slice/cases/satin/detention/stipend/spun-then-halted-one-past-limit.json
+[satin/detention/unpaid-start/caller-computes-at-limit]: ../slice/cases/satin/detention/unpaid-start/caller-computes-at-limit.json
+[satin/detention/unpaid-start/caller-computes-one-past-limit]: ../slice/cases/satin/detention/unpaid-start/caller-computes-one-past-limit.json
+[satin/detention/withheld/finite-forward-sees-whole]: ../slice/cases/satin/detention/withheld/finite-forward-sees-whole.json
 [satin/detention/withheld/forward-sees-whole]: ../slice/cases/satin/detention/withheld/forward-sees-whole.json
 [satin/detention/withheld/gas-sees-whole]: ../slice/cases/satin/detention/withheld/gas-sees-whole.json
 [satin/detention/withheld/refund-cap]: ../slice/cases/satin/detention/withheld/refund-cap.json
@@ -5620,14 +6080,24 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/limit-stops/data-size-one-byte-over]: ../slice/cases/satin/limit-stops/data-size-one-byte-over.json
 [satin/limit-stops/deposit/out-of-gas]: ../slice/cases/satin/limit-stops/deposit/out-of-gas.json
 [satin/limit-stops/deposit/stopped]: ../slice/cases/satin/limit-stops/deposit/stopped.json
+[satin/limit-stops/first-frame-value/log-at-limit]: ../slice/cases/satin/limit-stops/first-frame-value/log-at-limit.json
+[satin/limit-stops/first-frame-value/log-one-byte-over]: ../slice/cases/satin/limit-stops/first-frame-value/log-one-byte-over.json
+[satin/limit-stops/frame-budget/child-logs-at-budget]: ../slice/cases/satin/limit-stops/frame-budget/child-logs-at-budget.json
+[satin/limit-stops/frame-budget/child-logs-one-byte-over]: ../slice/cases/satin/limit-stops/frame-budget/child-logs-one-byte-over.json
+[satin/limit-stops/frame-budget/own-frame-log-one-byte-over]: ../slice/cases/satin/limit-stops/frame-budget/own-frame-log-one-byte-over.json
 [satin/limit-stops/hint-into-freed-room/halted]: ../slice/cases/satin/limit-stops/hint-into-freed-room/halted.json
 [satin/limit-stops/hint-into-freed-room/kept]: ../slice/cases/satin/limit-stops/hint-into-freed-room/kept.json
 [satin/limit-stops/hint-into-freed-room/reverted]: ../slice/cases/satin/limit-stops/hint-into-freed-room/reverted.json
 [satin/limit-stops/hint-into-freed-room/stopped]: ../slice/cases/satin/limit-stops/hint-into-freed-room/stopped.json
 [satin/limit-stops/log-over-limit/regular-charge-paid]: ../slice/cases/satin/limit-stops/log-over-limit/regular-charge-paid.json
 [satin/limit-stops/log-over-limit/regular-charge-short]: ../slice/cases/satin/limit-stops/log-over-limit/regular-charge-short.json
+[satin/limit-stops/pre-frame-growth/two-authorities-then-child]: ../slice/cases/satin/limit-stops/pre-frame-growth/two-authorities-then-child.json
 [satin/limit-stops/pre-frame/start-record-paid]: ../slice/cases/satin/limit-stops/pre-frame/start-record-paid.json
 [satin/limit-stops/pre-frame/start-record-unpaid]: ../slice/cases/satin/limit-stops/pre-frame/start-record-unpaid.json
+[satin/limit-stops/precompile-start/identity-answer-stopped]: ../slice/cases/satin/limit-stops/precompile-start/identity-answer-stopped.json
+[satin/limit-stops/precompile-start/identity-failure-kept]: ../slice/cases/satin/limit-stops/precompile-start/identity-failure-kept.json
+[satin/limit-stops/precompile-start/identity-failure-kept-code-at-address]: ../slice/cases/satin/limit-stops/precompile-start/identity-failure-kept-code-at-address.json
+[satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses]: ../slice/cases/satin/limit-stops/precompile-start/identity-priced-past-allowance-start-crosses.json
 [satin/limit-stops/reservoir/compute-stop-above-cap]: ../slice/cases/satin/limit-stops/reservoir/compute-stop-above-cap.json
 [satin/limit-stops/revert-with-stop-bytes/kind-0]: ../slice/cases/satin/limit-stops/revert-with-stop-bytes/kind-0.json
 [satin/limit-stops/revert-with-stop-bytes/kind-1]: ../slice/cases/satin/limit-stops/revert-with-stop-bytes/kind-1.json
@@ -5705,9 +6175,12 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/reads/oracle-slot-before-charge]: ../slice/cases/satin/reads/oracle-slot-before-charge.json
 [satin/selfdestruct/beneficiary-read/halted-unmarked]: ../slice/cases/satin/selfdestruct/beneficiary-read/halted-unmarked.json
 [satin/selfdestruct/beneficiary-read/marked-after-charges]: ../slice/cases/satin/selfdestruct/beneficiary-read/marked-after-charges.json
+[satin/selfdestruct/budget/absent-leaf-falls-first]: ../slice/cases/satin/selfdestruct/budget/absent-leaf-falls-first.json
+[satin/selfdestruct/budget/present-leaf-rise-crosses]: ../slice/cases/satin/selfdestruct/budget/present-leaf-rise-crosses.json
 [satin/selfdestruct/created/fresh-slot]: ../slice/cases/satin/selfdestruct/created/fresh-slot.json
 [satin/selfdestruct/created/fresh-slot-on-little-gas]: ../slice/cases/satin/selfdestruct/created/fresh-slot-on-little-gas.json
 [satin/selfdestruct/discarded/halted]: ../slice/cases/satin/selfdestruct/discarded/halted.json
+[satin/selfdestruct/discarded/one-of-two-accounts]: ../slice/cases/satin/selfdestruct/discarded/one-of-two-accounts.json
 [satin/selfdestruct/discarded/reverted]: ../slice/cases/satin/selfdestruct/discarded/reverted.json
 [satin/selfdestruct/discarded/reverted-then-kept]: ../slice/cases/satin/selfdestruct/discarded/reverted-then-kept.json
 [satin/selfdestruct/first-effective/absent-leaf]: ../slice/cases/satin/selfdestruct/first-effective/absent-leaf.json
@@ -5716,6 +6189,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/selfdestruct/first-effective/give-back-as-reservoir]: ../slice/cases/satin/selfdestruct/first-effective/give-back-as-reservoir.json
 [satin/selfdestruct/first-effective/in-constructor]: ../slice/cases/satin/selfdestruct/first-effective/in-constructor.json
 [satin/selfdestruct/first-effective/slot-restored-before]: ../slice/cases/satin/selfdestruct/first-effective/slot-restored-before.json
+[satin/selfdestruct/first-effective/to-itself]: ../slice/cases/satin/selfdestruct/first-effective/to-itself.json
+[satin/selfdestruct/first-effective/two-accounts]: ../slice/cases/satin/selfdestruct/first-effective/two-accounts.json
 [satin/selfdestruct/marked/code-deposited]: ../slice/cases/satin/selfdestruct/marked/code-deposited.json
 [satin/selfdestruct/marked/code-deposited-destroyed-again]: ../slice/cases/satin/selfdestruct/marked/code-deposited-destroyed-again.json
 [satin/selfdestruct/marked/fresh-slot]: ../slice/cases/satin/selfdestruct/marked/fresh-slot.json

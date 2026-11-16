@@ -1638,6 +1638,110 @@ own edge being the rule's there:
 
 The evm2-based implementation passes all forty-five cases.
 
+From a review of the first fill batch:
+
+**D-91. The first batch's edges a review found unpinned are cases at `c130558`, and the model's reach
+grows with them (D-63 amended).** An independent review of the detention, destruction and limit-stop
+cases listed the edges they leave unpinned and the mutations of the evm2-based implementation's
+engine no case of that implementation's own suite kills. Forty-one cases at `c130558`
+(`CURRENT_SPEC`), in the three areas, now take the edges a transaction can show, most in pairs one
+unit apart, sized from the model's own figures (D-57, D-59); every expected value comes from the
+specification through the model.
+
+- **Gas detention (26).** A ModExp input over EIP-7823's bound that halts after its gas charge burns
+  its whole forward and counts none of it as compute (`SATIN-DET-011` at `c130558`, D-78): priced at
+  the allowance and followed by one more charge, which fits, and forwarded less than the allowance
+  and followed by the caller's compute to the limit exactly and one past it. RIPEMD-160 priced at the
+  allowance and one past it (`SATIN-DET-021`, `-023`). A `DELEGATECALL` of the identity precompile
+  that carries the value its frame inherited from a sender whose balance is now zero: it moves no
+  value and checks no account, so it is the crossing (`SATIN-DET-024`). The transaction's own call of
+  ModExp at the block beneficiary's address, detained from its start: priced past the allowance (its
+  own stop, its gas untouched), within it, and past its gas (`SATIN-DET-008`, `-021`). A child that
+  halts on its value call's start record, and a value call's callee that halts on its stipend, each
+  followed by the caller at the limit and one past it: what they burn is no compute, the forward and
+  the stipend's rest among it, and their paid work is (`SATIN-DET-009` to `-011`, `-019`).
+  `BLOCKHASH` of the oldest block in range and of one older, in block 300 (`SATIN-DET-004`).
+  `BALANCE` of the beneficiary, and a call to it marked when the start is decided, at a compute that
+  leaves out the forward (`SATIN-DET-001`, `-003`). A read in a child that then reverts or halts,
+  which stays marked. A creation by the beneficiary, and `BLOBHASH`, with access off
+  (`SATIN-DET-006`, `-002`). A `CALL` and a `CALLCODE` one operand short of a target whose delegate
+  is the beneficiary, which fail on the stack as with access on (`SATIN-MAC-003`). A finite forward
+  between the spendable part and what the whole regular gas lets a call forward (`SATIN-DET-015`).
+  The Oracle's read at a whole regular gas of exactly its one charge, the crossing, and one gas
+  short, an out-of-gas (`SATIN-ORCL-004`, `SATIN-DET-018`, `-020`), quarantined (D-93).
+- **Limit stops (10).** A precompile that would answer with a success, its start crossing the
+  transaction's data-size limit: its answer is replaced by the stop on the call's whole regular gas,
+  nothing of its price taken from it; one that fails kept nothing and its failure stands, also when
+  the address holds code (`SATIN-STOP-014`, `SATIN-PCMP-008`); one priced past gas detention's
+  allowance whose start would cross data size as well is the compute stop. A frame's own data-size
+  budget reached through logs whose history a reservoir pays: the transaction's own frame one byte
+  past it, the stop naming the budget and not the limit, and a child at its budget and one byte past
+  (`SATIN-LIM-003`, `-004`, `-011`, `SATIN-STOP-018`). The first frame's value start counted on the
+  transaction with the hints that follow, a log at what is left and one byte past. Two applied
+  authorities' growth, 501 fresh slots and a child's start that fits, whose empty return data the
+  transaction returns.
+- **Destruction (5).** Two accounts created in one transaction at different multipliers, one with a
+  fresh slot, each destroyed by its own table, and the first destruction discarded by a reverting
+  frame (`SATIN-SD-002`, `-004`, `-005`, `-008`). A created account destroyed to itself, its balance
+  burned at once and silently, a later `BALANCE` of it reading zero (`SATIN-LOG-005`). A destruction
+  in a frame whose state-growth budget is zero: an absent leaf's fall makes room for the
+  beneficiary's rise, and a present leaf gives none, so the rise crosses (`SATIN-SD-018`, `-019`).
+- **The model's reach** (`docs/model.md`). RIPEMD-160's price and digest, ModExp's output, a
+  `DELEGATECALL` of a precompile, a transaction's own call of a precompile, `BALANCE` of the
+  beneficiary and a `CALL`'s read of it as its target, `BLOBHASH` with access off, `CALL` and
+  `CALLCODE` short of their operands (`CALLCODE` is added that far and no further), a created
+  account's `SELFDESTRUCT` to itself, a value call to the identity precompile where no limit is set
+  in a limit-stop case, and the block's number as a case's parameter. A case at `c130558` cites
+  `SATIN-STOP-014` where a value precompile's crossing cited `SATIN-STOP-016`, which that snapshot
+  retires (D-78). An account the state holds with storage, empty under EIP-161, that the
+  transaction leaves as it found it, is no change of the state diff. Every existing slice file is
+  byte-identical.
+
+**D-92. What the review corrected, and what stays out.**
+
+- **A frame's own data-size budget is reached.** D-75 held that a frame's data-size budget is out of
+  reach because the history of its logs and records costs over a billion gas. The execution cap
+  bounds regular gas, not the reservoir: a transaction of 2,000,000,000 gas in a block of
+  10,000,000,000 pays that history from its reservoir, and D-91's cases reach the budget of the
+  transaction's own frame and of a child. D-75's third item is withdrawn for data size; the KV
+  updates stay out of reach.
+- **A creator that is the beneficiary is reached without a read.** A creation transaction onto the
+  beneficiary's address is not detained from its start (`SATIN-DET-006`), so its initcode is a
+  creator running as the beneficiary that has read nothing; with access off, its `CREATE` is neither
+  refused nor marked.
+- **D-69's first reading, re-derived.** The case that halts ModExp at the allowance and then makes one
+  more charge was proposed under D-69's reading, by which the charge would cross. Under
+  `SATIN-DET-011` at `c130558` (D-78) the halt counts none of the forward as compute, its price
+  included, so the charge fits and the transaction completes; the model already reads the rule so.
+- **`SATIN-DET-025` has no case.** The answers it applies to are a system contract's intercepted
+  answers that spend regular gas. MegaAccessControl's and MegaLimitControl's spend none
+  (`SATIN-ICPT-004`), and an admitted `sendHint` is no answer: the call then runs the Oracle's
+  code, a frame held to the limit as any (`SATIN-ORCL-006`). KeylessDeploy's is the only
+  answer that spends regular gas, and only the transaction's own call is intercepted
+  (`SATIN-KEY-003`): it answers at compute zero, where the allowance is the whole cap, which its
+  overhead is far below, and the creation it runs is a frame held to the limit by its own charges.
+  No transaction makes an intercepted answer whose regular spend exceeds its frame's allowance.
+- **A slot of a surviving account created over storage.** `SATIN-SD-003` and `-016` have such a slot,
+  first accessed after the creation, read zero; neither says what the slot holds in the state after
+  the transaction when the account survives it and the transaction never accessed the slot. The
+  format lists a cleared slot as `0x0`; both adapters list only the slots the transaction wrote. The
+  case that destroys such an account at a zero budget ends with its creator's revert, so that no
+  observation depends on it.
+- **Still open.** The review's other edges need model work this change does not make: a collision
+  on a nonce or on code, and a re-creation by `CREATE2`; a creation transaction whose own frame
+  destroys its account; a destruction that returns an ordinary account to its original balance and
+  takes its record back; a failed creation whose initcode admitted a hint; a deposit's value start
+  at its record's history; a list of 1,000 absent authorities that fits; dimensions competing at one
+  start; an Oracle hint sent by the transaction's own frame; the rest of the precompile catalogue;
+  and the code deposit's and the creation's charging sites under detention.
+
+**D-93. Two detention cases are quarantined against the revm-based implementation.** At `7110d87b`
+it fails D-91's two Oracle reads, a deposit's detained call to the Oracle whose read's one charge is
+the crossing at exactly the whole regular gas and an out-of-gas one gas short. Both are deposits
+(D-60): their first difference is the deposit's gas used, below the rule's by its body's history,
+which that implementation does not charge (`SATIN-HIST-016`); its Oracle read is the rule's in
+both. The evm2-based implementation passes both.
+
 From the move of the revm-based pin to `1a981f4b`:
 
 **D-94. The revm-based pin moves to `1a981f4b`; every quarantined case gates.** The revm-based pin

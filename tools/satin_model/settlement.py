@@ -568,6 +568,10 @@ class SettlementMixin:
                            "nothing of the code back again", "SATIN-SD-015", "SATIN-LOG-005")
         for a, acct in sorted(self.state.items()):
             before = self.pre.get(a)
+            if (before is not None and a not in self.destroyed and before.storage and
+                    (before.nonce, before.balance, before.code, before.storage) ==
+                    (acct.nonce, acct.balance, acct.code, acct.storage)):
+                continue  # a leaf the state holds with storage, as the transaction found it: unchanged, so unlisted
             exists = not acct.empty() and a not in self.destroyed  # a marked account is deleted at the end (EIP-6780)
             if not exists:
                 if before is not None:

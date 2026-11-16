@@ -214,8 +214,8 @@ class CreationMixin:
         of the records it makes; and the volatile reads of either end, marked last (SATIN-SD-020). A marked account
         is deleted at the transaction's end (EIP-6780, SATIN-SD-015)."""
         d = self.d
-        if beneficiary == address and (address in self.created or not self.destruction):
-            raise Unmodelled("a SELFDESTRUCT to itself of an account created in the transaction")
+        if beneficiary == address and (not self.destruction or (address in self.created and address in self.destroyed)):
+            raise Unmodelled("a SELFDESTRUCT to itself of an account created in the transaction, repeated")
         if frame.get("access_off") and self.env.coinbase in (address, beneficiary):
             raise Unmodelled("a SELFDESTRUCT that reads the block beneficiary with volatile-data access off")
         first = address in self.created and address not in self.destroyed
@@ -361,6 +361,13 @@ class CreationMixin:
             if not first:
                 d.add("resources", "step 3: no balance moves, so no account is written, no beneficiary created and no "
                       "transfer log emitted", "SATIN-SD-001", "SATIN-SD-018", "SATIN-SD-019")
+            return
+        if beneficiary == address and first:
+            acct.balance = 0
+            d.add("resources", f"step 3: the beneficiary is {h(address)} itself, created in the transaction: its {balance} "
+                  "wei are burned at once, silently, so no transfer log is emitted, no account is written and nothing "
+                  "rises, and the account is removed at the transaction's end", "SATIN-LOG-005", "SATIN-SD-001",
+                  "SATIN-SD-018", "SATIN-SD-019")
             return
         if beneficiary == address:
             d.add("resources", f"step 3: the beneficiary is {h(address)} itself, which the transaction did not create: "

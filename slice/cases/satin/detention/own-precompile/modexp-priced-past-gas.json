@@ -1,0 +1,158 @@
+{
+  "caseId": "satin/detention/own-precompile/modexp-priced-past-gas",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x1384290",
+      "floor": "0x5298",
+      "gasUsed": "0x138ce20",
+      "history": "0x8b90",
+      "historyBytes": "0x196",
+      "refund": "0x0",
+      "regular": "0x1384290",
+      "state": "0x0",
+      "total": "0x138ce20"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "halt"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x138ce20",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "406",
+        "reported": "0x196"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x0000000000000000000000000000000000000005",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8c28080840138ce2094000000000000000000000000000000000000000580b86000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000048000000000000000000000000000000000000000000000000000000000000040025a06e1f21a25e4db64a4921fe27aa2df3dc56c2683da016b884f23c36ef61c906b4a01e81af44fa4624435cb45bbca6a3dba3c2b63563f4f5ee1c305b1f6a002b6310"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "the block beneficiary is ModExp's address, and a transaction calls it, detained from its start at compute zero; its input's header gives a base and a modulus of 1,024 bytes and an exponent of 72 bytes, which the transaction does not carry and ModExp reads as zeros, priced 20,971,520: past its whole regular gas: it runs on it and fails out of gas, as without the read"
+    },
+    "definition": "tools/make_slice.py::detention_gap_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-DET-001",
+    "SATIN-DET-003",
+    "SATIN-DET-008",
+    "SATIN-DET-009",
+    "SATIN-DET-011",
+    "SATIN-DET-012",
+    "SATIN-DET-013",
+    "SATIN-DET-014",
+    "SATIN-DET-016",
+    "SATIN-DET-020",
+    "SATIN-DET-021",
+    "SATIN-DET-023"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

@@ -110,9 +110,11 @@ HISTORY_STORAGE_ADDRESS = bytes.fromhex("0000f90827f1c53a10cb7a02335b17532000293
 # and P256VERIFY at 0x100.
 PRECOMPILE_SET = frozenset([i.to_bytes(20, "big") for i in range(1, 0x12)] + [(0x100).to_bytes(20, "big")])
 IDENTITY = (4).to_bytes(20, "big")
+RIPEMD160 = (3).to_bytes(20, "big")
 MODEXP = (5).to_bytes(20, "big")
 BN254_PAIRING = (8).to_bytes(20, "big")
 IDENTITY_BASE, IDENTITY_WORD = 15, 3  # inherited identity price: 15 + 3 a word
+RIPEMD160_BASE, RIPEMD160_WORD = 600, 120  # inherited RIPEMD-160 price, as Karst defines it (SATIN-PCMP-001): 600 + 120 a word
 MODEXP_MIN_GAS = 500  # SATIN-PCMP-002: EIP-7883's minimum
 MODEXP_MAX_INPUT_SIZE = 1_024  # SATIN-PCMP-002: EIP-7823's bound on each length
 BN254_PAIRING_MAX_INPUT_SIZE = 57_600  # SATIN-PCMP-001, SATIN-PCMP-004
