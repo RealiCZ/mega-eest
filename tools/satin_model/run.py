@@ -27,7 +27,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
-                 stops: bool = False, lists: bool = False, outcomes: bool = False):
+                 stops: bool = False, lists: bool = False, outcomes: bool = False, system_tx: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
         # A case of the authorization page's own rules (decision D-88): its derivation cites the list's simulation,
         # each entry's gates and checks, and the warmth the application leaves (SATIN-AUTH-001 to -018).
@@ -48,7 +48,14 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # cites the class each ending is in, the rule that makes a refusal the first failing step, and what a failed
         # deposit and a refused transaction report (SATIN-OUT-002 to -018, SATIN-VAL-003, -004, -008).
         self.outcomes = outcomes
+        # A case of the system-transaction page or of gas forwarding (decision D-82): the derivation cites the rules that
+        # classify the transaction's origin and say what that origin exempts it from (SATIN-MST-001 to -009).
+        self.system_tx = system_tx
         self.promoted = False  # a Mega System Transaction promoted to a deposit (SATIN-MST-005)
+        # A system-originated transaction (SATIN-MST-007): priced at m = 1, held to no per-transaction limit or frame
+        # budget and not detained, its usage counted and its history paid (SATIN-MST-008, D-83).
+        self.exempt = False
+        self.exempt_noted: set = set()  # the exemptions a derivation has stated once
         self.caught_stop = False  # a frame below the transaction's own was stopped and its caller ran on
         # The `gasPools` group (decision D-64): the first frame's pools at its start and end, and the
         # regular gas it and its children paid for state and history charges.
@@ -74,7 +81,9 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # "child-room" and "oracle-sload-room" what the limit leaves the transaction's compute at the first
         # detained child's start and at a detained Oracle read; "list" the regular gas when an authorization
         # list starts to be applied, "balance" the regular gas at the first BALANCE; "log" and "expand" the regular
-        # gas before the first LOG's charge and before the first memory expansion's.
+        # gas before the first LOG's charge and before the first memory expansion's; "forward-last" the caller's
+        # regular gas when the last CALL computes its forward, "delegate-forward" and "create-forward" when the first
+        # DELEGATECALL and the first CREATE compute theirs.
         self.probe: dict[str, int] = {}
         # Gas detention (SATIN-DET-009, -012): the transaction's compute, every regular charge its frames
         # make, and the limit the most restrictive volatile read set, None before any read.

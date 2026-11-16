@@ -51,7 +51,11 @@ class CallsMixin:
         if target == ORACLE and data[:4] == SEND_HINT:
             if child_gas == 0:
                 raise Unmodelled("a sendHint call with no gas")
-            if self.data_size + len(data) > TX_DATA_LIMIT:
+            if self.exempt and self.data_size + len(data) > TX_DATA_LIMIT:
+                d.add("limit", f"the sendHint's {fmt(len(data))} input bytes take the transaction's data size past "
+                      f"TX_DATA_LIMIT {fmt(TX_DATA_LIMIT)}; the transaction is system-originated, which no per-transaction "
+                      "limit stops: the hint is admitted and counted", "SATIN-MST-008", "SATIN-ORCL-010")
+            if not self.exempt and self.data_size + len(data) > TX_DATA_LIMIT:
                 d.add("outcome", f"interception: the sendHint's {fmt(len(data))} input bytes would take the transaction's "
                       f"data size {fmt(self.data_size)} over TX_DATA_LIMIT {fmt(TX_DATA_LIMIT)}: answered with the data-size "
                       f"stop MegaLimitExceeded(0, {fmt(TX_DATA_LIMIT)}) at admission, before the frame start, whether or not "

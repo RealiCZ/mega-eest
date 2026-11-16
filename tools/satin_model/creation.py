@@ -18,9 +18,10 @@ RECORD_HISTORY = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
 class CreationMixin:
     """A `CREATE` from a frame, and the `SELFDESTRUCT` of an account created in the transaction."""
 
-    def create(self, frame, creator: bytes, value: int, init: bytes):
-        """A `CREATE` once its regular charges are made: the created account's state gas before the forward, its
-        legacy share first (SATIN-HIST-011, SATIN-STATE-012), the forward, the history of the start's records
+    def create(self, frame, creator: bytes, value: int, init: bytes, target: bytes | None = None, name: str = "CREATE"):
+        """A `CREATE`, or a `CREATE2` onto its salted `target`, once its regular charges are made: the created
+        account's state gas before the forward, its legacy share first (SATIN-HIST-011, SATIN-STATE-012), the
+        forward, the history of the start's records
         after it (SATIN-HIST-009), the creation's reservoir share (SATIN-POOL-011), the start, the init code and
         the deposit, and the creator's nonce record once the creation returned (SATIN-LIM-008); a start that
         crosses a limit stops the creation before it runs (SATIN-STOP-013, -015). Returns (the created address, zero
@@ -28,7 +29,9 @@ class CreationMixin:
         the creator before its nonce record is held, and the return data the creation leaves)."""
         d, tx = self.d, self.tx
         creator_acct = self.state.setdefault(creator, Account())
-        target = created_address(creator, creator_acct.nonce)
+        op = name
+        if target is None:
+            target = created_address(creator, creator_acct.nonce)
         if value > creator_acct.balance:
             raise Unmodelled("a creation its creator cannot fund")
         self.load(target, "the created address, which the creation reads", "SATIN-WIT-002", "SATIN-WIT-008")
@@ -36,7 +39,7 @@ class CreationMixin:
         if existing is not None and not existing.empty():
             raise Unmodelled("a creation onto an address empty under EIP-161 or occupied")
         if target == self.env.coinbase or creator == self.env.coinbase:
-            d.add("outcome", f"the CREATE's {'created address' if target == self.env.coinbase else 'creator'} is the block "
+            d.add("outcome", f"the {op}'s {'created address' if target == self.env.coinbase else 'creator'} is the block "
                   "beneficiary: its loads of the creator and the created address are the creation's own checks, so it "
                   "is not marked as a read" + (", and it is not refused though the frame's volatile-data access is off"
                                                if frame.get("access_off") else ""), "SATIN-DET-006")
@@ -50,18 +53,19 @@ class CreationMixin:
         if target in self.pre:
             if not self.destruction:
                 raise Unmodelled("a creation onto an address the state holds a leaf for")
-            d.add("gasLedgers", f"CREATE of {h(target)}, whose leaf the state holds with nonce 0, no balance, no code and "
+            d.add("gasLedgers", f"{op} of {h(target)}, whose leaf the state holds with nonce 0, no balance, no code and "
                   f"{len(self.pre[target].storage)} slots: the creation does not collide on storage alone, and the address, "
                   "empty under EIP-161, is charged and counted as a new account", "SATIN-SD-016", "SATIN-SD-017",
                   "SATIN-STATE-011", "SATIN-ACCT-014")
         where = "an address the state holds no account for" if target not in self.pre else "an address empty under EIP-161"
-        d.add("gasLedgers", f"CREATE of {h(target)}, {where}: before the forward, the "
+        d.add("gasLedgers", f"{op} of {h(target)}, {where}: before the forward, the "
               f"created account's state gas {fmt(ACCOUNT_STATE)} x m={m} = {fmt(state)}, its legacy share min({fmt(state)}, "
               f"PRE_FORK_CREATE_COST - CREATE_ACCESS) = {fmt(legacy)} from regular gas first, then "
               f"{fmt(min(reservoir, state - legacy))} from the reservoir and the rest, "
               f"{fmt(state - legacy - min(reservoir, state - legacy))}, from regular gas", "SATIN-HIST-011",
               "SATIN-STATE-001", "SATIN-STATE-003", "SATIN-STATE-012", "SATIN-POOL-008")
         remaining = frame["regular"]
+        self.probe.setdefault("create-forward", remaining)
         forward = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
         self.draw_regular(frame, forward)
         self.regular_charges += forward
@@ -81,11 +85,13 @@ class CreationMixin:
         self.history_gas += history
         self.history_bytes += WRITE_RECORD_SIZE * len(records)
         whose = "the created account's" + (" and the creator's nonce record" if len(records) == 2 else "")
-        d.add("gasLedgers", f"the forward {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
-              f"{GAS_RETAINED_DENOMINATOR} = {fmt(forward)}; after it the history of the start's {len(records)} records "
-              f"({whose}), {len(records)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(history)}: "
+        d.add("gasLedgers", f"the forward, {op} having no gas operand, is the cap {fmt(remaining)} - {fmt(remaining)} x "
+              f"{GAS_RETAINED_NUMERATOR} / {GAS_RETAINED_DENOMINATOR} = {fmt(forward)}, with no stipend; after it the history "
+              f"of the start's {len(records)} records ({whose}), {len(records)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(history)}: "
               f"{fmt(from_reservoir)} from the reservoir and {fmt(history - from_reservoir)} from regular gas",
-              "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-HIST-009", "SATIN-HIST-011", "SATIN-POOL-008")
+              "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-004", "SATIN-FWD-006", "SATIN-HIST-009", "SATIN-HIST-011",
+              "SATIN-POOL-008")
+        self.probe.setdefault("create-reservoir", frame["reservoir"])  # the creator's reservoir before the share
         share = self.reservoir_share(frame, "the creation")
         name = f"the creation of {h(target)}"
         child = self.new_child(frame, forward, share)
@@ -145,8 +151,8 @@ class CreationMixin:
         status, out = self.run_child(child, init, {"address": target, "caller": creator, "value": value,
                                                    "calldata": b"", "name": name}, name, create=True)
         if status != "success":
-            if status == "stop" or creator != self.keyless_signer:
-                raise Unmodelled("a creation that fails, other than its keyless signer's own")
+            if status == "stop":
+                raise Unmodelled("a creation that is stopped")
             # SATIN-TAKE-007 failed-create: the creation's rollback, then the created account's state gas and its record's
             # history given back to the creator; the creator's nonce bump, made before the creation ran, stays.
             left = self.end_child(frame, child, status, snap, name)

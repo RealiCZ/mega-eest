@@ -19,6 +19,8 @@ class LimitsMixin:
         write's rises; the transaction's present counts do not hold them yet. The transaction's own frame's budget
         is what the transaction had left when the frame started (SATIN-LIM-002); a child's is its share of its
         caller's remaining (SATIN-LIM-003). An admitted hint is on no frame (SATIN-LIM-012)."""
+        if self.exempt:
+            return self.exempt_from_limits(what, data_size, kv, growth)
         if frame is not None and "budget" in frame:
             return self.hold_child_to_limits(frame, data_size, kv, growth, what)
         again = self.carried_on(frame)
@@ -71,6 +73,22 @@ class LimitsMixin:
                            f"past its limit {fmt(limit)}: the stop names the transaction limit", "SATIN-LIM-005",
                            "SATIN-LIM-010", "SATIN-LIM-011", "SATIN-LIM-012", *self.kind_rules(), *again)
                 raise LimitStop(kind, limit, f"{what}: the transaction's {name} past its limit {fmt(limit)}")
+
+    def exempt_from_limits(self, what: str, data_size: int, kv: int, growth: int) -> None:
+        """SATIN-MST-008: a system-originated transaction's write is held to no per-transaction limit or frame budget;
+        its usage is counted all the same."""
+        rises = (data_size, kv, growth)
+        over = [STOP_DIMENSIONS[k] for k, r, used, limit in zip(
+            (DATA_SIZE_STOP, KV_UPDATE_STOP, STATE_GROWTH_STOP), rises, (self.data_size, len(self.kv), self.growth),
+            (TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT)) if r and used + r > limit]
+        if over:
+            self.d.add("limit", f"{what} takes the transaction's {' and '.join(over)} past its limit; the transaction is "
+                       "system-originated, which no per-transaction limit or frame budget stops: the write is made and "
+                       "counted", "SATIN-MST-008")
+        elif "limits" not in self.exempt_noted:
+            self.exempt_noted.add("limits")
+            self.d.add("limit", f"{what} is held to no frame budget and no per-transaction limit, the transaction being "
+                       "system-originated; it is counted", "SATIN-MST-008")
 
     def carried_on(self, frame) -> tuple[str, ...]:
         """SATIN-STOP-007: a caller that caught a stop and carries on is held to what the transaction has left, and a

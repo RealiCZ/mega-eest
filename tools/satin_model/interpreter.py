@@ -35,6 +35,10 @@ def to_signed(v: int) -> int:
 BLOCK_ENV_READS = {0x41: "COINBASE", 0x44: "PREVRANDAO", 0x45: "GASLIMIT", 0x48: "BASEFEE", 0x4A: "BLOBBASEFEE",
                    0x4B: "SLOTNUM"}
 
+# What a frame a STATICCALL started may not run in this model: every instruction that changes state, and every call and
+# creation, which no case's static frame makes (EIP-214, kept by the base layer, decides them; the model does not).
+STATIC_UNMODELLED = {0x55, 0x5D, 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xF0, 0xF1, 0xF2, 0xF4, 0xF5, 0xFA, 0xFF}
+
 
 class InterpreterMixin:
     """One frame's bytecode: the opcodes the slice's cases and the system contracts' dispatchers use, each charge"""
@@ -112,6 +116,8 @@ class InterpreterMixin:
         while pc < len(code):
             op = code[pc]
             pc += 1
+            if ctx and ctx.get("static") and op in STATIC_UNMODELLED:
+                raise Unmodelled(f"opcode {op:#x} in a frame a STATICCALL started")
             if op == 0x00:  # STOP
                 steps.append(f"STOP {G_ZERO}")
                 if not ctx and frame.get("spendable") is not None:
@@ -176,11 +182,12 @@ class InterpreterMixin:
                     self.warm_slots.add((ORACLE, key))
                     self.load_slot(ORACLE, key, "the Oracle's SLOAD, which loads the slot before its charge, whatever the "
                                    "charge then does", "SATIN-ORCL-004", "SATIN-WIT-012")
-                    if tx.kind != "deposit":
+                    if tx.kind != "deposit" and not self.promoted:
                         raise Unmodelled("an Oracle read that asks the oracle service")
+                    whose = "a Mega System Transaction's" if self.promoted else "a deposit's"
                     d.add("gasLedgers", f"the Oracle's SLOAD of slot {key}, with {fmt(frame['regular'])} of regular gas in "
-                          "the frame: the read is made before its charge, the slot loaded and warm, and the read marked; a "
-                          "deposit's read asks no oracle service, so the slot's value is pushed", "SATIN-ORCL-002",
+                          "the frame: the read is made before its charge, the slot loaded and warm, and the read marked; "
+                          f"{whose} read asks no oracle service, so the slot's value is pushed", "SATIN-ORCL-002",
                           "SATIN-ORCL-003", "SATIN-ORCL-004", "SATIN-ORCL-005")
                     self.mark(ORACLE_ACCESS_COMPUTE_GAS, f"the Oracle's SLOAD of slot {key}")
                     self.probe.setdefault("oracle-sload", frame["regular"])
@@ -424,10 +431,7 @@ class InterpreterMixin:
                 self.charge_regular(frame, G_BASE, "TIMESTAMP")
                 stack.append(self.env.timestamp)
                 steps.append(f"TIMESTAMP {G_BASE}")
-                self.mark(BLOCK_ENV_ACCESS_COMPUTE_GAS, "TIMESTAMP, a read of the block environment, once it completes,")
-                self.split(frame)
-                d.add("gasLedgers", f"the frame's regular gas {fmt(frame['regular'])} is split: {fmt(frame['spendable'])} "
-                      "spendable, what the limit leaves the transaction, and the rest withheld", "SATIN-DET-014")
+                self.volatile_read(frame, "TIMESTAMP, a read of the block environment, once it completes,")
             elif op == 0x31:  # BALANCE
                 who = (pop() % 2**160).to_bytes(20, "big")
                 self.probe.setdefault("balance", frame["regular"])
@@ -539,6 +543,7 @@ class InterpreterMixin:
                 remaining = frame["regular"]
                 self.probe.setdefault("forward", remaining)
                 self.probe.setdefault("forward:" + target.hex(), remaining)  # each target's first CALL
+                self.probe["forward-last"] = remaining  # the last CALL's
                 self.probe.setdefault("reservoir:" + target.hex(), frame["reservoir"])
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
@@ -560,7 +565,7 @@ class InterpreterMixin:
                       f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}"
                       + (f", the child's gas {fmt(forward)} + CALL_STIPEND {CALL_STIPEND} = {fmt(child_gas)}" if value else ""),
                       "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-003",
-                      "SATIN-HIST-010", *self.order()[1])
+                      "SATIN-FWD-006", "SATIN-HIST-010", *self.order()[1])
                 # The history of the records the start would make, as the state stands now (SATIN-HIST-015):
                 # charged by the opcode with its other charges, after the forward (SATIN-HIST-010 step 4) and
                 # before the depth gate, interception and the frame start; a start that would make them and
@@ -637,6 +642,57 @@ class InterpreterMixin:
                 steps.append(f"CALL {fmt(opcode_charges + forward - left)} net")
                 d.add("gasLedgers", f"the call returns {fmt(left)} regular gas to its caller; success {int(ok)}, "
                       f"{len(out)} bytes of return data", "SATIN-POOL-012", "SATIN-ICPT-004")
+            elif op in (0xF2, 0xFA):  # CALLCODE, STATICCALL: a frame that moves no value to another account
+                name = "CALLCODE" if op == 0xF2 else "STATICCALL"
+                gas_req, target_w = pop(), pop()
+                value = pop() if op == 0xF2 else 0
+                a_off, a_size, r_off, r_size = pop(), pop(), pop(), pop()
+                target = (target_w % 2**160).to_bytes(20, "big")
+                before = self.regular_charges
+                self.charge_regular(frame, WARM_READ, name)
+                expand(a_off, a_size, f"{name} input")
+                expand(r_off, r_size, f"{name} output")
+                if value:
+                    self.charge_regular(frame, CALL_VALUE_COST, "the value transfer")
+                cold = target not in self.warm_accounts and target not in PRECOMPILE_SET
+                if cold:
+                    self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
+                    self.warm_accounts.add(target)
+                self.load(target, f"the {name}'s code account, once the opcode's access is paid", "SATIN-WIT-002",
+                          "SATIN-WIT-008")
+                opcode_charges = self.regular_charges - before
+                remaining = frame["regular"]
+                self.probe.setdefault("callcode-forward" if op == 0xF2 else "static-forward", remaining)
+                cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
+                forward = min(gas_req, cap)
+                self.draw_regular(frame, forward)
+                self.regular_charges += forward
+                child_gas = forward + (CALL_STIPEND if value else 0)
+                operand = fmt(gas_req) if gas_req < 2**256 - 1 else "the gas operand 2^256 - 1"
+                d.add("gasLedgers", f"{name} of {h(target)}" + (f" with value {value}" if op == 0xF2 else "") +
+                      f": the opcode's own charges {fmt(opcode_charges)} = warm read {WARM_READ}" +
+                      (f" + value transfer {fmt(CALL_VALUE_COST)}" if value else "") +
+                      (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}" if cold else "") +
+                      (" + memory" if opcode_charges > WARM_READ + (CALL_VALUE_COST if value else 0) +
+                       (COLD_ACCOUNT_SURCHARGE if cold else 0) else "") +
+                      f"; forward min({operand}, {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
+                      f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}" +
+                      (f", the child's gas {fmt(forward)} + CALL_STIPEND {CALL_STIPEND} = {fmt(child_gas)}, the stipend "
+                       "added after the cap and not taken from the caller" if value else ", with no stipend"),
+                      "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-003",
+                      "SATIN-FWD-006", *self.order()[1])
+                share = self.reservoir_share(frame, f"the {name} frame running {h(target)}'s code")
+                ok, out, left = self.code_call(frame, name, address, target, value,
+                                               bytes(memory[a_off:a_off + a_size]), child_gas, share)
+                frame["regular"] += left
+                self.regular_charges -= left
+                self.resume(frame, f"the {name} of {h(target)}")
+                self.split(frame)
+                returndata = out
+                if r_size:
+                    raise Unmodelled("a call that copies its output")
+                stack.append(1 if ok else 0)
+                steps.append(f"{name} {fmt(opcode_charges + forward - left)} net")
             elif op == 0xF4:  # DELEGATECALL
                 gas_req, target_w, a_off, a_size, r_off, r_size = [pop() for _ in range(6)]
                 target = (target_w % 2**160).to_bytes(20, "big")
@@ -652,14 +708,16 @@ class InterpreterMixin:
                           "SATIN-WIT-008")
                 opcode_charges = self.regular_charges - before
                 remaining = frame["regular"]
+                self.probe.setdefault("delegate-forward", remaining)
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
                 self.draw_regular(frame, forward)
                 self.regular_charges += forward
                 d.add("gasLedgers", f"DELEGATECALL to {h(target)}: the opcode's own charges {fmt(opcode_charges)}; forward "
                       f"min(the gas operand, {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
-                      f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}; it moves no value and makes no record",
-                      "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-003")
+                      f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}, with no stipend; it moves no value and "
+                      "makes no record", "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002",
+                      "SATIN-FWD-003", "SATIN-FWD-006")
                 share = self.reservoir_share(frame, f"the DELEGATECALL frame running {h(target)}'s code")
                 ok, out, left = self.delegatecall(frame, address, caller, value_in, target,
                                                   bytes(memory[a_off:a_off + a_size]), forward, share)
@@ -672,7 +730,7 @@ class InterpreterMixin:
                     raise Unmodelled("a call that copies its output")
                 stack.append(1 if ok else 0)
                 steps.append(f"DELEGATECALL {fmt(opcode_charges + forward - left)} net")
-            elif op in (0xF0, 0xF5):  # CREATE, and CREATE2 as far as its salt operand
+            elif op in (0xF0, 0xF5):  # CREATE and CREATE2
                 name = "CREATE" if op == 0xF0 else "CREATE2"
                 if len(stack) < 3:
                     # SATIN-SIZE-005 step 2: the operands are read before any charge, so a creation short of them fails
@@ -712,17 +770,29 @@ class InterpreterMixin:
                               "and finds no salt operand: it fails on the missing operand and halts its frame",
                               "SATIN-OUT-012", "SATIN-SIZE-005", "SATIN-SIZE-006")
                         raise Halt("CREATE2 short of its salt")
-                    raise Unmodelled("a CREATE2 with its salt")
-                self.charge_regular(frame, CREATE_ACCESS, "CREATE")
+                    salt = pop()
+                self.charge_regular(frame, CREATE_ACCESS, name)
+                init = bytes(memory[c_off:c_off + c_size])
+                target = None
+                if op == 0xF5:
+                    # SATIN-SIZE-005 step 6: the salt, then CREATE_ACCESS and the hashing of the initcode; the address is
+                    # keccak256(0xff ++ creator ++ salt ++ keccak256(initcode))[12:], EIP-1014's, kept by the base layer.
+                    self.charge_regular(frame, KECCAK_WORD * words, "CREATE2's hashing of its init code")
+                    target = ex.keccak256(b"\xff" + address + salt.to_bytes(32, "big") + ex.keccak256(init))[12:]
                 opcode_charges = self.regular_charges - before
-                d.add("gasLedgers", f"CREATE with {c_size} bytes of init code and {value} wei: regular {words} words x "
-                      f"{INITCODE_WORD_COST} + memory, then CREATE_ACCESS {fmt(CREATE_ACCESS)} = {fmt(opcode_charges)}",
-                      "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-SIZE-005")
-                created, left, returndata = self.create(frame, address, value, bytes(memory[c_off:c_off + c_size]))
+                d.add("gasLedgers", f"{name} with {c_size} bytes of init code and {value} wei: regular {words} words x "
+                      f"{INITCODE_WORD_COST} + memory, then CREATE_ACCESS {fmt(CREATE_ACCESS)}"
+                      + (f" and the hashing of the init code, {words} words x {KECCAK_WORD}" if op == 0xF5 else "")
+                      + f" = {fmt(opcode_charges)}", "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-SIZE-005")
+                if op == 0xF5:
+                    d.add("state", f"CREATE2's address, from its creator {h(address)}, its salt {salt:#x} and its init "
+                          f"code's hash: keccak256(0xff ++ creator ++ salt ++ keccak256(init code))[12:] = {h(target)}, "
+                          "whatever the creator's nonce (EIP-1014, kept by the base layer)", "SATIN-BASE-001")
+                created, left, returndata = self.create(frame, address, value, init, target=target, name=name)
                 frame["regular"] += left
                 self.regular_charges -= left
                 stack.append(int.from_bytes(created, "big"))
-                steps.append(f"CREATE {fmt(opcode_charges)} + the creation")
+                steps.append(f"{name} {fmt(opcode_charges)} + the creation")
             elif op == 0xFF:  # SELFDESTRUCT
                 beneficiary = (pop() % 2**160).to_bytes(20, "big")
                 if not ctx and (create or address in self.created or not self.destruction):

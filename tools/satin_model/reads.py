@@ -29,7 +29,14 @@ class ReadsMixin:
 
     def multiplier(self, bucket: int) -> int:
         """The bucket multiplier of a state charge, its capacity served by the SALT environment and exported
-        (SATIN-WIT-013)."""
+        (SATIN-WIT-013). A system-originated transaction's charge is priced at m = 1 and reads no capacity
+        (SATIN-MST-008)."""
+        if self.exempt:
+            capacity = self.env.buckets.get(bucket, MIN_BUCKET_SIZE)
+            self.d.add("gasLedgers", f"the state charge's bucket {bucket:#x}, of capacity {capacity:,}, would give the "
+                       f"multiplier {bucket_multiplier(self.env, bucket)}; the transaction is system-originated, so the charge "
+                       "is priced at m = 1 and the bucket's capacity is not read", "SATIN-MST-008")
+            return 1
         self.served_buckets.setdefault(bucket, self.env.buckets.get(bucket, MIN_BUCKET_SIZE))
         return bucket_multiplier(self.env, bucket)
 

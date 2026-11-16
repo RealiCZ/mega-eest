@@ -131,6 +131,11 @@ MEGA_LIMIT_CONTROL = bytes.fromhex("6342000000000000000000000000000000000005")
 SEQUENCER_REGISTRY = bytes.fromhex("6342000000000000000000000000000000000006")
 SEQUENCER_REGISTRY_CODE_HASH = bytes.fromhex("abd7e8f1c8f0f9ca0346df585b65d9791a7e9ba5c431cc4eda5d2c2f1f5e9c43")
 CURRENT_SYSTEM_ADDRESS_SLOT = 0
+# SATIN-MST-001, -006, -007: the contracts a Mega System Transaction may call, the source hash its promotion stamps, and
+# the caller of the pre-block calls, whose transactions are the protocol's own.
+MEGA_SYSTEM_TX_WHITELIST = frozenset({bytes.fromhex("6342000000000000000000000000000000000001")})
+MEGA_SYSTEM_TRANSACTION_SOURCE_HASH = bytes.fromhex("852c082c0faff590c6300c2c34815d1f79882552fa95ba413cd5aeb1dba84957")
+SYSTEM_CALLER = bytes.fromhex("fffffffffffffffffffffffffffffffffffffffe")
 SYSTEM_CONTRACTS = frozenset({ORACLE, KEYLESS_DEPLOY, MEGA_ACCESS_CONTROL, MEGA_LIMIT_CONTROL})  # the cases' system contracts
 # SATIN-SYSC-001: the six system contracts' addresses, every one of them, which SATIN-SYSC-005 bounds a pre-state at.
 SYSTEM_CONTRACT_ADDRESSES = frozenset({ORACLE, HIGH_PRECISION_TIMESTAMP, KEYLESS_DEPLOY, MEGA_ACCESS_CONTROL,
