@@ -2274,78 +2274,102 @@ From the gas pools', state gas's and gas schedule's uncited rules:
 cases at `bcf260d`, in two new areas besides `gas-pools`.** Seventeen rules of the pages Two-Pool
 Gas, State Gas and SALT Pricing, and Gas Schedule and Intrinsic Gas had no case: `SATIN-POOL-001` to
 `-004`, `-015`, `-021`, `-022`, `SATIN-STATE-004` to `-007`, `-009`, `-010`, and `SATIN-SCHED-001`,
-`-002`, `-012`, `-014`. Thirty-seven cases at `bcf260d` (`CURRENT_SPEC`) pin sixteen of them; each
+`-002`, `-012`, `-014`. Fifty-seven cases at `bcf260d` (`CURRENT_SPEC`) pin sixteen of them, twenty
+of them added for the edges an independent review of the first thirty-seven found unpinned; each
 expected value comes from the specification through the model. Every one passes on both
 implementations, plain and instrumented.
 
-- **The areas.** The thirteen new pool cases join `gas-pools`, whose scope is the pool page's
-  family. `state-gas` (twelve cases) scopes the `SATIN-STATE` family and `schedule` (twelve cases)
-  the `SATIN-SCHED` family. No existing case changes area or pins.
+- **The areas.** The nineteen new pool cases join `gas-pools`, whose scope is the pool page's
+  family. `state-gas` (twenty cases) scopes the `SATIN-STATE` family and `schedule` (eighteen
+  cases) the `SATIN-SCHED` family. No existing case changes area or pins.
 - **Their citations.** A case of these rules sets `pricing` (`Case`, `Run`). Its derivation then
   cites what every other derivation applies without citing: the EIP-8037 profile and its execution
   cap (`SATIN-POOL-001`), the cap on a transaction's total gas Satin does not apply, where a gas
-  limit passes it (`SATIN-POOL-003`), each of Satin's departures where it is applied, with the
-  frozen profile (`SATIN-POOL-004`, `-022`), a returned reservoir joining its caller's
-  (`SATIN-POOL-002`), where each state charge is made and what its multiplier scales
-  (`SATIN-STATE-004`, `-005`), the one read of a bucket's capacity and the bucket SALT maps a key to
+  limit passes it, and the regular gas a charge before the first frame drew staying spent
+  (`SATIN-POOL-003`), each of Satin's departures where it is applied, with the frozen profile
+  (`SATIN-POOL-004`, `-022`), a returned reservoir joining its caller's (`SATIN-POOL-002`), where
+  each state charge is made and what its multiplier scales (`SATIN-STATE-004`, `-005`), the bucket
+  SALT maps a key to and one multiplier for every charge and give-back in a bucket
   (`SATIN-STATE-006`, `-010`), the pricing of a deposit and of a system-originated transaction
   (`SATIN-STATE-009`), the forward's and the code deposit's departures from Amsterdam
   (`SATIN-SCHED-001`), and why an account is warm from the transaction's start (`SATIN-SCHED-012`,
   `-014`). Without `pricing` no derivation step changes, so every existing case's file and pins
   stay as they were.
-- **The gas pools (13).** A gas limit at the execution cap and one above it. One above EIP-8037's
+- **The gas pools (19).** A gas limit at the execution cap and one above it. One above EIP-8037's
   `TX_MAX_TOTAL_GAS_LIMIT`, `2^32 − 1`, and one at the block's gas limit, both admitted
   (`SATIN-POOL-003`; one above the block's is `satin/validation/gas-limit-above-block`). A creation
   transaction whose start record and created account the reservoir pays in part: its initcode
   halts, and the part the regular budget paid is consumed, nothing of it returning, or reverts, and
-  the whole is given back into the reservoir (`SATIN-POOL-003`, `-015`, `-024`). A first frame that
-  spills on a fresh slot and then calls a child that fills and restores one: the child's give-back
-  returns as reservoir and joins the caller's, crediting none of the caller's spill back to regular
-  gas (`SATIN-POOL-002`, `-012`). A first frame's revert after an EIP-7702 list applied from the
-  reservoir: the list's charges stay (`SATIN-POOL-002`, `-024`). A `CREATE` from a frame with a
-  reservoir whose initcode reverts or halts, and a value call its caller cannot fund to an account
-  the state does not hold: the account's state gas, its legacy share included, comes back into the
-  reservoir (`SATIN-POOL-015`). Computation, a memory expansion and a run of `JUMPDEST`s, to the
-  last gas of the regular budget, which completes with the reservoir untouched, and one gas past
-  it, a halt and no stop (`SATIN-POOL-021`).
-- **State gas (12).** A `CREATE` at `m = 3` deploying ten bytes, and a value call to an absent
+  the whole is given back into the reservoir (`SATIN-POOL-003`, `-015`, `-024`); and a value
+  start's record, paid by the regular budget below the cap, consumed when the first frame halts. A
+  first frame that spills on a fresh slot and then calls a child that fills and restores one: the
+  child's give-back returns as reservoir and joins the caller's, crediting none of the caller's
+  spill back to regular gas (`SATIN-POOL-002`, `-012`); and a reservoir share of 99 returned unspent
+  through two successful merges and through one (`SATIN-POOL-011`). A first frame's revert after an
+  EIP-7702 list applied from the reservoir: the list's charges stay (`SATIN-POOL-002`, `-024`). A
+  `CREATE` from a frame with a reservoir whose initcode reverts or halts, and a value call its
+  caller cannot fund to an account the state does not hold: the account's state gas, its legacy
+  share included, comes back into the reservoir (`SATIN-POOL-015`). A child forwarded one gas
+  short of its fresh slot's regular charges with the legacy share, whose reservoir share could pay
+  the whole charge, and forwarded exactly that (`SATIN-POOL-008`, `SATIN-STATE-012`). Computation,
+  a memory expansion and a run of `JUMPDEST`s, to the last gas of the regular budget, which
+  completes with the reservoir untouched, and one gas past it, a halt and no stop
+  (`SATIN-POOL-021`). And the transaction's own `keylessDeploy` call whose constructor fills a fresh
+  slot before destroying the deploy address: the call's `gasUsed` adds back the table's give-back
+  of the account and its one record, not the slot's (`SATIN-KEY-015`, `SATIN-SD-004`).
+- **State gas (20).** A `CREATE` at `m = 3` deploying ten bytes, and a value call to an absent
   account at `m = 5`: the account's and the code's state gas scale; the legacy share, the regular
   charges and the history do not (`SATIN-STATE-004`, `-005`). A call without value to an absent
   account, under an incomplete SALT input holding no bucket: no account is added, so no capacity is
-  read (`SATIN-STATE-004`). Two slots of one contract that `salt-v1` maps to one bucket, both
-  filled and one restored, under an incomplete input listing that bucket alone; a `CREATE` at
-  `m = 3` whose initcode reverts; a write at `m = 4` two frames deep that reverts, and its kept
-  control; and a created account destroyed by a call after a second creation deposited code at
-  another multiplier, whose table gives its code back at its own (`SATIN-STATE-006`). A creation's
-  account at `m = 2` and its constructor's slot at `m = 6` (`SATIN-STATE-010`). A deposit carrying
-  `MEGA_SYSTEM_TRANSACTION_SOURCE_HASH` that fills two slots and restores one, and one that creates
-  an account, both under an incomplete SALT input holding no bucket, against a user's deposit whose
-  value call adds an account at `m = 4` (`SATIN-STATE-009`).
-- **The gas schedule (12).** A `CALL` from a caller holding 1,000 of regular gas: it forwards 980,
+  read (`SATIN-STATE-004`). A `SELFDESTRUCT` moving a balance to a beneficiary present as an empty
+  leaf at `m = 3`, with and without a slot, a new account, and to one with nonce 1, not
+  (`SATIN-STATE-004`, `-011`). Two slots of one contract that `salt-v1` maps to one bucket, both
+  filled and one restored; a `CREATE` at `m = 3` whose initcode reverts; a creation whose
+  constructor fills a slot at `m = 4`, one gas short of its code deposit's history and exactly
+  paying it, the slot's charge going with its rollback and the account's coming back at `m = 3`
+  (`SATIN-POOL-015`, `SATIN-SCHED-011`); a write at `m = 4` two frames deep that reverts, and its
+  kept control; and a created account destroyed by a call after a second creation deposited code at
+  another multiplier, whose table gives its code back at its own (`SATIN-STATE-006`). A
+  creation's account at `m = 2` and its constructor's slot at `m = 6` (`SATIN-STATE-010`). A
+  bucket listed alone at the minimum capacity, at one below twice it and at twice it
+  (`SATIN-STATE-002`). A deposit carrying `MEGA_SYSTEM_TRANSACTION_SOURCE_HASH` that fills two
+  slots and restores one, and one that creates an account, both under an incomplete SALT input
+  holding no bucket, against a user's deposit whose value call adds an account at `m = 4`
+  (`SATIN-STATE-009`).
+- **The gas schedule (18).** A `CALL` from a caller holding 1,000 of regular gas: it forwards 980,
   the specification's own example (`SATIN-SCHED-001`). `EXTCODESIZE` of a cold contract and of the
-  warm recipient, and `EXTCODEHASH` of the warm sender: two warm reads against one
-  (`SATIN-SCHED-002`, `-014`). `BALANCE` of the sender, of the recipient and of an account not
-  accessed (`SATIN-SCHED-014`). `EXTCODESIZE` of a precompile; a `CALL` and a `BALANCE` of an
-  address an access list names without storage keys, a `CALL` of one named with a key, a
-  `CALLCODE` of one named without; a `SELFDESTRUCT` to an access-listed beneficiary; and a `CALL`
-  of the block beneficiary (`SATIN-SCHED-012`). A `CREATE` that deploys 33 bytes, its code's history
-  priced where Amsterdam prices none (`SATIN-SCHED-001`).
+  warm recipient, and `EXTCODEHASH` of the warm sender: two warm reads against one; `EXTCODECOPY` of
+  a cold contract twice with zero bytes, the static gas and the access paid all the same, and once
+  copying its code (`SATIN-SCHED-002`, `-014`). `BALANCE` of the sender, of the recipient and of an
+  account not accessed (`SATIN-SCHED-014`). `EXTCODESIZE` of a precompile; a `CALL` and a
+  `STATICCALL` whose first access is to an address an access list names without storage keys, a
+  `BALANCE` and a `CALL` of one, a `CALL` of one named with a key, a `CALLCODE` of one named
+  without; a `SELFDESTRUCT` to an access-listed beneficiary; and a `CALL` of the block beneficiary
+  (`SATIN-SCHED-012`). A `CREATE` that deploys 33 bytes, its code's history priced where Amsterdam
+  prices none (`SATIN-SCHED-001`). Creation transactions whose initcode is 96 and 97 bytes, across
+  EIP-3860's word step (`SATIN-SCHED-006`).
 
-**D-107. The model's reach grows by two reads and one start, and a halt's step is reworded.**
+**D-107. The model's reach grows by three reads and one start, and two steps are reworded.**
 Under `pricing` alone:
 
-- `EXTCODESIZE` (`0x3b`) and `EXTCODEHASH` (`0x3f`), which the model ran only for the block
-  beneficiary, run for any account outside a detained frame and with access on: the static gas,
-  two warm reads for `EXTCODESIZE` and one for `EXTCODEHASH`, then the additional cold account
-  access for an account that is not warm (`SATIN-SCHED-002`, `-003`). No opcode is added.
+- `EXTCODESIZE` (`0x3b`), `EXTCODEHASH` (`0x3f`) and `EXTCODECOPY` (`0x3c`), which the model ran
+  only for the block beneficiary, run for any account outside a detained frame and with access on:
+  the static gas, two warm reads for `EXTCODESIZE` and `EXTCODECOPY` and one for `EXTCODEHASH`, then
+  the additional cold account access for an account that is not warm, and for `EXTCODECOPY` its copy
+  and memory (`SATIN-SCHED-002`, `-003`). No opcode is added.
 - A `CALL` without value to an account without code is a start answered without a frame: a
   success, no return data, nothing kept, the child's regular gas and its reservoir share returned
   (`SATIN-POOL-012`, `SATIN-LIM-013`). It raised `Unmodelled` before, and still does without
   `pricing`.
-- A `CALL`'s or `CALLCODE`'s target, a `BALANCE`'s or `EXTCODESIZE`'s account and a
-  `SELFDESTRUCT`'s beneficiary that is warm say why: the sender and the recipient
-  (`SATIN-SCHED-014`), a precompile, the beneficiary or an access list's address
-  (`SATIN-SCHED-012`), or an earlier access.
+- A `CALL`'s, `CALLCODE`'s or `STATICCALL`'s target, a `BALANCE`'s, `EXTCODESIZE`'s or
+  `EXTCODECOPY`'s account and a `SELFDESTRUCT`'s beneficiary that is warm say why: the sender and
+  the recipient (`SATIN-SCHED-014`), a precompile, the beneficiary or an access list's address
+  (`SATIN-SCHED-012`), or an earlier access. A `SELFDESTRUCT` that moves a balance says whether its
+  beneficiary is new by EIP-161 emptiness (`SATIN-STATE-004`, `-011`).
+- A legacy share the frame's regular gas cannot pay, and a code deposit's charge the creation
+  cannot pay, say so at the charge (`SATIN-POOL-008`, `SATIN-STATE-012`, `SATIN-SCHED-011`).
+- A first frame's revert cites the give-back of its recipient's or created account's state gas
+  (`SATIN-POOL-015`) only where step 4 charged one.
 
 The step of a first frame's halt after the reservoir paid part of its start (D-85) wrote its total
 as the gas limit less the reservoir the frame received alone; it now writes the reservoir given
@@ -2354,17 +2378,29 @@ stores the step. `TX_MAX_TOTAL_GAS_LIMIT` (`2^32 − 1`, Base Layer) joins the m
 
 **D-108. What the pricing cases do not pin, and the readings they take.**
 
-- **`SATIN-STATE-007` has no case.** A bucket capacity below `MIN_BUCKET_SIZE` is a fault of the
-  node, with no outcome. The format records a fault as an outcome (`commit.status: fault`, through
-  `input.faults`), but neither adapter runs injected faults: both report an engine's internal
-  error as `error`, which a consumer never takes for a pass. A case expecting the fault would fail
-  on both until an adapter maps the error, which this change does not make. The rule stays in the
-  index's uncited rules.
+- **`SATIN-STATE-007` has no failing case.** A bucket capacity below `MIN_BUCKET_SIZE`, or one the
+  node cannot read, is a fault of the node, with no outcome. The format records a fault as an
+  outcome (`commit.status: fault`, through `input.faults`), but neither adapter runs injected
+  faults: both report an engine's internal error, and a bucket an incomplete input does not hold,
+  as `error`, which a consumer never takes for a pass. A case expecting the fault would fail on
+  both until an adapter maps the error, which this change does not make. Its valid side is pinned:
+  a capacity listed at the minimum is a bucket, priced at `m = 1`. A capacity below the minimum
+  that no charge reads is not a case: SALT holds no such bucket, so such an input is no state the
+  specification executes on, as D-97 holds of an invalid prestate. The rule stays in the index's
+  uncited rules.
+- **`SATIN-STATE-006`'s single read is not pinned.** The capacities are fixed inputs and the
+  `reads` group lists each served bucket once, so no observation tells one lookup from several of
+  the same capacity. The cases pin what a reuse decides: every later charge and give-back in a
+  bucket priced at the multiplier of its first, a give-back cancelling its charge exactly. A case
+  with one charge in its bucket does not cite the rule.
 - **`SATIN-POOL-004` is pinned where a departure is applied.** The frozen profile decides a figure
   only through what it keeps and what it departs from: the cases that show the reservoir share,
   the legacy share and the give-back into the reservoir cite it with `SATIN-POOL-022`. No change
   to EIP-8037 after `dbc6d457cb` that the rule names moves a figure, so no case can show one
   declined.
+- **A case of another page's rule in these areas.** The keyless case pins `SATIN-KEY-015` and
+  `SATIN-SD-004` by naming them: a `gasUsed` that adds back the table's give-back of the account
+  and its record, which a constructor's fresh slot does not enlarge.
 - **What stays out.** A `STATICCALL` of a precompile, a system call's outermost frame (block-level),
   a call at the call-depth limit (no transaction reaches it under the 98/100 forward), and
   `DUPN`, `SWAPN`, `EXCHANGE` and `CLZ`, which the model does not run.
