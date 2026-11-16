@@ -133,6 +133,10 @@ class StorageMixin:
         if now and not was:
             history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
             before = frame.get("spendable")
+            if frame.get("allowance") is not None:
+                d.add("gasLedgers", f"slot {key}'s record's history, {fmt(history)}, draws nothing on the frame's history "
+                      f"allowance, which only a log's history draws: {fmt(frame['allowance'])} of it stays unspent",
+                      "SATIN-HIST-019")
             try:
                 self.charge_state(frame, history, 0, "the slot's write record")
             except Halt:

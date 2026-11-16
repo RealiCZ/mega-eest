@@ -54,6 +54,10 @@ class TransactionMixin:
         if floor > tx.gas_limit:
             return ("validation", "floor-exceeds-gas-limit", own,
                     f"floor {fmt(floor)} > gas limit {fmt(tx.gas_limit)} (SATIN-VAL-003 step 3)")
+        if tx.gas_limit > EXECUTION_CAP and max(intrinsic, floor) > EXECUTION_CAP:
+            return ("validation", "floor-exceeds-gas-limit", own,
+                    f"gas limit {fmt(tx.gas_limit)} above EXECUTION_CAP {fmt(EXECUTION_CAP)} while the larger of the intrinsic "
+                    f"regular gas and the floor, {fmt(max(intrinsic, floor))}, exceeds it (SATIN-VAL-003 step 4)")
         if self.outcomes and floor == tx.gas_limit:
             self.d.add("outcome", f"the gas limit {fmt(tx.gas_limit)} is the floor exactly: step 3 refuses a floor that "
                        "exceeds the gas limit, and this one does not, so the check passes", "SATIN-VAL-002", "SATIN-VAL-003")

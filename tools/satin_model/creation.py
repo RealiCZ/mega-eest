@@ -10,7 +10,7 @@ from .constants import (
     SELFDESTRUCT_NEW_ACCOUNT_COST, SLOT_STATE, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     WRITE_RECORD_SIZE, limit_exceeded,
 )
-from .records import Account, created_address, fmt, h, pad_address, Unmodelled
+from .records import Account, created_address, fmt, h, Halt, pad_address, Unmodelled
 
 RECORD_HISTORY = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
 
@@ -33,10 +33,24 @@ class CreationMixin:
         if target is None:
             target = created_address(creator, creator_acct.nonce)
         if value > creator_acct.balance:
-            raise Unmodelled("a creation its creator cannot fund")
+            # SATIN-HIST-015, -023: the creation opcode refuses a creation whose endowment its creator cannot fund before
+            # it charges anything for the start and before it reads the created address: no frame, no state gas, no
+            # history, no nonce bump; its regular charges stand and it pushes zero.
+            d.add("gasLedgers", f"the {op}'s creator {h(creator)} holds {creator_acct.balance} wei and cannot fund the "
+                  f"endowment of {value}: the opcode refuses the creation before it charges anything for the start and "
+                  "before it reads the created address, so no frame starts, no state gas or history is charged, the "
+                  "creator's nonce is not bumped, and the opcode's regular charges stand", "SATIN-HIST-015",
+                  "SATIN-HIST-023")
+            d.add("resources", f"the refused {op} counts nothing: no record, no rise", "SATIN-HIST-015", "SATIN-ACCT-004",
+                  "SATIN-ACCT-014")
+            return bytes(20), 0, b""
         self.load(target, "the created address, which the creation reads", "SATIN-WIT-002", "SATIN-WIT-008")
         existing = self.state.get(target)
-        if existing is not None and not existing.empty():
+        # An address the transaction funded before the creation lands on it (SATIN-ACCT-005): it holds a balance and
+        # nothing else, is not empty under EIP-161, and differs already from what the transaction loaded.
+        funded = existing is not None and not existing.empty()
+        if funded and (existing.nonce or existing.code or existing.storage or target in self.pre or not self.current
+                       or ("a", target) not in self.kv):
             raise Unmodelled("a creation onto an address empty under EIP-161 or occupied")
         if target == self.env.coinbase or creator == self.env.coinbase:
             d.add("outcome", f"the {op}'s {'created address' if target == self.env.coinbase else 'creator'} is the block "
@@ -44,13 +58,21 @@ class CreationMixin:
                   "is not marked as a read" + (", and it is not refused though the frame's volatile-data access is off"
                                                if frame.get("access_off") else ""), "SATIN-DET-006")
         self.warm_accounts.add(target)
-        m = self.multiplier(self.salt_bucket(target, None))
-        state = ACCOUNT_STATE * m
-        legacy = min(state, LEGACY_CREATE_SHARE)
-        reservoir = frame["reservoir"]
-        self.charge_state(frame, state, legacy, "the created account")
-        self.state_gas += state
-        if target in self.pre:
+        if funded:
+            state = 0
+            d.add("gasLedgers", f"{op} of {h(target)}, which a transfer of the transaction funded with "
+                  f"{existing.balance} wei: not empty under EIP-161, so the creation charges no state gas for its leaf "
+                  "and makes no rise, before the forward or after", "SATIN-HIST-011", "SATIN-ACCT-014", "SATIN-ACCT-015")
+        else:
+            m = self.multiplier(self.salt_bucket(target, None))
+            state = ACCOUNT_STATE * m
+            legacy = min(state, LEGACY_CREATE_SHARE)
+            reservoir = frame["reservoir"]
+            self.charge_state(frame, state, legacy, "the created account")
+            self.state_gas += state
+        if funded:
+            pass
+        elif target in self.pre:
             if not self.destruction:
                 raise Unmodelled("a creation onto an address the state holds a leaf for")
             d.add("gasLedgers", f"{op} of {h(target)}, whose leaf the state holds with nonce 0, no balance, no code and "
@@ -58,12 +80,13 @@ class CreationMixin:
                   "empty under EIP-161, is charged and counted as a new account", "SATIN-SD-016", "SATIN-SD-017",
                   "SATIN-STATE-011", "SATIN-ACCT-014")
         where = "an address the state holds no account for" if target not in self.pre else "an address empty under EIP-161"
-        d.add("gasLedgers", f"{op} of {h(target)}, {where}: before the forward, the "
-              f"created account's state gas {fmt(ACCOUNT_STATE)} x m={m} = {fmt(state)}, its legacy share min({fmt(state)}, "
-              f"PRE_FORK_CREATE_COST - CREATE_ACCESS) = {fmt(legacy)} from regular gas first, then "
-              f"{fmt(min(reservoir, state - legacy))} from the reservoir and the rest, "
-              f"{fmt(state - legacy - min(reservoir, state - legacy))}, from regular gas", "SATIN-HIST-011",
-              "SATIN-STATE-001", "SATIN-STATE-003", "SATIN-STATE-012", "SATIN-POOL-008")
+        if not funded:
+            d.add("gasLedgers", f"{op} of {h(target)}, {where}: before the forward, the "
+                  f"created account's state gas {fmt(ACCOUNT_STATE)} x m={m} = {fmt(state)}, its legacy share min({fmt(state)}, "
+                  f"PRE_FORK_CREATE_COST - CREATE_ACCESS) = {fmt(legacy)} from regular gas first, then "
+                  f"{fmt(min(reservoir, state - legacy))} from the reservoir and the rest, "
+                  f"{fmt(state - legacy - min(reservoir, state - legacy))}, from regular gas", "SATIN-HIST-011",
+                  "SATIN-STATE-001", "SATIN-STATE-003", "SATIN-STATE-012", "SATIN-POOL-008")
         remaining = frame["regular"]
         self.probe.setdefault("create-forward", remaining)
         forward = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
@@ -71,8 +94,14 @@ class CreationMixin:
         self.regular_charges += forward
         # The start's records, as the state stands: the created account, and the creator's nonce record when
         # the bump changes an account that did not differ yet (SATIN-HIST-009, SATIN-ACCT-008).
-        records = [target] + ([creator] if ("a", creator) not in self.kv and creator != tx.sender
-                              and creator != self.keyless_signer else [])
+        records = ([target] if ("a", target) not in self.kv else []) + (
+            [creator] if ("a", creator) not in self.kv and creator != tx.sender and creator != self.keyless_signer else [])
+        target_record = target in records
+        if funded:
+            d.add("gasLedgers", f"{h(target)} differs already from what the transaction loaded, by the balance the "
+                  "transfer gave it: the creation adds no record for it" + ("" if creator in records else
+                  ", and the creator, changed already by that transfer, none for its nonce"), "SATIN-ACCT-005",
+                  "SATIN-ACCT-004", "SATIN-HIST-009")
         if creator == self.keyless_signer:
             d.add("gasLedgers", f"the creator {h(creator)} is the keyless signer, whose nonce the keyless creation's start "
                   "bumped: its account differs from what the transaction loaded already, so this bump makes no record of "
@@ -84,7 +113,8 @@ class CreationMixin:
         self.charge_state(frame, history, 0, "the creation's records")
         self.history_gas += history
         self.history_bytes += WRITE_RECORD_SIZE * len(records)
-        whose = "the created account's" + (" and the creator's nonce record" if len(records) == 2 else "")
+        whose = " and ".join((["the created account's"] if target_record else [])
+                             + (["the creator's nonce record"] if creator in records else [])) or "none"
         d.add("gasLedgers", f"the forward, {op} having no gas operand, is the cap {fmt(remaining)} - {fmt(remaining)} x "
               f"{GAS_RETAINED_NUMERATOR} / {GAS_RETAINED_DENOMINATOR} = {fmt(forward)}, with no stipend; after it the history "
               f"of the start's {len(records)} records ({whose}), {len(records)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(history)}: "
@@ -104,8 +134,8 @@ class CreationMixin:
         if acct.storage:
             self.storage_reads_zero(target, acct)
         self.kv.add(("a", target))
-        self.growth += 1
-        self.data_size += WRITE_RECORD_SIZE
+        self.growth += 0 if funded else 1
+        self.data_size += WRITE_RECORD_SIZE if target_record else 0
         if value:
             creator_acct.balance -= value
             acct.balance += value
@@ -113,7 +143,8 @@ class CreationMixin:
             self.logs.append((TRANSFER_LOG_ADDRESS, [TRANSFER_TOPIC, pad_address(creator), pad_address(target)],
                               value.to_bytes(32, "big")))
         d.add("resources", f"the creation's start: the creator's nonce becomes {creator_acct.nonce}; the created account, "
-              f"nonce 1, is one write record ({WRITE_RECORD_SIZE} bytes) and one unit of state growth on the creation"
+              + (f"nonce 1, is one write record ({WRITE_RECORD_SIZE} bytes) and one unit of state growth on the creation"
+                 if not funded else "nonce 1, keeps the balance the transfer gave it and adds no record and no rise")
               + (f", and the endowment of {value} wei moves with its transfer log ({TRANSFER_LOG_SIZE} bytes)" if value else ""),
               "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-ACCT-014", "SATIN-LOG-001", "SATIN-LOG-006")
         child["name"] = name
@@ -133,6 +164,8 @@ class CreationMixin:
             self.caught(frame)
             self.state.setdefault(creator, Account()).nonce += 1
             frame["reservoir"] += share
+            if funded:
+                raise Unmodelled("a stopped creation onto a funded address")
             self.give_back(frame, RECORD_HISTORY + state)
             self.history_gas -= RECORD_HISTORY
             self.history_bytes -= WRITE_RECORD_SIZE
@@ -157,6 +190,8 @@ class CreationMixin:
             # SATIN-TAKE-007 failed-create: the creation's rollback, then the created account's state gas and its record's
             # history given back to the creator; the creator's nonce bump, made before the creation ran, stays.
             left = self.end_child(frame, child, status, snap, name)
+            if funded:
+                raise Unmodelled("a failed creation onto a funded address")
             creator_acct = self.state.setdefault(creator, Account())
             creator_acct.nonce += 1
             self.give_back(frame, state + RECORD_HISTORY)
@@ -267,6 +302,20 @@ class CreationMixin:
         Returns whether the beneficiary is a new account."""
         d = self.d
         cold = beneficiary not in self.warm_accounts
+        if cold and self.current and self.destruction and frame["regular"] >= SELFDESTRUCT_COST \
+                and frame["regular"] - SELFDESTRUCT_COST < COLD_ACCOUNT_ACCESS:
+            # SATIN-WIT-012: a cold account load with less whole regular gas than its cold surcharge is skipped. The
+            # static cost is paid; the beneficiary's cold access is not, so the beneficiary is never loaded.
+            self.charge_regular(frame, SELFDESTRUCT_COST, "SELFDESTRUCT's static cost")
+            d.add("gasLedgers", f"SELFDESTRUCT's static cost {fmt(SELFDESTRUCT_COST)} is paid, leaving {fmt(frame['regular'])} "
+                  f"of regular gas, less than the cold access of its beneficiary {h(beneficiary)}, "
+                  f"{fmt(COLD_ACCOUNT_ACCESS)}: the frame halts before the load, so the beneficiary is not loaded and "
+                  "nothing is kept", "SATIN-SD-019", "SATIN-WIT-012")
+            if self.reads:
+                d.add("reads", f"the beneficiary {h(beneficiary)} is not loaded: its cold access cannot be paid",
+                      "SATIN-WIT-012")
+            raise Halt(f"out of gas at SELFDESTRUCT's cold access, {fmt(COLD_ACCOUNT_ACCESS)}, with "
+                       f"{fmt(frame['regular'])} regular gas left")
         self.load(beneficiary, "the SELFDESTRUCT's beneficiary", "SATIN-WIT-002")
         ben = self.state.get(beneficiary)
         new_ben = bool(balance) and (ben is None or ben.empty())
@@ -280,7 +329,14 @@ class CreationMixin:
             if self.current and frame.get("spendable") is not None:
                 self.d.add("gasLedgers", f"under gas detention SELFDESTRUCT's static cost {fmt(SELFDESTRUCT_COST)} is one "
                            f"charge, paid, and its dynamic part {fmt(regular - SELFDESTRUCT_COST)} another", "SATIN-DET-018")
-            self.charge_regular(frame, regular - SELFDESTRUCT_COST, "SELFDESTRUCT's cold access and new account")
+            try:
+                self.charge_regular(frame, regular - SELFDESTRUCT_COST, "SELFDESTRUCT's cold access and new account")
+            except Halt:
+                d.add("gasLedgers", f"the SELFDESTRUCT loaded its beneficiary {h(beneficiary)} and so observed its write, "
+                      f"and its frame, holding {fmt(frame['regular'])} of regular gas, cannot pay the "
+                      f"{fmt(regular - SELFDESTRUCT_COST)} it charges after the load: it halts out of gas, keeping nothing "
+                      "and charged no history", "SATIN-HIST-008", "SATIN-SD-019")
+                raise
         elif self.current and frame.get("spendable") is not None:
             self.d.add("gasLedgers", f"under gas detention SELFDESTRUCT's static cost {fmt(SELFDESTRUCT_COST)} is one charge, "
                        "paid; the opcode deducts nothing more", "SATIN-DET-018")
@@ -396,11 +452,41 @@ class CreationMixin:
         made = [beneficiary] if ("a", beneficiary) not in self.kv and beneficiary != tx.sender else []
         cleared = []
         if not first and address not in self.destroyed:
-            # The account it clears makes its record when this write is the first change to it (SATIN-SD-019 step 3);
-            # a write that returns it to what the transaction loaded would take its record back, which no case builds.
-            if address == tx.sender or (("a", address) in self.kv and self.pre[address].balance == 0):
-                raise Unmodelled("a SELFDESTRUCT that returns its account to what the transaction loaded")
-            cleared = [] if ("a", address) in self.kv else [address]
+            # Each end's record by SATIN-ACCT-004 on the balances the move leaves it: made where the move first changes
+            # it, taken back where the move returns it to what the transaction loaded (SATIN-ACCT-006), and the sender's
+            # never (SATIN-ACCT-008). What it takes back is given back first, into the destroying frame's reservoir,
+            # before what it makes is held and charged (SATIN-HIST-006, -007).
+            if address == tx.sender:
+                raise Unmodelled("a SELFDESTRUCT of the sender's account")
+            after = {address: 0, beneficiary: self.state.get(beneficiary, Account()).balance + balance}
+
+            def differs(a: bytes) -> bool:
+                now, was = self.state.get(a, Account()), self.pre.get(a, Account())
+                return (now.nonce, after[a], now.code) != (was.nonce, was.balance, was.code)
+
+            ends = [a for a in (address, beneficiary) if a != tx.sender and a not in self.destroyed]
+            takes = [a for a in ends if ("a", a) in self.kv and not differs(a)]
+            cleared = [address] if address in ends and ("a", address) not in self.kv and differs(address) else []
+            made = [beneficiary] if beneficiary in ends and ("a", beneficiary) not in self.kv and differs(beneficiary) else []
+            if takes:
+                back = RECORD_HISTORY * len(takes)
+                for a in takes:
+                    self.kv.discard(("a", a))
+                self.data_size -= WRITE_RECORD_SIZE * len(takes)
+                self.history_gas -= back
+                self.history_bytes -= WRITE_RECORD_SIZE * len(takes)
+                self.give_back(frame, back)
+                whose = " and ".join("the destroyed account's" if a == address else "the beneficiary's" for a in takes)
+                d.add("gasLedgers", f"step 3: the move of {balance} wei returns {whose} account to what the transaction "
+                      f"loaded, so the SELFDESTRUCT takes {len(takes)} record{'s' if len(takes) > 1 else ''} back where it "
+                      f"completed, -{len(takes)} KV and -{WRITE_RECORD_SIZE * len(takes)} bytes, and gives their "
+                      f"{fmt(back)} of history back first, into the reservoir of the frame running it, now "
+                      f"{fmt(frame['reservoir'])}, before what it makes is held and charged", "SATIN-ACCT-004",
+                      "SATIN-ACCT-006", "SATIN-HIST-006", "SATIN-HIST-007", "SATIN-HIST-012")
+        if beneficiary != tx.sender and beneficiary in self.fee_accounts() and beneficiary != address:
+            d.add("resources", f"the beneficiary {h(beneficiary)} is one of the four accounts the settlement credits fees to, "
+                  "which the body covers only for those credits: the destruction's write to it is recorded like a write "
+                  "to any other account", "SATIN-ACCT-010", "SATIN-ACCT-004")
         records_made = cleared + made
         self.hold_to_limits(WRITE_RECORD_SIZE * len(records_made) + TRANSFER_LOG_SIZE, len(records_made), int(new_ben),
                             f"the SELFDESTRUCT of {h(address)}", frame)
@@ -439,7 +525,14 @@ class CreationMixin:
               + f", the transfer log ({TRANSFER_LOG_SIZE} bytes) and the beneficiary's rise ({int(new_ben)})", *rules)
         if records:
             paid = min(frame["reservoir"], records)
-            self.charge_state(frame, records, 0, "the SELFDESTRUCT's records")
+            try:
+                self.charge_state(frame, records, 0, "the SELFDESTRUCT's records")
+            except Halt:
+                d.add("gasLedgers", f"the SELFDESTRUCT's {len(records_made)} records passed the limits, and their history, "
+                      f"{fmt(records)}, is charged after them: the frame, holding {fmt(frame['reservoir'])} of reservoir and "
+                      f"{fmt(frame['regular'])} of regular gas, cannot pay it and halts out of gas, keeping neither the "
+                      "records nor the move", "SATIN-HIST-013", "SATIN-HIST-008", "SATIN-SD-019")
+                raise
             self.history_gas += records
             self.history_bytes += WRITE_RECORD_SIZE * len(records_made)
             d.add("gasLedgers", f"step 4: the history of the {len(records_made)} record{'s' if len(records_made) > 1 else ''} "

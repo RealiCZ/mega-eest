@@ -179,7 +179,12 @@ specification's text and constants:
   logs nothing (`SATIN-ACCT-007`, `SATIN-LOG-003`); a value start without a frame held to the
   transaction's limit with the admitted hints counted (`SATIN-LIM-012`); the floor above the
   regular ledger (`SATIN-HIST-017`); and the settlement's credits to an empty fee account
-  (`SATIN-ACCT-017`). No opcode was added for them.
+  (`SATIN-ACCT-017`); a `SELFDESTRUCT` that returns an account to what the transaction loaded, taking
+  its record back (`SATIN-ACCT-006`), one whose frame cannot pay its beneficiary's cold access, which
+  loads nothing (`SATIN-WIT-012`), a creation refused for an endowment its creator cannot fund
+  (`SATIN-HIST-015`), and a successful creation onto an address a transfer of the transaction funded
+  (`SATIN-ACCT-005`); and validation's step 4, the execution cap (`SATIN-VAL-003`). No opcode was
+  added for them.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists

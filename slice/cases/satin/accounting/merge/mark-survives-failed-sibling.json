@@ -144,7 +144,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "P creates C and calls it, and C destroys itself to an existing account holding nothing; P then calls a contract that reverts, whose failure discards its own counts alone, and calls C with a word of calldata, which C writes to a slot never written: C's mark, made in a frame that succeeded, stands, so the write charges no state gas and adds no state growth and no record"
+      "intent": "P creates C and calls it, and C, holding nothing, destroys itself to an existing account holding 1 wei; P then calls a contract that reverts, whose failure discards its own counts alone, and calls C with a word of calldata, which C writes to a slot never written: C's mark, made in a frame that succeeded, stands, so the write charges no state gas and adds no state growth and no record"
     },
     "definition": "tools/make_slice.py::accounting_cases",
     "generator": "tools/make_slice.py",
