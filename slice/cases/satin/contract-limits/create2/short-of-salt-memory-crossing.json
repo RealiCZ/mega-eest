@@ -150,8 +150,7 @@
     "group:state"
   ],
   "rules": [
-    "SATIN-SIZE-002",
-    "SATIN-SIZE-003",
+    "SATIN-SIZE-005",
     "SATIN-SIZE-006"
   ],
   "schemaVersion": "2.0",

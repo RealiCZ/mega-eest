@@ -145,9 +145,7 @@
   ],
   "rules": [
     "SATIN-SIZE-001",
-    "SATIN-SIZE-002",
-    "SATIN-SIZE-003",
-    "SATIN-SIZE-004"
+    "SATIN-SIZE-003"
   ],
   "schemaVersion": "2.0",
   "specRef": {
