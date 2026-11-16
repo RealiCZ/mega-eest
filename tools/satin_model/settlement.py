@@ -4,12 +4,17 @@ diff and the limit group; the snapshot a failed first frame returns to; a deposi
 from __future__ import annotations
 
 from .constants import (
-    ACCOUNT_STATE, BASE_FEE_VAULT, COST_PER_HISTORY_BYTE, CURRENT_SYSTEM_ADDRESS_SLOT, DETENTION_STOP, ex, limit_exceeded,
-    REFUND_QUOTIENT, SEQUENCER_REGISTRY, SEQUENCER_REGISTRY_CODE_HASH, STOP_DIMENSIONS,
+    ACCOUNT_STATE, BASE_FEE_VAULT, COLD_ACCOUNT_SURCHARGE, COST_PER_HISTORY_BYTE, CURRENT_SYSTEM_ADDRESS_SLOT, delegate_of,
+    DETENTION_STOP, ex, INTERCEPTED, limit_exceeded, MAX_CONTRACT_SIZE, MAX_U64, MEGA_LIMIT_CONTROL, ORACLE,
+    PRECOMPILE_SET, REFUND_QUOTIENT, SEND_HINT,
+    SEQUENCER_REGISTRY,
+    SEQUENCER_REGISTRY_CODE_HASH, STOP_DIMENSIONS, WARM_READ,
     TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT,
     WRITE_RECORD_SIZE,
 )
-from .records import Account, dim, fmt, h, Halt, LimitStop, pad_address, q, Result, Stopped, Unmodelled, word
+from .records import (
+    Account, created_address, dim, fmt, h, Halt, LimitStop, pad_address, q, Result, Stopped, Unmodelled, word,
+)
 
 
 class SettlementMixin:
@@ -167,7 +172,11 @@ class SettlementMixin:
         was_empty = self.pre.get(tx.sender) is None or self.pre[tx.sender].empty()
         nonce_before = self.pre.get(tx.sender, Account()).nonce
         sender.balance += tx.mint
-        sender.nonce += 1
+        # SATIN-DEP-010: a creation from a sender at MAX_NONCE cannot bump it; the deposit's own bump is made below.
+        self.unbumpable = self.system_pages and tx.to is None and nonce_before == MAX_U64
+        if not self.unbumpable:
+            sender.nonce += 1
+        self.deposit_recipient = created_address(tx.sender, nonce_before) if tx.to is None else tx.to
         self.probe.setdefault("deposit-intrinsic", intrinsic)
         if tx.system_flag:
             # SATIN-DEP-008, SATIN-VAL-008: the base layer refuses the flag from Regolith on; a deposit is never rejected.
@@ -199,7 +208,7 @@ class SettlementMixin:
             if was_empty:
                 self.growth += 1
             return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
-        if tx.to is None or tx.to == tx.sender:
+        if (tx.to is None or tx.to == tx.sender) and not self.system_pages:
             raise Unmodelled("a creating or self-addressed deposit")
         if tx.gas_limit < intrinsic + body_history:
             # SATIN-DEP-001, SATIN-VAL-008: a deposit whose gas limit cannot pay its intrinsic regular gas and its body's
@@ -250,8 +259,14 @@ class SettlementMixin:
                       "is new; it is charged no ACCOUNT_WRITE and makes no write record, its account being a fixed record "
                       "of the body", "SATIN-AUTH-017", "SATIN-STATE-011", "SATIN-ACCT-015", "SATIN-ACCT-008")
         self.state_gas += caller_state
-        d.add("state", f"the mint {fmt(tx.mint)} is credited to the sender, its nonce bumped", "SATIN-DEP-004")
+        if self.unbumpable:
+            d.add("state", f"the mint {fmt(tx.mint)} is credited to the sender, whose nonce, MAX_NONCE, the deposit "
+                  "cannot bump", "SATIN-DEP-004", "SATIN-DEP-010")
+        else:
+            d.add("state", f"the mint {fmt(tx.mint)} is credited to the sender, its nonce bumped", "SATIN-DEP-004")
         kept = self.snapshot()  # the mint, the nonce bump and the created caller, which a failed deposit keeps
+        if self.system_pages:
+            return self.deposit_frame(kept, intrinsic, floor, nonce_before, was_empty, caller_state, regular, reservoir)
         if tx.value:
             if tx.value > sender.balance:
                 # The start that cannot fund the value makes no record (step 3); the recipient is loaded at step 4, which
@@ -322,6 +337,215 @@ class SettlementMixin:
             return self.reverted_deposit(kept, intrinsic, floor, nonce_before, was_empty, output)
         if status != "success":
             raise Unmodelled("a deposit's frame ending in " + status)
+        return self.deposit_success(intrinsic, floor, nonce_before, output)
+
+    def deposit_frame(self, kept, intrinsic: int, floor: int, nonce_before: int, was_empty: bool, caller_state: int,
+                      regular: int, reservoir: int) -> Result:
+        """A deposit's charges at steps 3 to 5 of SATIN-SCHED-008 and its first frame (D-109): the first frame's start
+        record, the load of the recipient or the created address at step 4 and its new or created account's state gas,
+        a delegated recipient's delegate access at step 5, each a charge whose failure makes a failed deposit that keeps
+        what it loaded (SATIN-DEP-012); a creation, one from a sender at MAX_NONCE that creates nothing (SATIN-DEP-010),
+        and a deposit to its own sender."""
+        tx, d = self.tx, self.d
+        sender = self.state[tx.sender]
+        create = tx.to is None
+        to_self = tx.to == tx.sender
+        recipient = self.deposit_recipient
+        if not self.exempt:
+            d.add("gasLedgers", "the deposit is a user's, not system-originated: priced by the SALT bucket its state lands "
+                  "in, held to every per-transaction limit and frame budget, and detained after a read of volatile data, "
+                  "as any transaction is", "SATIN-DEP-002", "SATIN-MST-010")
+        if self.unbumpable:
+            if tx.value > sender.balance:
+                raise Unmodelled("a creating deposit from MAX_NONCE whose value its sender cannot fund")
+            return self.unbumpable_creation(intrinsic, floor, nonce_before, recipient)
+        if create and tx.value:
+            raise Unmodelled("a creating deposit with an endowment")
+        if tx.value > sender.balance:
+            if create or to_self:
+                raise Unmodelled("a creating or self-addressed deposit whose value is unfunded")
+            # The start that cannot fund the value makes no record (step 3); the recipient is loaded at step 4, which
+            # charges an existing recipient nothing, and then the frame's start fails.
+            existing = self.state.get(tx.to)
+            if existing is None or existing.empty() or delegate_of(existing.code) is not None:
+                raise Unmodelled("an unfunded deposit to an empty or delegated recipient")
+            self.load(tx.to, "the recipient, at step 4 of the charges before the first frame, before the first frame's "
+                      "start finds the value unfunded", "SATIN-SCHED-008", "SATIN-WIT-008", "SATIN-DEP-012")
+            d.add("outcome", f"the deposit's value {fmt(tx.value)} is more than its sender holds with its mint credited, "
+                  f"{fmt(sender.balance)}: its first frame's start cannot fund it, makes no record and is charged none, and "
+                  "the frame fails; a deposit whose own frame halts this way is a failed deposit", "SATIN-DEP-004",
+                  "SATIN-HIST-015", "SATIN-OUT-013")
+            return self.failed_deposit(kept, nonce_before, was_empty, caller_state, "", cause="unfunded")
+        transfer = tx.value > 0 and not to_self
+        if to_self:
+            d.add("gasLedgers", f"the deposit is addressed to its own sender {h(tx.sender)}: its value, {fmt(tx.value)}, "
+                  "moves nothing, so its first frame's start makes no record and step 3 charges none; the sender, its "
+                  "recipient, was loaded at validation in that role", "SATIN-DEP-012", "SATIN-SCHED-008", "SATIN-ACCT-007")
+        # Step 3: the first frame's start record, a created account's or a value recipient's.
+        record = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE if (create or transfer) else 0
+        if record:
+            r = min(reservoir, record)
+            if record - r > regular:
+                d.add("outcome", f"the deposit's first frame's start record, {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = "
+                      f"{fmt(record)} of history gas charged at step 3, cannot be paid with the {fmt(regular)} of regular gas "
+                      "left: a deposit that cannot pay a charge made before its first frame becomes a failed deposit, "
+                      "running no frame", "SATIN-HIST-005", "SATIN-SCHED-008", "SATIN-DEP-004", "SATIN-SCHED-009")
+                return self.failed_deposit(kept, nonce_before, was_empty, caller_state, "", cause="pre-frame")
+            reservoir -= r
+            regular -= record - r
+            self.history_gas += record
+            self.history_bytes += WRITE_RECORD_SIZE
+            d.add("gasLedgers", f"step 3: the first frame's start record ({'the created account' if create else 'the value '
+                  'recipient'}), {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(record)} of history gas, which the "
+                  "deposit pays as any transaction does", "SATIN-HIST-005", "SATIN-SCHED-008", "SATIN-HIST-016")
+        # Step 4: the load for the first frame's start, and a new or created account's state gas.
+        if not to_self:
+            self.load(recipient, f"the {'created address' if create else 'recipient'}, at step 4 of the charges before "
+                      "the first frame and no earlier", "SATIN-SCHED-008", "SATIN-WIT-008", "SATIN-DEP-012")
+        existing = self.state.get(recipient)
+        if create and existing is not None and not existing.empty():
+            raise Unmodelled("a creating deposit onto an occupied address")
+        new_account = create or (transfer and (existing is None or existing.empty()))
+        account_state = 0
+        if new_account:
+            m = self.multiplier(self.salt_bucket(recipient, None))
+            account_state = ACCOUNT_STATE * m
+            what = "created account" if create else "recipient, empty under EIP-161,"
+            r = min(reservoir, account_state)
+            if account_state - r > regular:
+                d.add("outcome", f"step 4: the {what} {h(recipient)} is charged its new-account state gas "
+                      f"{fmt(ACCOUNT_STATE)} x m={m} = {fmt(account_state)}, which the {fmt(regular)} of regular gas left "
+                      "cannot pay: the deposit becomes a failed deposit, running no frame", "SATIN-SCHED-008",
+                      "SATIN-SCHED-009", "SATIN-DEP-004", "SATIN-STATE-003")
+                return self.failed_deposit(kept, nonce_before, was_empty, caller_state, "", cause="step-4")
+            reservoir -= r
+            regular -= account_state - r
+            self.state_gas += account_state
+            d.add("gasLedgers", f"step 4: the {what} {h(recipient)}'s new-account state gas {fmt(ACCOUNT_STATE)} x m={m} = "
+                  f"{fmt(account_state)}, no legacy share, paid", "SATIN-SCHED-008", "SATIN-STATE-001", "SATIN-STATE-003",
+                  "SATIN-POOL-024")
+        elif not to_self:
+            d.add("gasLedgers", f"step 4: the recipient {h(recipient)} is not empty under EIP-161" +
+                  (" (it holds code)" if existing is not None and existing.code else "") +
+                  ": no new-account state gas", "SATIN-SCHED-008", "SATIN-STATE-011")
+        # Step 5: a delegated recipient's delegate access, in regular gas.
+        code = tx.data if create else (existing.code if existing is not None else b"")
+        delegate = None if create else delegate_of(code)
+        if delegate is not None:
+            if int.from_bytes(delegate, "big") <= 0x100 or delegate in PRECOMPILE_SET:
+                raise Unmodelled("a delegation to a precompile")
+            cold = delegate not in self.warm_accounts
+            self.probe.setdefault("delegate", regular)
+            if regular < WARM_READ:
+                d.add("outcome", f"step 5: the recipient holds an EIP-7702 delegation to {h(delegate)}; the delegate's "
+                      f"access starts with WARM_STORAGE_READ_COST {WARM_READ}, which the {fmt(regular)} of regular gas left "
+                      "cannot pay: the delegate is not loaded, and the deposit becomes a failed deposit", "SATIN-SCHED-008",
+                      "SATIN-SCHED-009", "SATIN-DEP-004", "SATIN-DEP-012")
+                return self.failed_deposit(kept, nonce_before, was_empty, caller_state, "", cause="step-5")
+            if cold and regular - WARM_READ < COLD_ACCOUNT_SURCHARGE:
+                d.add("outcome", f"step 5: the recipient holds an EIP-7702 delegation to {h(delegate)}, which is not warm: "
+                      f"the warm read {WARM_READ} first leaves {fmt(regular - WARM_READ)} of regular gas, which cannot pay "
+                      f"the additional cold access {fmt(COLD_ACCOUNT_SURCHARGE)}: the delegate is not loaded, and the "
+                      "deposit becomes a failed deposit", "SATIN-SCHED-003", "SATIN-SCHED-008", "SATIN-SCHED-009",
+                      "SATIN-DEP-004", "SATIN-DEP-012")
+                return self.failed_deposit(kept, nonce_before, was_empty, caller_state, "", cause="step-5")
+            access = WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0)
+            regular -= access
+            self.regular_charges += access
+            self.warm_accounts.add(delegate)
+            self.load(delegate, "the recipient's delegate, at step 5, once its access is paid", "SATIN-SCHED-008",
+                      "SATIN-WIT-008")
+            d.add("gasLedgers", f"step 5: the recipient holds an EIP-7702 delegation to {h(delegate)}: its access, warm "
+                  f"read {WARM_READ}" + (f" + cold access {fmt(COLD_ACCOUNT_SURCHARGE)}" if cold else ", the delegate warm")
+                  + f" = {fmt(access)} of regular gas, paid; the delegate's code runs in the recipient's frame",
+                  "SATIN-SCHED-003", "SATIN-SCHED-008")
+            code = self.state.get(delegate, Account()).code
+        # The frame starts: the value moves, or the account is created.
+        self.address = recipient
+        if transfer:
+            sender.balance -= tx.value
+            self.state.setdefault(recipient, Account()).balance += tx.value
+            self.kv.add(("a", recipient))
+            self.data_size += WRITE_RECORD_SIZE + TRANSFER_LOG_SIZE
+            self.logs.append((TRANSFER_LOG_ADDRESS, [TRANSFER_TOPIC, pad_address(tx.sender), pad_address(recipient)],
+                              tx.value.to_bytes(32, "big")))
+            d.add("resources", f"the value moves at the frame's start: the recipient's write record ({WRITE_RECORD_SIZE} "
+                  f"bytes, one KV update) and its EIP-7708 transfer log ({TRANSFER_LOG_SIZE} bytes, no history gas)",
+                  "SATIN-ACCT-005", "SATIN-LOG-006")
+            if new_account:
+                self.growth += 1
+                d.add("resources", "the recipient is empty under EIP-161: one unit of state growth", "SATIN-ACCT-014")
+        if create:
+            acct = self.state.setdefault(recipient, Account())
+            acct.nonce = 1
+            self.kv.add(("a", recipient))
+            self.growth += 1
+            self.data_size += WRITE_RECORD_SIZE
+            d.add("resources", "the created account: one write record and one unit of state growth", "SATIN-ACCT-005",
+                  "SATIN-ACCT-014")
+        frame = {"regular": regular, "reservoir": reservoir, "regular_at_start": regular, "reservoir_at_start": reservoir}
+        self.first_frame = frame
+        self.frame_start_counts = (self.data_size, len(self.kv), self.growth)
+        # SATIN-DET-008, SATIN-DEP-002: a user's deposit whose sender or call recipient is the block beneficiary is
+        # detained from its start, as any transaction is; a creation onto the beneficiary is not (SATIN-DET-006).
+        parties = [name for name, who in (("sender", tx.sender), ("call recipient", None if create else recipient))
+                   if who == self.env.coinbase]
+        if delegate is not None and delegate == self.env.coinbase:
+            parties.append("call recipient's EIP-7702 delegate")
+        if parties:
+            self.detain_from_start(frame, parties)
+            if not self.exempt:
+                d.add("gasLedgers", "the deposit is a user's, so its detention from its start is any transaction's",
+                      "SATIN-DEP-002", "SATIN-DET-026")
+        if not create and recipient == ORACLE and tx.data[:4] == SEND_HINT:
+            self.own_hint(frame, tx.data)
+        limit_control = (not create and recipient == MEGA_LIMIT_CONTROL and not tx.value
+                         and tx.data[:4] in INTERCEPTED[MEGA_LIMIT_CONTROL])
+        try:
+            if limit_control:
+                status, output = self.own_limit_control(frame)
+            else:
+                status, output = self.execute(code, frame, create)
+            if recipient == ORACLE and not create:
+                self.oracle_method(tx.sender, tx.data, status, output, "the deposit's own call of the Oracle")
+            if not create and not limit_control:
+                self.contract_method(recipient, code, tx.data, status, output, "the deposit's own call")
+            if create and status == "success":
+                if len(output) > MAX_CONTRACT_SIZE or output[:1] == b"\xef":
+                    raise Unmodelled("a creating deposit's refused code")
+                self.deposit_code(output, frame, recipient)
+        except Halt as e:
+            return self.failed_deposit(kept, nonce_before, was_empty, caller_state, str(e))
+        except (Stopped, LimitStop) as e:
+            return self.stopped_deposit(kept, intrinsic, floor, nonce_before, was_empty, e)
+        if status == "revert":
+            return self.reverted_deposit(kept, intrinsic, floor, nonce_before, was_empty, output)
+        if status != "success":
+            raise Unmodelled("a deposit's frame ending in " + status)
+        # A creation's output is what its initcode returned, the code it deposited.
+        return self.deposit_success(intrinsic, floor, nonce_before, output, created=recipient if create else None)
+
+    def unbumpable_creation(self, intrinsic: int, floor: int, nonce_before: int, recipient: bytes) -> Result:
+        """SATIN-DEP-010: a creation from a sender at MAX_NONCE whose balance, its mint credited, funds the value succeeds
+        with nothing created: no account, no state gas, no record and no state growth, its first frame's gas untouched."""
+        d = self.d
+        d.add("outcome", f"the deposit creates from a sender whose nonce is MAX_NONCE, {MAX_U64}, which cannot be bumped, "
+              "and its balance with the mint credited funds the value: it succeeds with nothing created and nothing "
+              f"counted for the creation, no account at {h(recipient)}, no state gas, no record and no state growth, and "
+              "its first frame's gas untouched", "SATIN-DEP-010")
+        if self.tx.value:
+            d.add("state", f"the value {fmt(self.tx.value)} is checked first and funded by the sender's balance with its "
+                  "mint credited, and it moves nowhere, nothing being created: the sender keeps it, and no transfer is "
+                  "logged", "SATIN-DEP-010")
+        d.add("gasLedgers", "neither the first frame's start record nor the created account's state gas is kept: the "
+              "deposit is billed its intrinsic gas and its body's history alone", "SATIN-DEP-010", "SATIN-HIST-005")
+        return self.deposit_success(intrinsic, floor, nonce_before, b"")
+
+    def deposit_success(self, intrinsic: int, floor: int, nonce_before: int, output: bytes,
+                        created: bytes | None = None) -> Result:
+        """A deposit whose own frame succeeds settles as an ordinary transaction (SATIN-DEP-007): its ledgers, with no
+        fee, its usage and its deposit receipt."""
+        tx, d = self.tx, self.d
         total = intrinsic + self.regular_charges + self.history_gas + self.state_gas
         refund = min(self.refund, total // REFUND_QUOTIENT)
         gas_used = max(total - refund, floor)
@@ -353,7 +577,8 @@ class SettlementMixin:
         d.add("outcome", "admitted; the deposit's frame succeeds", "SATIN-DEP-007",
               *(("SATIN-OUT-001",) if self.outcomes else ()))
         outcome = {"admission": {"status": "admitted"},
-                   "execution": {"status": "success", "output": h(output), "createdAddress": None},
+                   "execution": {"status": "success", "output": h(output),
+                                 "createdAddress": h(created) if created else None},
                    "commit": {"status": "committed"}}
         observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
                         "resources": resources, "limit": None}
@@ -413,7 +638,11 @@ class SettlementMixin:
                    "commit": {"status": "committed"}}
         observations = {"outcome": outcome, "state": self.diff(), "receipt": receipt, "gasLedgers": ledgers,
                         "resources": resources, "limit": None}
-        if self.reads or self.pools:
+        if self.reads and self.system_pages and not self.pools:
+            d.add("reads", "a reverted deposit takes back what its frame wrote, not what it loaded", "SATIN-WIT-002",
+                  "SATIN-DEP-012")
+            observations["reads"] = self.reads_observation()
+        elif self.reads or self.pools:
             raise Unmodelled("the reads or the pools of a reverted deposit")
         return Result(observations, d)
 
@@ -487,8 +716,10 @@ class SettlementMixin:
         as one unit of state growth, uncharged (SATIN-ACCT-020). Its gas ledgers are exactly SATIN-DEP-005's, with
         no floor and no refund (decision D-66)."""
         tx, d = self.tx, self.d
-        if self.hint_bytes:
+        if self.hint_bytes and not self.system_pages:
             raise Unmodelled("a failed deposit that admitted a hint")
+        if getattr(self, "unbumpable", False):
+            raise Unmodelled("a failed deposit from a sender whose nonce cannot be bumped")
         if self.stops:
             d.add("limit", "the deposit's own frame halts, and a halt is no limit stop: the deposit is a failed deposit and "
                   "reports no stop", "SATIN-STOP-002", "SATIN-STOP-010", "SATIN-DEP-004")
@@ -507,6 +738,11 @@ class SettlementMixin:
         self.logs = []
         self.state_gas = self.history_gas = 0
         self.history_bytes = body
+        hints = self.hint_bytes
+        if hints:
+            d.add("resources", f"the hints it admitted, {fmt(hints)} input bytes, stay counted as data size with its body: "
+                  "an admitted input stays counted whatever the transaction then does, a failed deposit included, and "
+                  "pays no history gas", "SATIN-DEP-006", "SATIN-ORCL-009")
         d.add("gasLedgers", f"it uses its whole gas limit, {fmt(tx.gas_limit)}, the reservoir included, reported as regular "
               f"gas, with no state gas and no history gas: the caller's {fmt(caller_state)} of state gas, paid before the "
               "frame, is not reported as state gas, and nothing returns to the sender", "SATIN-DEP-005", "SATIN-DEP-006",
@@ -521,7 +757,7 @@ class SettlementMixin:
         gas = tx.gas_limit
         ledgers = {"total": q(gas), "regular": q(gas), "state": q(0), "history": q(0), "historyBytes": q(body),
                    "refund": q(0), "floor": q(0), "gasUsed": q(gas), "blockGas": q(gas)}
-        resources = {"dataSize": dim(TX_DATA_LIMIT, body), "kvUpdates": dim(TX_KV_UPDATE_LIMIT, 0),
+        resources = {"dataSize": dim(TX_DATA_LIMIT, body + hints), "kvUpdates": dim(TX_KV_UPDATE_LIMIT, 0),
                      "stateGrowth": dim(TX_STATE_GROWTH_LIMIT, self.growth)}
         if self.promoted:
             # A promoted Mega System Transaction is a legacy transaction in its block: promotion changes execution only,
@@ -543,7 +779,10 @@ class SettlementMixin:
                         "resources": resources, "limit": None}
         if self.pools:
             raise Unmodelled("the pools of a failed deposit")
-        if self.reads:
+        if self.reads and self.system_pages:
+            self.failed_deposit_reads(cause)
+            observations["reads"] = self.reads_observation()
+        elif self.reads:
             # SATIN-DEP-012 from bcf260d on (D-96): the load for the first frame's start is made at step 4 of the charges
             # before the first frame; a deposit that fails earlier makes none, one that reaches step 4 keeps it.
             if cause in ("validation", "pre-frame"):
@@ -558,6 +797,32 @@ class SettlementMixin:
                   "execution made before it failed", "SATIN-WIT-002", "SATIN-DEP-004")
             observations["reads"] = self.reads_observation()
         return Result(observations, d)
+
+    def failed_deposit_reads(self, cause: str) -> None:
+        """SATIN-DEP-012: what a failed deposit loaded for its first frame's start. One that fails validation or a charge
+        of steps 1 to 3 makes no such load, beyond the sender it loads as sender; one that reaches step 4 keeps the load
+        of its recipient or created address, and one that fails at step 5 loads its delegate only as SATIN-SCHED-008
+        allows."""
+        tx, d = self.tx, self.d
+        recipient = self.deposit_recipient
+        which = "created address" if tx.to is None else "recipient"
+        if tx.to == tx.sender:
+            d.add("reads", f"the deposit's recipient is its sender {h(tx.sender)}, loaded at validation in that role, and so "
+                  "loaded all the same whatever the deposit then does", "SATIN-DEP-012", "SATIN-SCHED-008")
+        elif cause in ("validation", "pre-frame"):
+            d.add("reads", f"the {which} {h(recipient)} is not loaded: a deposit that fails validation, or cannot pay a "
+                  "charge made before step 4 of the charges before the first frame, makes no load for its first frame's "
+                  "start", "SATIN-DEP-012", "SATIN-SCHED-008")
+        else:
+            d.add("reads", f"the deposit reached step 4, where it loaded its {which} {h(recipient)} for its first frame's "
+                  "start, and keeps that load though it then fails" + {"step-4": " at step 4",
+                                                                       "step-5": " at step 5"}.get(cause, ""),
+                  "SATIN-DEP-012", "SATIN-SCHED-008")
+            if cause == "step-5":
+                d.add("reads", "the delegate is not loaded: the deposit could not pay the access SATIN-SCHED-008 requires "
+                      "before the delegate's load", "SATIN-DEP-012", "SATIN-SCHED-008")
+        d.add("reads", "a failed deposit takes back what it wrote, not what it loaded: its reads are every load its "
+              "execution made before it failed", "SATIN-WIT-002", "SATIN-DEP-004")
 
     def diff(self) -> dict:
         out = {}

@@ -4,9 +4,10 @@ at the schedule's price, the volatile reads and their refusal, and a call's opco
 from __future__ import annotations
 
 from .constants import (
-    ACCESS_TYPE_BENEFICIARY, ACCESS_TYPE_TIMESTAMP, ACCOUNT_STATE, BLOCK_ENV_ACCESS_COMPUTE_GAS, BLOCKHASH_WINDOW,
+    ACCESS_TYPE_BENEFICIARY, ACCESS_TYPE_ORACLE, ACCESS_TYPE_TIMESTAMP, ACCOUNT_STATE, BLOCK_ENV_ACCESS_COMPUTE_GAS, BLOCKHASH_WINDOW,
     CALL_STIPEND, delegate_of, G_BLOCKHASH, HISTORY_STORAGE_ADDRESS, PRECOMPILE_SET,
     CALL_VALUE_COST, COLD_ACCOUNT_SURCHARGE, COLD_SLOAD, COPY_WORD, COST_PER_HISTORY_BYTE, CREATE_ACCESS, ex, G_BASE,
+    G_EXP, G_EXP_BYTE,
     G_HIGH, G_JUMPDEST, G_LOW, G_MID, G_VERYLOW, G_ZERO, GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR,
     INITCODE_WORD_COST, KECCAK_BASE,
     KECCAK_WORD, LEGACY_NEW_ACCOUNT_SHARE, LOG_BASE_SIZE, LOG_COST, LOG_DATA_COST, LOG_TOPIC_COST,
@@ -116,7 +117,7 @@ class InterpreterMixin:
         while pc < len(code):
             op = code[pc]
             pc += 1
-            if ctx and ctx.get("static") and op in STATIC_UNMODELLED:
+            if ctx and ctx.get("static") and op in STATIC_UNMODELLED and not (op == 0xFA and self.system_pages):
                 raise Unmodelled(f"opcode {op:#x} in a frame a STATICCALL started")
             if op == 0x00:  # STOP
                 steps.append(f"STOP {G_ZERO}")
@@ -174,8 +175,14 @@ class InterpreterMixin:
                 memory[offset:offset + 32] = value.to_bytes(32, "big")
                 steps.append(f"MSTORE {G_VERYLOW} + memory to {mem_words} words")
             elif op == 0x54:  # SLOAD
-                if ctx and address == ORACLE:
+                # The Oracle's own frame: a child at its address, or the transaction's own call of it (D-109).
+                if address == ORACLE and (ctx or self.system_pages):
                     key = pop()
+                    if frame.get("access_off") and self.system_pages:
+                        d.add("outcome", f"the Oracle's SLOAD of slot {key} is an Oracle read in a frame whose volatile-data "
+                              "access is off: refused, asking no service and marking nothing", "SATIN-ORCL-004",
+                              "SATIN-HPTS-002")
+                        return refuse(ACCESS_TYPE_ORACLE, "the Oracle's SLOAD")
                     if frame.get("access_off"):
                         raise Unmodelled("an Oracle read refused")
                     value = self.state.get(ORACLE, Account()).storage.get(key, 0)
@@ -201,7 +208,7 @@ class InterpreterMixin:
                     self.split(frame)
                     steps.append(f"SLOAD of the Oracle's storage {fmt(COLD_SLOAD)}")
                     continue
-                if ctx:
+                if ctx and not self.system_pages:
                     raise Unmodelled("an SLOAD in a child frame")
                 if frame.get("spendable") is not None:
                     raise Unmodelled("an SLOAD in a detained frame")
@@ -350,6 +357,35 @@ class InterpreterMixin:
             elif op == 0x06:
                 a, b = pop(), pop()
                 simple("MOD", G_LOW, a % b if b else 0)
+            # The inherited opcodes the system contracts' compiled code uses besides, at their Osaka static gas, which
+            # Amsterdam keeps (SATIN-SCHED-002): the Oracle's and the High-Precision Timestamp's.
+            elif op == 0x08 and self.system_pages:
+                a, b, n = pop(), pop(), pop()
+                simple("ADDMOD", G_MID, (a + b) % n if n else 0)
+            elif op == 0x0A and self.system_pages:
+                base, exponent = pop(), pop()
+                cost = G_EXP + G_EXP_BYTE * ((exponent.bit_length() + 7) // 8)
+                simple("EXP", cost, pow(base, exponent, 2**256))
+            elif op == 0x30 and self.system_pages:
+                simple("ADDRESS", G_BASE, int.from_bytes(address, "big"))
+            elif op == 0x37 and self.system_pages:  # CALLDATACOPY
+                dest, off, size = pop(), pop(), pop()
+                words = (size + 31) // 32
+                self.charge_regular(frame, G_VERYLOW, "CALLDATACOPY")
+                if words:
+                    self.charge_regular(frame, COPY_WORD * words, "CALLDATACOPY's copy")
+                expand(dest, size, "CALLDATACOPY")
+                memory[dest:dest + size] = calldata[off:off + size].ljust(size, b"\x00") if off < len(calldata) else bytes(size)
+                steps.append(f"CALLDATACOPY {G_VERYLOW + COPY_WORD * words} + memory to {mem_words} words")
+            elif op == 0x5E and self.system_pages:  # MCOPY
+                dest, src, size = pop(), pop(), pop()
+                words = (size + 31) // 32
+                self.charge_regular(frame, G_VERYLOW, "MCOPY")
+                if words:
+                    self.charge_regular(frame, COPY_WORD * words, "MCOPY's copy")
+                expand(max(dest, src), size, "MCOPY")
+                memory[dest:dest + size] = bytes(memory[src:src + size])
+                steps.append(f"MCOPY {G_VERYLOW + COPY_WORD * words} + memory to {mem_words} words")
             elif op == 0x43:  # NUMBER
                 if frame.get("access_off"):
                     raise Unmodelled("a refused NUMBER")
@@ -391,6 +427,20 @@ class InterpreterMixin:
             elif op in (0x3B, 0x3F):  # EXTCODESIZE, EXTCODEHASH
                 who = (pop() % 2**160).to_bytes(20, "big")
                 name = "EXTCODESIZE" if op == 0x3B else "EXTCODEHASH"
+                if who != self.env.coinbase and self.system_pages and op == 0x3B:
+                    # A contract's check that its call's target holds code, as Solidity compiles a call: the access of
+                    # an account that is not volatile.
+                    static = 2 * WARM_READ  # SATIN-SCHED-002: one access for the account and one for its code
+                    self.charge_regular(frame, static, "EXTCODESIZE's static cost")
+                    cold = who not in self.warm_accounts and who not in PRECOMPILE_SET
+                    if cold:
+                        self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "EXTCODESIZE's cold access")
+                        self.warm_accounts.add(who)
+                    self.load(who, "EXTCODESIZE's account, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
+                    acct = self.state.get(who)
+                    stack.append(len(acct.code) if acct is not None else 0)
+                    steps.append(f"EXTCODESIZE {fmt(static + (COLD_ACCOUNT_SURCHARGE if cold else 0))}")
+                    continue
                 if who != self.env.coinbase or frame.get("access_off"):
                     raise Unmodelled(f"an {name} of an account other than the block beneficiary, or refused")
                 static = 2 * WARM_READ if op == 0x3B else WARM_READ  # SATIN-SCHED-002, -003
@@ -689,7 +739,10 @@ class InterpreterMixin:
                           "SATIN-DET-014", "SATIN-DET-015", "SATIN-DET-019")
                 returndata = out
                 if r_size:
-                    raise Unmodelled("a call that copies its output")
+                    if not self.system_pages:
+                        raise Unmodelled("a call that copies its output")
+                    n = min(r_size, len(out))
+                    memory[r_off:r_off + n] = out[:n]
                 stack.append(1 if ok else 0)
                 steps.append(f"CALL {fmt(opcode_charges + forward - left)} net")
                 d.add("gasLedgers", f"the call returns {fmt(left)} regular gas to its caller; success {int(ok)}, "
@@ -742,7 +795,10 @@ class InterpreterMixin:
                 self.split(frame)
                 returndata = out
                 if r_size:
-                    raise Unmodelled("a call that copies its output")
+                    if not self.system_pages:
+                        raise Unmodelled("a call that copies its output")
+                    n = min(r_size, len(out))
+                    memory[r_off:r_off + n] = out[:n]
                 stack.append(1 if ok else 0)
                 steps.append(f"{name} {fmt(opcode_charges + forward - left)} net")
             elif op == 0xF4:  # DELEGATECALL
@@ -787,7 +843,10 @@ class InterpreterMixin:
                 self.split(frame)
                 returndata = out
                 if r_size:
-                    raise Unmodelled("a call that copies its output")
+                    if not self.system_pages:
+                        raise Unmodelled("a call that copies its output")
+                    n = min(r_size, len(out))
+                    memory[r_off:r_off + n] = out[:n]
                 stack.append(1 if ok else 0)
                 steps.append(f"DELEGATECALL {fmt(opcode_charges + forward - left)} net")
             elif op in (0xF0, 0xF5):  # CREATE and CREATE2

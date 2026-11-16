@@ -5,9 +5,11 @@ from __future__ import annotations
 
 from .constants import (
     BLOCK_ENV_ACCESS_COMPUTE_GAS, COST_PER_HISTORY_BYTE, FRAME_SHARE_DENOMINATOR, FRAME_SHARE_NUMERATOR, DISABLE_VOLATILE_DATA_ACCESS, INTERCEPTED, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_ERRORS,
-    limit_exceeded, MEGA_ACCESS_CONTROL, NON_ZERO_TRANSFER, ORACLE, SEND_HINT, SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS,
+    limit_exceeded, MEGA_ACCESS_CONTROL, MEGA_LIMIT_CONTROL, NON_ZERO_TRANSFER, ORACLE, SEND_HINT, SYSTEM_CONTRACTS,
+    TRANSFER_LOG_ADDRESS,
     TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
-    TX_DATA_LIMIT, WRITE_RECORD_SIZE,
+    TX_DATA_LIMIT, WRITE_RECORD_SIZE, selector, ex, HIGH_PRECISION_TIMESTAMP, HIGH_PRECISION_TIMESTAMP_CODE_HASH,
+    TIMESTAMP_BASE_SLOT, TIMESTAMP_MAX_SLOTS,
 )
 from .records import Account, fmt, h, pad_address, Unmodelled
 
@@ -38,6 +40,8 @@ class CallsMixin:
                       "SATIN-ICPT-004", "SATIN-POOL-012")
                 frame["reservoir"] += share
                 return True, b"", child_gas
+            if not value and self.system_pages and target == MEGA_LIMIT_CONTROL:
+                return self.limit_control_answer(frame, child_gas, share, "CALL")
             if not value:
                 raise Unmodelled("an interceptor's own answer")
             d.add("outcome", f"interception: an intercepted method of {h(target)} called with value {value} is answered "
@@ -48,9 +52,13 @@ class CallsMixin:
             frame["reservoir"] += share
             self.give_back_start(frame, records, history, "the answer starts no frame")
             return False, NON_ZERO_TRANSFER, child_gas
-        if target == ORACLE and data[:4] == SEND_HINT:
+        if target == ORACLE and data[:4] == SEND_HINT and self.system_pages and (child_gas == 0 or frame.get("access_off")):
+            self.drop_hint(frame, child_gas, data)
+        elif target == ORACLE and data[:4] == SEND_HINT:
             if child_gas == 0:
                 raise Unmodelled("a sendHint call with no gas")
+            if frame.get("access_off"):
+                raise Unmodelled("a sendHint call from a frame whose volatile-data access is off")
             if self.exempt and self.data_size + len(data) > TX_DATA_LIMIT:
                 d.add("limit", f"the sendHint's {fmt(len(data))} input bytes take the transaction's data size past "
                       f"TX_DATA_LIMIT {fmt(TX_DATA_LIMIT)}; the transaction is system-originated, which no per-transaction "
@@ -69,6 +77,8 @@ class CallsMixin:
                 return False, limit_exceeded(0, TX_DATA_LIMIT), child_gas
             self.data_size += len(data)
             self.hint_bytes += len(data)
+            if self.system_pages:
+                self.hand_hint(caller, data, "the calling frame")
             if self.principles:
                 d.add("resources", f"the sendHint's {fmt(len(data))} input bytes take the transaction's data size from "
                       f"{fmt(self.data_size - len(data))} to {fmt(self.data_size)}, not over TX_DATA_LIMIT "
@@ -77,6 +87,10 @@ class CallsMixin:
                   f"volatile-data access is on: admitted, before the frame start; its {fmt(len(data))} input bytes count as "
                   "data size on the transaction, on no frame's budget and with no history gas, and stay counted whatever the "
                   "call then does", "SATIN-ORCL-006", "SATIN-ORCL-009", "SATIN-ICPT-007", "SATIN-ACCT-001", "SATIN-ACCT-002")
+        if self.system_pages and any(data[:4] in sels for sels in INTERCEPTED.values()) and target not in INTERCEPTED:
+            d.add("outcome", f"the call carries the selector of an intercepted method, but to {h(target)}, which is no system "
+                  "contract with an interceptor: matching is on the address first, so nothing intercepts it and the code "
+                  "the state holds there runs", "SATIN-ICPT-001", "SATIN-MLC-001")
         # The frame start: the caller's funds are checked and the value moves (SATIN-LIM-013, -015).
         caller_acct = self.state.setdefault(caller, Account())
         callee = self.state.get(target)
@@ -240,3 +254,193 @@ class CallsMixin:
                    "caller's reservoir, not its regular gas; there it can pay the caller's later state and history charges, "
                    f"and what is left returns to the sender at the settlement ({self.order()[0]})", "SATIN-HIST-012",
                    "SATIN-POOL-017", *self.order()[1])
+
+    # --- the system contracts' own pages (D-109) -----------------------------------------------------
+
+    def limit_control_answer(self, frame, child_gas: int, share: int, scheme: str):
+        """MegaLimitControl's `remainingComputeGas()` called by a `CALL` or a `STATICCALL` without value: answered by the
+        node before the frame start (SATIN-ICPT-001, -007), `min(own, allowance)` read when the call reaches the
+        interceptor (SATIN-MLC-002): `own` the caller's regular gas after the forward with the forward counted back,
+        regular gas only (SATIN-MLC-003), and `allowance` what a compute limit leaves the transaction. The answer
+        charges nothing, and the child's regular gas and the reservoir share return (SATIN-ICPT-004)."""
+        d = self.d
+        own = frame["regular"] + child_gas
+        d.add("outcome", f"interception: remainingComputeGas() called by a {scheme} without value is MegaLimitControl's "
+              "intercepted method, answered by the node before the frame start; the bytecode does not run",
+              "SATIN-ICPT-001", "SATIN-ICPT-007", "SATIN-MLC-001")
+        remaining = self.remaining_compute(own, f"the caller's regular gas after the {scheme} drew its forward, "
+                                           f"{fmt(frame['regular'])}, with the forward {fmt(child_gas)} counted back",
+                                           frame["reservoir"] + share)
+        frame["reservoir"] += share
+        d.add("gasLedgers", f"the answer charges nothing: the child's {fmt(child_gas)} regular gas returns untouched, and "
+              "the reservoir share with it", "SATIN-ICPT-004", "SATIN-POOL-012")
+        return True, remaining.to_bytes(32, "big"), child_gas
+
+    def remaining_compute(self, own: int, what: str, reservoir: int) -> int:
+        """SATIN-MLC-002, -003: `min(own, allowance)`, the allowance what the compute limit leaves the transaction, absent
+        while no limit is set; regular gas only."""
+        d = self.d
+        d.add("gasLedgers", f"own = {what} = {fmt(own)}, regular gas only: the {fmt(reservoir)} of reservoir the caller "
+              "holds is not part of it", "SATIN-MLC-002", "SATIN-MLC-003")
+        if self.limit is None:
+            d.add("outcome", f"no read of volatile data has set a compute limit, so there is no allowance: the answer is "
+                  f"own, {fmt(own)}, ABI-encoded as a uint64", "SATIN-MLC-002")
+            return own
+        allowance = max(0, self.limit - self.compute)
+        remaining = min(own, allowance)
+        d.add("outcome", f"the compute limit {fmt(self.limit)} leaves the transaction, at compute {fmt(self.compute)}, the "
+              f"allowance {fmt(allowance)}: the answer is min({fmt(own)}, {fmt(allowance)}) = {fmt(remaining)}, ABI-encoded "
+              "as a uint64", "SATIN-MLC-002", "SATIN-DET-009", "SATIN-DET-012")
+        return remaining
+
+    def system_code_call(self, scheme: str, address: bytes, target: bytes, data: bytes) -> None:
+        """A `DELEGATECALL` or `CALLCODE` of a system contract: never intercepted, it runs the contract's bytecode in a
+        frame of the caller's own context (SATIN-ICPT-001); of the Oracle's `sendHint` it reaches no service and counts
+        nothing (SATIN-ORCL-008), and of MegaLimitControl's method its bytecode answers (SATIN-MLC-001)."""
+        d = self.d
+        rules = ["SATIN-ICPT-001"]
+        what = f"a {scheme} of {h(target)}'s code on {h(address)}"
+        if target == ORACLE and data[:4] == SEND_HINT:
+            d.add("outcome", f"{what} with sendHint's selector is no sendHint call: only a CALL or a STATICCALL is; the "
+                  "Oracle's bytecode runs in the caller's own context, no hint reaches the service and nothing is counted",
+                  "SATIN-ORCL-008", "SATIN-ORCL-006", *rules)
+            return
+        if target == MEGA_LIMIT_CONTROL:
+            rules.append("SATIN-MLC-001")
+        if target == KEYLESS_DEPLOY and data[:4] == KEYLESS_DEPLOY_CALL:
+            d.add("outcome", f"{what} carries keylessDeploy's selector: recognition needs a CALL at depth 0, so it is not "
+                  "recognized, charged nothing, and the code the state holds at the address runs", "SATIN-ICPT-006",
+                  "SATIN-KEY-003")
+        d.add("outcome", f"{what} is never intercepted, whatever its selector: the contract's bytecode runs in a frame of "
+              "the caller's own context", *rules)
+        if target == ORACLE and data[:4] in (ORACLE_SELECTORS["getSlot(uint256)"], ORACLE_SELECTORS["getSlots(uint256[])"]):
+            d.add("outcome", f"the Oracle's read method runs on {h(address)}'s storage: its SLOAD is not in the Oracle's own "
+                  "frame, so it is no Oracle read: an ordinary SLOAD, cold then warm, that asks no service and marks "
+                  "nothing for gas detention", "SATIN-ORCL-002", "SATIN-ORCL-003")
+
+    def hand_hint(self, sender: bytes, data: bytes, who: str) -> None:
+        """SATIN-ORCL-007, -009: an admitted hint whose input decodes as sendHint(bytes32,bytes) is handed to the service
+        with its topic, its data and the address of the frame that made the call; one that does not decode reaches none."""
+        decoded = decode_hint(data)
+        if decoded is None:
+            self.d.add("reads", "the admitted input does not decode as sendHint(bytes32,bytes): it stays counted and "
+                       "reaches no service", "SATIN-ORCL-009")
+            return
+        topic, payload = decoded
+        self.hints.append((sender, topic, payload))
+        self.d.add("reads", f"the hint is handed to the oracle service before the call returns: its topic {h(topic)}, its "
+                   f"{len(payload)} bytes of data and {who}'s address {h(sender)}", "SATIN-ORCL-006", "SATIN-ORCL-007")
+
+
+    def oracle_method(self, caller: bytes, data: bytes, status: str, out: bytes, where: str) -> None:
+        """What the Oracle's bytecode did with one of its methods (SATIN-ORCL-001): its reads, the restricted writes the
+        immediate caller is authorized for by the bytecode alone (SATIN-ORCL-011), `multiCall` and `sendHint`."""
+        if not self.system_pages:
+            return
+        d, sel = self.d, data[:4]
+        if sel in (ORACLE_SELECTORS["getSlot(uint256)"], ORACLE_SELECTORS["getSlots(uint256[])"]):
+            d.add("outcome", f"{where}: the Oracle's read method returns the value at each slot asked, in order, each read "
+                  f"by SLOAD in the Oracle's own frame; the frame ends in {status} with {len(out)} bytes", "SATIN-ORCL-001")
+        elif sel in RESTRICTED_WRITES:
+            live = self.live_system_address()
+            if status == "revert" and out[:4] == ORACLE_SELECTORS["InvalidLength(uint256,uint256)"]:
+                d.add("outcome", f"{where}: setSlots with arrays of different lengths reverts with InvalidLength before any "
+                      "SSTORE and before the caller is checked", "SATIN-ORCL-001")
+                return
+            allowed = live is not None and caller == live
+            named = h(live) if live else "no address, the registry naming none"
+            if allowed != (status == "success") or (not allowed and out[:4] != ORACLE_SELECTORS["NotSystemAddress()"]):
+                raise Unmodelled("an Oracle write whose bytecode answered otherwise than SATIN-ORCL-011 states")
+            d.add("outcome", f"{where}: a restricted write; its body ran first and was charged as it ran, then the Oracle's "
+                  f"bytecode checked its immediate caller {h(caller)} against the address SequencerRegistry."
+                  f"currentSystemAddress() returns, {named}: " + (
+                      "the same, so the write stands" if allowed else
+                      "not the same, so the call reverts with NotSystemAddress() and every write and log of the body is "
+                      "taken back") + ", by the bytecode's check alone, whatever sent the transaction", "SATIN-ORCL-001",
+                  "SATIN-ORCL-011")
+        elif sel == ORACLE_SELECTORS["multiCall(bytes[])"]:
+            d.add("outcome", f"{where}: multiCall executes each payload by DELEGATECALL into the Oracle, in order, and ends in "
+                  f"{status}", "SATIN-ORCL-001")
+        elif sel == SEND_HINT:
+            d.add("outcome", f"{where}: sendHint is a no-op view method at the bytecode level: the frame ends in {status} "
+                  f"with {len(out)} bytes", "SATIN-ORCL-001")
+
+
+    def contract_method(self, address: bytes, code: bytes, data: bytes, status: str, out: bytes, where: str) -> None:
+        """What MegaLimitControl's or the High-Precision Timestamp's own bytecode did (SATIN-MLC-001, SATIN-HPTS-001,
+        -002), where a case runs it."""
+        if not self.system_pages or not code:
+            return
+        d, sel = self.d, data[:4]
+        if code == self.pre.get(MEGA_LIMIT_CONTROL, Account()).code:
+            if status != "revert" or out != NOT_INTERCEPTED:
+                raise Unmodelled("MegaLimitControl's bytecode answering otherwise than SATIN-MLC-001 states")
+            d.add("outcome", f"{where}: MegaLimitControl's bytecode runs, its intercepted method and every other selector "
+                  "reverting with NotIntercepted()", "SATIN-MLC-001")
+        elif address == HIGH_PRECISION_TIMESTAMP and ex.keccak256(code) == HIGH_PRECISION_TIMESTAMP_CODE_HASH:
+            if sel == selector("timestamp()"):
+                d.add("outcome", f"{where}: the High-Precision Timestamp's timestamp() reads Oracle slot "
+                      f"TIMESTAMP_BASE_SLOT {TIMESTAMP_BASE_SLOT} through the Oracle's getSlot and ends in {status}"
+                      + (f" with {len(out)} bytes" if status == "success" else ", returning the Oracle's revert"),
+                      "SATIN-HPTS-001")
+                d.add("gasLedgers", "the wrapper's read of the Oracle's storage is an Oracle read: an SLOAD in the Oracle's "
+                      "own frame, reached through getSlot, answered as an Oracle read, charged as a cold access, held to "
+                      "gas detention, and refused in a frame whose volatile-data access is off", "SATIN-HPTS-002",
+                      "SATIN-ORCL-002", "SATIN-ORCL-003")
+            elif sel == selector("update(uint256)"):
+                d.add("outcome", f"{where}: the High-Precision Timestamp's update forwards to the Oracle's setSlot of slot "
+                      f"TIMESTAMP_BASE_SLOT, whose immediate caller is the timestamp contract itself, and ends in {status}",
+                      "SATIN-HPTS-001")
+            else:
+                d.add("outcome", f"{where}: the High-Precision Timestamp's accessor returns the constant of its interface, "
+                      f"{len(out)} bytes, ABI-encoded: ORACLE_CONTRACT_ADDRESS, TIMESTAMP_BASE_SLOT {TIMESTAMP_BASE_SLOT} or "
+                      f"TIMESTAMP_MAX_SLOTS {TIMESTAMP_MAX_SLOTS} as a uint32", "SATIN-HPTS-001")
+
+
+    def drop_hint(self, frame, child_gas: int, data: bytes) -> None:
+        """SATIN-ORCL-006: a sendHint call whose frame would start with no regular gas, or that a frame whose
+        volatile-data access is off makes, is not admitted: the hint is dropped and nothing counted, before any data-size
+        check (SATIN-ORCL-010 is a check at admission), and the call goes on to its frame start."""
+        why = ("its frame would start with no regular gas, the call forwarding none and carrying no value"
+               if child_gas == 0 else "the frame that makes it has its volatile-data access off")
+        over = self.data_size + len(data) > TX_DATA_LIMIT
+        self.d.add("resources", f"the sendHint call is not admitted: {why}; the hint is dropped and its {fmt(len(data))} "
+                   "input bytes are not counted" + (", so the data-size limit it would cross is never checked and nothing "
+                                                     "stops it" if over else "") + "; the call reaches its frame start and "
+                   "runs the Oracle's bytecode", "SATIN-ORCL-006", "SATIN-ORCL-010", "SATIN-ICPT-007")
+
+    def admit_static_hint(self, frame, caller: bytes, data: bytes, child_gas: int) -> None:
+        """A STATICCALL of sendHint is a sendHint call (SATIN-ORCL-008): admitted and handed as a CALL's, before the
+        frame start, the hint being no write of state."""
+        if child_gas == 0 or frame.get("access_off") or self.data_size + len(data) > TX_DATA_LIMIT:
+            raise Unmodelled("a STATICCALL of sendHint dropped or stopped")
+        self.data_size += len(data)
+        self.hint_bytes += len(data)
+        self.d.add("resources", f"interception: a STATICCALL of the Oracle with sendHint's selector is a sendHint call, its "
+                   f"gas limit {fmt(child_gas)} above zero and its frame's access on: admitted before the frame start, a hint "
+                   f"being no write of state; its {fmt(len(data))} input bytes count as data size on the transaction",
+                   "SATIN-ORCL-006", "SATIN-ORCL-008", "SATIN-ORCL-009", "SATIN-ICPT-001", "SATIN-ICPT-007")
+        self.hand_hint(caller, data, "the calling frame")
+
+
+def decode_hint(data: bytes):
+    """The arguments of sendHint(bytes32,bytes) as the ABI decoder reads them: (topic, data), or None."""
+    body = data[4:]
+    if len(body) < 64:
+        return None
+    offset = int.from_bytes(body[32:64], "big")
+    if offset + 32 > len(body):
+        return None
+    length = int.from_bytes(body[offset:offset + 32], "big")
+    if offset + 32 + length > len(body):
+        return None
+    return body[:32], body[offset + 32:offset + 32 + length]
+
+
+ORACLE_SELECTORS = {name: selector(name) for name in (
+    "getSlot(uint256)", "getSlots(uint256[])", "setSlot(uint256,bytes32)", "setSlots(uint256[],bytes32[])",
+    "emitLog(bytes32,bytes)", "emitLogs(bytes32,bytes[])", "multiCall(bytes[])", "NotSystemAddress()",
+    "InvalidLength(uint256,uint256)")}
+RESTRICTED_WRITES = {ORACLE_SELECTORS[n] for n in ("setSlot(uint256,bytes32)", "setSlots(uint256[],bytes32[])",
+                                                    "emitLog(bytes32,bytes)", "emitLogs(bytes32,bytes[])")}
+NOT_INTERCEPTED = selector("NotIntercepted()")

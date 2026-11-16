@@ -54,6 +54,7 @@ LOG_DATA_COST = 8
 MEMORY_WORD = 3
 # The inherited static gas tiers of the opcodes the model runs (Osaka's, kept by SATIN-SCHED-002).
 G_ZERO, G_JUMPDEST, G_BASE, G_VERYLOW, G_LOW, G_MID, G_HIGH = 0, 1, 2, 3, 5, 8, 10
+G_EXP, G_EXP_BYTE = 10, 50  # inherited EXP: its static gas and its price per byte of the exponent
 REFUND_QUOTIENT = 5  # EIP-3529, kept by SATIN-POOL-018
 MIN_BUCKET_SIZE = 256  # SATIN-STATE-002
 TX_DATA_LIMIT = 13_107_200  # SATIN-LIM-001
@@ -133,6 +134,9 @@ HIGH_PRECISION_TIMESTAMP = bytes.fromhex("63420000000000000000000000000000000000
 KEYLESS_DEPLOY = bytes.fromhex("6342000000000000000000000000000000000003")
 MEGA_ACCESS_CONTROL = bytes.fromhex("6342000000000000000000000000000000000004")
 MEGA_LIMIT_CONTROL = bytes.fromhex("6342000000000000000000000000000000000005")
+# SATIN-HPTS-001: the High-Precision Timestamp's code by hash, the Oracle's address embedded, and its storage allocation.
+HIGH_PRECISION_TIMESTAMP_CODE_HASH = bytes.fromhex("1b2df8ca5350cd7106d67ed95532584526f97a5ca267c8eef73a1831f53720f2")
+TIMESTAMP_BASE_SLOT, TIMESTAMP_MAX_SLOTS = 0, 8
 # SATIN-REG-001, -002: the SequencerRegistry, its version 2.0.0 code by hash, and the slot that holds the system address.
 SEQUENCER_REGISTRY = bytes.fromhex("6342000000000000000000000000000000000006")
 SEQUENCER_REGISTRY_CODE_HASH = bytes.fromhex("abd7e8f1c8f0f9ca0346df585b65d9791a7e9ba5c431cc4eda5d2c2f1f5e9c43")

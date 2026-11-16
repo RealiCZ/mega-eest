@@ -1,0 +1,182 @@
+{
+  "caseId": "satin/deposits/start-load/creation-paid",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x5dc0",
+      "floor": "0x5dc0",
+      "gasUsed": "0x3a340",
+      "history": "0x7850",
+      "historyBytes": "0x15e",
+      "refund": "0x0",
+      "regular": "0x5dc0",
+      "state": "0x2cd30",
+      "total": "0x3a340"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": "0x0c243ebe6a031753dc0dd850acf422844a3efb76",
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "reads": {
+      "accounts": {
+        "0x0c243ebe6a031753dc0dd850acf422844a3efb76": null,
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x3"
+        }
+      },
+      "blockHashes": {},
+      "buckets": {
+        "0xc59d54": "0x100"
+      },
+      "codes": [],
+      "hints": [],
+      "oracle": [],
+      "storage": {}
+    },
+    "receipt": {
+      "depositNonce": "0x3",
+      "depositReceiptVersion": "0x1",
+      "gasUsed": "0x3a340",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x7e"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "350",
+        "reported": "0x15e"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "1",
+        "reported": "0x1"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x0c243ebe6a031753dc0dd850acf422844a3efb76": {
+          "balance": "0x0",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x4",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x3",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "deposit",
+      "raw": "0x7ef83fa0000000000000000000000000000000000000000000000000000000000000005d94a94f5374fce5edbc8e2a8697c15331677e6ebf0b8080808303a3408080"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "at the created account's state gas",
+      "intent": "the same creation with a gas limit of 238,400: the created account's state gas paid exactly, the account created with nonce 1 and no code"
+    },
+    "definition": "tools/make_slice.py::deposit_page_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:deposit",
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:reads",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-003",
+    "SATIN-DEP-001",
+    "SATIN-DEP-002",
+    "SATIN-DEP-004",
+    "SATIN-DEP-007",
+    "SATIN-DEP-009",
+    "SATIN-DEP-012",
+    "SATIN-HIST-016",
+    "SATIN-LOG-004"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

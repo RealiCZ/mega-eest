@@ -28,7 +28,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
                  stops: bool = False, lists: bool = False, outcomes: bool = False, system_tx: bool = False,
-                 current: bool = False):
+                 current: bool = False, system_pages: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
         # A case citing the snapshot `c130558`, which retires SATIN-STOP-016: a value precompile's crossing is held to the
         # price by SATIN-STOP-014 and SATIN-DET-022 there (D-78).
@@ -56,6 +56,12 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # classify the transaction's origin and say what that origin exempts it from (SATIN-MST-001 to -009).
         self.system_tx = system_tx
         self.promoted = False  # a Mega System Transaction promoted to a deposit (SATIN-MST-005)
+        # A case of the deposits page or of a system contract's page (decision D-109): the derivation cites the rules of
+        # those pages where its steps apply them, and the model runs the system contracts' own code where a case reaches
+        # it: the Oracle's reads and restricted writes, the SequencerRegistry's answer, the High-Precision Timestamp,
+        # MegaLimitControl's answer, and a deposit's charges at steps 4 and 5 of SATIN-SCHED-008.
+        self.system_pages = system_pages
+        self.hints: list[tuple[bytes, bytes, bytes]] = []  # the hints handed to the oracle service: (from, topic, data)
         # A system-originated transaction (SATIN-MST-007): priced at m = 1, held to no per-transaction limit or frame
         # budget and not detained, its usage counted and its history paid (SATIN-MST-008, D-83).
         self.exempt = False

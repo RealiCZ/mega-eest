@@ -146,6 +146,30 @@ specification's text and constants:
   case's input. A precompile's address that holds code is priced and run as the precompile
   (`SATIN-PCMP-008`), and an account the state holds with storage, empty under EIP-161, that the
   transaction leaves as it found it is no change of the state diff.
+- **The deposits page and the small system contracts** (D-109): a deposit's charges at steps 3 to 5
+  of `SATIN-SCHED-008`, its start record, the load of its recipient or created address at step 4
+  with a new or created account's state gas, and a delegated recipient's delegate access at step 5,
+  each failing into a failed deposit that keeps what it loaded (`SATIN-DEP-012`); a creating deposit
+  without an endowment, a deposit to its own sender, and a creation from a sender at `MAX_NONCE`,
+  which creates nothing (`SATIN-DEP-010`); a failed deposit that keeps the hints it admitted
+  (`SATIN-DEP-006`); the hints handed to the oracle service, in `reads`, and the transaction's own
+  `sendHint` (`SATIN-ORCL-006`, `-007`, `-009`); MegaLimitControl's answer to a `CALL`, a
+  `STATICCALL` and the transaction's own call (`SATIN-MLC-001` to `-004`); and the system contracts'
+  own code where a case reaches it: the Oracle's reads, its restricted writes with the
+  SequencerRegistry's answer (`SATIN-ORCL-001`, `-011`), `multiCall` and a `DELEGATECALL` of
+  `sendHint` (`SATIN-ORCL-008`), the High-Precision Timestamp (`SATIN-HPTS-001`, `-002`) and an Oracle
+  read refused with access off. For that code the interpreter runs an `SLOAD` below the transaction's
+  own frame, a call that copies its output, `EXTCODESIZE` of any account, `ADDMOD` (`0x08`), `EXP`
+  (`0x0a`), `ADDRESS` (`0x30`), `CALLDATACOPY` (`0x37`) and `MCOPY` (`0x5e`), in the cases that carry
+  `system_pages` alone. After a review the model also takes the transaction's own call of the Oracle
+  as the Oracle's own frame, every read there cold; a deposit detained from its start as any
+  transaction, and its own `remainingComputeGas()`; a hint dropped before any size check, its call
+  starting with no gas or sent with access off, and the transaction's own on a first frame of no
+  gas; a `STATICCALL` of `sendHint` and a `STATICCALL` from a static frame; a `CALLCODE` of the
+  Oracle, MegaLimitControl or KeylessDeploy and a `DELEGATECALL` of KeylessDeploy, which run the
+  held code; a transaction's own value call of an intercepted method, answered `NonZeroTransfer()`
+  at depth 0; a creation from `MAX_NONCE` with a value its sender funds; and a reverted deposit's
+  reads.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -157,10 +181,11 @@ without code (`SATIN-SYSC-005`, D-97).
 
 | Not in the model | Where it is covered instead |
 | --- | --- |
-| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's and RIPEMD-160's runs, ModExp's prices and output and the price of an over-size BN254 pairing; a `CALLCODE` or `STATICCALL` of a system contract, a precompile, an account without code or a delegated account, a `CALLCODE` its caller cannot fund, and any state change, call or creation in a frame a `STATICCALL` started; a creation that collides, is stopped other than at its start or in a limit-stop case (D-91), or lands on an address with a balance, other than a keyless deployment's (D-79); a `CALL` to an account that holds an EIP-7702 delegation, other than a keyless signer; a keyless deploy address the transaction changed already or that holds storage; a keyless creation stopped in KV updates, which the protocol's limits reach only after data size; and a node configuration that disables EIP-3607; a repeated `SELFDESTRUCT` to itself of an account created in the transaction; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
+| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's and RIPEMD-160's runs, ModExp's prices and output and the price of an over-size BN254 pairing; a `CALLCODE` of a system contract and a `STATICCALL` of one other than the Oracle's reads, the SequencerRegistry and MegaLimitControl's answer (D-109), a precompile, an account without code or a delegated account, a `CALLCODE` its caller cannot fund, and any state change, call or creation in a frame a `STATICCALL` started; a creation that collides, is stopped other than at its start or in a limit-stop case (D-91), or lands on an address with a balance, other than a keyless deployment's (D-79); a `CALL` to an account that holds an EIP-7702 delegation, other than a keyless signer; a keyless deploy address the transaction changed already or that holds storage; a keyless creation stopped in KV updates, which the protocol's limits reach only after data size; and a node configuration that disables EIP-3607; a repeated `SELFDESTRUCT` to itself of an account created in the transaction; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | A pre-state outside the specification: storage at a system contract's address in an account without code (`SATIN-SYSC-005`); and the pre-block deployment of the system contracts that would run on it (`SATIN-SYSC-003`, `SATIN-REG-008`), which no single transaction runs | Nothing: no execution from such a state is specified, so no case holds one (D-97). The deployment from a valid state belongs to the block profiles |
+| A creating deposit with an endowment other than from `MAX_NONCE`, a failed deposit from a sender at `MAX_NONCE`, an Oracle read the service answers, a transaction's own hint stopped at the data-size limit, and MegaAccessControl's answers other than `disableVolatileDataAccess()` (D-109, D-110) | Each implementation; the evm2-based implementation's own tests and differential gates |
 | An expectation two engines agree on but the model does not derive | Nothing, today. Such a case would be a different kind of expectation, an agreement rather than a derivation from the specification, and would have to be labelled apart from the spec-derived cases (its own provenance status and evidence) if it were ever added |
 
 The model is not the executable specification of Satin. A specification that runs is a direction the
@@ -178,19 +203,19 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `records.py` | The model's exceptions, the derivation record, the inputs (accounts, the transaction, the block environment), the result, and the observations' value formats |
 | `run.py` | `Run`: the run state, composed of the mixins below |
 | `transaction.py` | Validation's refusals in the order of `SATIN-VAL-003`, the system shape, a Mega System Transaction's own checks and a caller the registry does not name, the transaction's origin (`SATIN-MST-007`), intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, a creation's code over `MAX_CONTRACT_SIZE`, the out-of-gas path before it |
-| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; the live system address; a deposit's run, its validation (from the live system address whatever its destination), its value and its start record, a reverted deposit, a stopped deposit, and a failed deposit; a promoted Mega System Transaction's run and a system-originated transaction's history and usage |
+| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; the live system address; a deposit's run, its validation (from the live system address whatever its destination), its value and its start record, its charges at steps 3 to 5 and its first frame (`deposit_frame`), a creation from `MAX_NONCE`, a reverted deposit, a stopped deposit, and a failed deposit, its hints and its reads; a promoted Mega System Transaction's run and a system-originated transaction's history and usage |
 | `precompiles.py` | A call to a precompile, by any call opcode the model has or as the transaction's own: the funds check, the price read before it runs, and under gas detention the decision from it (`SATIN-DET-021` to `-024`); the identity's, RIPEMD-160's and ModExp's outputs |
 | `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, the give-back into the reservoir |
 | `detention.py` | The limit a volatile read sets, the caps it is set from, a frame's spendable and withheld parts, and a transaction detained from its start |
 | `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use (`ORIGIN` and `GASPRICE` among them since D-88), the volatile reads and their refusal, the opcode charges of a call, a `CALLCODE`, a `DELEGATECALL`, a `STATICCALL`, a `CREATE` or `CREATE2` and a `SELFDESTRUCT`; under gas detention's cases, the readers of the whole regular gas |
-| `calls.py` | A call decided in the order of `SATIN-ICPT-007`: interception, the frame start, the records a value start makes and takes back, the child and what it returns |
+| `calls.py` | A call decided in the order of `SATIN-ICPT-007`: interception, the frame start, the records a value start makes and takes back, the child and what it returns; MegaLimitControl's answer, the hints handed to the service, and what the Oracle's, MegaLimitControl's and the High-Precision Timestamp's own code did |
 | `frames.py` | A child frame's budgets and reservoir share, the snapshot its failure returns to, how it ends (`SATIN-POOL-012`, `-014`), a stop it catches, a start held to the started frame's budget, a failed frame's hints and the data-size stop of the frame it returns into, `DELEGATECALL`, and `CALLCODE` and `STATICCALL` |
 | `creation.py` | A `CREATE` or `CREATE2` from a frame, onto an absent address or one whose storage then reads zero, stopped at its start with its creator's nonce record, or whose initcode reverts or halts; a `SELFDESTRUCT` in the order of `SATIN-SD-019`: the first of an account created in the transaction with the destruction table and its mark, a repeated one, and one of an account the transaction did not create |
 | `interception.py` | The transaction's own `keylessDeploy` call: the decoder's conditions and the deployment's first steps |
 | `keyless.py` | A keyless deployment past step 3's encoding check: the carried transaction and its signer, steps 3 to 15, the creation, its collision, the signer's nonce and records, `gasUsed` and the answer (D-79) |
 | `authorizations.py` | An EIP-7702 list before the first frame: its simulation, each entry's gates and the checks of its authority's code and nonce, a list that does not fit and is skipped, each entry's charges and records, the sender's own entry, a further entry for one authority |
 | `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, in a detained frame its static cost apart and its state and history drawn from the withheld part first, and a creation's deposited code |
-| `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it; a state charge's multiplier, `m = 1` for a system-originated transaction, which reads no capacity |
+| `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it, and the hints handed to the oracle service; a state charge's multiplier, `m = 1` for a system-originated transaction, which reads no capacity |
 | `limits.py` | A write held to its frame's budget, the transaction's own or a child's, and then the transaction's limit, and the rules a case that pins the limit-stop page cites (D-73); a system-originated transaction's write, held to neither |
 
 A case's explanation, which `tools/make_slice.py --explain <caseId>` prints, names the model by its

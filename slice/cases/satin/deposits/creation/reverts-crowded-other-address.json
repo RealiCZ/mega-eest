@@ -1,0 +1,174 @@
+{
+  "caseId": "satin/deposits/creation/reverts-crowded-other-address",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x5e80",
+      "floor": "0x5e80",
+      "gasUsed": "0xc98e",
+      "history": "0x6b98",
+      "historyBytes": "0x139",
+      "refund": "0x0",
+      "regular": "0x5df6",
+      "state": "0x0",
+      "total": "0xc98e"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "revert"
+      }
+    },
+    "reads": {
+      "accounts": {
+        "0x0c243ebe6a031753dc0dd850acf422844a3efb76": null,
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x3"
+        }
+      },
+      "blockHashes": {},
+      "buckets": {
+        "0xc59d54": "0x100"
+      },
+      "codes": [],
+      "hints": [],
+      "oracle": [],
+      "storage": {}
+    },
+    "receipt": {
+      "depositNonce": "0x3",
+      "depositReceiptVersion": "0x1",
+      "gasUsed": "0xc98e",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x7e"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "313",
+        "reported": "0x139"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x4",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x3",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {
+        "0xb11473": "0x400"
+      },
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "deposit",
+      "raw": "0x7ef842a0000000000000000000000000000000000000000000000000000000000000005d94a94f5374fce5edbc8e2a8697c15331677e6ebf0b808080830f424080835f5ffd"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a deposit from a sender of nonce 3 whose initcode reverts, the bucket of the address nonce 0 would derive at four times the minimum capacity, which is never read: the deposit reverts, not a failed deposit, its created account and its charges taken back; its reads keep the created address and its bucket's capacity (SATIN-DEP-012)"
+    },
+    "definition": "tools/make_slice.py::system_pages_gap_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:deposit",
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:reads",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-DEP-002",
+    "SATIN-DEP-004",
+    "SATIN-DEP-007",
+    "SATIN-DEP-009",
+    "SATIN-DEP-012",
+    "SATIN-HIST-016"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}
