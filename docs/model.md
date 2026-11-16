@@ -161,7 +161,15 @@ specification's text and constants:
   read refused with access off. For that code the interpreter runs an `SLOAD` below the transaction's
   own frame, a call that copies its output, `EXTCODESIZE` of any account, `ADDMOD` (`0x08`), `EXP`
   (`0x0a`), `ADDRESS` (`0x30`), `CALLDATACOPY` (`0x37`) and `MCOPY` (`0x5e`), in the cases that carry
-  `system_pages` alone.
+  `system_pages` alone. After a review the model also takes the transaction's own call of the Oracle
+  as the Oracle's own frame, every read there cold; a deposit detained from its start as any
+  transaction, and its own `remainingComputeGas()`; a hint dropped before any size check, its call
+  starting with no gas or sent with access off, and the transaction's own on a first frame of no
+  gas; a `STATICCALL` of `sendHint` and a `STATICCALL` from a static frame; a `CALLCODE` of the
+  Oracle, MegaLimitControl or KeylessDeploy and a `DELEGATECALL` of KeylessDeploy, which run the
+  held code; a transaction's own value call of an intercepted method, answered `NonZeroTransfer()`
+  at depth 0; a creation from `MAX_NONCE` with a value its sender funds; and a reverted deposit's
+  reads.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -177,7 +185,7 @@ without code (`SATIN-SYSC-005`, D-97).
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | A pre-state outside the specification: storage at a system contract's address in an account without code (`SATIN-SYSC-005`); and the pre-block deployment of the system contracts that would run on it (`SATIN-SYSC-003`, `SATIN-REG-008`), which no single transaction runs | Nothing: no execution from such a state is specified, so no case holds one (D-97). The deployment from a valid state belongs to the block profiles |
-| A creating deposit with an endowment, a failed deposit from a sender at `MAX_NONCE`, an Oracle read the service answers, and a hint dropped for its gas or its access (D-109, D-110) | Each implementation; the evm2-based implementation's own tests and differential gates |
+| A creating deposit with an endowment other than from `MAX_NONCE`, a failed deposit from a sender at `MAX_NONCE`, an Oracle read the service answers, a transaction's own hint stopped at the data-size limit, and MegaAccessControl's answers other than `disableVolatileDataAccess()` (D-109, D-110) | Each implementation; the evm2-based implementation's own tests and differential gates |
 | An expectation two engines agree on but the model does not derive | Nothing, today. Such a case would be a different kind of expectation, an agreement rather than a derivation from the specification, and would have to be labelled apart from the spec-derived cases (its own provenance status and evidence) if it were ever added |
 
 The model is not the executable specification of Satin. A specification that runs is a direction the

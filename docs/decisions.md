@@ -1989,11 +1989,14 @@ From the deposits page, the Oracle and the small system contracts:
 
 **D-109. The deposits page, the Oracle's, MegaLimitControl's and the High-Precision Timestamp's
 pages are pinned by cases at `bcf260d`, and the model runs the system contracts' own code where they
-reach it (D-63 amended).** Twenty-three rules of these pages and of interception had no case. Forty-six
-cases at `bcf260d` (`CURRENT_SPEC`) now pin sixteen of them, most in pairs one unit apart, sized from
-the model's own figures (D-57, D-59). Every expected value comes from the specification through the
-model, and every case passes on both implementations. The cases carry the flag `system_pages`, which
+reach it (D-63 amended).** Twenty-three rules of these pages and of interception had no case. A
+hundred and one cases at `bcf260d` (`CURRENT_SPEC`), forty-six and then fifty-five after a review,
+pin sixteen of them, most in pairs one unit apart, sized from the model's own figures (D-57,
+D-59). Every expected value comes from the specification through the model, and every case passes
+on both implementations. The cases carry the flag `system_pages`, which
 gates the model's new reach and its citations, so no earlier case moves.
+
+The first forty-six:
 
 - **Deposits (21, area `deposits`).** The load for the first frame's start (`SATIN-DEP-012` at
   `bcf260d`, D-96), each case with its reads:
@@ -2065,6 +2068,53 @@ gates the model's new reach and its citations, so no earlier case moves.
   - An Oracle read in a frame whose volatile-data access is off is refused with
     `VolatileDataAccessDisabled(11)`, asking nothing and marking nothing.
 
+An independent review of these cases listed twenty-three edges they left unpinned, found no wrong
+expectation, and showed one shape the model got wrong. Fifty-five more cases at `bcf260d` take the
+edges a transaction can show, in the review's order; every one passes on both implementations.
+
+- **The review's High edges (24).** A user's deposit whose sender or recipient is the block
+  beneficiary, detained from its start, its compute stopped at the cap where the same deposit with
+  neither succeeds; a deposit's own `remainingComputeGas()`, detained and not (`SATIN-DEP-002`,
+  `SATIN-MLC-004`). Hints never admitted, and so never size-checked: one past the data-size limit
+  from a frame whose access is off and one forwarded no gas; a child's gas of 0 and 1, and a value
+  call's stipend, funded and not; sendHint's selector alone, a canonical input with a trailing byte
+  and an unpadded one, each counted whole (`SATIN-ORCL-006`, `-009`, `-010`). The Oracle's write
+  from code the live system address delegates to, in a user's deposit, and the deposit's own call,
+  refused (`SATIN-ORCL-011`). The timestamp updated and then read in one deposit, and `getSlots` of
+  one slot twice, each read cold. The Oracle's `getSlot` run by `DELEGATECALL` on another account's
+  storage, an ordinary read that marks nothing (`SATIN-ORCL-002`). A `STATICCALL` of `sendHint`,
+  from a contract and from a static frame (`SATIN-ORCL-008`). A creation from `MAX_NONCE` carrying
+  a value its mint funds (`SATIN-DEP-010`). A deposit's own `sendHint` on a first frame of 0 and 1
+  regular gas (`SATIN-ORCL-006`, `SATIN-DEP-006`).
+- **The Medium and Low edges (31).** A creating deposit whose initcode reverts, with the created
+  address's bucket crowded and with the bucket of the address nonce 0 would derive crowded, its
+  reads naming the created address's alone, and a creation priced at `m = 4`. Dispatch by the
+  address and the four selector bytes: a trailing byte, a three-byte input, the selector at another
+  address, and other code at MegaLimitControl's address (`SATIN-ICPT-001`, `SATIN-MLC-001`). A
+  transaction's own value call of MegaLimitControl and of MegaAccessControl, `NonZeroTransfer()` at
+  depth 0 (`SATIN-ICPT-003`). MegaLimitControl forwarded 0 and 1 gas, a contract call above the
+  execution cap, the allowance across a nested frame, and detention by an applied authority that is
+  the beneficiary (`SATIN-MLC-002` to `-004`). `CALLCODE` of `sendHint` and of
+  `remainingComputeGas()`. Three hints in order across a reverted child and a failed deposit.
+  `multiCall`'s first failing payload and its empty-revert error, `emitLog` refused and standing,
+  `setSlots` of one slot twice. A sender the state holds empty under EIP-161 one short of its
+  account's state gas at `m = 2`, at it, and with a nonce of 1. A creating deposit one gas short of
+  its one byte's code deposit and paying it, and its initcode reverting with data. The timestamp
+  read twice. A contract's `DELEGATECALL` and `CALLCODE` of KeylessDeploy with arguments that
+  decode, which run the held code (`SATIN-ICPT-006`).
+- **The model.** An `SLOAD` in the Oracle's own frame at depth 0, the transaction's own call of the
+  Oracle, is an Oracle read: before, the model priced it as an ordinary `SLOAD`, warm after a first
+  read of the slot. That changed no figure of the cases committed before (each read its slots
+  once), and adds `SATIN-ORCL-002` to `-005` to the rules `satin/oracle/get-slots/in-order` pins,
+  whose expectation is unchanged. A deposit is detained from its start as any transaction, and its
+  own `remainingComputeGas()` is answered. A hint whose call would start with no regular gas, or
+  that a frame with access off sends, is dropped before any size check; a `STATICCALL` of `sendHint`
+  is admitted; a `STATICCALL` runs in a static frame; a `CALLCODE` of the Oracle, MegaLimitControl
+  or KeylessDeploy, and a `DELEGATECALL` of KeylessDeploy, run the held code. A transaction's own
+  value call of an intercepted method is answered `NonZeroTransfer()` and its start record's history
+  given back. A creation from `MAX_NONCE` may carry a value its sender funds. A reverted deposit
+  reports its reads. A creating deposit's output is the code it deposited.
+
 **D-110. What the deposits and system-contract cases cannot hold.** Seven of the twenty-three rules
 stay without a case:
 
@@ -2075,9 +2125,15 @@ stay without a case:
   block may include, are decided over a block and its Mega System Transactions, not by one
   transaction against its pre-state. Their deposit and Mega System Transaction clauses follow from
   `SATIN-ORCL-005`, which the deposits' Oracle reads pin.
-- **`SATIN-ICPT-002`.** A call past `CALL_STACK_LIMIT` needs a frame at depth 1,024. Each call
-  forwards at most 98% of what its caller holds (`SATIN-FWD-001`), and regular gas is bounded by the
-  execution cap, so the frame at that depth holds under one gas: no transaction reaches the gate.
+- **`SATIN-ICPT-002`.** A call past `CALL_STACK_LIMIT` needs a frame at depth 1,024. A call
+  forwards at most `g − ⌊g × 2 / 100⌋` of the `g` its caller holds once the opcode's own charges are
+  made (`SATIN-FWD-001`, integer division), which is at most `0.98 × g + 1`; and every call first
+  pays at least `WARM_STORAGE_READ_COST`, 100, and the pushes of its operands. So a frame's regular
+  gas is at most 0.98 times its caller's, the rounding's one gas being far below the charges, and a
+  value call's `CALL_STIPEND` of 2,300 is no way around it, its value-transfer charge of 11,300
+  being larger. From the execution cap of 200,000,000 the frame at depth 1,024 holds at most
+  `0.98^1024 × 200,000,000`, under one gas, and cannot pay the 100 its own call needs: no
+  transaction reaches the gate.
 - **`SATIN-ICPT-005`.** As for `SATIN-DET-025` (D-92): MegaAccessControl's and MegaLimitControl's
   answers spend no regular gas, an admitted `sendHint` is no answer, and KeylessDeploy's answer,
   the only one that spends, is made at compute zero, where the allowance is the whole cap.
@@ -2085,6 +2141,17 @@ stay without a case:
   `state-transition` case: the promoted transaction's receipt is its envelope's, a legacy receipt
   with no deposit fields (`SATIN-MST-005`), and it is system-originated by `SATIN-MST-007`'s first
   clause whether or not the hash is stamped.
+
+Of the review's twenty-three edges, two stay out for their size, and parts of three:
+
+- **A transaction's own hint at the data-size limit, and a body over it.** The own call counts its
+  input twice, so its total is `310 + 2L`: the hint reaches the limit only with some 6.5 MB of
+  calldata, and a deposit's body over the limit needs 13 MB. Each case would hold more than the
+  whole slice holds today, its calldata in hex; the child's hint at the limit and one byte past it
+  are cases (D-91). They wait for the owner's word on fixtures of that size.
+- **MegaAccessControl's dispatch matrix, `emitLogs`, and the timestamp's reserved slots.**
+  MegaLimitControl's matrix, `emitLog` and the timestamp read twice stand for them; the model runs
+  MegaAccessControl's answer only for `disableVolatileDataAccess()`.
 
 Of the pinned rules, `SATIN-DEP-010`'s second sentence is not a case: a sender at `MAX_NONCE` that
 cannot fund its creation's value is a failed deposit, which must bump the sender's nonce
@@ -2095,11 +2162,15 @@ cannot fund its creation's value is a failed deposit, which must bump the sender
 run them.** Two readings the cases take where the text is terse:
 
 - **A failed deposit's SALT reads.** A deposit that fails at step 4 has read the capacity of the
-  bucket its recipient's or created address's state gas is priced in. The case reports that
-  capacity among its reads, as it reports the recipient's load (`SATIN-WIT-002`, `-013`).
+  bucket its recipient's or created address's state gas is priced in, which the charge needs before
+  it can fail. `SATIN-WIT-013` exports every capacity the environment served, a failed execution's
+  included, so the case reports it among its reads, as it reports the recipient's load.
 - **The transaction's own call of `remainingComputeGas()`.** `SATIN-MLC-004` makes `own` the gas the
-  transaction's own frame was given. Detained from its start, that frame's allowance is the whole
-  cap, the charges before the first frame being no compute (`SATIN-DET-008`), so the answer is
-  `BLOCK_ENV_ACCESS_COMPUTE_GAS` itself when the frame holds more.
+  transaction's own frame was given. A transaction is detained from its start when its sender, its
+  call recipient or an EIP-7702 authority it applies is the block beneficiary (`SATIN-DET-008`);
+  `SATIN-MLC-004`'s parenthesis names the sender and the authority only, and for a direct call the
+  recipient is MegaLimitControl itself. The allowance at that start is the whole cap, the charges
+  before the first frame being no compute, so the answer is `BLOCK_ENV_ACCESS_COMPUTE_GAS` itself
+  when the frame holds more; the cases detain by the sender and by an authority.
 
 Both implementations answer every case as the model derives it.
