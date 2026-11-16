@@ -9,7 +9,8 @@ from .constants import (
     AUTHORIZATION_SIZE, CALLDATA_NONZERO, CALLDATA_ZERO, COLD_ACCOUNT_ACCESS, COLD_ACCOUNT_SURCHARGE,
     COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, ex, EXECUTION_CAP, FLOOR_PER_BYTE,
     INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_DEPLOY_CODE_HASH, limit_exceeded, MAX_CONTRACT_SIZE,
-    MAX_U64, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, ORACLE, PER_AUTH_BASE_COST, PRECOMPILE_SET,
+    MAX_U64, MEGA_LIMIT_CONTROL, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, ORACLE, PER_AUTH_BASE_COST,
+    PRECOMPILE_SET, INTERCEPTED, SEND_HINT,
     STOP_DIMENSIONS, SYSTEM_CALLER, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
 )
@@ -498,8 +499,14 @@ class TransactionMixin:
         self.frame_start_counts = (self.data_size, len(self.kv), self.growth)
         snapshot = self.snapshot()
         status, output = "success", b""
+        limit_control = (self.system_pages and not create and recipient == MEGA_LIMIT_CONTROL and not tx.value
+                         and data[:4] in INTERCEPTED[MEGA_LIMIT_CONTROL])
+        if self.system_pages and not create and recipient == ORACLE and data[:4] == SEND_HINT:
+            self.own_hint(frame, data)
         try:
-            if keyless:
+            if limit_control:
+                status, output = self.own_limit_control(frame)
+            elif keyless:
                 status, output = self.keyless_call(frame)
             else:
                 if not create and recipient == KEYLESS_DEPLOY and data[:4] == KEYLESS_DEPLOY_CALL:
@@ -523,6 +530,10 @@ class TransactionMixin:
                           "the code the state holds there runs", "SATIN-ICPT-006")
                 if create or recipient not in PRECOMPILE_SET:
                     status, output = self.execute(code, frame, create)
+                    if not create and recipient == ORACLE:
+                        self.oracle_method(tx.sender, data, status, output, "the transaction's own call of the Oracle")
+                    if not create:
+                        self.contract_method(recipient, code, data, status, output, "the transaction's own call")
                 if create and status == "success" and len(output) > MAX_CONTRACT_SIZE:
                     d.add("outcome", f"the initcode returns {fmt(len(output))} bytes of code to deposit, over "
                           f"MAX_CONTRACT_SIZE {fmt(MAX_CONTRACT_SIZE)}: the size check halts the creation before any of "
@@ -762,3 +773,36 @@ class TransactionMixin:
         if tx.ty in (2, 4):
             return min(tx.max_fee, self.env.base_fee + tx.max_priority)
         return tx.gas_price
+
+    def own_limit_control(self, frame):
+        """The transaction's own call of MegaLimitControl's `remainingComputeGas()`: a CALL at depth 0, intercepted all
+        the same (SATIN-ICPT-001), with no calling frame, so `own` is the gas its own frame was given (SATIN-MLC-004).
+        The answer charges nothing, so the frame's regular gas is all returned."""
+        d = self.d
+        d.add("outcome", "interception: the transaction's own call of remainingComputeGas() is a CALL at depth 0 to "
+              "MegaLimitControl, intercepted though no opcode initiated it, and answered by the node before the frame "
+              "start; the bytecode does not run", "SATIN-ICPT-001", "SATIN-ICPT-007", "SATIN-MLC-001")
+        detained = frame.get("spendable") is not None
+        d.add("outcome", "the transaction calls the contract directly and has no calling frame: own is the gas its own "
+              f"frame was given, {fmt(frame['regular'])}" + (", and it is detained from its start, so the allowance can "
+                                                             "make the answer less" if detained else ""), "SATIN-MLC-004")
+        remaining = self.remaining_compute(frame["regular"], "the regular gas the transaction's own frame was given",
+                                           frame["reservoir"])
+        d.add("gasLedgers", f"the answer charges nothing: the frame's {fmt(frame['regular'])} of regular gas is all "
+              "returned", "SATIN-ICPT-004")
+        return "success", remaining.to_bytes(32, "big")
+
+    def own_hint(self, frame, data: bytes) -> None:
+        """A `sendHint` that is the transaction's own call (SATIN-ORCL-006): judged on its first frame's whole regular
+        gas, with no stipend, and admitted when that is above zero; its input counts twice, as calldata in the body and
+        as the hint (SATIN-ORCL-009), and the service is handed the sender's address (SATIN-ORCL-007)."""
+        d, tx = self.d, self.tx
+        if frame["regular"] == 0 or self.data_size + len(data) > TX_DATA_LIMIT:
+            raise Unmodelled("the transaction's own sendHint dropped or stopped")
+        self.data_size += len(data)
+        self.hint_bytes += len(data)
+        d.add("resources", f"the transaction's own call is a sendHint to the Oracle, judged on its first frame's whole "
+              f"regular gas, {fmt(frame['regular'])}, above zero and with no stipend: admitted before the frame start; its "
+              f"{fmt(len(data))} input bytes count as data size a second time, once as calldata in the body and once as the "
+              "hint, on no frame's budget and with no history gas", "SATIN-ORCL-006", "SATIN-ORCL-009", "SATIN-ICPT-007")
+        self.hand_hint(tx.sender, data, "the transaction's sender, the frame that made the call being the transaction's own,")

@@ -75,5 +75,9 @@ class ReadsMixin:
         self.d.add("reads", f"reads: accounts {len(accounts)}, slots {len(self.loaded_slots)}, codes {len(codes)}, SALT "
                    f"capacities {len(self.served_buckets)}; no block hash, oracle answer or hint",
                    "SATIN-WIT-001", "SATIN-WIT-005", "SATIN-WIT-013")
+        hints = [{"from": h(f), "topic": h(t), "data": h(dt)} for f, t, dt in getattr(self, "hints", [])]
+        if hints:
+            self.d.add("reads", f"the hints handed to the oracle service, in order: {len(hints)}, each with its topic, its "
+                       "data and the address of the frame that made the call", "SATIN-ORCL-007", "SATIN-WIT-001")
         return {"accounts": accounts, "storage": storage, "codes": codes, "blockHashes": {},
-                "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": [], "hints": []}
+                "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": [], "hints": hints}
