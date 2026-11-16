@@ -5,8 +5,8 @@ from __future__ import annotations
 
 from .constants import (
     ACCOUNT_STATE, BASE_FEE_VAULT, COLD_ACCOUNT_SURCHARGE, COST_PER_HISTORY_BYTE, CURRENT_SYSTEM_ADDRESS_SLOT, delegate_of,
-    DETENTION_STOP, ex, INTERCEPTED, limit_exceeded, MAX_CONTRACT_SIZE, MAX_U64, MEGA_LIMIT_CONTROL, ORACLE,
-    PRECOMPILE_SET, REFUND_QUOTIENT, SEND_HINT,
+    DETENTION_STOP, ex, INTERCEPTED, L1_FEE_VAULT, limit_exceeded, MAX_CONTRACT_SIZE, MAX_U64, MEGA_LIMIT_CONTROL,
+    OPERATOR_FEE_VAULT, ORACLE, PRECOMPILE_SET, REFUND_QUOTIENT, SEND_HINT,
     SEQUENCER_REGISTRY,
     SEQUENCER_REGISTRY_CODE_HASH, STOP_DIMENSIONS, WARM_READ,
     TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT,
@@ -49,6 +49,7 @@ class SettlementMixin:
         d.add("gasLedgers", f"gas used max({fmt(total)} - {fmt(refund)}, floor {fmt(floor)}) = {fmt(gas_used)}; the block "
               f"counts max(regular {fmt(regular_ledger)}, floor {fmt(floor)}) = {fmt(max(regular_ledger, floor))}",
               "SATIN-POOL-018", "SATIN-POOL-020")
+        self.floor_binds(total - refund, regular_ledger, floor)
 
         # Fees: the sender is returned what it did not use; the base fee vault and the beneficiary
         # are credited (base layer, SATIN-BASE-001).
@@ -56,6 +57,8 @@ class SettlementMixin:
         if price:
             base = gas_used * env.base_fee
             tip = gas_used * (price - env.base_fee)
+            created = [a for a, credit in ((BASE_FEE_VAULT, base), (env.coinbase, tip))
+                       if credit and self.state.get(a, Account()).empty()]
             if base:
                 self.state.setdefault(BASE_FEE_VAULT, Account()).balance += base
             if tip:
@@ -64,6 +67,11 @@ class SettlementMixin:
                   f"{fmt(gas_used)} x {fmt(env.base_fee)}, the beneficiary {fmt(gas_used)} x {fmt(price - env.base_fee)}; "
                   "the L1 data fee and the operator fee are zero, the L1 block contract's fee parameters being zero",
                   "SATIN-BASE-001", "SATIN-BASE-010")
+            if created:
+                d.add("resources", f"the settlement's fee credits make {', '.join(h(a) for a in created)}, empty under "
+                      "EIP-161 until then, hold a balance: no rise of state growth, no state gas and no write record, the "
+                      "credits being no EIP-8037 charge site and the fee accounts' writes being the body's",
+                      "SATIN-ACCT-017", "SATIN-ACCT-010", "SATIN-HIST-003")
 
         ledgers = {"total": q(total), "regular": q(regular_ledger), "state": q(self.state_gas), "history": q(self.history_gas),
                    "historyBytes": q(self.history_bytes), "refund": q(refund), "floor": q(floor), "gasUsed": q(gas_used),
@@ -101,6 +109,25 @@ class SettlementMixin:
         if self.pools:
             observations["gasPools"] = self.pools_observation(status, gas_used)
         return Result(observations, d)
+
+    def fee_accounts(self) -> set:
+        """The four accounts a transaction's fees are credited to (SATIN-HIST-003): the block beneficiary, the L1 fee
+        vault, the base fee vault and the operator fee vault."""
+        return {self.env.coinbase, L1_FEE_VAULT, BASE_FEE_VAULT, OPERATOR_FEE_VAULT}
+
+    def floor_binds(self, spend: int, regular_ledger: int, floor: int, deposit: bool = False) -> None:
+        """SATIN-HIST-017: the floor, computed and validated for every transaction, bounds the block's figure where the
+        regular ledger is below it; it raises the gas used only where the spend less the refund is below it."""
+        if floor <= regular_ledger:
+            return
+        raised = spend < floor
+        self.d.add("gasLedgers", f"the floor {fmt(floor)}, computed and validated for the transaction, is above its regular "
+                   f"ledger {fmt(regular_ledger)}: the block counts the floor"
+                   + (f", and the gas used is the floor, drawn from the whole gas limit" if raised else
+                      f"; the spend less the refund, {fmt(spend)}, its history among it, is above the floor, so the gas "
+                      "used is that spend and not the floor")
+                   + ("; the deposit pays nothing either way, only its receipt's and the block's figures moving"
+                      if deposit else ""), "SATIN-HIST-017", "SATIN-POOL-020")
 
     def history_paid(self) -> None:
         """SATIN-MST-008: a system-originated transaction pays history gas as any transaction does."""
@@ -554,6 +581,7 @@ class SettlementMixin:
               f"as any transaction; {self.history_bytes} history bytes), regular {fmt(regular_ledger)}, total {fmt(total)}",
               "SATIN-POOL-019", "SATIN-HIST-016", "SATIN-DEP-001", "SATIN-HIST-022")
         d.add("gasLedgers", f"gas used {fmt(gas_used)}, block gas max({fmt(regular_ledger)}, {fmt(floor)})", "SATIN-POOL-018", "SATIN-POOL-020")
+        self.floor_binds(total - refund, regular_ledger, floor, deposit=True)
         self.history_paid()
         ledgers = {"total": q(total), "regular": q(regular_ledger), "state": q(self.state_gas), "history": q(self.history_gas),
                    "historyBytes": q(self.history_bytes), "refund": q(refund), "floor": q(floor), "gasUsed": q(gas_used),

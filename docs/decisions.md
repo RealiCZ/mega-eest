@@ -1985,6 +1985,78 @@ response to every run request of the slice, its 611 gating cases and the negativ
 instrumented, is byte-identical at `353608b9` and at `ccbdb23e`. No case, model rule or tool
 changes.
 
+From the history page's and the resource-accounting page's uncited rules:
+
+**D-100. Two areas pin the history page and the resource-accounting page, whole, at `bcf260d`.**
+Every transaction's derivation applies the history page (`SATIN-HIST`) and the resource-accounting
+page (`SATIN-ACCT`), and the areas that cite them name single rules (D-76), so twenty-four of their
+rules were applied by many cases and pinned by none. Two areas now take the pages whole: `history`,
+whose scope is `SATIN-HIST`, and `accounting`, whose scope is `SATIN-ACCT`. Their forty cases cite
+`specs/satin-bcf260d` and sit at the rules' edges, with a control where one is cheap:
+
+- `history` (27): history unscaled in buckets of m = 2 and 4 (`SATIN-HIST-001`); an `SSTORE` one gas
+  short of its regular charge after its load, one short of its record's history, and paying it
+  (`SATIN-HIST-008`, `-013`); a log crossing the data-size limit while its frame cannot pay its
+  history, a stop, against one that fits, a halt (`SATIN-HIST-013`); a value call's start under a
+  crossing limit, its caller one gas short of the records' history, which halts first, and paying
+  it, which is stopped and given the charge back (`SATIN-HIST-014`); a value call to a new account
+  whose caller keeps one gas short of the records' history after a forward computed past the new
+  account's state gas, and exactly it (`SATIN-HIST-010`); the forward a creation's constructor
+  reads, its created account's state gas paid from regular gas or from the reservoir before it
+  (`SATIN-HIST-011`); the history allowance, spent by one log and by five, one log past it, a log
+  past it one gas short of its rest and paying it, a record's history the allowance does not pay,
+  and the starts that grant none (`SATIN-HIST-018` to `-021`); the specification's two examples of
+  the history bytes (`SATIN-HIST-022`); a descendant's give-back paying its next record
+  (`SATIN-HIST-007`); and a regular ledger one below and one above the floor, and a deposit's
+  (`SATIN-HIST-017`);
+- `accounting` (13): a value `CALLCODE` and a value call to the calling account itself
+  (`SATIN-ACCT-007`); value to the sender (`SATIN-ACCT-008`) and to an applied authority
+  (`SATIN-ACCT-009`); value to the base fee vault from a call and as the transaction's own value to
+  the vault the state does not hold, the settlement's credits no rise (`SATIN-ACCT-010`, `-017`); a
+  creator's nonce record surviving its creation's failure, a destruction's mark surviving a failed
+  sibling, and a child's log merging after its caller's large one (`SATIN-ACCT-011`, `-012`); the
+  transaction's whole state-growth limit, a fall at it and a rise the fall made room for, and a
+  second rise that crosses (`SATIN-ACCT-018`, `-019`); and a failed deposit from an empty leaf and
+  from a caller of nonce 1 (`SATIN-ACCT-020`).
+
+No existing case changes: no other area's scope holds either page whole. Every new case passes on
+both implementations, plain and instrumented.
+
+**D-101. The model cites the two pages where they decide, and two of its paths are corrected.**
+The derivations cite the rules at the steps where they decide: the bucket's m beside an unscaled
+history charge (`SATIN-HIST-001`), an `SSTORE` that fails at its regular charge after its load
+(`SATIN-HIST-008`), a log held to the limits before its history and a record's or a log's history
+the frame cannot pay (`SATIN-HIST-013`), the floor where it is above the regular ledger
+(`SATIN-HIST-017`), a log in a frame no value start granted an allowance (`SATIN-HIST-018`), a value
+start's transfer log (`SATIN-HIST-021`), value to the sender, to an applied authority and to a fee
+account (`SATIN-ACCT-008` to `-010`), a child's end and a failed creation's creator record
+(`SATIN-ACCT-011`), a marked account's store (`SATIN-ACCT-016`), the settlement's credits to an
+empty fee account (`SATIN-ACCT-017`), a slot's fall (`SATIN-ACCT-018`) and a state-growth crossing
+(`SATIN-ACCT-019`). No opcode is added. Two paths no case had run are corrected:
+
+- A value `CALL` to the calling account itself moved the value and emitted a transfer log. It now
+  moves nothing, makes no record and logs nothing, as `SATIN-ACCT-007` and `SATIN-LOG-003` state,
+  and still grants its child the allowance.
+- A value start answered without a frame was held to the transaction's limit with the admitted
+  hints left out. A hint is on no frame's budget and on the transaction (`SATIN-LIM-012`), so the
+  start is now held to the transaction's limit with them, as a start with a frame already was.
+
+**D-102. What the two pages leave to no transaction-level case.**
+
+- **The floor never raises a Satin transaction's gas used.** A byte of calldata costs 4 or 16 gas
+  and 88 of history; the floor counts it at 64, and the body's 310 history bytes are outside it. A
+  transaction's spend is therefore above the floor by more than its refund can take, a fifth of it.
+  The branch of `SATIN-HIST-017` and `SATIN-POOL-018` where the gas used is the floor is not
+  reachable at these constants. Its cases pin the block's figure, `max(regular, floor)`, on either
+  side of the floor, and a deposit's.
+- **A hint the transaction's own value call admits before its start.** Under `SATIN-ICPT-007` the
+  hint is counted before the start, and the start is held to the limit with it (`SATIN-ACCT-002`,
+  `SATIN-LIM-013`). That start crosses only when the body and the hint, the same bytes twice, come
+  within two hundred bytes of `TX_DATA_LIMIT`: more than 6.5 MB of calldata, which no case carries.
+- **`SATIN-ACCT-012`'s KV check.** At these constants `TX_KV_UPDATE_LIMIT` records weigh more than
+  `TX_DATA_LIMIT` bytes, so the data-size limit stops a transaction first. The KV check is made,
+  and no transaction can show it.
+
 From the deposits page, the Oracle and the small system contracts:
 
 **D-109. The deposits page, the Oracle's, MegaLimitControl's and the High-Precision Timestamp's

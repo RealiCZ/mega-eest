@@ -353,6 +353,10 @@ class TransactionMixin:
             d.add("gasLedgers", f"{'created' if create else 'new'}-account state gas {fmt(ACCOUNT_STATE)} x m={m} = "
                   f"{fmt(pre_frame_state)} at step 4, no legacy share", "SATIN-SCHED-008", "SATIN-STATE-001",
                   "SATIN-STATE-003", "SATIN-POOL-024")
+            if m > 1 and start_record:
+                d.add("gasLedgers", f"the account's bucket gives m = {m}, which scales its state gas and not the history of "
+                      f"its start record: {WRITE_RECORD_SIZE} x COST_PER_HISTORY_BYTE {COST_PER_HISTORY_BYTE}, whatever the "
+                      "bucket", "SATIN-HIST-001", "SATIN-HIST-002")
         # Of step 3's history, the authorities' records drew the reservoir first, when the list was
         # applied; the first frame's start record draws what they left (D-58).
         drawn = []  # what the reservoir paid of the start record and of the start's state gas
@@ -444,6 +448,10 @@ class TransactionMixin:
                 d.add("resources", f"the value moves: the recipient's write record ({WRITE_RECORD_SIZE} bytes, one KV "
                       f"update) and its EIP-7708 transfer log ({TRANSFER_LOG_SIZE} bytes, no history gas)",
                       "SATIN-ACCT-005", "SATIN-LOG-006")
+                if recipient in self.fee_accounts():
+                    d.add("resources", f"the recipient {h(recipient)} is one of the four accounts the settlement credits fees "
+                          "to, which the body covers only for those credits: the value execution moves to it is recorded "
+                          "like a write to any other account", "SATIN-ACCT-010", "SATIN-HIST-003")
             else:
                 d.add("resources", f"the value moves: its EIP-7708 transfer log ({TRANSFER_LOG_SIZE} bytes, no history gas); "
                       "the recipient's write record is the list's", "SATIN-ACCT-009", "SATIN-LOG-006")

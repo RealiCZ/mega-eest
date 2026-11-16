@@ -167,8 +167,9 @@ class CreationMixin:
                   "created, and the "
                   f"created account's {fmt(state)} of state gas and its record's {fmt(RECORD_HISTORY)} of history gas are "
                   "given back into the creator's reservoir after the child's reservoir joined it; the creator's nonce "
-                  f"bump stays, now {creator_acct.nonce}", "SATIN-TAKE-007", "SATIN-POOL-015", "SATIN-HIST-012",
-                  "SATIN-LIM-008")
+                  f"bump stays, now {creator_acct.nonce}, and its nonce record is the creating frame's and survives the "
+                  "creation's failure", "SATIN-TAKE-007", "SATIN-POOL-015", "SATIN-HIST-012", "SATIN-LIM-008",
+                  "SATIN-ACCT-011")
             frame["regular"] += left
             self.regular_charges -= left
             self.creator_record(frame, creator, records)

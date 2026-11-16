@@ -171,6 +171,16 @@ specification's text and constants:
   at depth 0; a creation from `MAX_NONCE` with a value its sender funds; and a reverted deposit's
   reads.
 
+- **The history page and the resource-accounting page** (D-100, D-101): the history allowance spent
+  by several logs and drawn whole by a log past it, and the starts that grant none; an `SSTORE` and
+  a log that fail after their write was observed, at a regular charge or at their history, and a log
+  held to a limit before its history; the transaction's whole state-growth limit, with a fall that
+  makes room; a value `CALL` to the calling account itself, which moves nothing, makes no record and
+  logs nothing (`SATIN-ACCT-007`, `SATIN-LOG-003`); a value start without a frame held to the
+  transaction's limit with the admitted hints counted (`SATIN-LIM-012`); the floor above the
+  regular ledger (`SATIN-HIST-017`); and the settlement's credits to an empty fee account
+  (`SATIN-ACCT-017`). No opcode was added for them.
+
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
 raises `Unmodelled` rather than guessing. A pre-state the specification excludes raises

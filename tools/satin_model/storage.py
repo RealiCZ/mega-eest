@@ -51,10 +51,17 @@ class StorageMixin:
                   "original is zero", "SATIN-SD-003", "SATIN-SD-016")
         if address in self.destroyed:
             return self.sstore_marked(frame, address, key, new, present, original, access, write, cold)
-        if detained:
-            self.charge_regular(frame, access + write - WARM_READ, "SSTORE's dynamic cost")
-        else:
-            self.charge_regular(frame, access + write, "SSTORE")
+        try:
+            if detained:
+                self.charge_regular(frame, access + write - WARM_READ, "SSTORE's dynamic cost")
+            else:
+                self.charge_regular(frame, access + write, "SSTORE")
+        except Halt:
+            d.add("gasLedgers", f"the SSTORE of slot {key} loaded the slot and so observed its write, and its frame, holding "
+                  f"{fmt(frame['regular'])} of regular gas, cannot pay the {fmt(access + write)} it charges after the load: "
+                  "it halts out of gas, keeping nothing of the write, and is charged no history for a record",
+                  "SATIN-HIST-008")
+            raise
         label = f"SSTORE slot {key} {original}->{present}->{new}: {'cold' if cold else 'warm'} access {fmt(access)}"
         rules = ["SATIN-SCHED-003", "SATIN-SCHED-004"] if cold else ["SATIN-SCHED-003"]
         if write:
@@ -80,6 +87,10 @@ class StorageMixin:
             label += f"; state gas {fmt(SLOT_STATE)} x m={m} = {fmt(charge)} ({fmt(legacy)} legacy share first)"
             rules += ["SATIN-STATE-001", "SATIN-STATE-002", "SATIN-STATE-008", "SATIN-STATE-012", "SATIN-POOL-008"]
             d.add("resources", f"slot {key} filled from zero: state growth +1", "SATIN-ACCT-016")
+            if m > 1:
+                d.add("gasLedgers", f"the slot's bucket gives m = {m}, which scales its state gas and not the history of its "
+                      f"write record: {WRITE_RECORD_SIZE} x COST_PER_HISTORY_BYTE {COST_PER_HISTORY_BYTE}, whatever the "
+                      "bucket", "SATIN-HIST-001", "SATIN-HIST-002")
         elif original == 0 and present != 0 and new == 0:
             m = self.multiplier(self.salt_bucket(address, key))
             charge = SLOT_STATE * m
@@ -89,6 +100,8 @@ class StorageMixin:
             label += f"; state gas {fmt(charge)} given back into the reservoir"
             rules += ["SATIN-STATE-008", "SATIN-HIST-012"]
             d.add("resources", f"slot {key} back to zero: state growth -1", "SATIN-ACCT-016")
+            d.add("resources", f"the fall happens at the SSTORE that restores slot {key}, the one slot fall, and is held to "
+                  "no limit: a fall cannot cross one, and the room it frees is room for a later rise", "SATIN-ACCT-018")
         # The refund counter, EIP-2200's transitions at Satin's prices.
         if new != present:
             if original != 0:
@@ -120,7 +133,14 @@ class StorageMixin:
         if now and not was:
             history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
             before = frame.get("spendable")
-            self.charge_state(frame, history, 0, "the slot's write record")
+            try:
+                self.charge_state(frame, history, 0, "the slot's write record")
+            except Halt:
+                d.add("gasLedgers", f"slot {key}'s write record passed the limits, and its history, {fmt(history)}, is charged "
+                      f"after them: the frame, holding {fmt(frame['reservoir'])} of reservoir and {fmt(frame['regular'])} of "
+                      "regular gas, cannot pay it and halts out of gas, keeping neither the record nor its bytes",
+                      "SATIN-HIST-013", "SATIN-HIST-006")
+                raise
             if detained:
                 d.add("gasLedgers", f"the record's history, {fmt(history)}, what the reservoir cannot pay from regular gas, "
                       f"draws the withheld part first: the spendable part goes from {fmt(before)} to "
@@ -192,7 +212,7 @@ class StorageMixin:
               "state gas, so the write neither charges nor refills a fresh slot's state gas", "SATIN-SD-013",
               "SATIN-SCHED-003", *(("SATIN-SCHED-004",) if cold else ()))
         d.add("resources", f"the write to slot {key} of the marked account adds nothing to state growth and makes no "
-              "record", "SATIN-SD-013")
+              "record", "SATIN-SD-013", "SATIN-ACCT-016")
         return f"SSTORE {fmt(access + write)}"
 
     def deposit_code(self, code: bytes, frame, address: bytes) -> None:
@@ -220,6 +240,7 @@ class StorageMixin:
         else:
             d.add("gasLedgers", f"code deposit of {len(code)} bytes: hashing {words} words x {KECCAK_WORD} = {keccak}; state "
                   f"{CODE_STATE_PER_BYTE} x m={m} x {len(code)} = {fmt(state)}; history {COST_PER_HISTORY_BYTE} x "
-                  f"{len(code)} = {fmt(history)}", "SATIN-SCHED-011", "SATIN-STATE-003", "SATIN-HIST-002")
+                  f"{len(code)} = {fmt(history)}", "SATIN-SCHED-011", "SATIN-STATE-003", "SATIN-HIST-002",
+                  *(("SATIN-HIST-001",) if m > 1 else ()))
         d.add("resources", f"deposited code adds {len(code)} bytes of data size, no state growth of its own",
               "SATIN-ACCT-002", "SATIN-ACCT-013")

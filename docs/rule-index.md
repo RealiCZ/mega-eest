@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-bcf260d], source commit `bcf260d3de62c50cd1700e4f8
 (committed `2026-11-16T12:04:00+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **712** (712 gating, 0 quarantined).
-Cited rule IDs: **271**. Uncited rule IDs in that registry: **140**
-(130 active, 10 retired).
+Cases: **752** (752 gating, 0 quarantined).
+Cited rule IDs: **295**. Uncited rule IDs in that registry: **116**
+(106 active, 10 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -22,12 +22,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/merge/large-log-then-child-log] | gating | unqualified | [satin-bcf260d] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-one-word] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log2-two-topics] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log4-four-topics-two-words] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/two-logs-in-order] | gating | unqualified | [satin-d34e626] |
+
+### SATIN-ACCT-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/failed-deposit/empty-leaf-caller] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/failed-deposit/nonce-only-caller] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-rise] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-two-rises] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/creator-record-survives-failed-creation] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/large-log-then-child-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/mark-survives-failed-sibling] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/call-to-self-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/callcode-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-ACCT-003
 
@@ -58,6 +77,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-rise] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-two-rises] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/creator-record-survives-failed-creation] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/mark-survives-failed-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -78,6 +103,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/creator-record-survives-failed-creation] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/mark-survives-failed-sibling] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
 | [satin/creation/code-bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/empty-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/initcode-reverts] | gating | unqualified | [satin-d34e626] |
@@ -96,15 +127,70 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/growth/fall-at-limit-then-rise] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-two-rises] | gating | unqualified | [satin-bcf260d] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/sstore/reset-then-restored] | gating | unqualified | [satin-d34e626] |
 
+### SATIN-ACCT-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/no-record/call-to-self-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/callcode-with-value] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-ACCT-008
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-ACCT-009
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-ACCT-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-ACCT-011
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/merge/creator-record-survives-failed-creation] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/large-log-then-child-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/mark-survives-failed-sibling] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/call-to-self-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/callcode-with-value] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-ACCT-012
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-rise] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-two-rises] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/creator-record-survives-failed-creation] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/large-log-then-child-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/mark-survives-failed-sibling] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/call-to-self-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/callcode-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
+
 ### SATIN-ACCT-013
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/merge/mark-survives-failed-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/creation/code-bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/empty-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
@@ -115,6 +201,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/creator-record-survives-failed-creation] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/mark-survives-failed-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/creation/code-bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/empty-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/initcode-reverts] | gating | unqualified | [satin-d34e626] |
@@ -129,6 +218,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/call-to-self-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/no-record/callcode-with-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/deposit-caller/empty-leaf] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
@@ -164,6 +256,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/growth/fall-at-limit-then-rise] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-two-rises] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/merge/mark-survives-failed-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -175,6 +270,33 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/sstore/fresh-then-restored-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/sstore/sload-then-fresh-write] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/two-fresh-slots/two-buckets] | gating | unqualified | [satin-d34e626] |
+
+### SATIN-ACCT-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-ACCT-018
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/growth/fall-at-limit-then-rise] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/growth/fall-at-limit-then-two-rises] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-ACCT-019
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/growth/fall-at-limit-then-two-rises] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-ACCT-020
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/accounting/failed-deposit/empty-leaf-caller] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/failed-deposit/nonce-only-caller] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-AUTH-001
 
@@ -2108,10 +2230,43 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
 
+### SATIN-HIST-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/unscaled/creation-in-crowded-buckets] | gating | unqualified | [satin-bcf260d] |
+
 ### SATIN-HIST-002
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/delegatecall-in-value-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/own-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/bytes/deposit-empty-calldata] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/block-counts-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/deposit-block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/give-back/descendant-pays-record] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/regular-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/unscaled/creation-in-crowded-buckets] | gating | unqualified | [satin-bcf260d] |
 | [satin/intrinsic/access-list/one-address-two-keys] | gating | unqualified | [satin-d34e626] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
 | [satin/intrinsic/call/contract-stop] | gating | unqualified | [satin-d34e626] |
@@ -2132,6 +2287,33 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/delegatecall-in-value-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/own-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/bytes/deposit-empty-calldata] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/block-counts-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/deposit-block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/give-back/descendant-pays-record] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/regular-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/unscaled/creation-in-crowded-buckets] | gating | unqualified | [satin-bcf260d] |
 | [satin/intrinsic/access-list/one-address-two-keys] | gating | unqualified | [satin-d34e626] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
 | [satin/intrinsic/call/contract-stop] | gating | unqualified | [satin-d34e626] |
@@ -2146,6 +2328,33 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/delegatecall-in-value-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/own-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/bytes/deposit-empty-calldata] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/block-counts-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/deposit-block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/give-back/descendant-pays-record] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/regular-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/unscaled/creation-in-crowded-buckets] | gating | unqualified | [satin-bcf260d] |
 | [satin/intrinsic/access-list/one-address-two-keys] | gating | unqualified | [satin-d34e626] |
 | [satin/intrinsic/access-list/warm-slot-write] | gating | unqualified | [satin-d34e626] |
 | [satin/intrinsic/call/contract-stop] | gating | unqualified | [satin-d34e626] |
@@ -2168,6 +2377,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
+| [satin/history/allowance/none/delegatecall-in-value-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/own-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/unscaled/creation-in-crowded-buckets] | gating | unqualified | [satin-bcf260d] |
 | [satin/pre-frame/authorities-first-halt] | gating | unqualified | [satin-5fb2688] |
 | [satin/pre-frame/keyless-start-record-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/pre-frame/keyless-start-record-one-short] | gating | unqualified | [satin-5fb2688] |
@@ -2183,6 +2396,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/own-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/give-back/descendant-pays-record] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/unscaled/creation-in-crowded-buckets] | gating | unqualified | [satin-bcf260d] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-one-word] | gating | unqualified | [satin-d34e626] |
@@ -2205,6 +2431,26 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/sstore/sload-then-fresh-write] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/two-fresh-slots/two-buckets] | gating | unqualified | [satin-d34e626] |
 
+### SATIN-HIST-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/give-back/descendant-pays-record] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-008
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/delegatecall-in-value-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/regular-one-short] | gating | unqualified | [satin-bcf260d] |
+
 ### SATIN-HIST-009
 
 | Case | Status | Citation | Registry |
@@ -2219,6 +2465,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/records-unpaid/send-hint-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/zero-gas-exact] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/records-unpaid/zero-gas-one-short] | gating | unqualified | [satin-5fb2688] |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
 | [satin/take-backs/answer-stopped] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/no-balance] | gating | unqualified | [satin-cdded1e] |
@@ -2228,16 +2487,79 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/take-backs/sent-back/signs-turned] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/signs-turned-paid] | gating | unqualified | [satin-cdded1e] |
 
+### SATIN-HIST-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-011
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/create-forward/state-from-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+
 ### SATIN-HIST-012
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/give-back/descendant-pays-record] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
 | [satin/outcomes/precompile/identity-value-start-fails] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/precompile/identity-value-start-stopped] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/refused-read/child-reverts-caught] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/stop/child-stopped-caught] | gating | unqualified | [satin-c130558] |
 | [satin/sstore/fresh-then-restored] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored-gas] | gating | unqualified | [satin-5fb2688] |
+
+### SATIN-HIST-013
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/delegatecall-in-value-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-one-short] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-014
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-HIST-015
 
@@ -2254,6 +2576,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/contract-refused] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-HIST-016
 
@@ -2287,6 +2618,96 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/deposits/start-load/empty-recipient-unpaid] | gating | unqualified | [satin-bcf260d] |
 | [satin/deposits/start-load/funded-recipient] | gating | unqualified | [satin-bcf260d] |
 | [satin/deposits/start-load/to-sender] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/bytes/deposit-empty-calldata] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/deposit-block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-017
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/floor/block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/deposit-block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-018
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/delegatecall-in-value-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/own-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/unscaled/creation-in-crowded-buckets] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-019
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-020
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-021
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-HIST-022
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/delegatecall-in-value-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/own-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/bytes/deposit-empty-calldata] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/create-forward/state-from-reservoir] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/block-counts-regular] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/floor/deposit-block-counts-floor] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/give-back/descendant-pays-record] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/record-history-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/sstore-after-load/regular-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/unscaled/creation-in-crowded-buckets] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-HIST-023
 
@@ -2306,6 +2727,20 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/contract-refused] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/empty-account] | gating | unqualified | [satin-5fb2688] |
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/history/allowance/empty-logs-5] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/empty-logs-6] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/log-past-allowance/rest-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/none/call-without-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/one-empty-log] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/allowance/record-not-drawn/paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/limit-before-history/fitting] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-at-history] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/new-account-call/kept-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/history/start-paid-before-hold/paid] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-HPTS-001
 
@@ -6378,17 +6813,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 
 | Rule | Status | Specification page at the pinned commit |
 | --- | --- | --- |
-| `SATIN-ACCT-002` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-007` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-008` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-009` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-010` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-011` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-012` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-017` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-018` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-019` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
-| `SATIN-ACCT-020` | active | [evm/resource-accounting.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-accounting.md) |
 | `SATIN-ACT-001` | active | [block/activation.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/block/activation.md) |
 | `SATIN-ACT-002` | active | [block/activation.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/block/activation.md) |
 | `SATIN-ACT-003` | active | [block/activation.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/block/activation.md) |
@@ -6428,19 +6852,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-DEP-013` | active | [block/deposits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/block/deposits.md) |
 | `SATIN-DET-025` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-detention.md) |
 | `SATIN-DET-027` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-HIST-001` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-007` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-008` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-010` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-011` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-013` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-014` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-017` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-018` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-019` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-020` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-021` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
-| `SATIN-HIST-022` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
 | `SATIN-ICPT-002` | active | [system-contracts/interception.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/interception.md) |
 | `SATIN-ICPT-005` | active | [system-contracts/interception.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/interception.md) |
 | `SATIN-LIM-009` | active | [evm/resource-limits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/resource-limits.md) |
@@ -6521,6 +6932,19 @@ Retired rules are labeled separately from active rules; their absence is not an 
 
 [satin/access-control/refused-read]: ../slice/cases/satin/access-control/refused-read.json
 [satin/access-control/refused-read-under-static-gas]: ../slice/cases/satin/access-control/refused-read-under-static-gas.json
+[satin/accounting/authority/value-call-after-list]: ../slice/cases/satin/accounting/authority/value-call-after-list.json
+[satin/accounting/failed-deposit/empty-leaf-caller]: ../slice/cases/satin/accounting/failed-deposit/empty-leaf-caller.json
+[satin/accounting/failed-deposit/nonce-only-caller]: ../slice/cases/satin/accounting/failed-deposit/nonce-only-caller.json
+[satin/accounting/fee-account/value-call-to-base-fee-vault]: ../slice/cases/satin/accounting/fee-account/value-call-to-base-fee-vault.json
+[satin/accounting/fee-account/value-to-absent-base-fee-vault]: ../slice/cases/satin/accounting/fee-account/value-to-absent-base-fee-vault.json
+[satin/accounting/growth/fall-at-limit-then-rise]: ../slice/cases/satin/accounting/growth/fall-at-limit-then-rise.json
+[satin/accounting/growth/fall-at-limit-then-two-rises]: ../slice/cases/satin/accounting/growth/fall-at-limit-then-two-rises.json
+[satin/accounting/merge/creator-record-survives-failed-creation]: ../slice/cases/satin/accounting/merge/creator-record-survives-failed-creation.json
+[satin/accounting/merge/large-log-then-child-log]: ../slice/cases/satin/accounting/merge/large-log-then-child-log.json
+[satin/accounting/merge/mark-survives-failed-sibling]: ../slice/cases/satin/accounting/merge/mark-survives-failed-sibling.json
+[satin/accounting/no-record/call-to-self-with-value]: ../slice/cases/satin/accounting/no-record/call-to-self-with-value.json
+[satin/accounting/no-record/callcode-with-value]: ../slice/cases/satin/accounting/no-record/callcode-with-value.json
+[satin/accounting/sender/value-call-to-sender]: ../slice/cases/satin/accounting/sender/value-call-to-sender.json
 [satin/authorizations/absent-authority]: ../slice/cases/satin/authorizations/absent-authority.json
 [satin/authorizations/beneficiary/gated-authority-not-detained]: ../slice/cases/satin/authorizations/beneficiary/gated-authority-not-detained.json
 [satin/authorizations/beneficiary/skipped-authority-not-detained]: ../slice/cases/satin/authorizations/beneficiary/skipped-authority-not-detained.json
@@ -6768,6 +7192,33 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/gas-pools/fresh-slot-restored]: ../slice/cases/satin/gas-pools/fresh-slot-restored.json
 [satin/gas-pools/legacy-share-from-regular]: ../slice/cases/satin/gas-pools/legacy-share-from-regular.json
 [satin/gas-pools/value-transfer-control]: ../slice/cases/satin/gas-pools/value-transfer-control.json
+[satin/history/allowance/empty-logs-5]: ../slice/cases/satin/history/allowance/empty-logs-5.json
+[satin/history/allowance/empty-logs-6]: ../slice/cases/satin/history/allowance/empty-logs-6.json
+[satin/history/allowance/log-past-allowance/rest-one-short]: ../slice/cases/satin/history/allowance/log-past-allowance/rest-one-short.json
+[satin/history/allowance/log-past-allowance/rest-paid]: ../slice/cases/satin/history/allowance/log-past-allowance/rest-paid.json
+[satin/history/allowance/none/call-without-value]: ../slice/cases/satin/history/allowance/none/call-without-value.json
+[satin/history/allowance/none/delegatecall-in-value-frame]: ../slice/cases/satin/history/allowance/none/delegatecall-in-value-frame.json
+[satin/history/allowance/none/own-frame]: ../slice/cases/satin/history/allowance/none/own-frame.json
+[satin/history/allowance/one-empty-log]: ../slice/cases/satin/history/allowance/one-empty-log.json
+[satin/history/allowance/record-not-drawn/one-short]: ../slice/cases/satin/history/allowance/record-not-drawn/one-short.json
+[satin/history/allowance/record-not-drawn/paid]: ../slice/cases/satin/history/allowance/record-not-drawn/paid.json
+[satin/history/bytes/deposit-empty-calldata]: ../slice/cases/satin/history/bytes/deposit-empty-calldata.json
+[satin/history/create-forward/state-from-regular]: ../slice/cases/satin/history/create-forward/state-from-regular.json
+[satin/history/create-forward/state-from-reservoir]: ../slice/cases/satin/history/create-forward/state-from-reservoir.json
+[satin/history/floor/block-counts-floor]: ../slice/cases/satin/history/floor/block-counts-floor.json
+[satin/history/floor/block-counts-regular]: ../slice/cases/satin/history/floor/block-counts-regular.json
+[satin/history/floor/deposit-block-counts-floor]: ../slice/cases/satin/history/floor/deposit-block-counts-floor.json
+[satin/history/give-back/descendant-pays-record]: ../slice/cases/satin/history/give-back/descendant-pays-record.json
+[satin/history/limit-before-history/crossing]: ../slice/cases/satin/history/limit-before-history/crossing.json
+[satin/history/limit-before-history/fitting]: ../slice/cases/satin/history/limit-before-history/fitting.json
+[satin/history/new-account-call/kept-at-history]: ../slice/cases/satin/history/new-account-call/kept-at-history.json
+[satin/history/new-account-call/kept-one-short]: ../slice/cases/satin/history/new-account-call/kept-one-short.json
+[satin/history/sstore-after-load/record-history-one-short]: ../slice/cases/satin/history/sstore-after-load/record-history-one-short.json
+[satin/history/sstore-after-load/record-history-paid]: ../slice/cases/satin/history/sstore-after-load/record-history-paid.json
+[satin/history/sstore-after-load/regular-one-short]: ../slice/cases/satin/history/sstore-after-load/regular-one-short.json
+[satin/history/start-paid-before-hold/one-short]: ../slice/cases/satin/history/start-paid-before-hold/one-short.json
+[satin/history/start-paid-before-hold/paid]: ../slice/cases/satin/history/start-paid-before-hold/paid.json
+[satin/history/unscaled/creation-in-crowded-buckets]: ../slice/cases/satin/history/unscaled/creation-in-crowded-buckets.json
 [satin/interception/access-control/own-call-with-value]: ../slice/cases/satin/interception/access-control/own-call-with-value.json
 [satin/interception/access-control/value-funded]: ../slice/cases/satin/interception/access-control/value-funded.json
 [satin/interception/access-control/value-unfunded]: ../slice/cases/satin/interception/access-control/value-unfunded.json

@@ -37,13 +37,13 @@ class LimitsMixin:
                 self.d.add("limit", f"{what} rises the frame's {name} by {fmt(rise)}, from {fmt(net)} past its budget "
                            f"{fmt(budget)}, what the transaction had left when the frame started: the frame budget is "
                            "crossed, and the stop names it", "SATIN-LIM-002", "SATIN-LIM-004", "SATIN-LIM-010",
-                           "SATIN-LIM-011", *self.kind_rules(), *again)
+                           "SATIN-LIM-011", *self.kind_rules(), *again, *self.rise_rules(kind))
                 raise LimitStop(kind, budget, f"{what}: its {name} past the frame budget {fmt(budget)}")
             if used + rise > limit:
                 self.d.add("limit", f"{what} rises the frame's {name} by {fmt(rise)} to {fmt(net + rise)}, within its "
                            f"budget {fmt(budget)}, and the transaction's from {fmt(used)} to {fmt(used + rise)}, past its "
                            f"limit {fmt(limit)}: the stop names the transaction limit", "SATIN-LIM-005", "SATIN-LIM-010",
-                           "SATIN-LIM-011", "SATIN-LIM-012", *self.kind_rules(), *again)
+                           "SATIN-LIM-011", "SATIN-LIM-012", *self.kind_rules(), *again, *self.rise_rules(kind))
                 raise LimitStop(kind, limit, f"{what}: the transaction's {name} past its limit {fmt(limit)}")
 
     def hold_child_to_limits(self, frame, data_size: int, kv: int, growth: int, what: str) -> None:
@@ -65,13 +65,13 @@ class LimitsMixin:
                 self.d.add("outcome", f"{what} rises the {name} of {who} by {fmt(rise)}, from its net {fmt(net)} past its "
                            f"budget {fmt(budget)}, its share of its caller's remaining when it started: the frame budget is "
                            "crossed, and the stop names it", "SATIN-LIM-003", "SATIN-LIM-004", "SATIN-LIM-010",
-                           "SATIN-LIM-011", *self.kind_rules(), *again)
+                           "SATIN-LIM-011", *self.kind_rules(), *again, *self.rise_rules(kind))
                 raise LimitStop(kind, budget, f"{what}: its {name} past the frame budget {fmt(budget)}")
             if used + rise > limit:
                 self.d.add("outcome", f"{what} rises the {name} of {who} by {fmt(rise)} to a net of {fmt(net + rise)}, "
                            f"within its budget {fmt(budget)}, and the transaction's from {fmt(used)} to {fmt(used + rise)}, "
                            f"past its limit {fmt(limit)}: the stop names the transaction limit", "SATIN-LIM-005",
-                           "SATIN-LIM-010", "SATIN-LIM-011", "SATIN-LIM-012", *self.kind_rules(), *again)
+                           "SATIN-LIM-010", "SATIN-LIM-011", "SATIN-LIM-012", *self.kind_rules(), *again, *self.rise_rules(kind))
                 raise LimitStop(kind, limit, f"{what}: the transaction's {name} past its limit {fmt(limit)}")
 
     def exempt_from_limits(self, what: str, data_size: int, kv: int, growth: int) -> None:
@@ -89,6 +89,11 @@ class LimitsMixin:
             self.exempt_noted.add("limits")
             self.d.add("limit", f"{what} is held to no frame budget and no per-transaction limit, the transaction being "
                        "system-originated; it is counted", "SATIN-MST-008")
+
+    def rise_rules(self, kind: int) -> tuple[str, ...]:
+        """SATIN-ACCT-019: a rise of state growth that would take the signed net past the transaction's limit or the
+        frame's budget is the crossing, and is not kept."""
+        return ("SATIN-ACCT-019",) if kind == STATE_GROWTH_STOP else ()
 
     def carried_on(self, frame) -> tuple[str, ...]:
         """SATIN-STOP-007: a caller that caught a stop and carries on is held to what the transaction has left, and a

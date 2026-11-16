@@ -487,7 +487,7 @@ def cases() -> list[Case]:
                   authorization_cases,
                   outcome_cases, outcome_edge_cases, keyless_cases,
                   keyless_gap_cases, forwarding_cases, system_tx_cases, deposit_page_cases, oracle_page_cases,
-                  system_contract_cases, system_pages_gap_cases):
+                  system_contract_cases, system_pages_gap_cases, history_cases, accounting_cases):
         made = group()
         for c in made:
             c.definition = group.__name__
@@ -5048,6 +5048,316 @@ def least_paying(c: Case) -> int:
     return lo
 
 
+# --- History gas and the history allowance, and resource accounting: the rules no case pinned (D-100) ---------
+
+ALLOWANCE_CHILD = bytes.fromhex("00000000000000000000000000000000000c0f01")  # a value call's child that logs or writes
+DELEGATED_LOGGER = bytes.fromhex("00000000000000000000000000000000000c0f02")  # code a frame runs by DELEGATECALL
+FAILING = bytes.fromhex("00000000000000000000000000000000000c0f03")  # a contract that reverts at once
+CALLCODE_TARGET = bytes.fromhex("00000000000000000000000000000000000c0f04")  # code a CALLCODE runs, which stops
+
+
+def jumpdests(n: int) -> bytes:
+    """`n` JUMPDESTs, one gas each: a pad that burns exactly `n` of a frame's regular gas."""
+    return b"\x5b" * n
+
+
+def history_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = CURRENT_SPEC
+    record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
+    log0 = model.LOG_BASE_SIZE * model.COST_PER_HISTORY_BYTE
+    allowance = model.HISTORY_ALLOWANCE_BYTES * model.COST_PER_HISTORY_BYTE
+    log0_ops = 2 * model.G_BASE + model.LOG_COST  # PUSH0, PUSH0, LOG0
+
+    def case(name: str, intent: str, **kw) -> None:
+        add(Case(f"satin/history/{name}", intent, spec=spec, **kw))
+
+    # SATIN-HIST-001: history is COST_PER_HISTORY_BYTE a byte, whatever bucket the state charges land in.
+    init = sstore(0, 1) + log(0, 0, 0, []) + init_returning(b"\x01")
+    case("unscaled/creation-in-crowded-buckets", "a creation transaction whose created account's bucket gives m = 2 and "
+         "whose initcode writes a fresh slot in a bucket of m = 4, emits an empty LOG0 and deploys one byte: the "
+         f"account's {fmt(model.ACCOUNT_STATE)}, the slot's {fmt(model.SLOT_STATE)} and the code byte's "
+         f"{fmt(model.CODE_STATE_PER_BYTE)} of state gas are each scaled by their bucket's m, while the history of the two "
+         f"records, the log and the byte, {fmt(2 * record + log0 + model.COST_PER_HISTORY_BYTE)}, is COST_PER_HISTORY_BYTE "
+         "a byte, whatever the buckets", to=None, data=init, salt={("created", None): 2, ("created", 0): 4})
+
+    # SATIN-HIST-008, -013: an SSTORE that observed its write fails after its load, at its regular charge or at its
+    # record's history; slot 1 of the contract holds 5 and is reset to 7, which charges no state gas.
+    reset = model.COLD_SSTORE_ACCESS + model.SSTORE_RESET
+    pushes = 2 * model.G_VERYLOW
+    for name, held, tail, boundary in (
+            ("regular-one-short", reset - 1, f"which cannot pay the {fmt(reset)} the SSTORE charges after it loaded the "
+             "slot: the SSTORE observed its write and halts out of gas, keeping nothing of it and charged no history",
+             "the regular gas at the SSTORE one below its regular charge"),
+            ("record-history-one-short", reset + record - 1, f"which pays its {fmt(reset)} of regular charges and is one "
+             f"short of the record's {fmt(record)} of history, charged after the limits hold the record: it halts out of "
+             "gas, keeping neither the record nor its bytes", "the regular gas one below the record's history"),
+            ("record-history-paid", reset + record, f"which pays the {fmt(reset)} and the record's {fmt(record)} of history "
+             "exactly: the write and its record are kept", "the regular gas at the record's history")):
+        case(f"sstore-after-load/{name}", f"the transaction's own frame holds {fmt(held)} of regular gas at an SSTORE that "
+             f"resets slot 1, whose original is 5, to 7, a cold access and a reset, {fmt(reset)} in all, " + tail
+             + "; the slot is loaded in every case", boundary=boundary, storage={1: 5}, code=sstore(1, 7) + STOP,
+             reads=True, tune=("frame", pushes + held))
+
+    # SATIN-HIST-013: a log's bytes are held to the limits before its history is charged. Hints leave the transaction
+    # room for less than an empty LOG0 or exactly one, and the frame cannot pay the log's history once its regular
+    # charge is paid: the crossing is the stop, and the log that fits halts out of gas.
+    for name, room, tail in (
+            ("limit-before-history/crossing", model.LOG_BASE_SIZE - 1, "its bytes cross the data-size limit, which is "
+             f"held first, so the frame is stopped with MegaLimitExceeded(0, {fmt(model.TX_DATA_LIMIT)}) and no history is "
+             "charged"),
+            ("limit-before-history/fitting", model.LOG_BASE_SIZE, "its bytes fit the data-size limit exactly, and the "
+             "history charge that follows cannot be paid: a halt, keeping neither the log nor its bytes")):
+        case(name, f"hints leave the transaction {room} bytes of data size, and the frame holds "
+             f"{fmt(model.LOG_COST + log0 - 1)} of regular gas at an empty LOG0, which pays its {fmt(model.LOG_COST)} of "
+             f"regular charge and is one short of its {fmt(log0)} of history: " + tail,
+             boundary=f"the log's {model.LOG_BASE_SIZE} bytes {'one past' if room < model.LOG_BASE_SIZE else 'at'} the "
+             "room the hints leave", system=True, gas=8_000_000, tune=("log", model.LOG_COST + log0 - 1),
+             code=hints_leaving(room) + log(0, 0, 0, []) + STOP)
+
+    # SATIN-HIST-014: a value call's start is paid for by its opcode before it is held to the limits. Hints leave less
+    # room than the start's two records and transfer log; a caller one short of the records' history runs out of gas
+    # first, and one that pays it sees its start stopped and the charge given back.
+    start_bytes = 2 * model.WRITE_RECORD_SIZE + model.TRANSFER_LOG_SIZE
+    eoa = {EOA: model.Account(balance=1)}
+    for name, kept, tail, extra in (
+            ("start-paid-before-hold/one-short", 2 * record - 1, "it cannot pay them and halts out of gas in the opcode: "
+             "the start is never decided, so it is not held to the limits and nothing is stopped", {}),
+            ("start-paid-before-hold/paid", 2 * record, "it pays them, the start is decided and held to the limits, its "
+             f"{start_bytes} bytes cross the data-size limit, and the started frame is stopped with "
+             f"MegaLimitExceeded(0, {fmt(model.TX_DATA_LIMIT)}), which the caller catches; the {fmt(2 * record)} come "
+             "back into the caller's reservoir when the stopped frame returns, which the first frame ends with",
+             {"pools": True})):
+        case(name, f"hints leave the transaction {start_bytes - 1} bytes of data size, and the first frame sends 1 wei and "
+             f"no gas to an existing account without code, a start that would keep two records and a transfer log, "
+             f"{start_bytes} bytes; the caller keeps {fmt(kept)} of regular gas and no reservoir for the records' "
+             f"{fmt(2 * record)} of history: " + tail,
+             boundary=f"the caller's regular gas {'one below' if kept < 2 * record else 'at'} the records' history",
+             system=True, gas=8_000_000, contract_balance=1, accounts=eoa, tune=("forward:" + EOA.hex(), kept),
+             code=hints_leaving(start_bytes - 1) + call(0, EOA, 1, 0) + b"\x50" + STOP, **extra)
+
+    # SATIN-HIST-010: a value CALL to an account empty under EIP-161 charges the new account's state gas before the
+    # forward and the records' history after it, from what the caller keeps of a forward of all it may.
+    at = kept_threshold(2 * record)
+    for name, remaining, tail in (
+            ("new-account-call/kept-one-short", at - 1, f"keeps {fmt((at - 1) * model.GAS_RETAINED_NUMERATOR // model.GAS_RETAINED_DENOMINATOR)}, "
+             f"one short of the records' {fmt(2 * record)}, and halts out of gas in the opcode"),
+            ("new-account-call/kept-at-history", at, f"keeps {fmt(2 * record)}, which pays the records' history exactly, "
+             "and the account is created")):
+        case(name, "the first frame, holding 1 wei, calls an address the state holds no account for with 1 wei, "
+             f"forwarding all it may: the new account's {fmt(model.ACCOUNT_STATE)} of state gas, its "
+             f"{fmt(model.LEGACY_NEW_ACCOUNT_SHARE)} legacy share first, is paid from regular gas before the forward, "
+             f"leaving {fmt(remaining)}, of which the forward takes all but {model.GAS_RETAINED_NUMERATOR}/"
+             f"{model.GAS_RETAINED_DENOMINATOR}; the records' history is charged after the forward, and the caller " + tail,
+             boundary=f"the regular gas left for the forward {'one below' if remaining < at else 'at'} {fmt(at)}",
+             contract_balance=1, gas=1_000_000, tune=("forward:" + ABSENT.hex(), remaining),
+             code=call(MAX_GAS, ABSENT, 1, 0) + b"\x50" + STOP)
+
+    # SATIN-HIST-011: a CREATE charges the created account's state gas before it computes the forward, which the
+    # constructor's GAS shows, stored in its fresh slot 0.
+    for name, extra, tail in (
+            ("create-forward/state-from-regular", {}, "with no reservoir, the account's whole "
+             f"{fmt(model.ACCOUNT_STATE)} of state gas, its {fmt(model.LEGACY_CREATE_SHARE)} legacy share first, comes "
+             "from regular gas before the forward"),
+            ("create-forward/state-from-reservoir", {"gas": model.EXECUTION_CAP + 1_000_000}, "with a reservoir that "
+             f"pays the account's state gas past its {fmt(model.LEGACY_CREATE_SHARE)} legacy share, the legacy share alone "
+             "comes from regular gas before the forward")):
+        case(name, "the first frame creates an account whose constructor stores GAS, the regular gas the creation was "
+             "forwarded less GAS's own, in its slot 0: " + tail + ", so the forward, all but "
+             f"{model.GAS_RETAINED_NUMERATOR}/{model.GAS_RETAINED_DENOMINATOR} of what that leaves, is what the slot shows; "
+             "the history of the start's records is charged after the forward", code=create(0, store_gas(0) + STOP) + STOP,
+             **extra)
+
+    # SATIN-HIST-018 to -021: the history allowance of a value call's child.
+    def child(code: bytes, storage=None) -> dict:
+        return {ALLOWANCE_CHILD: model.Account(nonce=1, code=code, storage=storage or {})}
+
+    value_call = call(0, ALLOWANCE_CHILD, 1, 0) + b"\x50" + STOP
+    case("allowance/one-empty-log", "the specification's example: a value call whose child has the stipend alone and no "
+         f"reservoir emits an empty LOG0, {fmt(log0)} of history, which the child's allowance of {fmt(allowance)} pays: the "
+         "child succeeds, the log's history is on no gas ledger, and its bytes are among the transaction's history bytes",
+         contract_balance=1, accounts=child(log(0, 0, 0, []) + STOP), code=value_call)
+    fits = model.HISTORY_ALLOWANCE_BYTES // model.LOG_BASE_SIZE
+    for n, tail in (
+            (fits, f"their {model.HISTORY_ALLOWANCE_BYTES} bytes are the allowance's exactly, which pays all their history, "
+                   "the transfer log of the value that granted it having drawn nothing on it: the child succeeds"),
+            (fits + 1, "the allowance pays the first " + str(fits) + f" and is spent; the last log's {fmt(log0)} must come "
+                       "from the stipend's remainder, which cannot pay it: the child halts and its start is discarded")):
+        case(f"allowance/empty-logs-{n}", f"a value call whose child has the stipend alone and no reservoir emits {n} empty "
+             f"LOG0s, {fmt(n * log0_ops)} of regular gas within the stipend: " + tail,
+             boundary=f"{n * model.LOG_BASE_SIZE} log bytes {'at' if n == fits else 'past'} the allowance's "
+                      f"{model.HISTORY_ALLOWANCE_BYTES}",
+             contract_balance=1, accounts=child(log(0, 0, 0, []) * n + STOP), code=value_call)
+    # A log two bytes past the allowance: the frame's gas pays the rest, one gas short of it and exactly. (One byte
+    # past would leave the frame one byte's history short, a figure equal to COST_PER_HISTORY_BYTE less one.)
+    data = model.HISTORY_ALLOWANCE_BYTES - model.LOG_BASE_SIZE + 2
+    over = (model.LOG_BASE_SIZE + data) * model.COST_PER_HISTORY_BYTE - allowance
+    log_cost = (model.G_VERYLOW + model.G_BASE + model.LOG_COST + model.LOG_DATA_COST * data
+                + model.memory_cost((data + 31) // 32))
+    for name, left in (("allowance/log-past-allowance/rest-one-short", over - 1),
+                       ("allowance/log-past-allowance/rest-paid", over)):
+        pad = model.CALL_STIPEND - log_cost - left
+        case(name, f"a value call whose child has the stipend alone burns {fmt(pad)} of it and emits a LOG0 of {data} "
+             f"data bytes, {fmt(log_cost)} of regular gas with its memory, leaving {fmt(left)}: its history draws "
+             f"min(history, allowance) = {fmt(allowance)} from the allowance first and {fmt(over)} from the frame's gas, "
+             + ("which is one short: the child halts" if left < over else "which it pays: the child succeeds"),
+             boundary=f"the child's regular gas after the log's charge {'one below' if left < over else 'at'} what the "
+                      "allowance leaves of its history",
+             contract_balance=1, accounts=child(jumpdests(pad) + log(0, 0, data, []) + STOP), code=value_call)
+    # A write record's history draws nothing on the allowance (SATIN-HIST-019).
+    for name, short in (("allowance/record-not-drawn/one-short", 1), ("allowance/record-not-drawn/paid", 0)):
+        need = pushes + reset + record - short
+        case(name, f"a value call whose child resets its slot 1, which holds 5, to 7, and holds {fmt(need)} of regular gas, "
+             f"the stipend included: {fmt(reset)} of regular charges and then the record's {fmt(record)} of history, which "
+             f"the frame's gas must pay, the allowance of {fmt(allowance)} paying a log's history alone: "
+             + ("one short, the child halts with its allowance untouched" if short else "paid, the child succeeds and its "
+                "allowance is untouched"),
+             boundary=f"the child's regular gas {'one below' if short else 'at'} its charges and the record's history",
+             contract_balance=1, accounts=child(sstore(1, 7) + STOP, {1: 5}),
+             code=call(need - model.CALL_STIPEND, ALLOWANCE_CHILD, 1, 0) + b"\x50" + STOP)
+    # No other start grants an allowance (SATIN-HIST-018).
+    short = log0_ops + log0 - 1
+    case("allowance/none/call-without-value", f"a call without value forwards {fmt(short)} to a child that emits an empty "
+         f"LOG0, one short of its {fmt(log0_ops)} of regular gas and {fmt(log0)} of history: the start grants no allowance, "
+         "so the child halts", boundary="the child's gas one below the log's charges",
+         accounts=child(log(0, 0, 0, []) + STOP), code=call(short, ALLOWANCE_CHILD, 0, 0) + b"\x50" + STOP)
+    case("allowance/none/delegatecall-in-value-frame", f"a transaction carrying 1 wei to a contract that runs, by "
+         f"DELEGATECALL forwarding {fmt(short)}, code that emits an empty LOG0: the delegated frame runs with the value "
+         "its frame was entered with, and a DELEGATECALL grants no allowance, so it halts one short of the log's history",
+         boundary="the delegated frame's gas one below the log's charges", value=1,
+         accounts={DELEGATED_LOGGER: model.Account(nonce=1, code=log(0, 0, 0, []) + STOP)},
+         code=delegatecall(short, DELEGATED_LOGGER) + b"\x50" + STOP)
+    case("allowance/none/own-frame", "a transaction carrying 1 wei to a contract that emits an empty LOG0: the "
+         f"transaction's own frame is granted no allowance, so the log's {fmt(log0)} of history is on its history ledger",
+         value=1, code=log(0, 0, 0, []) + STOP)
+
+    # SATIN-HIST-022: the specification's example of a deposit's history bytes.
+    case("bytes/deposit-empty-calldata", "the specification's example: a deposit with empty calldata that makes no write, "
+         f"from an existing caller to a contract that stops, reports {model.TX_BODY_SIZE} bytes of data size and "
+         f"{model.TX_BODY_SIZE} history bytes, its body", deposit=(0, 1_000_000), sender_nonce=3)
+
+    # SATIN-HIST-007: a give-back lands in the reservoir of the frame that makes it, which can pay a later record with
+    # it. P, the first frame, writes slot 0 from 7 to 8; C, run by DELEGATECALL on P's storage, writes it back and
+    # resets slot 1 from 5 to 6, whose record the give-back pays.
+    case("give-back/descendant-pays-record", f"the first frame P writes its slot 0, whose original is 7, to 8, paying the "
+         f"record's {fmt(record)} of history from regular gas; C, run by P's DELEGATECALL on P's storage with no reservoir, "
+         f"writes slot 0 back to 7, which gives the {fmt(record)} into C's own reservoir, and resets slot 1 from 5 to 6, "
+         "whose record that reservoir pays: regular gas paid one record's history in all, and the first frame ends with "
+         "no reservoir", storage={0: 7, 1: 5}, pools=True,
+         accounts={DELEGATED_LOGGER: model.Account(nonce=1, code=sstore(0, 7) + sstore(1, 6) + STOP)},
+         code=sstore(0, 8) + delegatecall(MAX_GAS, DELEGATED_LOGGER) + b"\x50" + STOP)
+
+    # SATIN-HIST-017: the floor bounds the block's figure; at these constants it never reaches the gas used.
+    n = 32
+    gap = (model.FLOOR_PER_BYTE - model.CALLDATA_NONZERO) * n  # the floor less the intrinsic regular gas
+    for name, burn_, tail in (
+            ("floor/block-counts-floor", gap - 1, "one below the floor: the block counts the floor"),
+            ("floor/block-counts-regular", gap + 1, "one above the floor: the block counts the regular ledger")):
+        case(name, f"{n} non-zero calldata bytes to a contract that burns {fmt(burn_)} of regular gas, which puts the "
+             f"regular ledger " + tail + "; the gas used is the transaction's spend, its history among it, which is above "
+             "the floor", boundary=f"the regular ledger one {'below' if burn_ < gap else 'above'} the floor",
+             data=b"\xff" * n, code=jumpdests(burn_) + STOP)
+    case("floor/deposit-block-counts-floor", f"a deposit of {n} non-zero calldata bytes from an existing caller to a "
+         "contract that stops: its regular ledger is below its floor, so the block counts the floor, its receipt's gas "
+         "used is its spend, and the deposit pays nothing either way", deposit=(0, 1_000_000), sender_nonce=3,
+         data=b"\xff" * n)
+    return out
+
+
+def accounting_cases() -> list[Case]:
+    out: list[Case] = []
+    add = out.append
+    spec = CURRENT_SPEC
+
+    def case(name: str, intent: str, **kw) -> None:
+        add(Case(f"satin/accounting/{name}", intent, spec=spec, **kw))
+
+    # SATIN-ACCT-007: a value that moves from an account to itself records nothing.
+    target = {CALLCODE_TARGET: model.Account(nonce=1, code=STOP)}
+    case("no-record/callcode-with-value", "a contract holding 10 wei sends 1 wei by CALLCODE to code that stops: the value "
+         "moves from the calling account to itself, so no account changes, no record is made and no transfer log is "
+         "emitted", contract_balance=10, accounts=target, code=callcode(MAX_GAS, CALLCODE_TARGET, 1) + b"\x50" + STOP)
+    case("no-record/call-to-self-with-value", "a contract holding 10 wei calls itself with 1 wei, and the inner frame, "
+         "seeing the value, stops: no account changes, no record is made and no transfer log is emitted",
+         contract_balance=10, code=jump_if(b"\x34", STOP, call(MAX_GAS, CONTRACT, 1, 0) + b"\x50" + STOP))
+    # SATIN-ACCT-008: the sender's account is a fixed record of the body.
+    case("sender/value-call-to-sender", "a contract holding 10 wei sends 1 wei to the transaction's sender: the sender's "
+         "account, a fixed record of the body, is not recorded again, so the transfer records the contract's account "
+         "alone, one KV update, with a transfer log", contract_balance=10,
+         code=call(0, SENDER, 1, 0) + b"\x50" + STOP)
+    # SATIN-ACCT-009: an applied authority is changed by the list.
+    authority = {AUTHORITY: model.Account(balance=1)}
+    case("authority/value-call-after-list", "an EIP-7702 transaction whose one entry, signed by an existing account at its "
+         "nonce with a zero target, is applied, and whose first frame, a contract holding 10 wei, sends that authority "
+         "1 wei: the authority's record is the list's, and the value adds none, so the transaction keeps two records, "
+         "the authority's and the contract's", ty=4, max_fee=0, max_priority=0, contract_balance=10, gas=500_000,
+         accounts=authority, authorizations=[(AUTH_KEY, CHAIN_ID, bytes(20), 0)],
+         code=call(0, AUTHORITY, 1, 0) + b"\x50" + STOP)
+    # SATIN-ACCT-010, -017: the fee accounts.
+    vault = {model.BASE_FEE_VAULT: model.Account(balance=1)}
+    case("fee-account/value-call-to-base-fee-vault", "a contract holding 10 wei sends 1 wei to the base fee vault, which "
+         "holds 1 wei, in a transaction that pays a base fee: execution's write to the vault is recorded like a write to "
+         "any other account, two records with the contract's, and the settlement's fee credit to it adds none",
+         contract_balance=10, accounts=vault, gas_price=2_000_000, base_fee=1_000_000,
+         code=call(0, model.BASE_FEE_VAULT, 1, 0) + b"\x50" + STOP)
+    case("fee-account/value-to-absent-base-fee-vault", "a transaction's 1 wei to the base fee vault, which the state holds "
+         "no account for, with a gas price above the base fee: the value is the vault's rise, its write record and its "
+         "state gas, as any recipient's; the settlement's credits to the vault and to the block beneficiary, absent too, "
+         "are no rise and no record", to=model.BASE_FEE_VAULT, code=None, value=1, gas_price=3_000_000,
+         base_fee=1_000_000)
+    # SATIN-ACCT-011: a creator's nonce record survives its creation's failure; a sibling's failure discards only
+    # its own counts, a destruction's mark kept by a frame that succeeded included.
+    case("merge/creator-record-survives-failed-creation", "a contract creates an account whose initcode reverts: nothing "
+         "is created, and the creator's nonce record, the creating frame's, survives the creation's failure, one KV "
+         "update", code=create(0, revert(0, 0)) + STOP)
+    created = model.created_address(CONTRACT, 1)
+    heir = {HEIR: model.Account(balance=1), FAILING: model.Account(nonce=1, code=revert(0, 0))}
+
+    def runtime(beneficiary: bytes) -> bytes:
+        """With calldata, SSTORE(1, CALLDATALOAD(0)); with value, STOP; else SELFDESTRUCT(beneficiary)."""
+        destroy = selfdestruct_to(beneficiary)
+        accept = 8 + len(destroy)  # CALLDATASIZE, PUSH1, JUMPI, CALLVALUE, PUSH1, JUMPI, then `destroy`
+        store = accept + 2  # JUMPDEST, STOP
+        return (b"\x36" + bytes([0x60, store]) + b"\x57" + b"\x34" + bytes([0x60, accept]) + b"\x57" + destroy
+                + b"\x5b" + STOP + b"\x5b" + push(0) + b"\x35" + push(1) + b"\x55" + STOP)
+
+    case("merge/mark-survives-failed-sibling", "P creates C and calls it, and C destroys itself to an existing account "
+         "holding nothing; P then calls a contract that reverts, whose failure discards its own counts alone, and calls "
+         "C with a word of calldata, which C writes to a slot never written: C's mark, made in a frame that succeeded, "
+         "stands, so the write charges no state gas and adds no state growth and no record",
+         accounts=heir, gas=3_000_000, destruction=True,
+         code=create(0, returning(runtime(HEIR))) + call(MAX_GAS, created, 0, 0) + b"\x50"
+         + call(MAX_GAS, FAILING, 0, 0) + b"\x50" + mstore(0, 7) + call(MAX_GAS, created, 0, 32) + b"\x50" + STOP)
+    big = 42_400
+    case("merge/large-log-then-child-log", f"the first frame emits a LOG0 of {fmt(big)} data bytes and then calls a "
+         "child that emits an empty LOG0 and succeeds: the child's bytes merge into its caller's, no log is a write "
+         "record, and the transaction keeps no KV update", gas=6_000_000,
+         accounts={ALLOWANCE_CHILD: model.Account(nonce=1, code=log(0, 0, 0, []) + STOP)},
+         code=log(0, 0, big, []) + call(MAX_GAS, ALLOWANCE_CHILD, 0, 0) + b"\x50" + STOP)
+    # SATIN-ACCT-018, -019: the signed net of state growth, at the transaction's limit.
+    limit = model.TX_STATE_GROWTH_LIMIT
+    fill = b"".join(sstore(k, 1) for k in range(1, limit + 1))
+    case("growth/fall-at-limit-then-rise", f"the first frame writes {fmt(limit)} fresh slots, its whole state-growth "
+         "budget, writes the first back to zero, a fall that crosses nothing and frees one unit, and writes one more "
+         "fresh slot, a rise the signed net holds: it fits, and the transaction keeps its whole limit",
+         gas=140_000_000, code=fill + sstore(1, 0) + sstore(limit + 1, 1) + STOP)
+    case("growth/fall-at-limit-then-two-rises", f"the same {fmt(limit)} fresh slots, fall and rise, and then one more "
+         "fresh slot: that rise takes the signed net past the budget, which the fall freed by one unit alone, and is the "
+         "crossing: it is not kept, and the frame is stopped",
+         gas=140_000_000, code=fill + sstore(1, 0) + sstore(limit + 1, 1) + sstore(limit + 2, 1) + STOP)
+    # SATIN-ACCT-020: a failed deposit's caller, empty under EIP-161, counts one unit of state growth, uncharged.
+    intrinsic = model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE
+    for name, held, tail in (("failed-deposit/empty-leaf-caller", model.Account(), "an empty leaf, empty under EIP-161: "
+                              "the failed deposit counts it as one unit of state growth, charged no state gas"),
+                             ("failed-deposit/nonce-only-caller", model.Account(nonce=1), "an account of nonce 1 and no "
+                              "balance, not empty under EIP-161: the failed deposit counts no state growth")):
+        case(name, f"a deposit one gas short of its intrinsic gas and its body's history, {fmt(intrinsic)}, fails "
+             f"validation and is a failed deposit; its caller is " + tail, deposit=(0, intrinsic - 1),
+             absent_sender=True, accounts={OTHER: held})
+    return out
+
+
 def account(nonce=0, balance=0, code=b"", storage=None) -> dict:
     return {"nonce": q(nonce), "balance": q(balance), "code": h(code),
             "storage": {"0x" + k.to_bytes(32, "big").hex(): q(v) for k, v in sorted((storage or {}).items())}}
@@ -5258,6 +5568,8 @@ AREA_SCOPE = {
     "gas-forwarding": ("SATIN-FWD", "SATIN-POOL-011"),
     "system-tx": ("SATIN-MST", "SATIN-VAL-005", "SATIN-REG-002"),
     "system-contracts": ("SATIN-MLC", "SATIN-HPTS", "SATIN-SYSC"),
+    "history": ("SATIN-HIST",),
+    "accounting": ("SATIN-ACCT",),
 }
 RULE_ID = re.compile(r"SATIN-[A-Z]+-[0-9]{3}")
 
