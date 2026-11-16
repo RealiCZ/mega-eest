@@ -124,15 +124,23 @@ specification's text and constants:
   address with the initcode's hashing among its charges; a creation whose initcode reverts or halts,
   for any creator (`SATIN-TAKE-007`); a deposit from the live system address whatever its
   destination; and a synthetic message with an authorization list.
-- **The first batch's edges a review found** (D-91): RIPEMD-160's price, read before it runs, and
-  its digest (`ripemd160` in `precompiles.py`, written out from the algorithm), and ModExp's output;
-  a `DELEGATECALL` of a precompile, which carries the value its frame inherited and moves none
-  (`SATIN-DET-024`); the transaction's own call of a precompile, decided from its price at the
-  transaction's compute; `BALANCE` of the block beneficiary and a `CALL` to it, a read marked once
-  the opcode completes, or for the call when its start is decided, at a compute that leaves out the
-  forward (`SATIN-DET-003`); `BLOBHASH` with access off, not refused; `CALL` and `CALLCODE` short of
-  their seven operands, a stack underflow before any refusal (`SATIN-MAC-003`); a created account's
-  first `SELFDESTRUCT` to itself, which burns its balance at once and silently (`SATIN-LOG-005`); a
+- **The first batch's edges two reviews found** (D-91): RIPEMD-160's price, read before it runs, and
+  its digest (`ripemd160` in `precompiles.py`, written out from the algorithm), SHA-256's and
+  ecrecover's prices and outputs (ecrecover only on an input whose `v` recovers nothing), and
+  ModExp's output; a `DELEGATECALL` of a precompile, which carries the value its frame inherited and
+  moves none (`SATIN-DET-024`); the transaction's own call of a precompile, decided from its price
+  at the transaction's compute; `BALANCE` and `EXTCODECOPY` (`0x3c`, added for the beneficiary
+  alone) of the block beneficiary, a `CALL` and a `DELEGATECALL` to it, and a transaction's
+  recipient delegating to it, reads marked once the opcode completes, or for a call when its start
+  is decided, at a compute that leaves out the forward, and none when the opcode fails
+  (`SATIN-DET-003`); `BLOBHASH` with access off, not refused; `CALL` and `CALLCODE` short of their
+  seven operands, a stack underflow before any refusal (`SATIN-MAC-003`); `SELFDESTRUCT`'s static
+  cost and its dynamic part as two charges (`SATIN-DET-018`); a created account's first
+  `SELFDESTRUCT` to itself, which burns its balance at once and silently (`SATIN-LOG-005`), and one
+  in a creation transaction's own frame, whose table gives back the charges made before that frame
+  once; a `CREATE` of any creator stopped in a limit-stop case, and the creator's resume after a
+  failed creation, held to the data-size limit (`SATIN-STOP-006`); a creation's reset of its
+  address's storage, a slot it does not write being zero afterwards (`SATIN-BASE-001`, D-93); a
   value call to the identity precompile where no limit is set in a limit-stop case, its answer
   replaced by the start's stop or its failure kept (`SATIN-STOP-014`); and the block's number as a
   case's input. A precompile's address that holds code is priced and run as the precompile
@@ -149,7 +157,7 @@ without code (`SATIN-SYSC-005`, D-97).
 
 | Not in the model | Where it is covered instead |
 | --- | --- |
-| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's and RIPEMD-160's runs, ModExp's prices and output and the price of an over-size BN254 pairing; a `CALLCODE` or `STATICCALL` of a system contract, a precompile, an account without code or a delegated account, a `CALLCODE` its caller cannot fund, and any state change, call or creation in a frame a `STATICCALL` started; a creation that collides, is stopped other than at its start, or lands on an address with a balance, other than a keyless deployment's (D-79); a `CALL` to an account that holds an EIP-7702 delegation, other than a keyless signer; a keyless deploy address the transaction changed already or that holds storage; a keyless creation stopped in KV updates, which the protocol's limits reach only after data size; and a node configuration that disables EIP-3607; a repeated `SELFDESTRUCT` to itself of an account created in the transaction, or one in a creation transaction's own frame; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
+| A general EVM: arbitrary bytecode, the whole opcode set, the precompiles other than the identity's and RIPEMD-160's runs, ModExp's prices and output and the price of an over-size BN254 pairing; a `CALLCODE` or `STATICCALL` of a system contract, a precompile, an account without code or a delegated account, a `CALLCODE` its caller cannot fund, and any state change, call or creation in a frame a `STATICCALL` started; a creation that collides, is stopped other than at its start or in a limit-stop case (D-91), or lands on an address with a balance, other than a keyless deployment's (D-79); a `CALL` to an account that holds an EIP-7702 delegation, other than a keyless signer; a keyless deploy address the transaction changed already or that holds storage; a keyless creation stopped in KV updates, which the protocol's limits reach only after data size; and a node configuration that disables EIP-3607; a repeated `SELFDESTRUCT` to itself of an account created in the transaction; a store of a marked account that moves the refund counter, and a slot of a created address accessed before the creation (D-72); a start that crosses a limit and takes records back; nesting a case does not build | Each implementation is a full EVM; the slice runs both against the model's figures (`tools/run-slice.sh`) |
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | A pre-state outside the specification: storage at a system contract's address in an account without code (`SATIN-SYSC-005`); and the pre-block deployment of the system contracts that would run on it (`SATIN-SYSC-003`, `SATIN-REG-008`), which no single transaction runs | Nothing: no execution from such a state is specified, so no case holds one (D-97). The deployment from a valid state belongs to the block profiles |
