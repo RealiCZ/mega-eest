@@ -46,15 +46,13 @@ class ReadsMixin:
             m = bucket_multiplier(self.env, bucket)
             capacity = self.env.buckets.get(bucket, MIN_BUCKET_SIZE)
             if bucket in self.served_buckets:
-                self.d.add("gasLedgers", f"{what or 'the state charge'} lands in bucket {bucket:#x}, whose capacity the "
-                           f"transaction read once already: the same m = {m}, as every later charge and give-back in the "
-                           "bucket, so a give-back cancels its charge exactly",
-                           "SATIN-STATE-006", "SATIN-STATE-010")
+                self.d.add("gasLedgers", f"{what or 'the state charge'} lands in bucket {bucket:#x}, in which the "
+                           f"transaction already made a charge: the same m = {m}, as for every later charge and give-back "
+                           "in the bucket, so a give-back cancels its charge exactly", "SATIN-STATE-006", "SATIN-STATE-010")
             else:
                 self.d.add("gasLedgers", f"{what or 'the state charge'} lands in bucket {bucket:#x}, the bucket SALT's own "
-                           f"mapping (salt-v1) assigns its key; the bucket's capacity, {capacity:,}, read once in the "
-                           f"transaction, gives m = floor({capacity:,} / {MIN_BUCKET_SIZE}) = {m}",
-                           "SATIN-STATE-002", "SATIN-STATE-006", "SATIN-STATE-010")
+                           f"mapping (salt-v1) assigns its key; the bucket's capacity, {capacity:,}, gives m = "
+                           f"floor({capacity:,} / {MIN_BUCKET_SIZE}) = {m}", "SATIN-STATE-002", "SATIN-STATE-010")
                 if self.tx.kind == "deposit":
                     self.d.add("gasLedgers", "the deposit is not system-originated: it is priced by its buckets, as any "
                                "transaction is", "SATIN-STATE-009")

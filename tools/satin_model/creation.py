@@ -334,6 +334,15 @@ class CreationMixin:
         self.load(beneficiary, "the SELFDESTRUCT's beneficiary", "SATIN-WIT-002")
         ben = self.state.get(beneficiary)
         new_ben = bool(balance) and (ben is None or ben.empty())
+        if self.pricing and balance and beneficiary != address:
+            held = ("the state holds no account at it" if ben is None else
+                    "its leaf is present with nonce 0, no balance and no code" + (" and storage" if ben.storage else "")
+                    if ben.empty() else f"its leaf holds nonce {ben.nonce}, balance {ben.balance}"
+                    + (" and code" if ben.code else ""))
+            d.add("gasLedgers", f"the SELFDESTRUCT moves {balance} wei to {h(beneficiary)}, a distinct account: {held}, so "
+                  "by EIP-161 emptiness it is " + ("new, and the destruction adds it and makes the new-account charge"
+                                                   if new_ben else "not new, and the destruction makes no new-account "
+                                                   "charge"), "SATIN-STATE-004", "SATIN-STATE-011")
         # A cold beneficiary: SELFDESTRUCT has no warm base, so its access is the whole cold account access, EIP-2929's
         # charge for it at EIP-8038's price (SATIN-SCHED-001, decision D-71).
         regular = SELFDESTRUCT_COST + (COLD_ACCOUNT_ACCESS if cold else 0) + (SELFDESTRUCT_NEW_ACCOUNT_COST if new_ben else 0)

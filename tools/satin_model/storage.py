@@ -229,13 +229,26 @@ class StorageMixin:
         d = self.d
         words = (len(code) + 31) // 32
         keccak = KECCAK_WORD * words
-        self.charge_regular(frame, keccak, "code deposit hashing")
         marked = address in self.destroyed
-        m = self.multiplier(self.salt_bucket(address, None), f"the code deposited at {h(address)}")
-        state = 0 if marked else CODE_STATE_PER_BYTE * m * len(code)
-        self.charge_state(frame, state, 0, "deposited code")
         history = COST_PER_HISTORY_BYTE * len(code)
-        self.charge_state(frame, history, 0, "deposited code's history")
+        charged, pending = [], f"the hashing {keccak}"
+        try:
+            self.charge_regular(frame, keccak, "code deposit hashing")
+            charged.append(f"hashing {keccak}")
+            m = self.multiplier(self.salt_bucket(address, None), f"the code deposited at {h(address)}")
+            state = 0 if marked else CODE_STATE_PER_BYTE * m * len(code)
+            pending = f"the state gas {fmt(state)}"
+            self.charge_state(frame, state, 0, "deposited code")
+            charged.append(f"state {fmt(state)}")
+            pending = f"the history {fmt(history)}"
+            self.charge_state(frame, history, 0, "deposited code's history")
+        except Halt:
+            if self.pricing:
+                d.add("gasLedgers", f"the code deposit of {len(code)} bytes, charged in the order hashing, state gas, "
+                      f"history: {', '.join(charged) or 'nothing'} paid, and the frame's regular gas and reservoir "
+                      f"together cannot pay {pending}, so the creation runs out of gas and no code is deposited",
+                      "SATIN-SCHED-011")
+            raise
         self.state_gas += state
         self.history_gas += history
         self.history_bytes += len(code)

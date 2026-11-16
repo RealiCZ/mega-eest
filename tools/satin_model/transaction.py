@@ -676,7 +676,7 @@ class TransactionMixin:
                       f"budget {fmt(paid)}: with the halt the reservoir's part returns to the transaction's reservoir, and "
                       f"the {fmt(paid)} regular gas paid stays spent, consumed with the frame's regular gas, no pre-execution "
                       "spill being committed or unwound as a rule of its own and nothing of it returning to the sender",
-                      "SATIN-POOL-003", "SATIN-POOL-015", "SATIN-POOL-024")
+                      "SATIN-POOL-003", "SATIN-POOL-024", *(("SATIN-POOL-015",) if pre_frame_state else ()))
             if self.outcomes and drawn[1]:
                 # SATIN-POOL-014, -015, SATIN-HIST-005: what the reservoir paid of the start returns to it with the halt.
                 d.add("gasLedgers", f"the halt takes the first frame's start back: of its record's history and the created "
@@ -739,12 +739,15 @@ class TransactionMixin:
                       f"{fmt(pre_frame_history + pre_frame_state)}, of which the reservoir paid {fmt(sum(drawn))} and the "
                       f"regular budget {fmt(pre_frame_history + pre_frame_state - sum(drawn))}, are no part of the frame's "
                       "own rollback: after it each is given back by its own rule into the transaction's reservoir, the "
-                      "part regular gas paid included, which is not credited to regular gas", "SATIN-POOL-015",
-                      "SATIN-POOL-024", "SATIN-POOL-003")
+                      "part regular gas paid included, which is not credited to regular gas", "SATIN-POOL-024",
+                      "SATIN-POOL-003", *(("SATIN-POOL-015",) if pre_frame_state else ()))
+            # A case of the pricing rules cites the give-back of a first frame's recipient or created account only where
+            # one was charged (D-108); every other case's step is as it was.
+            revert_rules = (("SATIN-POOL-014", "SATIN-POOL-015", "SATIN-HIST-005", "SATIN-POOL-017")
+                            if pre_frame_state or not self.pricing else ("SATIN-POOL-014", "SATIN-HIST-005", "SATIN-POOL-017"))
             d.add("gasLedgers", "revert: the frame's state and history charges, and the first frame's start record and "
                   "recipient or created-account state gas, are given back into the reservoir and return to the sender; its "
-                  f"regular charges {fmt(self.regular_charges)} stay spent", "SATIN-POOL-014", "SATIN-POOL-015",
-                  "SATIN-HIST-005", "SATIN-POOL-017")
+                  f"regular charges {fmt(self.regular_charges)} stay spent", *revert_rules)
             if self.stop is not None:
                 d.add("limit", f"the stop of the transaction's own frame is its result: {STOP_DIMENSIONS[self.stop[0]]}, limit "
                       f"{fmt(self.stop[1])}, return data MegaLimitExceeded({self.stop[0]}, {fmt(self.stop[1])}); the "

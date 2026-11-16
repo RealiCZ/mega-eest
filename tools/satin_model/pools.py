@@ -48,6 +48,11 @@ class PoolsMixin:
     def charge_state(self, frame, amount: int, legacy: int, what: str) -> None:
         """SATIN-POOL-008: the legacy share from regular gas, then the reservoir, then the spill."""
         if legacy > frame["regular"]:
+            if self.pricing:
+                self.d.add("gasLedgers", f"{what}: its legacy share, {fmt(legacy)}, is taken from regular gas before the "
+                           f"reservoir pays any of it, and the frame holds {fmt(frame['regular'])} of regular gas: it runs "
+                           f"out of gas, whatever its reservoir, {fmt(frame['reservoir'])}, holds", "SATIN-POOL-008",
+                           "SATIN-STATE-012")
             raise Halt(f"out of gas paying the legacy share of {what}")
         self.draw_regular(frame, legacy)
         rest = amount - legacy

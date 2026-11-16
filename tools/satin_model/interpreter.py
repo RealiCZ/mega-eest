@@ -533,6 +533,36 @@ class InterpreterMixin:
                 d.add("gasLedgers", f"{name} of the block beneficiary {h(who)}, warm from the transaction's start: its static "
                       f"cost {static}, no cold access", "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-SCHED-012")
                 self.volatile_read(frame, f"{name} of the block beneficiary's account, once it completes,")
+            elif op == 0x3C and self.pricing and frame.get("spendable") is None and not frame.get("access_off") \
+                    and stack and (stack[-1] % 2**160).to_bytes(20, "big") != self.env.coinbase:
+                # EXTCODECOPY of an account other than the block beneficiary, in a case of the schedule's own rules
+                # (D-106): its static gas, two warm reads, then the cold access, the copy and the memory.
+                who = (pop() % 2**160).to_bytes(20, "big")
+                dest, off, size = pop(), pop(), pop()
+                static = 2 * WARM_READ  # SATIN-SCHED-002: one access for the account and one for its code
+                self.charge_regular(frame, static, "EXTCODECOPY's static cost")
+                why = self.warm_from_start(who)
+                cold = who not in self.warm_accounts and who not in PRECOMPILE_SET
+                if cold:
+                    self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "EXTCODECOPY's cold access")
+                    self.warm_accounts.add(who)
+                words = (size + 31) // 32
+                if words:
+                    self.charge_regular(frame, COPY_WORD * words, "EXTCODECOPY's copy")
+                expand(dest, size, "EXTCODECOPY")
+                self.load(who, "EXTCODECOPY's account, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
+                acct = self.state.get(who)
+                ext = acct.code if acct is not None else b""
+                if size:
+                    memory[dest:dest + size] = ext[off:off + size].ljust(size, b"\x00") if off < len(ext) else bytes(size)
+                steps.append(f"EXTCODECOPY {fmt(static + (COLD_ACCOUNT_SURCHARGE if cold else 0))} + {COPY_WORD * words}"
+                             f" + memory to {mem_words} words")
+                access = (f"then the additional cold account access {fmt(COLD_ACCOUNT_SURCHARGE)}" if cold else
+                          (why[0] if why else "warm, accessed earlier in the transaction") + ", no cold access")
+                d.add("gasLedgers", f"EXTCODECOPY of {h(who)}, {size} bytes from offset {off}: its static gas {static}, one "
+                      f"warm read for the account and one for its code, {access}, and its copy {COPY_WORD} x {words} words "
+                      "with its memory, a zero-length copy paying the static gas and the access all the same",
+                      "SATIN-SCHED-002", "SATIN-SCHED-003", *(why[1] if why and not cold else ()))
             elif op == 0x3C:  # EXTCODECOPY, of the block beneficiary
                 who = (pop() % 2**160).to_bytes(20, "big")
                 dest, off, size = pop(), pop(), pop()
