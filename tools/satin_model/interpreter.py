@@ -851,7 +851,7 @@ class InterpreterMixin:
                 created, left, returndata = self.create(frame, address, value, init, target=target, name=name)
                 frame["regular"] += left
                 self.regular_charges -= left
-                self.resume(frame, "the CREATE")  # a failed creation that left a hint over the limit (SATIN-STOP-006)
+                self.resume(frame, f"the {name}")  # a failed creation that left a hint over the limit (SATIN-STOP-006)
                 stack.append(int.from_bytes(created, "big"))
                 steps.append(f"{name} {fmt(opcode_charges)} + the creation")
             elif op == 0xFF:  # SELFDESTRUCT
