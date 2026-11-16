@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-bcf260d], source commit `bcf260d3de62c50cd1700e4f8
 (committed `2026-11-16T12:04:00+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **503** (503 gating, 0 quarantined).
+Cases: **547** (547 gating, 0 quarantined).
 Cited rule IDs: **250**. Uncited rule IDs in that registry: **161**
 (151 active, 10 retired).
 
@@ -684,6 +684,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/deposits/new-caller/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/deposits/new-caller/minimum-bucket] | gating | unqualified | [satin-d34e626] |
+| [satin/system-tx/promoted/empty-address-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-unpaid] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-DEP-004
 
@@ -1338,15 +1340,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/no-value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/no-value-request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/create/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/delegatecall/frame-with-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-1] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-49] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/request-below-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
 
@@ -1356,15 +1377,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/no-value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/no-value-request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/create/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/delegatecall/frame-with-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-1] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-49] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/request-below-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
 
@@ -1374,14 +1414,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/no-value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/no-value-request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/delegatecall/frame-with-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-1] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-49] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/request-below-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
 
@@ -1390,12 +1447,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/gas-forwarding/create/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/share-of-99] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-FWD-005
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/gas-forwarding/callcode/value-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
@@ -1406,15 +1473,34 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/no-value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/no-value-request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/callcode/value-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/create/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/delegatecall/frame-with-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-1] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-49] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/small-remainder/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/staticcall/request-below-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
 
@@ -3071,12 +3157,19 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/promoted/delegated-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-unpaid] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/value-funded] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/value-unfunded] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-MST-003
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/live-address-creating-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/live-address-self-addressed-deposit] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-from-live-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/shape/access-list-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/shape/authorization-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
@@ -3088,7 +3181,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/beside-system-caller-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-access-list-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-authorization-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-legacy-message] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-reads-no-capacity] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/user-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/other-caller/retired-address-below-intrinsic] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/other-caller/retired-address-charged] | gating | unqualified | [satin-bcf260d] |
@@ -3098,44 +3196,107 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/promoted/chain-id-off-by-one] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/delegated-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-unpaid] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/nonce-below-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/value-funded] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/value-unfunded] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-MST-007
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/live-address-creating-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/live-address-self-addressed-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-1001-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-child-981-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-child-reverted] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-code-history] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-from-live-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-incomplete-salt] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-not-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-past-data-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-reads-no-capacity] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-access-list-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-authorization-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-legacy-message] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-reads-no-capacity] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-1001-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-child-981-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-child-reverted] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-code-history] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/user-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/delegated-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-unpaid] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/value-funded] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/value-unfunded] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-MST-008
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/source-hash-deposit-1001-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-child-981-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-child-reverted] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-code-history] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-incomplete-salt] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-not-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-past-data-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-reads-no-capacity] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-access-list-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-authorization-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-legacy-message] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-reads-no-capacity] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/delegated-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-unpaid] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/value-funded] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-MST-009
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/source-hash-deposit-1001-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-child-981-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-child-reverted] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-code-history] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-incomplete-salt] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-not-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-past-data-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-reads-no-capacity] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-access-list-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-authorization-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-legacy-message] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-reads-no-capacity] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/delegated-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/empty-address-paid] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-MST-010
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/live-address-creating-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/live-address-self-addressed-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-1001-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-child-981-slots] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-child-reverted] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-code-history] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/user-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-ORCL-002
@@ -3466,7 +3627,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/gas-forwarding/callcode/value-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create2/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-50] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
@@ -3637,8 +3804,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/beside-system-caller-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/live-address-creating-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/live-address-self-addressed-deposit] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-from-live-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-access-list-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-authorization-message] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-legacy-message] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-reads-no-capacity] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/user-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/other-caller/retired-address-below-intrinsic] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/other-caller/retired-address-charged] | gating | unqualified | [satin-bcf260d] |
@@ -4806,6 +4980,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/live-address-creating-deposit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/live-address-self-addressed-deposit] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/origin/source-hash-deposit-from-live-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/shape/access-list-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
 | [satin/system-tx/shape/authorization-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
@@ -5266,15 +5442,34 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/detention/withheld/state-gas-one-past-limit]: ../slice/cases/satin/detention/withheld/state-gas-one-past-limit.json
 [satin/gas-forwarding/call/request-above-cap]: ../slice/cases/satin/gas-forwarding/call/request-above-cap.json
 [satin/gas-forwarding/call/request-below-cap]: ../slice/cases/satin/gas-forwarding/call/request-below-cap.json
+[satin/gas-forwarding/callcode/no-value-request-above-cap]: ../slice/cases/satin/gas-forwarding/callcode/no-value-request-above-cap.json
+[satin/gas-forwarding/callcode/no-value-request-below-cap]: ../slice/cases/satin/gas-forwarding/callcode/no-value-request-below-cap.json
+[satin/gas-forwarding/callcode/remaining-49]: ../slice/cases/satin/gas-forwarding/callcode/remaining-49.json
+[satin/gas-forwarding/callcode/remaining-50]: ../slice/cases/satin/gas-forwarding/callcode/remaining-50.json
+[satin/gas-forwarding/callcode/remaining-99]: ../slice/cases/satin/gas-forwarding/callcode/remaining-99.json
+[satin/gas-forwarding/callcode/value-request-above-cap]: ../slice/cases/satin/gas-forwarding/callcode/value-request-above-cap.json
+[satin/gas-forwarding/callcode/value-request-below-cap]: ../slice/cases/satin/gas-forwarding/callcode/value-request-below-cap.json
+[satin/gas-forwarding/callcode/value-requesting-nothing]: ../slice/cases/satin/gas-forwarding/callcode/value-requesting-nothing.json
 [satin/gas-forwarding/create/endowed]: ../slice/cases/satin/gas-forwarding/create/endowed.json
+[satin/gas-forwarding/create2/endowed]: ../slice/cases/satin/gas-forwarding/create2/endowed.json
+[satin/gas-forwarding/create2/remaining-50]: ../slice/cases/satin/gas-forwarding/create2/remaining-50.json
+[satin/gas-forwarding/create2/remaining-99]: ../slice/cases/satin/gas-forwarding/create2/remaining-99.json
+[satin/gas-forwarding/create2/share-of-99]: ../slice/cases/satin/gas-forwarding/create2/share-of-99.json
 [satin/gas-forwarding/delegatecall/frame-with-value]: ../slice/cases/satin/gas-forwarding/delegatecall/frame-with-value.json
 [satin/gas-forwarding/reservoir/share-of-1]: ../slice/cases/satin/gas-forwarding/reservoir/share-of-1.json
+[satin/gas-forwarding/reservoir/share-of-49]: ../slice/cases/satin/gas-forwarding/reservoir/share-of-49.json
+[satin/gas-forwarding/reservoir/share-of-50]: ../slice/cases/satin/gas-forwarding/reservoir/share-of-50.json
 [satin/gas-forwarding/reservoir/share-of-99]: ../slice/cases/satin/gas-forwarding/reservoir/share-of-99.json
 [satin/gas-forwarding/reservoir/value-call-requesting-nothing]: ../slice/cases/satin/gas-forwarding/reservoir/value-call-requesting-nothing.json
 [satin/gas-forwarding/small-remainder/remaining-1]: ../slice/cases/satin/gas-forwarding/small-remainder/remaining-1.json
 [satin/gas-forwarding/small-remainder/remaining-49]: ../slice/cases/satin/gas-forwarding/small-remainder/remaining-49.json
 [satin/gas-forwarding/small-remainder/remaining-50]: ../slice/cases/satin/gas-forwarding/small-remainder/remaining-50.json
 [satin/gas-forwarding/small-remainder/remaining-99]: ../slice/cases/satin/gas-forwarding/small-remainder/remaining-99.json
+[satin/gas-forwarding/staticcall/remaining-49]: ../slice/cases/satin/gas-forwarding/staticcall/remaining-49.json
+[satin/gas-forwarding/staticcall/remaining-50]: ../slice/cases/satin/gas-forwarding/staticcall/remaining-50.json
+[satin/gas-forwarding/staticcall/remaining-99]: ../slice/cases/satin/gas-forwarding/staticcall/remaining-99.json
+[satin/gas-forwarding/staticcall/request-above-cap]: ../slice/cases/satin/gas-forwarding/staticcall/request-above-cap.json
+[satin/gas-forwarding/staticcall/request-below-cap]: ../slice/cases/satin/gas-forwarding/staticcall/request-below-cap.json
 [satin/gas-forwarding/system-originated/reservoir-share-of-99]: ../slice/cases/satin/gas-forwarding/system-originated/reservoir-share-of-99.json
 [satin/gas-forwarding/value-call/ten-thousand-left]: ../slice/cases/satin/gas-forwarding/value-call/ten-thousand-left.json
 [satin/gas-pools/answered-call-history-returns]: ../slice/cases/satin/gas-pools/answered-call-history-returns.json
@@ -5554,17 +5749,42 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/sstore/reset/non-zero-to-non-zero]: ../slice/cases/satin/sstore/reset/non-zero-to-non-zero.json
 [satin/sstore/sload-then-fresh-write]: ../slice/cases/satin/sstore/sload-then-fresh-write.json
 [satin/sstore/two-fresh-slots/two-buckets]: ../slice/cases/satin/sstore/two-fresh-slots/two-buckets.json
+[satin/system-tx/origin/beside-system-caller-message]: ../slice/cases/satin/system-tx/origin/beside-system-caller-message.json
+[satin/system-tx/origin/live-address-creating-deposit]: ../slice/cases/satin/system-tx/origin/live-address-creating-deposit.json
+[satin/system-tx/origin/live-address-self-addressed-deposit]: ../slice/cases/satin/system-tx/origin/live-address-self-addressed-deposit.json
+[satin/system-tx/origin/source-hash-deposit-1001-slots]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-1001-slots.json
+[satin/system-tx/origin/source-hash-deposit-child-981-slots]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-child-981-slots.json
+[satin/system-tx/origin/source-hash-deposit-child-reverted]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-child-reverted.json
+[satin/system-tx/origin/source-hash-deposit-code-history]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-code-history.json
 [satin/system-tx/origin/source-hash-deposit-crowded-bucket]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-crowded-bucket.json
 [satin/system-tx/origin/source-hash-deposit-from-live-address]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-from-live-address.json
+[satin/system-tx/origin/source-hash-deposit-incomplete-salt]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-incomplete-salt.json
 [satin/system-tx/origin/source-hash-deposit-not-detained]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-not-detained.json
 [satin/system-tx/origin/source-hash-deposit-past-data-size-limit]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-past-data-size-limit.json
+[satin/system-tx/origin/source-hash-deposit-reads-no-capacity]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-reads-no-capacity.json
+[satin/system-tx/origin/system-caller-access-list-message]: ../slice/cases/satin/system-tx/origin/system-caller-access-list-message.json
+[satin/system-tx/origin/system-caller-authorization-message]: ../slice/cases/satin/system-tx/origin/system-caller-authorization-message.json
+[satin/system-tx/origin/system-caller-deposit]: ../slice/cases/satin/system-tx/origin/system-caller-deposit.json
+[satin/system-tx/origin/system-caller-legacy-message]: ../slice/cases/satin/system-tx/origin/system-caller-legacy-message.json
 [satin/system-tx/origin/system-caller-message-crowded-bucket]: ../slice/cases/satin/system-tx/origin/system-caller-message-crowded-bucket.json
+[satin/system-tx/origin/system-caller-message-reads-no-capacity]: ../slice/cases/satin/system-tx/origin/system-caller-message-reads-no-capacity.json
+[satin/system-tx/origin/user-deposit-1001-slots]: ../slice/cases/satin/system-tx/origin/user-deposit-1001-slots.json
+[satin/system-tx/origin/user-deposit-child-981-slots]: ../slice/cases/satin/system-tx/origin/user-deposit-child-981-slots.json
+[satin/system-tx/origin/user-deposit-child-reverted]: ../slice/cases/satin/system-tx/origin/user-deposit-child-reverted.json
+[satin/system-tx/origin/user-deposit-code-history]: ../slice/cases/satin/system-tx/origin/user-deposit-code-history.json
 [satin/system-tx/origin/user-deposit-crowded-bucket]: ../slice/cases/satin/system-tx/origin/user-deposit-crowded-bucket.json
 [satin/system-tx/origin/user-message-crowded-bucket]: ../slice/cases/satin/system-tx/origin/user-message-crowded-bucket.json
 [satin/system-tx/other-caller/retired-address-below-intrinsic]: ../slice/cases/satin/system-tx/other-caller/retired-address-below-intrinsic.json
 [satin/system-tx/other-caller/retired-address-charged]: ../slice/cases/satin/system-tx/other-caller/retired-address-charged.json
 [satin/system-tx/other-caller/untrusted-registry]: ../slice/cases/satin/system-tx/other-caller/untrusted-registry.json
+[satin/system-tx/promoted/chain-id-off-by-one]: ../slice/cases/satin/system-tx/promoted/chain-id-off-by-one.json
+[satin/system-tx/promoted/delegated-address]: ../slice/cases/satin/system-tx/promoted/delegated-address.json
+[satin/system-tx/promoted/empty-address-paid]: ../slice/cases/satin/system-tx/promoted/empty-address-paid.json
+[satin/system-tx/promoted/empty-address-unpaid]: ../slice/cases/satin/system-tx/promoted/empty-address-unpaid.json
+[satin/system-tx/promoted/nonce-below-address]: ../slice/cases/satin/system-tx/promoted/nonce-below-address.json
 [satin/system-tx/promoted/oracle-read]: ../slice/cases/satin/system-tx/promoted/oracle-read.json
+[satin/system-tx/promoted/value-funded]: ../slice/cases/satin/system-tx/promoted/value-funded.json
+[satin/system-tx/promoted/value-unfunded]: ../slice/cases/satin/system-tx/promoted/value-unfunded.json
 [satin/system-tx/shape/access-list-call-to-oracle]: ../slice/cases/satin/system-tx/shape/access-list-call-to-oracle.json
 [satin/system-tx/shape/authorization-call-to-oracle]: ../slice/cases/satin/system-tx/shape/authorization-call-to-oracle.json
 [satin/system-tx/shape/fee-market-call-to-oracle]: ../slice/cases/satin/system-tx/shape/fee-market-call-to-oracle.json

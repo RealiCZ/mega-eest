@@ -1,0 +1,174 @@
+{
+  "caseId": "satin/gas-forwarding/create2/share-of-99",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xc82a",
+      "floor": "0x3a98",
+      "gasUsed": "0x733ea",
+      "history": "0xa190",
+      "historyBytes": "0x1d6",
+      "refund": "0x0",
+      "regular": "0xc82a",
+      "state": "0x5ca30",
+      "total": "0x733ea"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x733ea",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "470",
+        "reported": "0x1d6"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "4",
+        "reported": "0x4"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "3",
+        "reported": "0x3"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f60016001555a60025500000000000000000000000000000000000000000000005f52615a17600a5f5ff55000",
+          "nonce": "0x2",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0xefa95827501b854507fd362e1f2a0e3694a51f8d": {
+          "balance": "0x0",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {
+            "0x0000000000000000000000000000000000000000000000000000000000000001": "0x1",
+            "0x0000000000000000000000000000000000000000000000000000000000000002": "0xbac49ce"
+          }
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f60016001555a60025500000000000000000000000000000000000000000000005f52615a17600a5f5ff55000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8618080840beec7839400000000000000000000000000000000000c0de1808025a0b861795779dc8e2008133c6af467fa8897d820c82125fe42f6a7fa1ca7c56d4fa0381ee3a7e287d7345c4e3611cee5ffd7a756899af0975ec5fe0a47363ff8cccc"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "a reservoir of 99",
+      "intent": "a CREATE2 whose creator's reservoir, after the created account's state gas past its legacy share and the history of the start's two records, is 99: the creation receives the share 99 - 99 x 2 / 100 = 98, outside its regular forward (SATIN-FWD-005, SATIN-FWD-006, SATIN-POOL-011); its initcode writes a fresh slot, whose state gas the share pays first after its legacy share, and stores its GAS after the write, which shows the rest paid from its regular gas"
+    },
+    "definition": "tools/make_slice.py::forwarding_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-FWD-001",
+    "SATIN-FWD-002",
+    "SATIN-FWD-004",
+    "SATIN-FWD-005",
+    "SATIN-FWD-006",
+    "SATIN-POOL-011"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

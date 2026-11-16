@@ -1,0 +1,171 @@
+{
+  "caseId": "satin/gas-forwarding/callcode/value-requesting-nothing",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x6f44",
+      "floor": "0x3a98",
+      "gasUsed": "0xda84",
+      "history": "0x6b40",
+      "historyBytes": "0x1d8",
+      "refund": "0x0",
+      "regular": "0x6f44",
+      "state": "0x0",
+      "total": "0xda84"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000311",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xda84",
+      "logs": [
+        {
+          "address": "0x00000000000000000000000000000000000c0de1",
+          "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "topics": []
+        }
+      ],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "472",
+        "reported": "0x1d8"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x1",
+          "code": "0x5f5f5f5f6001620c0e095ff2503d5f5f3e3d5ff3",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0e09": {
+          "balance": "0x0",
+          "code": "0x60825fa05a5f5260205ff3",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8618080840bec2cf39400000000000000000000000000000000000c0de1808026a0341af2b002e2464cd7f677bb67da5ba915a6c53b5583c1bf6cd20e4c99281b66a01ba75216087196f062b964f4165287df1f70ca55cfd6238a1e3de2f3e6f2c08b"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "a reservoir of 99",
+      "intent": "a CALLCODE with 1 wei requesting no gas, its caller's reservoir 99 after the start's charges, which make no record: the frame receives the 2,300 stipend as its regular gas and the share 99 - 99 x 2 / 100 = 98 all the same, neither bounded by the request (SATIN-FWD-005, SATIN-FWD-006); it logs 162 bytes of history, 2 past the 160 a value CALLCODE's allowance covers, 176 of history gas that the share pays first and regular gas the rest, so its GAS shows the share"
+    },
+    "definition": "tools/make_slice.py::forwarding_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-FWD-001",
+    "SATIN-FWD-002",
+    "SATIN-FWD-003",
+    "SATIN-FWD-005",
+    "SATIN-FWD-006",
+    "SATIN-POOL-011"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

@@ -1291,6 +1291,21 @@ def create(value: int, init: bytes) -> bytes:
     return bytes_to_memory(init) + push(len(init)) + push(0) + push(value) + b"\xf0\x50"
 
 
+def create2(value: int, init: bytes, salt: int) -> bytes:
+    """CREATE2 of `init`, laid out in memory from offset 0, with `value` wei and `salt`; the created address is popped."""
+    return bytes_to_memory(init) + push(salt) + push(len(init)) + push(0) + push(value) + b"\xf5\x50"
+
+
+def callcode(gas: int, target: bytes, value: int) -> bytes:
+    """CALLCODE(gas, target, value, 0, 0, 0, 0)."""
+    return push(0) + push(0) + push(0) + push(0) + push(value) + push(int.from_bytes(target, "big")) + push(gas) + b"\xf2"
+
+
+def staticcall(gas: int, target: bytes) -> bytes:
+    """STATICCALL(gas, target, 0, 0, 0, 0)."""
+    return push(0) + push(0) + push(0) + push(0) + push(int.from_bytes(target, "big")) + push(gas) + b"\xfa"
+
+
 def jump_if(cond: bytes, then: bytes, otherwise: bytes) -> bytes:
     """`cond`, then `otherwise` when it is zero, or a jump to `then` when it is not."""
     dest = len(cond) + 3 + len(otherwise)
@@ -2798,6 +2813,9 @@ def outcome_edge_cases() -> list[Case]:
 REPORT_GAS = b"\x5a" + push(0) + b"\x52" + push(32) + push(0) + b"\xf3"  # MSTORE(0, GAS), RETURN(0, 32)
 STORE_REPORTER = bytes.fromhex("00000000000000000000000000000000000c0e08")  # writes a fresh slot, then returns GAS
 STIPEND_LOGGER = bytes.fromhex("00000000000000000000000000000000000c0e09")  # logs past its history allowance
+CREATE2_CREATOR = bytes.fromhex("00000000000000000000000000000000000c0e0a")  # creates by CREATE2 initcode that halts
+SLOT_WRITER = bytes.fromhex("00000000000000000000000000000000000c0e0b")  # writes fresh slots
+WRITE_LOG_REVERTER = bytes.fromhex("00000000000000000000000000000000000c0e0c")  # writes a fresh slot and logs, then reverts
 
 
 def cap_of(remaining: int) -> int:
@@ -2910,6 +2928,127 @@ def forwarding_cases() -> list[Case]:
              "(SATIN-FWD-003): the share pays the history past it, which the stipend left after the log's regular "
              "charges could not, and the log is kept", spec=spec, gas=model.EXECUTION_CAP + 1_000_000,
              contract_balance=1, accounts=dict(logger), code=call(0, STIPEND_LOGGER, 1, 0) + STOP))
+
+    # SATIN-FWD-006: the reservoir share either side of 50, where the subtraction forwards the whole reservoir below it.
+    for left in (49, 50):
+        share = cap_of(left)
+        add(Case(f"satin/gas-forwarding/reservoir/share-of-{left}", f"a transaction whose gas limit leaves its own frame a "
+                 f"reservoir of {left} after the body's history: its CALL gives the child the share {left} - {left} x {num} "
+                 f"/ {den} = {share} and keeps {left - share}" + (", the whole reservoir, a remaining below 50 being "
+                                                                  "forwarded whole" if share == left else "") +
+                 " (SATIN-FWD-006, SATIN-POOL-011); the child writes a fresh slot, whose state gas the share pays first "
+                 "after its legacy share, so its GAS after the write shows the rest paid from its regular gas (SATIN-FWD-005)",
+                 boundary=f"a reservoir of {left}", spec=spec, gas=model.EXECUTION_CAP + body + left,
+                 accounts=dict(store_report), code=call(MAX_GAS, STORE_REPORTER, 0, 0) + b"\x50" + RETURN_RETURNDATA))
+
+    # SATIN-FWD-001 to -003, -006: CALLCODE's own path. It moves its value from the calling account to itself, so it makes
+    # no record and charges no history after the forward (SATIN-ACCT-007); its value adds the stipend as CALL's does.
+    report_code = lambda gas, value=0: callcode(gas, REPORTER, value) + b"\x50" + RETURN_RETURNDATA
+    held = 10_000
+    cap = cap_of(held)
+    for value in (0, 1):
+        for over in (False, True):
+            request = cap + (1 if over else -1)
+            child = min(request, cap) + (stipend if value else 0)
+            add(Case(f"satin/gas-forwarding/callcode/{'value' if value else 'no-value'}-request-"
+                     f"{'above' if over else 'below'}-cap",
+                     f"a CALLCODE of a reporter's code " + (f"with {value} wei, which moves from the calling account to "
+                                                            "itself, " if value else "without value, ") +
+                     f"requesting {fmt(request)} from a caller holding {fmt(held)} of regular gas after the opcode's "
+                     "charges" + (f", the value-transfer cost {fmt(model.CALL_VALUE_COST)} among them" if value else "") +
+                     f": the cap is {fmt(held)} - {fmt(held)} x {num} / {den} = {fmt(cap)}, and the frame receives "
+                     f"min(request, cap) = {fmt(min(request, cap))}" +
+                     (f" + CALL_STIPEND {fmt(stipend)} = {fmt(child)}, the stipend added after the cap" if value else
+                      ", with no stipend") + f"; its GAS shows {fmt(child - model.G_BASE)} (SATIN-FWD-001, "
+                     "SATIN-FWD-002, SATIN-FWD-003)", boundary=f"the request one {'above' if over else 'below'} the cap",
+                     spec=spec, contract_balance=value, accounts=dict(reporter), code=report_code(request, value),
+                     tune=("callcode-forward", held)))
+    for remaining in (49, 50, 99):
+        cap = cap_of(remaining)
+        add(Case(f"satin/gas-forwarding/callcode/remaining-{remaining}", f"a CALLCODE requesting all it may from a caller "
+                 f"holding {remaining} of regular gas after the opcode's charges: it forwards {remaining} - {remaining} x "
+                 f"{num} / {den} = {cap}" + (", the whole remaining" if cap == remaining else "") + ", where the "
+                 f"multiplication would give {remaining * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR} "
+                 f"(SATIN-FWD-001, SATIN-FWD-006); the frame's GAS shows {cap - model.G_BASE}",
+                 boundary=f"a remaining of {remaining}", spec=spec, accounts=dict(reporter), code=report_code(MAX_GAS),
+                 tune=("callcode-forward", remaining)))
+    # The share of a CALLCODE that forwards no regular gas: the frame receives the stipend and its history allowance, and
+    # logs two bytes of history past the allowance, which the share pays first and its regular gas the rest.
+    left = 99
+    share = cap_of(left)
+    size = model.HISTORY_ALLOWANCE_BYTES - model.LOG_BASE_SIZE + 2
+    past = 2 * model.COST_PER_HISTORY_BYTE
+    allowance_logger = {STIPEND_LOGGER: model.Account(nonce=1, code=log(0, 0, size, []) + REPORT_GAS)}
+    add(Case("satin/gas-forwarding/callcode/value-requesting-nothing", f"a CALLCODE with 1 wei requesting no gas, its "
+             f"caller's reservoir {left} after the start's charges, which make no record: the frame receives the "
+             f"{fmt(stipend)} stipend as its regular gas and the share {left} - {left} x {num} / {den} = {share} all the same, "
+             "neither bounded by the request (SATIN-FWD-005, SATIN-FWD-006); it logs "
+             f"{model.LOG_BASE_SIZE + size} bytes of history, 2 past the {model.HISTORY_ALLOWANCE_BYTES} a value "
+             f"CALLCODE's allowance covers, {fmt(past)} of history gas that the share pays first and regular gas the rest, "
+             "so its GAS shows the share", boundary=f"a reservoir of {left}", spec=spec,
+             gas=model.EXECUTION_CAP + body + left, contract_balance=1, accounts=dict(allowance_logger),
+             code=callcode(0, STIPEND_LOGGER, 1) + b"\x50" + RETURN_RETURNDATA))
+
+    # SATIN-FWD-001, -003, -006: STATICCALL's own path, with no value and no stipend, read by a reporter that changes no
+    # state.
+    report_static = lambda gas: staticcall(gas, REPORTER) + b"\x50" + RETURN_RETURNDATA
+    remaining = 200_000
+    cap = cap_of(remaining)
+    for over in (False, True):
+        request = cap + (1 if over else -1)
+        add(Case(f"satin/gas-forwarding/staticcall/request-{'above' if over else 'below'}-cap", f"a STATICCALL requesting "
+                 f"{fmt(request)} from a caller holding {fmt(remaining)} of regular gas after the opcode's charges: the cap is "
+                 f"{fmt(remaining)} - {fmt(remaining)} x {num} / {den} = {fmt(cap)}, and the frame receives min(request, cap) "
+                 f"= {fmt(min(request, cap))} and no stipend; its GAS shows {fmt(min(request, cap) - model.G_BASE)} "
+                 "(SATIN-FWD-001, SATIN-FWD-003)", boundary=f"the request one {'above' if over else 'below'} the cap",
+                 spec=spec, accounts=dict(reporter), code=report_static(request), tune=("static-forward", remaining)))
+    for remaining in (49, 50, 99):
+        cap = cap_of(remaining)
+        add(Case(f"satin/gas-forwarding/staticcall/remaining-{remaining}", f"a STATICCALL requesting all it may from a "
+                 f"caller holding {remaining} of regular gas after the opcode's charges: it forwards {remaining} - "
+                 f"{remaining} x {num} / {den} = {cap}" + (", the whole remaining" if cap == remaining else "") + ", where "
+                 f"the multiplication would give {remaining * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR} "
+                 f"(SATIN-FWD-001, SATIN-FWD-006); the frame's GAS shows {cap - model.G_BASE}",
+                 boundary=f"a remaining of {remaining}", spec=spec, accounts=dict(reporter), code=report_static(MAX_GAS),
+                 tune=("static-forward", remaining)))
+
+    # SATIN-FWD-004, -006: CREATE2's normal path. A small remainder: a creator called with a tuned gas operand, holding a
+    # reservoir share that pays the created account's state gas past its legacy share and the start's records, creates
+    # initcode that halts and burns its forward; the creator keeps the rest of its regular gas and stops.
+    salt = 0x5A17
+    creator2 = {CREATE2_CREATOR: model.Account(nonce=1, code=create2(0, INVALID, salt) + STOP)}
+    for remaining in (50, 99):
+        cap = cap_of(remaining)
+        add(Case(f"satin/gas-forwarding/create2/remaining-{remaining}", f"a CREATE2 whose creator holds {remaining} of "
+                 "regular gas after the opcode's charges and the created account's state gas, which come before the "
+                 f"forward: it forwards {remaining} - {remaining} x {num} / {den} = {cap} and no stipend, and the creator "
+                 f"keeps {remaining - cap}, where the multiplication would keep "
+                 f"{remaining - remaining * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR} and EIP-150's "
+                 f"63/64 {remaining // 64} (SATIN-FWD-001, SATIN-FWD-002, SATIN-FWD-004, SATIN-FWD-006); the initcode "
+                 "halts and burns the forward, the creation fails, and the creator stops on what it kept; its reservoir "
+                 "share pays the start's records after the forward", boundary=f"a remaining of {remaining}", spec=spec,
+                 gas=model.EXECUTION_CAP + body + 200_000, accounts=dict(creator2),
+                 make=lambda gas: call(gas, CREATE2_CREATOR, 0, 0) + STOP, params={"gas": 300_000},
+                 retune=[("create-forward", remaining, "gas", 1)]))
+    remaining = 1_000_000
+    cap = cap_of(remaining)
+    add(Case("satin/gas-forwarding/create2/endowed", f"a CREATE2 endowing 1 wei with salt {salt:#x}, its creator holding "
+             f"{fmt(remaining)} of regular gas after the opcode's charges, the initcode's hashing among them, and the created "
+             f"account's state gas, which come before the forward: it forwards the cap {fmt(cap)} and no stipend, and the "
+             f"initcode stores its GAS, {fmt(cap - model.G_BASE)}, in a fresh slot of the account at the address the salt "
+             "and the initcode decide, whatever the creator's nonce (SATIN-FWD-002, SATIN-FWD-004)", spec=spec,
+             contract_balance=1, code=create2(1, b"\x5a" + push(0) + b"\x55" + STOP, salt) + STOP,
+             tune=("create-forward", remaining)))
+    left = 99
+    records = 2 * model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE  # the created account's and the creator's nonce
+    created = model.ACCOUNT_STATE - model.LEGACY_CREATE_SHARE  # what the reservoir pays of the created account's state gas
+    add(Case(f"satin/gas-forwarding/create2/share-of-{left}", f"a CREATE2 whose creator's reservoir, after the created "
+             f"account's state gas past its legacy share and the history of the start's two records, is {left}: the "
+             f"creation receives the share {left} - {left} x {num} / {den} = {cap_of(left)}, outside its regular forward "
+             "(SATIN-FWD-005, SATIN-FWD-006, SATIN-POOL-011); its initcode writes a fresh slot, whose state gas the share "
+             "pays first after its legacy share, and stores its GAS after the write, which shows the rest paid from its "
+             "regular gas", boundary=f"a reservoir of {left}", spec=spec, gas=model.EXECUTION_CAP + body + created + records + left,
+             code=create2(0, sstore(1, 1) + store_gas(2) + STOP, salt) + STOP))
     return out
 
 
@@ -3040,6 +3179,143 @@ def system_tx_cases() -> list[Case]:
              sender_nonce=3, spec=spec, system_tx=True,
              accounts={STORE_REPORTER: model.Account(nonce=1, code=sstore(1, 1) + REPORT_GAS)},
              code=call(MAX_GAS, STORE_REPORTER, 0, 0) + b"\x50" + RETURN_RETURNDATA))
+
+    # SATIN-MST-002, -005, SATIN-DEP-003: a Mega System Transaction from a system address empty under EIP-161 executes as
+    # a deposit whose caller it creates, charged once at m = 1 though the caller's bucket is crowded, before the frame.
+    get_slot = model.selector("getSlot(uint256)") + word(slot)
+    promoted = dict(to=model.ORACLE, gas_price=price, data=get_slot, accounts={**live, **oracle}, **common)
+    caller_state = model.ACCOUNT_STATE
+    for gas, paid in ((200_000, False), (300_000, True)):
+        add(Case(f"satin/system-tx/promoted/empty-address-{'paid' if paid else 'unpaid'}", "a Mega System Transaction to the "
+                 f"Oracle's getSlot({slot}) with a gas limit of {fmt(gas)}, from the live system address, which is empty "
+                 "under EIP-161 and whose account bucket is at twice the minimum capacity: promoted, it executes as a "
+                 "deposit whose caller is empty, charged that account's new-account state gas once, before its first frame, "
+                 f"at m = 1, {fmt(caller_state)} (SATIN-DEP-003, SATIN-MST-005, SATIN-MST-008); " +
+                 ("its gas limit pays it, so the caller is created, its nonce 1, one unit of state growth and no write "
+                  "record, no fee charged, and the bucket's capacity is not read" if paid else
+                  "its gas limit cannot pay it, so it is a failed deposit, which uses its whole gas limit as regular gas "
+                  "with no state or history gas, and keeps the created caller, its nonce bump and its unit of state growth"),
+                 boundary="the caller's state gas " + ("paid" if paid else "unpaid"), gas=gas, sender_balance=0,
+                 salt={("sender", None): 2}, reads=paid, **promoted))
+    # SATIN-MST-005: the checks before the promotion, a failure a rejection, and the EIP-7702 exception to EIP-3607.
+    add(Case("satin/system-tx/promoted/chain-id-off-by-one", f"the system shape from the live system address signed for "
+             f"chain {CHAIN_ID + 1}, the chain's id plus one, every other field valid: a Mega System Transaction must carry "
+             "the chain's id, so it is rejected before any promotion, and nothing runs or is charged (SATIN-MST-005)",
+             gas=200_000, nonce=1, sender_nonce=1, sender_balance=0, chain_id=CHAIN_ID + 1, **promoted))
+    add(Case("satin/system-tx/promoted/nonce-below-address", "the system shape from the live system address, whose nonce is "
+             "1, carrying nonce 0: its nonce must equal the system address's, so it is rejected before any promotion and "
+             "the address's nonce is not bumped (SATIN-MST-005)", gas=200_000, nonce=0, sender_nonce=1, sender_balance=0,
+             **promoted))
+    add(Case("satin/system-tx/promoted/delegated-address", "the system shape from the live system address, which holds an "
+             "EIP-7702 delegation indicator, its nonce matched: the one code EIP-3607 lets a sender hold, so it is promoted "
+             f"and runs as a deposit, the Oracle answering getSlot({slot}) with no fee charged (SATIN-MST-002, "
+             "SATIN-MST-005)", gas=200_000, nonce=1, sender_nonce=1, sender_balance=0,
+             sender_code=model.DELEGATION_PREFIX + DELEGATE, **promoted))
+    # SATIN-MST-005: no mint; the value the promoted deposit carries is its sender's to fund.
+    for balance in (1, 0):
+        add(Case(f"satin/system-tx/promoted/value-{'funded' if balance else 'unfunded'}", "a Mega System Transaction to the "
+                 f"Oracle's getSlot({slot}) carrying 1 wei from a system address holding {balance}: promoted with no mint, "
+                 + ("the value moves at its frame's start and the Oracle's method, which takes no value, reverts: the "
+                    "deposit's revert keeps the nonce bump and its body's history, takes the value back, and charges no fee"
+                    if balance else "its frame's start cannot fund the value, so it is a failed deposit, using its whole gas "
+                    "limit as regular gas, the nonce bumped and no value minted for it") + " (SATIN-MST-005)",
+                 boundary=f"a value of 1 against a balance of {balance}", gas=200_000, value=1, nonce=1, sender_nonce=1,
+                 sender_balance=balance, **promoted))
+
+    # SATIN-MST-008: a system-originated transaction reads no bucket's capacity at all: the reads show none served, and a
+    # SALT input that does not hold the bucket is never asked for it.
+    add(Case("satin/system-tx/origin/source-hash-deposit-reads-no-capacity", "a deposit carrying "
+             "MEGA_SYSTEM_TRANSACTION_SOURCE_HASH writes a fresh slot in a bucket at twice the minimum capacity: "
+             "system-originated, its state charge is priced at m = 1 and no bucket's capacity is read, so its reads serve "
+             "no SALT capacity (SATIN-MST-007, SATIN-MST-008)", source_hash=SYSTEM_TX_SOURCE, code=sstore(1, 1) + STOP,
+             salt={(CONTRACT, 1): 2}, reads=True, **deposit))
+    add(Case("satin/system-tx/origin/system-caller-message-reads-no-capacity", "a type-2 execution message from "
+             "SYSTEM_CALLER writes a fresh slot in a bucket at twice the minimum capacity: system-originated, its state "
+             "charge is priced at m = 1 and no bucket's capacity is read, so its reads serve no SALT capacity "
+             "(SATIN-MST-007, SATIN-MST-008)", synthetic=True, sender=model.SYSTEM_CALLER, ty=2, spec=spec, system_tx=True,
+             code=sstore(1, 1) + STOP, salt={(CONTRACT, 1): 2}, reads=True))
+    add(Case("satin/system-tx/origin/source-hash-deposit-incomplete-salt", "a deposit carrying "
+             "MEGA_SYSTEM_TRANSACTION_SOURCE_HASH writes a fresh slot, its SALT input incomplete and holding no bucket: "
+             "system-originated, it reads no bucket's capacity, so the missing bucket is never asked for and the deposit "
+             "succeeds at m = 1 (SATIN-MST-008), where a user's write would need the capacity the input does not hold",
+             source_hash=SYSTEM_TX_SOURCE, code=sstore(1, 1) + STOP, salt_complete=False, **deposit))
+
+    # SATIN-MST-007: SYSTEM_CALLER's transaction is the protocol's whatever its type, a deposit's among them; the address
+    # one above it is a user's.
+    caller_kw = dict(synthetic=True, sender=model.SYSTEM_CALLER, spec=spec, system_tx=True, code=sstore(1, 1) + STOP,
+                     salt={(CONTRACT, 1): 2})
+    for name, what, kw in (("legacy", "a legacy execution message", {"ty": 0}),
+                           ("access-list", "a type-1 execution message with an access list", {
+                               "ty": 1, "access_list": [(REPORTER, [])]}),
+                           ("authorization", "a type-4 execution message with one valid authorization entry", {
+                               "ty": 4, "authorizations": [(AUTH_KEY, CHAIN_ID, DELEGATE, 0)]})):
+        add(Case(f"satin/system-tx/origin/system-caller-{name}-message", f"{what} from SYSTEM_CALLER writes a fresh slot in "
+                 "a bucket at twice the minimum capacity: system-originated on its sender whatever its type, it is priced "
+                 "at m = 1 (SATIN-MST-007, SATIN-MST-008)", **{**caller_kw, **kw}))
+    add(Case("satin/system-tx/origin/system-caller-deposit", "a deposit from SYSTEM_CALLER carrying another source hash than "
+             "MEGA_SYSTEM_TRANSACTION_SOURCE_HASH writes a fresh slot in a bucket at twice the minimum capacity: "
+             "system-originated on its caller, it is priced at m = 1, and it settles as a deposit, with a deposit's receipt "
+             "(SATIN-MST-007, SATIN-MST-008)", sender=model.SYSTEM_CALLER, code=sstore(1, 1) + STOP,
+             salt={(CONTRACT, 1): 2}, **deposit))
+    beside = (int.from_bytes(model.SYSTEM_CALLER, "big") + 1).to_bytes(20, "big")
+    add(Case("satin/system-tx/origin/beside-system-caller-message", f"a type-2 execution message from {h(beside)}, the "
+             "address one above SYSTEM_CALLER, writes a fresh slot in a bucket at twice the minimum capacity: only "
+             "SYSTEM_CALLER itself is the protocol's caller, so this is a user's transaction, validated and charged as "
+             "one and priced at the bucket's m = 2 (SATIN-MST-004)", **{**caller_kw, "sender": beside, "ty": 2}))
+
+    # SATIN-MST-008, -009: no frame budget or transaction limit stops the protocol's own transaction, in a child as in its
+    # own frame, and what it uses is reported; a user's deposit is stopped at the same edges (SATIN-MST-010).
+    writes = lambda n: b"".join(sstore(k, 1) for k in range(1, n + 1)) + STOP
+    budget = model.TX_STATE_GROWTH_LIMIT * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
+    many = dict(deposit=(0, 130_000_000), sender_nonce=3, spec=spec, system_tx=True)
+    for system in (True, False):
+        who = "source-hash" if system else "user"
+        add(Case(f"satin/system-tx/origin/{who}-deposit-child-{budget + 1}-slots", "a deposit " +
+                 ("carrying MEGA_SYSTEM_TRANSACTION_SOURCE_HASH" if system else "carrying another source hash") +
+                 f" calls a child that writes {budget + 1} fresh slots, one past the {budget} of state growth a child's "
+                 "budget holds: " + ("system-originated, no frame budget stops it, every write is kept and the growth is "
+                                     "reported (SATIN-MST-008, SATIN-MST-009)" if system else
+                                     "a user's deposit, its child is stopped at the write past its budget, its writes "
+                                     "discarded, and the deposit runs on (SATIN-MST-010)"),
+                 boundary=f"{budget + 1} fresh slots in a child", source_hash=SYSTEM_TX_SOURCE if system else None,
+                 accounts={SLOT_WRITER: model.Account(nonce=1, code=writes(budget + 1))},
+                 code=call(MAX_GAS, SLOT_WRITER, 0, 0) + b"\x50" + STOP, **many))
+        add(Case(f"satin/system-tx/origin/{who}-deposit-{model.TX_STATE_GROWTH_LIMIT + 1}-slots", "a deposit " +
+                 ("carrying MEGA_SYSTEM_TRANSACTION_SOURCE_HASH" if system else "carrying another source hash") +
+                 f" writes {fmt(model.TX_STATE_GROWTH_LIMIT + 1)} fresh slots in its own frame, one past TX_STATE_GROWTH_LIMIT "
+                 f"{fmt(model.TX_STATE_GROWTH_LIMIT)}: " +
+                 ("system-originated, no transaction limit stops it, every write is kept and its growth is reported past "
+                  "the limit, not clamped to it (SATIN-MST-008, SATIN-MST-009)" if system else
+                  "a user's deposit, its frame is stopped at the last write and the deposit settles as a revert "
+                  "(SATIN-MST-010)"), boundary=f"{fmt(model.TX_STATE_GROWTH_LIMIT + 1)} fresh slots",
+                 source_hash=SYSTEM_TX_SOURCE if system else None, code=writes(model.TX_STATE_GROWTH_LIMIT + 1), **many))
+
+    # SATIN-MST-008, -010: history is charged at every point it is for any transaction, the protocol's own included: a
+    # created account's code, and a failed child's rollback, which gives back what the child charged.
+    for system in (True, False):
+        who = "source-hash" if system else "user"
+        what = "carrying MEGA_SYSTEM_TRANSACTION_SOURCE_HASH" if system else "carrying another source hash"
+        add(Case(f"satin/system-tx/origin/{who}-deposit-code-history", f"a deposit {what} creates an account whose initcode "
+                 f"deploys 1 byte of code: the code's byte is history the deposit pays, {model.COST_PER_HISTORY_BYTE} gas, "
+                 "with the created account's record and the creator's nonce record, " +
+                 ("system-originated or not (SATIN-MST-008)" if system else "as any transaction (SATIN-MST-010)"),
+                 source_hash=SYSTEM_TX_SOURCE if system else None, code=create(0, init_returning(STOP)) + STOP, **deposit))
+        add(Case(f"satin/system-tx/origin/{who}-deposit-child-reverted", f"a deposit {what} calls a child that writes a "
+                 "fresh slot and logs, then reverts: the rollback discards the write and the log and gives back the state "
+                 "and history gas the child charged for them, so the deposit keeps only its body's history, " +
+                 ("system-originated or not (SATIN-MST-008)" if system else "as any transaction (SATIN-MST-010)"),
+                 source_hash=SYSTEM_TX_SOURCE if system else None,
+                 accounts={WRITE_LOG_REVERTER: model.Account(nonce=1, code=sstore(1, 1) + log(0, 0, 0, []) + revert(0, 0))},
+                 code=call(MAX_GAS, WRITE_LOG_REVERTER, 0, 0) + b"\x50" + STOP, **deposit))
+
+    # SATIN-MST-003, SATIN-VAL-005: a deposit from the live system address fails whatever its destination.
+    for name, what, to in (("creating", "a creation, its recipient empty", None),
+                           ("self-addressed", "addressed to the live system address itself", SENDER)):
+        add(Case(f"satin/system-tx/origin/live-address-{name}-deposit", f"a deposit from the live system address, {what}, "
+                 "with a mint: a deposit never has the system shape, so it is a failed deposit, which keeps the mint and the "
+                 "nonce bump, creates or calls nothing, and reports its body as its history bytes (SATIN-MST-003, "
+                 "SATIN-VAL-005)", deposit=(ETH, 1_000_000), sender_nonce=3, spec=spec, system_tx=True, to=to, data=b"",
+                 code=None, accounts=dict(live)))
     return out
 
 
@@ -3519,7 +3795,10 @@ def synthetic_message(c: Case, sender: bytes) -> dict:
             "maxFeePerGas": None if legacy_fee else q(c.max_fee),
             "maxPriorityFeePerGas": None if legacy_fee else q(c.max_priority),
             "accessList": [{"address": h(a), "storageKeys": ["0x" + k.to_bytes(32, "big").hex() for k in keys]}
-                           for a, keys in c.access_list], "authorizationList": []}
+                           for a, keys in c.access_list],
+            "authorizationList": [{"chainId": q(e[1]), "address": h(e[2]), "nonce": q(e[3]),
+                                   "authority": h(authority_of(e)) if authority_of(e) else None}
+                                  for e in c.authorizations]}
 
 
 def build(c: Case):
@@ -3551,16 +3830,16 @@ def build(c: Case):
 
     if c.deposit:
         mint, gas = c.deposit
-        raw = (ex.deposit(c.source_hash, sender, c.to, mint, c.value, gas, c.data) if not c.system_flag else
-               b"\x7e" + ex.rlp([c.source_hash, sender, c.to, mint, c.value, gas, 1, c.data]))
+        to = c.to if c.to is not None else b""  # a creating deposit's recipient field is empty
+        raw = (ex.deposit(c.source_hash, sender, to, mint, c.value, gas, c.data) if not c.system_flag else
+               b"\x7e" + ex.rlp([c.source_hash, sender, to, mint, c.value, gas, 1, c.data]))
         tx = model.Tx("deposit", 0x7E, sender, c.to, 0, gas, c.value, c.data, None, mint=mint, system_flag=c.system_flag,
                       source_hash=c.source_hash)
         source = {"kind": "deposit", "raw": h(raw)}
     elif c.synthetic:
-        if c.authorizations:
-            raise SystemExit(f"{c.case_id}: a synthetic message with authorizations")
         tx = model.Tx("synthetic", c.ty, sender, c.to, c.nonce, c.gas, c.value, c.data, c.chain_id, gas_price=c.gas_price,
-                      max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list)
+                      max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list,
+                      authorizations=[(e[1], e[2], e[3], authority_of(e)) for e in c.authorizations])
         source = synthetic_message(c, sender)
     else:
         if c.ty == 0:

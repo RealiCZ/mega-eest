@@ -130,8 +130,10 @@ class TransactionMixin:
             return ("validation", "nonce-too-low" if tx.nonce < sender.nonce else "nonce-too-high", own,
                     f"transaction nonce {tx.nonce} is not the system address's nonce {sender.nonce}")
         self.promoted = True
+        held = ("that address holds no code" if not sender.code else "that address holds an EIP-7702 delegation "
+                "indicator, the one code EIP-3607 lets a sender hold")
         d.add("outcome", "a legacy call to the Oracle from the live system address, of the system shape, is a Mega System "
-              "Transaction; it carries the chain's id, its nonce is the system address's and that address holds no code, so "
+              f"Transaction; it carries the chain's id, its nonce is the system address's and {held}, so "
               "it is promoted to a deposit from the system address, with no mint, no fee and no other validation check of "
               "its own: system-originated", "SATIN-MST-002", "SATIN-MST-005", "SATIN-MST-007", "SATIN-VAL-008")
         return None

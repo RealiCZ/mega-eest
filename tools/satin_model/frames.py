@@ -7,8 +7,8 @@ from __future__ import annotations
 from .constants import (
     COST_PER_HISTORY_BYTE, DATA_SIZE_STOP, delegate_of, DETENTION_STOP, FRAME_SHARE_DENOMINATOR, FRAME_SHARE_NUMERATOR,
     GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR, HISTORY_ALLOWANCE_BYTES, INTERCEPTED, KV_UPDATE_STOP,
-    limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, ORACLE, STATE_GROWTH_STOP, STOP_DIMENSIONS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE,
-    TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT, WRITE_RECORD_SIZE,
+    limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, ORACLE, PRECOMPILE_SET, STATE_GROWTH_STOP, STOP_DIMENSIONS,
+    SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT, WRITE_RECORD_SIZE,
 )
 from .records import Account, fmt, h, Halt, LimitStop, pad_address, Stopped, Unmodelled
 
@@ -357,4 +357,44 @@ class FramesMixin:
             self.d.add("gasLedgers", f"{name} returns {len(out)} bytes and {fmt(child['regular'])} of regular gas to its "
                        "caller", "SATIN-POOL-012", "SATIN-OUT-001")
         left = self.end_child(frame, child, status, snap, name)
+        return status == "success", out, left
+
+    # --- CALLCODE and STATICCALL --------------------------------------------------------------------
+
+    def code_call(self, frame, name: str, address: bytes, target: bytes, value: int, data: bytes, child_gas: int,
+                  share: int):
+        """A `CALLCODE` or a `STATICCALL` once its opcode's charges, the forward and the reservoir share are made. A
+        `CALLCODE` runs `target`'s code on the calling account, as its own caller, with its value, which moves from
+        that account to itself: no account changes, no record is made and nothing is logged (SATIN-ACCT-007,
+        SATIN-LOG-003), and a value grants the frame a history allowance (SATIN-HIST-018). A `STATICCALL` runs
+        `target`'s code on `target`, with no value and no allowance, in a static frame. Returns (success, return
+        data, the regular gas the child returns)."""
+        d = self.d
+        callee = self.state.get(target)
+        if (target in INTERCEPTED or target in SYSTEM_CONTRACTS or target in PRECOMPILE_SET or callee is None
+                or not callee.code or delegate_of(callee.code) is not None):
+            raise Unmodelled(f"a {name} of a system contract, a precompile, an account without code or a delegated "
+                             "account")
+        static = name == "STATICCALL"
+        if value > self.state.get(address, Account()).balance:
+            raise Unmodelled("a CALLCODE its caller cannot fund")
+        fname = f"the STATICCALL frame of {h(target)}" if static else f"the CALLCODE frame of {h(target)}'s code on {h(address)}"
+        child = self.new_child(frame, child_gas, share, allowance=bool(value))
+        child["name"] = fname
+        snap = self.frame_snapshot()
+        if value:
+            d.add("state", f"the CALLCODE's value {value} moves from {h(address)} to that same account: no account "
+                  "changes, no record is made and no transfer is logged, so the opcode charges no record's history; the "
+                  "start grants its frame a history allowance, which enters no gas", "SATIN-ACCT-007", "SATIN-ACCT-015",
+                  "SATIN-LOG-003", "SATIN-HIST-009", "SATIN-HIST-018")
+        else:
+            d.add("state", f"the {name} moves no value and makes no record, and its frame has no history allowance",
+                  "SATIN-HIST-009", "SATIN-HIST-018")
+        ctx = {"address": target if static else address, "caller": address, "value": value, "calldata": data,
+               "name": fname, "static": static}
+        status, out = self.run_child(child, callee.code, ctx, fname)
+        if status == "success":
+            d.add("gasLedgers", f"{fname} returns {len(out)} bytes and {fmt(child['regular'])} of regular gas to its "
+                  "caller", "SATIN-POOL-012", "SATIN-OUT-001")
+        left = self.end_child(frame, child, status, snap, fname)
         return status == "success", out, left

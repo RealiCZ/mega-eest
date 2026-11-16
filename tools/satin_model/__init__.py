@@ -81,7 +81,9 @@ the slice uses:
 - for the system-transaction page and gas forwarding (D-82, D-83): a transaction from the live system
   address without the system shape, a promoted Mega System Transaction that runs, and the protocol's
   own transactions (a promoted one, a deposit carrying `MEGA_SYSTEM_TRANSACTION_SOURCE_HASH`, a
-  synthetic message from `SYSTEM_CALLER`), priced at m = 1, not detained and held to no limit;
+  synthetic message from `SYSTEM_CALLER`, of any type, and a deposit from it), priced at m = 1, not
+  detained and held to no limit; and the forward of `CALLCODE`, `STATICCALL` and `CREATE2`, and a
+  creation whose initcode fails (D-84);
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check

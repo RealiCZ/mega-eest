@@ -163,8 +163,6 @@ class SettlementMixin:
 
     def run_deposit(self, intrinsic: int, floor: int, regular: int, reservoir: int, body_history: int) -> Result:
         tx, env, d = self.tx, self.env, self.d
-        if tx.to is None or tx.to == tx.sender:
-            raise Unmodelled("a creating or self-addressed deposit")
         sender = self.state[tx.sender]
         was_empty = self.pre.get(tx.sender) is None or self.pre[tx.sender].empty()
         nonce_before = self.pre.get(tx.sender, Account()).nonce
@@ -188,6 +186,11 @@ class SettlementMixin:
                   "so it is invalid, and being a deposit it is not rejected but included as a failed deposit, which runs no "
                   "call", "SATIN-REG-002", "SATIN-VAL-005", "SATIN-VAL-008", "SATIN-MST-003", "SATIN-DEP-008",
                   "SATIN-DEP-004")
+            if tx.to is None or tx.to == tx.sender:
+                d.add("outcome", "the deposit " + ("is a creation" if tx.to is None else "is addressed to its own caller")
+                      + ", which decides nothing here: whatever its destination, a deposit from the live system address "
+                      "fails before any of it runs, so nothing is created and nothing is called", "SATIN-MST-003",
+                      "SATIN-VAL-005")
             if self.exempt and self.system_tx:
                 d.add("outcome", "the deposit carries MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, the promotion's, from the live "
                       "system address: system-originated, and a deposit from that address all the same, so a failed "
@@ -196,6 +199,8 @@ class SettlementMixin:
             if was_empty:
                 self.growth += 1
             return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
+        if tx.to is None or tx.to == tx.sender:
+            raise Unmodelled("a creating or self-addressed deposit")
         if tx.gas_limit < intrinsic + body_history:
             # SATIN-DEP-001, SATIN-VAL-008: a deposit whose gas limit cannot pay its intrinsic regular gas and its body's
             # history fails validation and is included as a failed deposit, never rejected.
