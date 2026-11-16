@@ -1,0 +1,186 @@
+{
+  "caseId": "satin/selfdestruct/charges/new-beneficiary-state-one-short",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x3d857",
+      "floor": "0x3a98",
+      "gasUsed": "0xa5d5f",
+      "history": "0xa2f0",
+      "historyBytes": "0x1da",
+      "refund": "0x0",
+      "regular": "0x3d857",
+      "state": "0x5e218",
+      "total": "0xa5d5f"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xa5d5f",
+      "logs": [
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de1",
+            "0x00000000000000000000000093da612d2a72aa99d5ba73757f2e644fb4d6a934"
+          ]
+        }
+      ],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "634",
+        "reported": "0x27a"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "4",
+        "reported": "0x4"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "3",
+        "reported": "0x3"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f600160015560016002557f61deadff00000000000000000000000000000000005f52745f5260045ff300000000000000000000000000000060205260315f6001f0505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93462030f9af15000",
+          "nonce": "0x2",
+          "storage": {}
+        },
+        "0x93da612d2a72aa99d5ba73757f2e644fb4d6a934": {
+          "balance": "0x1",
+          "code": "0x61deadff",
+          "nonce": "0x1",
+          "storage": {
+            "0x0000000000000000000000000000000000000000000000000000000000000001": "0x1",
+            "0x0000000000000000000000000000000000000000000000000000000000000002": "0x1"
+          }
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x1",
+          "code": "0x7f600160015560016002557f61deadff00000000000000000000000000000000005f52745f5260045ff300000000000000000000000000000060205260315f6001f0505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93462030f9af15000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080833d09009400000000000000000000000000000000000c0de1808026a04d1e3b3cb5df123090a8c7c5f7feffa1bceca42162320d5ac80fd6a6dd99b1d3a05a44bbaa4d5d804a1c7d4fce66be7cb520cc7e1cf90400f688e40a15695f7457"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "the child's gas one below the destruction's charges",
+      "intent": "P creates C with 1 wei and two fresh slots, and calls C with 200,602 of regular gas; C destroys itself to a cold address the state holds no account for, whose regular charges are 17,000 and whose new account's state gas, 183,600, regular gas pays, the transaction having no reservoir: one gas short of the new account's state gas: the child halts in the destruction's charges, before the table, whose give-back it never receives, and C survives with its slots"
+    },
+    "definition": "tools/make_slice.py::selfdestruct_gap_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-SD-018",
+    "SATIN-SD-019",
+    "SATIN-SD-020",
+    "SATIN-STATE-001",
+    "SATIN-STATE-002",
+    "SATIN-STATE-003",
+    "SATIN-STATE-008",
+    "SATIN-STATE-012"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

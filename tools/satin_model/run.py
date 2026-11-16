@@ -27,8 +27,12 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
 
     def __init__(self, env: Env, pre: dict[bytes, Account], tx: Tx, salt_bucket, principles: bool = False,
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
-                 stops: bool = False, lists: bool = False, outcomes: bool = False, system_tx: bool = False):
+                 stops: bool = False, lists: bool = False, outcomes: bool = False, system_tx: bool = False,
+                 current: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
+        # A case citing the snapshot `c130558`, which retires SATIN-STOP-016: a value precompile's crossing is held to the
+        # price by SATIN-STOP-014 and SATIN-DET-022 there (D-78).
+        self.current = current
         # A case of the authorization page's own rules (decision D-88): its derivation cites the list's simulation,
         # each entry's gates and checks, and the warmth the application leaves (SATIN-AUTH-001 to -018).
         self.lists = lists

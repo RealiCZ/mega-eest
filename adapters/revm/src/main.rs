@@ -984,11 +984,23 @@ fn state_diff(o: &MegaTransactionOutcome, pre: &BTreeMap<Address, PreAccount>) -
             None if acc.info.code_hash == revm::primitives::KECCAK_EMPTY => Vec::new(),
             None => before.map(|b| b.code.clone()).ok_or_else(|| bad(format!("{a}: code not loaded")))?,
         };
+        // A creation that survives resets the address's storage (the base EVM's create transition
+        // destroys it first): every declared pre-state slot the run did not write is zero afterwards,
+        // which the complete change set lists as a cleared slot. Final values are compared with the
+        // pre-state, so a slot written back to its pre-state value is unchanged.
+        let mut finals: BTreeMap<U256, U256> = acc.storage.iter().map(|(k, slot)| (*k, slot.present_value)).collect();
+        if acc.is_created() {
+            if let Some(b) = before {
+                for k in b.storage.keys() {
+                    finals.entry(*k).or_insert(U256::ZERO);
+                }
+            }
+        }
         let mut slots = BTreeMap::new();
-        for (k, slot) in acc.storage.iter() {
+        for (k, v) in &finals {
             let original = before.and_then(|b| b.storage.get(k).copied()).unwrap_or_default();
-            if slot.present_value != original {
-                slots.insert(hex_bytes(&k.to_be_bytes::<32>()), qty_u256(slot.present_value));
+            if *v != original {
+                slots.insert(hex_bytes(&k.to_be_bytes::<32>()), qty_u256(*v));
             }
         }
         let changed = match before {

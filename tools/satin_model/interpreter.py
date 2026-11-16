@@ -403,6 +403,31 @@ class InterpreterMixin:
                 d.add("gasLedgers", f"{name} of the block beneficiary {h(who)}, warm from the transaction's start: its static "
                       f"cost {static}, no cold access", "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-SCHED-012")
                 self.volatile_read(frame, f"{name} of the block beneficiary's account, once it completes,")
+            elif op == 0x3C:  # EXTCODECOPY, of the block beneficiary
+                who = (pop() % 2**160).to_bytes(20, "big")
+                dest, off, size = pop(), pop(), pop()
+                if who != self.env.coinbase or frame.get("access_off") or not self.current:
+                    raise Unmodelled("an EXTCODECOPY of an account other than the block beneficiary, or refused")
+                static = 2 * WARM_READ  # SATIN-SCHED-002: one access for the account and one for its code
+                self.charge_regular(frame, static, "EXTCODECOPY's static cost")
+                words = (size + 31) // 32
+                try:
+                    if words:
+                        self.charge_regular(frame, COPY_WORD * words, "EXTCODECOPY's copy")
+                    expand(dest, size, "EXTCODECOPY")
+                except Halt:
+                    d.add("gasLedgers", f"EXTCODECOPY of the block beneficiary {h(who)} runs out of gas at its copy or its "
+                          "memory, before it completes: a read whose opcode fails marks nothing", "SATIN-DET-003",
+                          "SATIN-DET-020")
+                    raise
+                acct = self.state.get(who)
+                ext = acct.code if acct is not None else b""
+                memory[dest:dest + size] = ext[off:off + size].ljust(size, b"\x00") if off < len(ext) else bytes(size)
+                steps.append(f"EXTCODECOPY {static} + {COPY_WORD * words} + memory to {mem_words} words")
+                d.add("gasLedgers", f"EXTCODECOPY of the block beneficiary {h(who)}, warm from the transaction's start: its "
+                      f"static cost {static}, its copy {COPY_WORD} x {words} words and its memory, no cold access",
+                      "SATIN-SCHED-002", "SATIN-SCHED-012")
+                self.volatile_read(frame, "EXTCODECOPY of the block beneficiary's account, once it completes,")
             elif op == 0x49:  # BLOBHASH
                 i = pop()
                 self.charge_regular(frame, G_VERYLOW, "BLOBHASH")
@@ -412,6 +437,9 @@ class InterpreterMixin:
                 steps.append(f"BLOBHASH {G_VERYLOW}")
                 d.add("gasLedgers", f"BLOBHASH of index {i} pushes zero, the transaction carrying no blob hash; it reads the "
                       "transaction's own blob hashes and is no volatile read: nothing is marked", "SATIN-DET-002")
+                if frame.get("access_off"):
+                    d.add("outcome", "the frame's volatile-data access is off, and BLOBHASH, no volatile read, is not "
+                          "refused: only a volatile read is", "SATIN-DET-002", "SATIN-MAC-003")
             elif op == 0x47:  # SELFBALANCE
                 if frame.get("access_off") and address == self.env.coinbase:
                     raise Unmodelled("a refused SELFBALANCE")
@@ -448,8 +476,6 @@ class InterpreterMixin:
                               "SATIN-WIT-012")
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "BALANCE's cold access")
                     self.warm_accounts.add(who)
-                if who == self.env.coinbase:
-                    raise Unmodelled("a BALANCE of the beneficiary that reads")
                 note = self.authority_warmth.get(who) if self.lists else None
                 if note is not None and cold == note[0].startswith("is not"):
                     d.add("gasLedgers", f"BALANCE's account {h(who)}, an authority of the list, {note[0]}: its access costs "
@@ -457,6 +483,13 @@ class InterpreterMixin:
                 self.load(who, "BALANCE's account, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
                 stack.append(self.state.get(who, Account()).balance)
                 steps.append(f"BALANCE {fmt(WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0))}")
+                if who == self.env.coinbase:
+                    if cold:
+                        raise Unmodelled("a BALANCE of a cold block beneficiary")
+                    d.add("gasLedgers", f"BALANCE of the block beneficiary {h(who)}, warm from the transaction's start, "
+                          f"costs its static cost {WARM_READ} alone and is a read of the beneficiary's account",
+                          "SATIN-DET-001", "SATIN-SCHED-012")
+                    self.volatile_read(frame, "BALANCE of the block beneficiary's account, once it completes,")
             elif op == 0x5A:  # GAS
                 self.charge_regular(frame, G_BASE, "GAS")
                 stack.append(frame["regular"])
@@ -485,6 +518,15 @@ class InterpreterMixin:
                 self.charge_regular(frame, G_VERYLOW, f"SWAP{n}")
                 stack[-1], stack[-1 - n] = stack[-1 - n], stack[-1]
                 steps.append(f"SWAP{n} {G_VERYLOW}")
+            elif op in (0xF1, 0xF2) and len(stack) < 7:  # CALL, CALLCODE short of their seven operands
+                name = "CALL" if op == 0xF1 else "CALLCODE"
+                if frame.get("access_off"):
+                    d.add("outcome", f"{name} finds {len(stack)} of its seven operands on the stack in a frame whose "
+                          "volatile-data access is off: an opcode volatile only for the account it reads, its target's or "
+                          "the delegate's it follows, must first have every operand it takes, and one that fails on its "
+                          "operands fails as it would with access on: a stack underflow, a halt, before any read is "
+                          "refused", "SATIN-MAC-003", "SATIN-DET-001")
+                raise Halt(f"stack underflow at {name}")
             elif op == 0xF1:  # CALL
                 gas_req, target_w, value, a_off, a_size, r_off, r_size = [pop() for _ in range(7)]
                 target = (target_w % 2**160).to_bytes(20, "big")
@@ -614,6 +656,10 @@ class InterpreterMixin:
                 share = self.reservoir_share(frame, f"the start of the CALL to {h(target)}")
                 self.history_number = False
                 if target in PRECOMPILE_SET:
+                    if callee is not None and callee.code:
+                        d.add("outcome", f"the precompile's address {h(target)} holds code: the call reaches precompile "
+                              "dispatch and runs the precompile, priced by it, whatever code the state holds there",
+                              "SATIN-PCMP-008")
                     ok, out, left = self.precompile_call(frame, address, target, value, bytes(memory[a_off:a_off + a_size]),
                                                          child_gas, records, history, share)
                 else:
@@ -627,6 +673,12 @@ class InterpreterMixin:
                 if self.detention and target == HISTORY_STORAGE_ADDRESS and not self.history_number:
                     d.add("gasLedgers", "the call to the EIP-2935 history contract ended without its code completing a "
                           "NUMBER: the call itself is not marked, so it is no read", "SATIN-DET-005", "SATIN-DET-003")
+                if (self.detention and self.current and value and not ok and self.limit is not None
+                        and target not in PRECOMPILE_SET):
+                    d.add("gasLedgers", f"the value call's callee failed: what it ran on the {fmt(CALL_STIPEND)} stipend "
+                          f"before it failed was compute, as the rest of what it ran is, and the {fmt(left)} it returned, "
+                          "what a halt burned not among it, lowers nothing", "SATIN-DET-010", "SATIN-DET-011",
+                          "SATIN-DET-009")
                 if self.detention and value and ok and self.limit is not None and target not in PRECOMPILE_SET:
                     d.add("gasLedgers", f"the value call returns: what its callee ran on the {fmt(CALL_STIPEND)} stipend was "
                           f"compute, and the {fmt(left)} it left, the rest of the stipend among it, comes back to the caller "
@@ -700,7 +752,11 @@ class InterpreterMixin:
                 self.charge_regular(frame, WARM_READ, "DELEGATECALL")
                 expand(a_off, a_size, "DELEGATECALL input")
                 expand(r_off, r_size, "DELEGATECALL output")
-                cold = target not in self.warm_accounts
+                cold = target not in self.warm_accounts and target not in PRECOMPILE_SET
+                if target in PRECOMPILE_SET:
+                    d.add("gasLedgers", f"the precompile at {h(target)} is warm from the transaction's start: the "
+                          "DELEGATECALL makes no cold access, its own regular charges coming first, as any opcode's",
+                          "SATIN-SCHED-012", "SATIN-DET-021")
                 if cold:
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
                     self.warm_accounts.add(target)
@@ -719,8 +775,12 @@ class InterpreterMixin:
                       "makes no record", "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002",
                       "SATIN-FWD-003", "SATIN-FWD-006")
                 share = self.reservoir_share(frame, f"the DELEGATECALL frame running {h(target)}'s code")
-                ok, out, left = self.delegatecall(frame, address, caller, value_in, target,
-                                                  bytes(memory[a_off:a_off + a_size]), forward, share)
+                if target in PRECOMPILE_SET:
+                    ok, out, left = self.precompile_call(frame, address, target, 0, bytes(memory[a_off:a_off + a_size]),
+                                                         forward, [], 0, share, inherited=(value_in, caller))
+                else:
+                    ok, out, left = self.delegatecall(frame, address, caller, value_in, target,
+                                                      bytes(memory[a_off:a_off + a_size]), forward, share)
                 frame["regular"] += left
                 self.regular_charges -= left
                 self.resume(frame, f"the DELEGATECALL running {h(target)}'s code")
@@ -791,12 +851,20 @@ class InterpreterMixin:
                 created, left, returndata = self.create(frame, address, value, init, target=target, name=name)
                 frame["regular"] += left
                 self.regular_charges -= left
+                self.resume(frame, f"the {name}")  # a failed creation that left a hint over the limit (SATIN-STOP-006)
                 stack.append(int.from_bytes(created, "big"))
                 steps.append(f"{name} {fmt(opcode_charges)} + the creation")
             elif op == 0xFF:  # SELFDESTRUCT
                 beneficiary = (pop() % 2**160).to_bytes(20, "big")
-                if not ctx and (create or address in self.created or not self.destruction):
+                own_creation = create and self.destruction and self.current and address in self.created
+                if not ctx and not own_creation and (create or address in self.created or not self.destruction):
                     raise Unmodelled("a SELFDESTRUCT of the transaction's own frame")
+                if own_creation:
+                    d.add("gasLedgers", f"the creation transaction's own frame destroys {h(address)}, the account it "
+                          "creates: the first effective destruction of an account created in the transaction, its table "
+                          "giving back the charges made before the first frame for the created account, its state gas and "
+                          "its record's history, into this frame's reservoir, once", "SATIN-SD-001", "SATIN-SD-007",
+                          "SATIN-HIST-005")
                 self.selfdestruct(frame, address, beneficiary)
                 steps.append("SELFDESTRUCT")
                 return done("success", b"")

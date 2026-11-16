@@ -151,7 +151,8 @@ class CreationMixin:
         status, out = self.run_child(child, init, {"address": target, "caller": creator, "value": value,
                                                    "calldata": b"", "name": name}, name, create=True)
         if status != "success":
-            if status == "stop":
+            # A creation that is stopped, held to its creator's limits, only in a limit-stop case (D-91).
+            if status == "stop" and not (self.stops and self.current and creator != self.keyless_signer):
                 raise Unmodelled("a creation that is stopped")
             # SATIN-TAKE-007 failed-create: the creation's rollback, then the created account's state gas and its record's
             # history given back to the creator; the creator's nonce bump, made before the creation ran, stays.
@@ -162,7 +163,8 @@ class CreationMixin:
             self.state_gas -= state
             self.history_gas -= RECORD_HISTORY
             self.history_bytes -= WRITE_RECORD_SIZE
-            d.add("gasLedgers", f"{name} {'reverts' if status == 'revert' else 'halts'}: nothing is created, and the "
+            d.add("gasLedgers", f"{name} {dict(revert='reverts', halt='halts', stop='is stopped')[status]}: nothing is "
+                  "created, and the "
                   f"created account's {fmt(state)} of state gas and its record's {fmt(RECORD_HISTORY)} of history gas are "
                   "given back into the creator's reservoir after the child's reservoir joined it; the creator's nonce "
                   f"bump stays, now {creator_acct.nonce}", "SATIN-TAKE-007", "SATIN-POOL-015", "SATIN-HIST-012",
@@ -204,6 +206,12 @@ class CreationMixin:
         self.d.add("gasLedgers", f"the created account's slots read zero from its creation on: each of the "
                    f"{len(acct.storage)} slots the state holds at {h(target)} that the transaction first accesses after "
                    "the creation has an original of zero, whatever the state held there", "SATIN-SD-003", "SATIN-SD-016")
+        if self.current:
+            self.d.add("state", f"the creation resets the storage of {h(target)}, as the base layer's create transition "
+                       "destroys it before the initcode runs: once the creation succeeds, each slot the state held there "
+                       "that the created account does not write is zero, the slots the transaction never accesses "
+                       "among them; the reset makes no write record, charges no history and moves no state growth, and a "
+                       "creation rolled back restores the storage", "SATIN-BASE-001", "SATIN-SD-003", "SATIN-SD-016")
         acct.storage = {}
 
     def selfdestruct(self, frame, address: bytes, beneficiary: bytes) -> None:
@@ -214,8 +222,8 @@ class CreationMixin:
         of the records it makes; and the volatile reads of either end, marked last (SATIN-SD-020). A marked account
         is deleted at the transaction's end (EIP-6780, SATIN-SD-015)."""
         d = self.d
-        if beneficiary == address and (address in self.created or not self.destruction):
-            raise Unmodelled("a SELFDESTRUCT to itself of an account created in the transaction")
+        if beneficiary == address and (not self.destruction or (address in self.created and address in self.destroyed)):
+            raise Unmodelled("a SELFDESTRUCT to itself of an account created in the transaction, repeated")
         if frame.get("access_off") and self.env.coinbase in (address, beneficiary):
             raise Unmodelled("a SELFDESTRUCT that reads the block beneficiary with volatile-data access off")
         first = address in self.created and address not in self.destroyed
@@ -249,7 +257,7 @@ class CreationMixin:
                 self.mark(BLOCK_ENV_ACCESS_COMPUTE_GAS, f"the SELFDESTRUCT's read of {who}, the block beneficiary, once "
                           "its last step that can fail is passed,")
                 self.d.add("gasLedgers", "the read is marked only after every step of the SELFDESTRUCT that can fail",
-                           "SATIN-SD-020")
+                           "SATIN-SD-020", *(("SATIN-DET-007",) if end == address and self.current else ()))
                 self.split(frame)
                 break
 
@@ -264,7 +272,17 @@ class CreationMixin:
         # A cold beneficiary: SELFDESTRUCT has no warm base, so its access is the whole cold account access, EIP-2929's
         # charge for it at EIP-8038's price (SATIN-SCHED-001, decision D-71).
         regular = SELFDESTRUCT_COST + (COLD_ACCOUNT_ACCESS if cold else 0) + (SELFDESTRUCT_NEW_ACCOUNT_COST if new_ben else 0)
-        self.charge_regular(frame, regular, "SELFDESTRUCT")
+        # Each part SELFDESTRUCT deducts is a charge of its own, in the opcode's order: its static cost, then its dynamic
+        # part, the cold access and a new beneficiary's account together, as the base layer deducts them (SATIN-DET-018).
+        self.charge_regular(frame, SELFDESTRUCT_COST, "SELFDESTRUCT's static cost")
+        if regular > SELFDESTRUCT_COST:
+            if self.current and frame.get("spendable") is not None:
+                self.d.add("gasLedgers", f"under gas detention SELFDESTRUCT's static cost {fmt(SELFDESTRUCT_COST)} is one "
+                           f"charge, paid, and its dynamic part {fmt(regular - SELFDESTRUCT_COST)} another", "SATIN-DET-018")
+            self.charge_regular(frame, regular - SELFDESTRUCT_COST, "SELFDESTRUCT's cold access and new account")
+        elif self.current and frame.get("spendable") is not None:
+            self.d.add("gasLedgers", f"under gas detention SELFDESTRUCT's static cost {fmt(SELFDESTRUCT_COST)} is one charge, "
+                       "paid; the opcode deducts nothing more", "SATIN-DET-018")
         self.warm_accounts.add(beneficiary)
         reservoir = frame["reservoir"]
         if new_ben:
@@ -361,6 +379,13 @@ class CreationMixin:
             if not first:
                 d.add("resources", "step 3: no balance moves, so no account is written, no beneficiary created and no "
                       "transfer log emitted", "SATIN-SD-001", "SATIN-SD-018", "SATIN-SD-019")
+            return
+        if beneficiary == address and first:
+            acct.balance = 0
+            d.add("resources", f"step 3: the beneficiary is {h(address)} itself, created in the transaction: its {balance} "
+                  "wei are burned at once, silently, so no transfer log is emitted, no account is written and nothing "
+                  "rises, and the account is removed at the transaction's end", "SATIN-LOG-005", "SATIN-SD-001",
+                  "SATIN-SD-018", "SATIN-SD-019")
             return
         if beneficiary == address:
             d.add("resources", f"step 3: the beneficiary is {h(address)} itself, which the transaction did not create: "

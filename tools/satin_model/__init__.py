@@ -68,6 +68,14 @@ the slice uses:
   `EXTCODESIZE` and `EXTCODEHASH`, `BLOBHASH` and a creation onto the beneficiary as none, a transaction
   detained from its start, an `SSTORE` in a detained frame, and a call to a precompile decided from its
   price (the identity precompile, ModExp's price, a BN254 pairing over its size limit);
+- for the first batch's edges two reviews found (D-91): RIPEMD-160's price and digest and
+  ModExp's output; a `DELEGATECALL` of a precompile and a transaction's own call of one; `BALANCE` of
+  the beneficiary and a `CALL` to it as reads; `BLOBHASH` with access off; `CALL` and `CALLCODE` short
+  of their operands; a created account's first `SELFDESTRUCT` to itself; and a limit-stop case's value
+  call to the identity precompile where no limit is set; and at `bcf260d`: SHA-256's and ecrecover's
+  prices; `EXTCODECOPY` and a `DELEGATECALL` of the beneficiary and a recipient delegating to it as
+  reads; `SELFDESTRUCT`'s two charges and one in a creation transaction's own frame; a limit-stop
+  case's stopped `CREATE` and its creator's resume; and a creation's reset of its address's storage;
 - calls, value transfers, creation transactions and deposits, with or without a reservoir, and a
   deposit whose own frame halts (`SATIN-DEP-004`);
 - for the outcomes page and validation's order (D-85): `CREATE`'s and `CREATE2`'s operands, size check

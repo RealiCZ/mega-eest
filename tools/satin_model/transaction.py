@@ -9,9 +9,9 @@ from .constants import (
     AUTHORIZATION_SIZE, CALLDATA_NONZERO, CALLDATA_ZERO, COLD_ACCOUNT_ACCESS, COLD_ACCOUNT_SURCHARGE,
     COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, ex, EXECUTION_CAP, FLOOR_PER_BYTE,
     INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_DEPLOY_CODE_HASH, limit_exceeded, MAX_CONTRACT_SIZE,
-    MAX_U64, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, PER_AUTH_BASE_COST, SYSTEM_CALLER,
-    STOP_DIMENSIONS, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_BASE_COST,
-    TX_BODY_SIZE, TX_DATA_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
+    MAX_U64, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, ORACLE, PER_AUTH_BASE_COST, PRECOMPILE_SET,
+    STOP_DIMENSIONS, SYSTEM_CALLER, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
+    TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
 )
 from .records import (
     Account, created_address, fmt, h, Halt, InvalidPrestate, LimitStop, OutOfGasBeforeFrame, pad_address, refused,
@@ -461,6 +461,8 @@ class TransactionMixin:
             self.growth += 1
             self.data_size += WRITE_RECORD_SIZE
             d.add("resources", "the created account: one write record and one unit of state growth", "SATIN-ACCT-005", "SATIN-ACCT-014")
+            if self.destruction and self.current:
+                self.created.add(recipient)  # the transaction's own creation, which its frame can destroy (SATIN-SD-001)
         self.history_gas += pre_frame_history
         self.history_bytes += WRITE_RECORD_SIZE if start_record else 0
         self.state_gas += pre_frame_state
@@ -476,6 +478,8 @@ class TransactionMixin:
                    if who == env.coinbase]
         if env.coinbase in self.applied_authorities:
             parties.append("applied EIP-7702 authority")
+        if delegate is not None and delegate == env.coinbase and self.current:
+            parties.append("call recipient's EIP-7702 delegate")
         if parties:
             self.detain_from_start(frame, parties)
         elif self.lists and tx.authorizations:
@@ -509,11 +513,16 @@ class TransactionMixin:
                     d.add("outcome", "the transaction's own CALL to KeylessDeploy does not carry keylessDeploy's selector: "
                           "not recognized, charged nothing, and the code the state holds at the address runs",
                           "SATIN-ICPT-006")
+                elif not create and recipient in PRECOMPILE_SET:
+                    if tx.value or code:
+                        raise Unmodelled("a transaction to a precompile carrying value or holding code")
+                    status, output = self.own_precompile(frame, recipient, data)
                 elif not create and data[:4] == KEYLESS_DEPLOY_CALL and keyless_arguments(data) is not None:
                     d.add("outcome", f"the transaction's own CALL carries keylessDeploy's selector and arguments that "
                           f"decode, but to {h(recipient)}, not KEYLESS_DEPLOY_ADDRESS: not recognized, charged nothing, and "
                           "the code the state holds there runs", "SATIN-ICPT-006")
-                status, output = self.execute(code, frame, create)
+                if create or recipient not in PRECOMPILE_SET:
+                    status, output = self.execute(code, frame, create)
                 if create and status == "success" and len(output) > MAX_CONTRACT_SIZE:
                     d.add("outcome", f"the initcode returns {fmt(len(output))} bytes of code to deposit, over "
                           f"MAX_CONTRACT_SIZE {fmt(MAX_CONTRACT_SIZE)}: the size check halts the creation before any of "

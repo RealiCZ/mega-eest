@@ -5,7 +5,7 @@ frame and held to the started frame's budget (`SATIN-LIM-013`, `SATIN-STOP-014`)
 from __future__ import annotations
 
 from .constants import (
-    COST_PER_HISTORY_BYTE, DATA_SIZE_STOP, delegate_of, DETENTION_STOP, FRAME_SHARE_DENOMINATOR, FRAME_SHARE_NUMERATOR,
+    BLOCK_ENV_ACCESS_COMPUTE_GAS, COST_PER_HISTORY_BYTE, DATA_SIZE_STOP, delegate_of, DETENTION_STOP, FRAME_SHARE_DENOMINATOR, FRAME_SHARE_NUMERATOR,
     GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR, HISTORY_ALLOWANCE_BYTES, INTERCEPTED, KV_UPDATE_STOP,
     limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, ORACLE, PRECOMPILE_SET, STATE_GROWTH_STOP, STOP_DIMENSIONS,
     SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT, WRITE_RECORD_SIZE,
@@ -351,6 +351,15 @@ class FramesMixin:
         child = self.new_child(frame, child_gas, share)
         child["name"] = name
         snap = self.frame_snapshot()
+        if target == self.env.coinbase:
+            if not self.current:
+                raise Unmodelled("a DELEGATECALL of the block beneficiary's code outside gas detention's cases")
+            # SATIN-DET-001, -003: the call opcode's read of the beneficiary's account, marked when the start is decided.
+            self.d.add("gasLedgers", f"the DELEGATECALL's target {h(target)} is the block beneficiary: its read of the "
+                       "beneficiary's account completes when the start is decided, after the opcode's charges and its "
+                       f"forward and before the child runs, at the transaction's compute {fmt(self.compute)}, which "
+                       f"leaves out the {fmt(child_gas)} it forwards", "SATIN-DET-001", "SATIN-DET-003", "SATIN-DET-009")
+            self.mark(BLOCK_ENV_ACCESS_COMPUTE_GAS, "the DELEGATECALL's read of the block beneficiary's account")
         status, out = self.run_child(child, callee.code, {"address": address, "caller": caller, "value": value,
                                                           "calldata": data, "name": name}, name)
         if status == "success":

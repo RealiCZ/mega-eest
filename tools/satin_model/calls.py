@@ -4,7 +4,7 @@ what it returns (`SATIN-POOL-012`), the records a value start makes and takes ba
 from __future__ import annotations
 
 from .constants import (
-    COST_PER_HISTORY_BYTE, DISABLE_VOLATILE_DATA_ACCESS, INTERCEPTED, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_ERRORS,
+    BLOCK_ENV_ACCESS_COMPUTE_GAS, COST_PER_HISTORY_BYTE, FRAME_SHARE_DENOMINATOR, FRAME_SHARE_NUMERATOR, DISABLE_VOLATILE_DATA_ACCESS, INTERCEPTED, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_ERRORS,
     limit_exceeded, MEGA_ACCESS_CONTROL, NON_ZERO_TRANSFER, ORACLE, SEND_HINT, SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS,
     TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     TX_DATA_LIMIT, WRITE_RECORD_SIZE,
@@ -104,6 +104,20 @@ class CallsMixin:
             raise Unmodelled("a value call that adds an account with code")
         name = f"the child frame of {h(target)}"
         child = self.new_child(frame, child_gas, share, allowance=bool(value))
+        if self.stops and self.current and target not in SYSTEM_CONTRACTS:
+            # SATIN-LIM-003, -004: the child's budgets; the transaction's own frame received what the body and the counts
+            # made before it left (SATIN-LIM-002), which are on no frame (SATIN-LIM-005).
+            remaining = self.frame_remaining(frame)
+            d.add("resources", f"{name} receives, in each dimension, its share of what its caller has left, "
+                  f"{FRAME_SHARE_NUMERATOR}/{FRAME_SHARE_DENOMINATOR} rounded down: data size {fmt(remaining[0])} -> "
+                  f"{fmt(child['budget'][0])}, KV updates {fmt(remaining[1])} -> {fmt(child['budget'][1])}, state growth "
+                  f"{fmt(remaining[2])} -> {fmt(child['budget'][2])}", "SATIN-LIM-003", "SATIN-LIM-004")
+            if frame is self.first_frame:
+                d.add("resources", "its caller, the transaction's own frame, received what the transaction had left once "
+                      f"the body and the counts made before the first frame were counted, {fmt(self.frame_start_counts[0])} "
+                      f"bytes of data size, {self.frame_start_counts[1]} KV updates and {self.frame_start_counts[2]} of state "
+                      "growth: those counts are on no frame, the transaction's net holding them once, so the frames' nets "
+                      "do not count them again", "SATIN-LIM-002", "SATIN-LIM-005")
         snap = self.frame_snapshot()
         takes = []
         if value:
@@ -160,6 +174,16 @@ class CallsMixin:
                   "opcode charged for the start's records is given back into the caller's reservoir when the stopped "
                   "frame returns", "SATIN-POOL-012", "SATIN-HIST-014", "SATIN-HIST-012", "SATIN-STOP-005")
             return False, limit_exceeded(kind, crossed), child_gas
+        if target == self.env.coinbase:
+            if self.limit is None and not self.detention:
+                raise Unmodelled("a call to the block beneficiary outside gas detention's cases")
+            # SATIN-DET-003: a call opcode's read of the beneficiary's account as its target completes when the start is
+            # decided, after the opcode's charges and its forward, before the child runs: the forward is no compute.
+            d.add("gasLedgers", f"the CALL's target {h(target)} is the block beneficiary: its read of the beneficiary's "
+                  "account completes when the start is decided, after the opcode's charges and its forward and before the "
+                  f"child runs its first instruction, at the transaction's compute {fmt(self.compute)}, which leaves out the "
+                  f"{fmt(child_gas)} the call forwards", "SATIN-DET-001", "SATIN-DET-003", "SATIN-DET-009")
+            self.mark(BLOCK_ENV_ACCESS_COMPUTE_GAS, "the CALL's read of the block beneficiary's account")
         keyless = target == KEYLESS_DEPLOY and data[:4] == KEYLESS_DEPLOY_CALL
         if keyless:
             d.add("outcome", "a keylessDeploy call a contract makes is not recognized, the transaction's own frame alone "

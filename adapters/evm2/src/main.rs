@@ -620,6 +620,8 @@ struct Touched {
     new_code: Option<Vec<u8>>,
     selfdestructed: bool,
     slots: Vec<(U256, U256)>,
+    /// The engine wiped the account's pre-existing storage: a creation that survives resets it.
+    wiped: bool,
 }
 
 fn reason_of(e: &HandlerError) -> Option<&'static str> {
@@ -779,6 +781,9 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
             new_code: c.code.map(|(_, b)| b.original_bytes().to_vec()),
             selfdestructed: c.selfdestructed,
             slots: c.storage.changed_slots().map(|(k, s)| (*k, s.current)).collect(),
+            // A creation discards the address's old storage (evm2 keeps the discard on the account and
+            // commits it as a wipe); a creation's account is created, its wipe not always in the overlay.
+            wiped: c.storage.wiped || c.created,
         })
         .collect();
     let r: TxResult<MegaTypes> = executed.commit();
@@ -983,8 +988,20 @@ fn diff(listed: &BTreeMap<Address, Listed>, touched: &[Touched]) -> Value {
             (None, None, Some(b)) => b.code.clone(),
             (None, None, None) => Vec::new(),
         };
+        // A creation that survives resets the address's storage (the base EVM's create transition
+        // destroys it first): every declared pre-state slot the run did not write is zero afterwards,
+        // which the complete change set lists as a cleared slot. Final values are compared with the
+        // pre-state, so a slot written back to its pre-state value is unchanged.
+        let mut finals: BTreeMap<U256, U256> = t.slots.iter().copied().collect();
+        if t.wiped {
+            if let Some(b) = before {
+                for k in b.slots.keys() {
+                    finals.entry(*k).or_insert(U256::ZERO);
+                }
+            }
+        }
         let mut slots = BTreeMap::new();
-        for (k, v) in &t.slots {
+        for (k, v) in &finals {
             let was = before.and_then(|b| b.slots.get(k)).copied().unwrap_or(U256::ZERO);
             if *v != was {
                 slots.insert(format!("0x{}", hex32(k)), q(*v));
