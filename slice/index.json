@@ -9002,6 +9002,463 @@
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
         "name": "megaeth/Satin"
       }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/call/request-below-cap",
+      "file": "cases/satin/gas-forwarding/call/request-below-cap.json",
+      "fileDigest": "sha256:6eac30d6c0f9fee80d529afb0068a73af443e119c9fea88d6abaa36684633b0d",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/call/request-above-cap",
+      "file": "cases/satin/gas-forwarding/call/request-above-cap.json",
+      "fileDigest": "sha256:3c954505db0b3addcf3f98adf24bdc2de3b3e3708489f989cef74c3071f4cc18",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/small-remainder/remaining-49",
+      "file": "cases/satin/gas-forwarding/small-remainder/remaining-49.json",
+      "fileDigest": "sha256:f806a221aa62ad759a523ece8b7ac95d5db8f3f8076cc05f46571c47ee7be7b9",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/small-remainder/remaining-50",
+      "file": "cases/satin/gas-forwarding/small-remainder/remaining-50.json",
+      "fileDigest": "sha256:0cd8e23cd950b06d52c1035b0faa4663c047285f5088ad3aaebbe2ab0dad18d7",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/small-remainder/remaining-99",
+      "file": "cases/satin/gas-forwarding/small-remainder/remaining-99.json",
+      "fileDigest": "sha256:f5ef61ad54399772642a00326c3f771c76b5e18edd929c3426f000741aa96786",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/small-remainder/remaining-1",
+      "file": "cases/satin/gas-forwarding/small-remainder/remaining-1.json",
+      "fileDigest": "sha256:2913110906ee262792ece076c3784d5257bad0c2766be229dd2751d8f7b68d26",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/value-call/ten-thousand-left",
+      "file": "cases/satin/gas-forwarding/value-call/ten-thousand-left.json",
+      "fileDigest": "sha256:4cda344890cfbd28c1cdf0851166975b6a5063746c4e4682ffabd97e3e236ecf",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/delegatecall/frame-with-value",
+      "file": "cases/satin/gas-forwarding/delegatecall/frame-with-value.json",
+      "fileDigest": "sha256:2e48d78da69c4734157a20b8c953c8fec72fb662186efe48a0d7366b8d1d8077",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/create/endowed",
+      "file": "cases/satin/gas-forwarding/create/endowed.json",
+      "fileDigest": "sha256:d5420644371c6e913f5b60805ab62c6ab132b23c2dacb7c6dde1373146b6aa84",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-004",
+        "SATIN-FWD-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/reservoir/share-of-99",
+      "file": "cases/satin/gas-forwarding/reservoir/share-of-99.json",
+      "fileDigest": "sha256:90f774c52eb6d1860ff7b9b1f345690feb05a36d1895e68ef1d4f667c952c1e0",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-005",
+        "SATIN-FWD-006",
+        "SATIN-POOL-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/reservoir/share-of-1",
+      "file": "cases/satin/gas-forwarding/reservoir/share-of-1.json",
+      "fileDigest": "sha256:6277acee77d97f773c7dee4ee343c6396bb31a7826c08c515df813e53fd3d710",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-005",
+        "SATIN-FWD-006",
+        "SATIN-POOL-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/reservoir/value-call-requesting-nothing",
+      "file": "cases/satin/gas-forwarding/reservoir/value-call-requesting-nothing.json",
+      "fileDigest": "sha256:b3b738d7aeaa31fde8e22f66712aa6b44d86db458810646fdab682c20594a1ec",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-005",
+        "SATIN-FWD-006",
+        "SATIN-POOL-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/shape/legacy-call-off-whitelist",
+      "file": "cases/satin/system-tx/shape/legacy-call-off-whitelist.json",
+      "fileDigest": "sha256:98d1120930b2b642166658dd58c0c0a48d46d4b697fbabe7d6b393235e00a9dd",
+      "rules": [
+        "SATIN-MST-001",
+        "SATIN-MST-003",
+        "SATIN-VAL-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/shape/legacy-creation",
+      "file": "cases/satin/system-tx/shape/legacy-creation.json",
+      "fileDigest": "sha256:e98e99cbf62e6cdc81f9054c1f4925e241c91f561aedc7cb90da1f64b57cbb6d",
+      "rules": [
+        "SATIN-MST-001",
+        "SATIN-MST-003",
+        "SATIN-VAL-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/shape/access-list-call-to-oracle",
+      "file": "cases/satin/system-tx/shape/access-list-call-to-oracle.json",
+      "fileDigest": "sha256:171f57d966835aa7fee6891fcf02d756933d551a5dca145a701c63b5a00a4bd3",
+      "rules": [
+        "SATIN-MST-001",
+        "SATIN-MST-003",
+        "SATIN-VAL-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/shape/fee-market-call-to-oracle",
+      "file": "cases/satin/system-tx/shape/fee-market-call-to-oracle.json",
+      "fileDigest": "sha256:167a3761dec9dc1bcfad7a3be672a8cb7420f386aae59aca3a67845fd4160f1d",
+      "rules": [
+        "SATIN-MST-001",
+        "SATIN-MST-003",
+        "SATIN-VAL-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/shape/authorization-call-to-oracle",
+      "file": "cases/satin/system-tx/shape/authorization-call-to-oracle.json",
+      "fileDigest": "sha256:ad75089291a793de24f04c234aa90e38a84209af9fe73904173c5bbd687087c1",
+      "rules": [
+        "SATIN-MST-001",
+        "SATIN-MST-003",
+        "SATIN-VAL-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/other-caller/retired-address-charged",
+      "file": "cases/satin/system-tx/other-caller/retired-address-charged.json",
+      "fileDigest": "sha256:a8b246839abf23b5a520ad08da6376f5245edd63328ea9d2453f30a3ba6203db",
+      "rules": [
+        "SATIN-MST-004",
+        "SATIN-REG-002"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/other-caller/retired-address-below-intrinsic",
+      "file": "cases/satin/system-tx/other-caller/retired-address-below-intrinsic.json",
+      "fileDigest": "sha256:9cb07c7053508b34e014d32cbefec2f99f431f78acdabcbdf0bea1c0eca87941",
+      "rules": [
+        "SATIN-MST-004",
+        "SATIN-REG-002"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/other-caller/untrusted-registry",
+      "file": "cases/satin/system-tx/other-caller/untrusted-registry.json",
+      "fileDigest": "sha256:6d8569261651b9fed23e56e6cf8ee2d92cc24c515f89d4ae216c4a0d0c5c658b",
+      "rules": [
+        "SATIN-MST-004",
+        "SATIN-REG-002"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/promoted/oracle-read",
+      "file": "cases/satin/system-tx/promoted/oracle-read.json",
+      "fileDigest": "sha256:201fbb6541a03a90ae46e2071209a160b99311b417d50ddd5b52ef65943ad2cb",
+      "rules": [
+        "SATIN-MST-002",
+        "SATIN-MST-005",
+        "SATIN-MST-007",
+        "SATIN-MST-008",
+        "SATIN-MST-009"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/origin/source-hash-deposit-crowded-bucket",
+      "file": "cases/satin/system-tx/origin/source-hash-deposit-crowded-bucket.json",
+      "fileDigest": "sha256:c79b1ef6cfb22baf004390b578fd0f60c9562e60a93bcd656ff2810d1de9b004",
+      "rules": [
+        "SATIN-MST-007",
+        "SATIN-MST-008",
+        "SATIN-MST-009"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/origin/user-deposit-crowded-bucket",
+      "file": "cases/satin/system-tx/origin/user-deposit-crowded-bucket.json",
+      "fileDigest": "sha256:53dac1e1f9747e6a6308d2d5cfbe204d212543882c749c2a2b9d6dc127d1047a",
+      "rules": [
+        "SATIN-MST-007",
+        "SATIN-MST-010"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/origin/system-caller-message-crowded-bucket",
+      "file": "cases/satin/system-tx/origin/system-caller-message-crowded-bucket.json",
+      "fileDigest": "sha256:15a51b571ee63559c879db2e3794ad5ed3c9b835d2eaa86fe22b3c175e5c45c8",
+      "rules": [
+        "SATIN-MST-004",
+        "SATIN-MST-007",
+        "SATIN-MST-008",
+        "SATIN-MST-009",
+        "SATIN-REG-002"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/origin/user-message-crowded-bucket",
+      "file": "cases/satin/system-tx/origin/user-message-crowded-bucket.json",
+      "fileDigest": "sha256:a7264beb45550c919fa0920e727798b01d8f198f5efeee8c8cfc2beaaf6dfb0b",
+      "rules": [
+        "SATIN-MST-004",
+        "SATIN-REG-002"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/origin/source-hash-deposit-not-detained",
+      "file": "cases/satin/system-tx/origin/source-hash-deposit-not-detained.json",
+      "fileDigest": "sha256:3ad66b93e8b9f6900dc1416f41738ee5e1bb0917c000a041e003083685134ed5",
+      "rules": [
+        "SATIN-MST-007",
+        "SATIN-MST-008",
+        "SATIN-MST-009"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/origin/source-hash-deposit-past-data-size-limit",
+      "file": "cases/satin/system-tx/origin/source-hash-deposit-past-data-size-limit.json",
+      "fileDigest": "sha256:1e18764a10477434b493ac4639b776182a61d28275b9ea03e947f240576179a2",
+      "rules": [
+        "SATIN-MST-007",
+        "SATIN-MST-008",
+        "SATIN-MST-009"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "system-tx",
+      "caseId": "satin/system-tx/origin/source-hash-deposit-from-live-address",
+      "file": "cases/satin/system-tx/origin/source-hash-deposit-from-live-address.json",
+      "fileDigest": "sha256:333aeaef6ca6804fba4aa0703fdf9f6de476c60fb690136c52c7b720ebc8f0fd",
+      "rules": [
+        "SATIN-MST-003",
+        "SATIN-MST-007",
+        "SATIN-REG-002",
+        "SATIN-VAL-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-forwarding",
+      "caseId": "satin/gas-forwarding/system-originated/reservoir-share-of-99",
+      "file": "cases/satin/gas-forwarding/system-originated/reservoir-share-of-99.json",
+      "fileDigest": "sha256:f6d514da0e9031f4a99572d8e9b7079446096815685efd0439a556e7cd8b746f",
+      "rules": [
+        "SATIN-FWD-001",
+        "SATIN-FWD-002",
+        "SATIN-FWD-003",
+        "SATIN-FWD-005",
+        "SATIN-FWD-006",
+        "SATIN-FWD-007",
+        "SATIN-POOL-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
     }
   ],
   "format": "mega-fixture-slice-index",

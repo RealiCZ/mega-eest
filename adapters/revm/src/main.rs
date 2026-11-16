@@ -818,6 +818,11 @@ fn oracle_errors_of(oracle: &FixtureOracle) -> Vec<String> {
 
 /// The refusal reason of an implementation error, by the variant's name.
 fn refusal_reason(debug: &str) -> Option<&'static str> {
+    // A transaction from the live system address without the system shape (SATIN-VAL-005), an
+    // `InvalidTransaction::Str` of the implementation's own message.
+    if debug.contains(mega_evm::system::SYSTEM_ADDRESS_WITHOUT_SYSTEM_SHAPE) {
+        return Some("not-system-shape");
+    }
     const TABLE: [(&str, &str); 16] = [
         ("NonceTooLow", "nonce-too-low"),
         ("NonceTooHigh", "nonce-too-high"),

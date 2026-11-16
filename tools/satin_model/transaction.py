@@ -9,7 +9,7 @@ from .constants import (
     AUTHORIZATION_SIZE, CALLDATA_NONZERO, CALLDATA_ZERO, COLD_ACCOUNT_ACCESS, COLD_ACCOUNT_SURCHARGE,
     COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, ex, EXECUTION_CAP, FLOOR_PER_BYTE,
     INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_DEPLOY_CODE_HASH, limit_exceeded, MAX_CONTRACT_SIZE,
-    MAX_U64, ORACLE, PER_AUTH_BASE_COST,
+    MAX_U64, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, PER_AUTH_BASE_COST, SYSTEM_CALLER,
     STOP_DIMENSIONS, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_BASE_COST,
     TX_BODY_SIZE, TX_DATA_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
 )
@@ -32,6 +32,14 @@ class TransactionMixin:
             return None
         if self.live_system_address() == tx.sender:
             return self.classify_system(intrinsic, body_history)
+        if self.system_tx:
+            live = self.live_system_address()
+            d_live = (f"the live system address is {h(live)}" if live else "no live system address is named, the registry "
+                      "holding other code or naming none")
+            self.d.add("outcome", f"its caller {h(tx.sender)} is not the live system address ({d_live}): the transaction is "
+                       "no Mega System Transaction, whatever its shape, and is validated and charged as a user's"
+                       + (", its fee among the rest; whether it is the protocol's own is decided by its caller apart"
+                          if tx.sender == SYSTEM_CALLER else ""), "SATIN-MST-004", "SATIN-REG-002")
         if tx.chain_id is not None and tx.chain_id != env.chain_id:
             return ("validation", "chain-id-mismatch", "SATIN-VAL-006",
                     f"the transaction carries chain id {tx.chain_id}, the chain's is {env.chain_id}")
@@ -104,7 +112,7 @@ class TransactionMixin:
         refusal, and once it passes them promoted to a deposit, which no other check refuses (SATIN-VAL-008)."""
         tx, env, d = self.tx, self.env, self.d
         sender = self.pre.get(tx.sender, Account())
-        if not (tx.ty == 0 and tx.to == ORACLE):
+        if not (tx.ty == 0 and tx.to in MEGA_SYSTEM_TX_WHITELIST):
             shape = ("a creation" if tx.to is None else f"a type-{tx.ty} transaction" if tx.ty else
                      f"a legacy call to {h(tx.to)}, which is not on MEGA_SYSTEM_TX_WHITELIST")
             return ("validation", "not-system-shape", ("SATIN-VAL-005", "SATIN-MST-001", "SATIN-MST-003"),
@@ -140,6 +148,28 @@ class TransactionMixin:
                 raise InvalidPrestate(f"the pre-state holds storage at the system contract address {h(address)} in an "
                                       "account without code, an invalid prestate outside the specification "
                                       "(SATIN-SYSC-005)")
+
+    def classify_origin(self) -> None:
+        """SATIN-MST-007: whether the transaction is the protocol's own, on its own fields: a Mega System Transaction, a
+        transaction from SYSTEM_CALLER, or a deposit carrying MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, whoever its caller."""
+        tx = self.tx
+        if self.promoted:
+            why = "a Mega System Transaction, promoted"
+        elif tx.sender == SYSTEM_CALLER:
+            why = "its caller being SYSTEM_CALLER, the caller of the pre-block calls, whatever its type"
+        elif tx.kind == "deposit" and tx.source_hash == MEGA_SYSTEM_TRANSACTION_SOURCE_HASH:
+            why = "a deposit carrying MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, whoever its caller"
+        else:
+            if tx.kind == "deposit" and self.system_tx:
+                self.d.add("gasLedgers", "the deposit carries another source hash than MEGA_SYSTEM_TRANSACTION_SOURCE_HASH "
+                           "and its caller is not SYSTEM_CALLER: a user's deposit, not system-originated, priced by bucket "
+                           "and held to every limit", "SATIN-MST-007", "SATIN-MST-010")
+            return
+        self.exempt = True
+        if not self.system_tx:
+            return
+        self.d.add("gasLedgers", f"the transaction is system-originated, {why}, a test made on its own fields, in a block "
+                   "as outside one", "SATIN-MST-007")
 
     def run(self) -> Result:
         tx, env, d = self.tx, self.env, self.d
@@ -251,6 +281,7 @@ class TransactionMixin:
         self.warm_accounts: set = {tx.sender, env.coinbase} | ({tx.to} if tx.to else set()) | {a for a, _ in tx.access_list}
 
         sender_acct = self.state.setdefault(tx.sender, Account())
+        self.classify_origin()
         if tx.kind == "deposit" or self.promoted:
             return self.run_deposit(intrinsic, floor, regular, reservoir, body_history)
 

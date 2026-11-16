@@ -176,11 +176,12 @@ class InterpreterMixin:
                     self.warm_slots.add((ORACLE, key))
                     self.load_slot(ORACLE, key, "the Oracle's SLOAD, which loads the slot before its charge, whatever the "
                                    "charge then does", "SATIN-ORCL-004", "SATIN-WIT-012")
-                    if tx.kind != "deposit":
+                    if tx.kind != "deposit" and not self.promoted:
                         raise Unmodelled("an Oracle read that asks the oracle service")
+                    whose = "a Mega System Transaction's" if self.promoted else "a deposit's"
                     d.add("gasLedgers", f"the Oracle's SLOAD of slot {key}, with {fmt(frame['regular'])} of regular gas in "
-                          "the frame: the read is made before its charge, the slot loaded and warm, and the read marked; a "
-                          "deposit's read asks no oracle service, so the slot's value is pushed", "SATIN-ORCL-002",
+                          "the frame: the read is made before its charge, the slot loaded and warm, and the read marked; "
+                          f"{whose} read asks no oracle service, so the slot's value is pushed", "SATIN-ORCL-002",
                           "SATIN-ORCL-003", "SATIN-ORCL-004", "SATIN-ORCL-005")
                     self.mark(ORACLE_ACCESS_COMPUTE_GAS, f"the Oracle's SLOAD of slot {key}")
                     self.probe.setdefault("oracle-sload", frame["regular"])
@@ -424,10 +425,7 @@ class InterpreterMixin:
                 self.charge_regular(frame, G_BASE, "TIMESTAMP")
                 stack.append(self.env.timestamp)
                 steps.append(f"TIMESTAMP {G_BASE}")
-                self.mark(BLOCK_ENV_ACCESS_COMPUTE_GAS, "TIMESTAMP, a read of the block environment, once it completes,")
-                self.split(frame)
-                d.add("gasLedgers", f"the frame's regular gas {fmt(frame['regular'])} is split: {fmt(frame['spendable'])} "
-                      "spendable, what the limit leaves the transaction, and the rest withheld", "SATIN-DET-014")
+                self.volatile_read(frame, "TIMESTAMP, a read of the block environment, once it completes,")
             elif op == 0x31:  # BALANCE
                 who = (pop() % 2**160).to_bytes(20, "big")
                 self.probe.setdefault("balance", frame["regular"])
@@ -539,6 +537,7 @@ class InterpreterMixin:
                 remaining = frame["regular"]
                 self.probe.setdefault("forward", remaining)
                 self.probe.setdefault("forward:" + target.hex(), remaining)  # each target's first CALL
+                self.probe["forward-last"] = remaining  # the last CALL's
                 self.probe.setdefault("reservoir:" + target.hex(), frame["reservoir"])
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
@@ -560,7 +559,7 @@ class InterpreterMixin:
                       f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}"
                       + (f", the child's gas {fmt(forward)} + CALL_STIPEND {CALL_STIPEND} = {fmt(child_gas)}" if value else ""),
                       "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-003",
-                      "SATIN-HIST-010", *self.order()[1])
+                      "SATIN-FWD-006", "SATIN-HIST-010", *self.order()[1])
                 # The history of the records the start would make, as the state stands now (SATIN-HIST-015):
                 # charged by the opcode with its other charges, after the forward (SATIN-HIST-010 step 4) and
                 # before the depth gate, interception and the frame start; a start that would make them and
@@ -652,14 +651,16 @@ class InterpreterMixin:
                           "SATIN-WIT-008")
                 opcode_charges = self.regular_charges - before
                 remaining = frame["regular"]
+                self.probe.setdefault("delegate-forward", remaining)
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
                 self.draw_regular(frame, forward)
                 self.regular_charges += forward
                 d.add("gasLedgers", f"DELEGATECALL to {h(target)}: the opcode's own charges {fmt(opcode_charges)}; forward "
                       f"min(the gas operand, {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
-                      f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}; it moves no value and makes no record",
-                      "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-003")
+                      f"{GAS_RETAINED_DENOMINATOR} = {fmt(cap)}) = {fmt(forward)}, with no stipend; it moves no value and "
+                      "makes no record", "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-FWD-001", "SATIN-FWD-002",
+                      "SATIN-FWD-003", "SATIN-FWD-006")
                 share = self.reservoir_share(frame, f"the DELEGATECALL frame running {h(target)}'s code")
                 ok, out, left = self.delegatecall(frame, address, caller, value_in, target,
                                                   bytes(memory[a_off:a_off + a_size]), forward, share)

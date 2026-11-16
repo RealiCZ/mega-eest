@@ -637,6 +637,13 @@ fn reason_of(e: &HandlerError) -> Option<&'static str> {
         HandlerError::FeeCapLessThanBaseFee { .. } => "fee-cap-below-base-fee",
         HandlerError::PriorityFeeGreaterThanMaxFee => "priority-fee-above-fee-cap",
         HandlerError::EmptyAuthorizationList => "invalid-authorization-list",
+        // A transaction from the live system address without the system shape (SATIN-VAL-005).
+        HandlerError::External(e)
+            if e.downcast_ref::<mega_evm2::satin_ext::Refusal>()
+                .is_some_and(|r| r.0 == mega_evm2::tx::SYSTEM_ADDRESS_WITHOUT_SYSTEM_SHAPE) =>
+        {
+            "not-system-shape"
+        }
         _ => return None,
     })
 }

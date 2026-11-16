@@ -63,12 +63,14 @@ class SettlementMixin:
         ledgers = {"total": q(total), "regular": q(regular_ledger), "state": q(self.state_gas), "history": q(self.history_gas),
                    "historyBytes": q(self.history_bytes), "refund": q(refund), "floor": q(floor), "gasUsed": q(gas_used),
                    "blockGas": q(max(regular_ledger, floor))}
+        self.history_paid()
         kv = len(self.kv)
         resources = {"dataSize": dim(TX_DATA_LIMIT, self.data_size), "kvUpdates": dim(TX_KV_UPDATE_LIMIT, kv),
                      "stateGrowth": dim(TX_STATE_GROWTH_LIMIT, self.growth)}
         d.add("resources", f"kept: data size {self.data_size} bytes, {kv} KV updates, state growth {self.growth}; the limits "
               f"are the protocol's {fmt(TX_DATA_LIMIT)}, {fmt(TX_KV_UPDATE_LIMIT)} and {fmt(TX_STATE_GROWTH_LIMIT)}",
               "SATIN-LIM-001", "SATIN-LIM-007", "SATIN-ACCT-012")
+        self.report_usage()
         receipt = {"type": q(tx.ty), "status": "0x1" if status == "success" else "0x0", "gasUsed": q(gas_used),
                    "logs": [{"address": h(a), "topics": [h(t) for t in ts], "data": h(dt)} for a, ts, dt in self.logs],
                    "depositNonce": None, "depositReceiptVersion": None}
@@ -94,6 +96,25 @@ class SettlementMixin:
         if self.pools:
             observations["gasPools"] = self.pools_observation(status, gas_used)
         return Result(observations, d)
+
+    def history_paid(self) -> None:
+        """SATIN-MST-008: a system-originated transaction pays history gas as any transaction does."""
+        if self.exempt and self.system_tx:
+            self.d.add("gasLedgers", f"the system-originated transaction pays its history gas, {fmt(self.history_gas)} for "
+                       f"{fmt(self.history_bytes)} bytes, as any transaction does: no exemption of the protocol's own work "
+                       "reaches it", "SATIN-MST-008", "SATIN-HIST-016")
+
+    def report_usage(self) -> None:
+        """SATIN-MST-008, -009: a system-originated transaction's usage is counted in every dimension and reported, a
+        figure past a limit included."""
+        if not (self.exempt and self.system_tx):
+            return
+        over = [name for name, used, limit in (("data size", self.data_size, TX_DATA_LIMIT),
+                                                ("KV updates", len(self.kv), TX_KV_UPDATE_LIMIT),
+                                                ("state growth", self.growth, TX_STATE_GROWTH_LIMIT)) if used > limit]
+        self.d.add("resources", "the system-originated transaction's usage is counted in every dimension and reported"
+                   + (f", its {' and '.join(over)} past the limit, which stopped none of it" if over else ""),
+                   "SATIN-MST-008", "SATIN-MST-009")
 
     def live_system_address(self) -> bytes | None:
         """SATIN-REG-002: the live system address, the address slot 0 of the SequencerRegistry holds when the registry's
@@ -167,6 +188,11 @@ class SettlementMixin:
                   "so it is invalid, and being a deposit it is not rejected but included as a failed deposit, which runs no "
                   "call", "SATIN-REG-002", "SATIN-VAL-005", "SATIN-VAL-008", "SATIN-MST-003", "SATIN-DEP-008",
                   "SATIN-DEP-004")
+            if self.exempt and self.system_tx:
+                d.add("outcome", "the deposit carries MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, the promotion's, from the live "
+                      "system address: system-originated, and a deposit from that address all the same, so a failed "
+                      "deposit; no promotion is made for it, so none of a Mega System Transaction's checks runs",
+                      "SATIN-MST-003", "SATIN-MST-007")
             if was_empty:
                 self.growth += 1
             return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
@@ -181,8 +207,12 @@ class SettlementMixin:
             if was_empty:
                 self.growth += 1
             return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
-        if self.promoted:
-            raise Unmodelled("a promoted Mega System Transaction that runs")
+        if self.promoted and self.system_tx:
+            d.add("state", f"the promoted transaction runs as a deposit from the system address {h(tx.sender)} to "
+                  f"{h(tx.to)}, with its value {fmt(tx.value)}, gas limit {fmt(tx.gas_limit)} and input, no mint and the gas "
+                  "price zero: no fee is charged and no fee recipient credited, whatever its signed gas price, the "
+                  "caller its recipient sees is the system address, and that address's nonce is bumped as a deposit's "
+                  "sender's", "SATIN-MST-002", "SATIN-MST-005")
         if self.outcomes:
             d.add("outcome", f"the deposit's gas limit {fmt(tx.gas_limit)} pays its intrinsic regular gas and its body's "
                   f"history gas, {fmt(intrinsic + body_history)}: it passes validation", "SATIN-DEP-001", "SATIN-VAL-002",
@@ -295,6 +325,7 @@ class SettlementMixin:
               f"as any transaction; {self.history_bytes} history bytes), regular {fmt(regular_ledger)}, total {fmt(total)}",
               "SATIN-POOL-019", "SATIN-HIST-016", "SATIN-DEP-001", "SATIN-HIST-022")
         d.add("gasLedgers", f"gas used {fmt(gas_used)}, block gas max({fmt(regular_ledger)}, {fmt(floor)})", "SATIN-POOL-018", "SATIN-POOL-020")
+        self.history_paid()
         ledgers = {"total": q(total), "regular": q(regular_ledger), "state": q(self.state_gas), "history": q(self.history_gas),
                    "historyBytes": q(self.history_bytes), "refund": q(refund), "floor": q(floor), "gasUsed": q(gas_used),
                    "blockGas": q(max(regular_ledger, floor))}
@@ -302,12 +333,18 @@ class SettlementMixin:
                      "stateGrowth": dim(TX_STATE_GROWTH_LIMIT, self.growth)}
         d.add("resources", f"kept: data size {self.data_size}, {len(self.kv)} KV updates, state growth {self.growth}",
               "SATIN-ACCT-003", "SATIN-LIM-007")
+        self.report_usage()
         receipt = {"type": "0x7e", "status": "0x1", "gasUsed": q(gas_used),
                    "logs": [{"address": h(a), "topics": [h(t) for t in ts], "data": h(dt)} for a, ts, dt in self.logs],
                    "depositNonce": q(nonce_before), "depositReceiptVersion": "0x1"}
-        d.add("receipt", f"a deposit receipt (the base layer's, type 0x7e): its nonce before the deposit ({nonce_before}) and "
-              f"receipt version 1 (D-40); gas used {fmt(gas_used)}, which the deposit does not pay; the mint is not logged",
-              "SATIN-BASE-001", "SATIN-POOL-018", "SATIN-DEP-009", "SATIN-LOG-004")
+        if self.promoted:
+            receipt.update({"type": q(tx.ty), "depositNonce": None, "depositReceiptVersion": None})
+            d.add("receipt", f"the promoted transaction's receipt is its envelope's, a legacy receipt: status 0x1, gas used "
+                  f"{fmt(gas_used)}, which it does not pay, and no deposit fields (D-87)", "SATIN-POOL-018")
+        else:
+            d.add("receipt", f"a deposit receipt (the base layer's, type 0x7e): its nonce before the deposit ({nonce_before}) "
+                  f"and receipt version 1 (D-40); gas used {fmt(gas_used)}, which the deposit does not pay; the mint is not "
+                  "logged", "SATIN-BASE-001", "SATIN-POOL-018", "SATIN-DEP-009", "SATIN-LOG-004")
         d.add("outcome", "admitted; the deposit's frame succeeds", "SATIN-DEP-007",
               *(("SATIN-OUT-001",) if self.outcomes else ()))
         outcome = {"admission": {"status": "admitted"},
@@ -343,6 +380,7 @@ class SettlementMixin:
               f"{fmt(total)}", "SATIN-POOL-014", "SATIN-POOL-017", "SATIN-POOL-019", "SATIN-HIST-016", "SATIN-HIST-022")
         d.add("gasLedgers", f"gas used max({fmt(total)}, floor {fmt(floor)}) = {fmt(gas_used)}, which the deposit does not "
               f"pay; block gas max({fmt(regular_ledger)}, {fmt(floor)})", "SATIN-POOL-018", "SATIN-POOL-020", "SATIN-DEP-009")
+        self.history_paid()
         d.add("state", "the deposit keeps what was applied before its first frame: the mint credited to its sender and its "
               "nonce bump" + (", and the caller account it created" if was_empty else ""), "SATIN-DEP-004")
         ledgers = {"total": q(total), "regular": q(regular_ledger), "state": q(self.state_gas), "history": q(self.history_gas),
@@ -354,9 +392,14 @@ class SettlementMixin:
               "SATIN-POOL-014", "SATIN-LIM-007")
         receipt = {"type": "0x7e", "status": "0x0", "gasUsed": q(gas_used), "logs": [],
                    "depositNonce": q(nonce_before), "depositReceiptVersion": "0x1"}
-        d.add("receipt", f"a deposit receipt with status 0x0, as a reverted transaction's: gas used {fmt(gas_used)}, no logs, "
-              f"its nonce before the deposit ({nonce_before}) and receipt version 1", "SATIN-OUT-014", "SATIN-DEP-009",
-              "SATIN-POOL-018")
+        if self.promoted:
+            receipt.update({"type": q(tx.ty), "depositNonce": None, "depositReceiptVersion": None})
+            d.add("receipt", f"the promoted transaction's receipt is its envelope's, a legacy receipt: status 0x0, gas used "
+                  f"{fmt(gas_used)}, no logs and no deposit fields (D-87)", "SATIN-POOL-018")
+        else:
+            d.add("receipt", f"a deposit receipt with status 0x0, as a reverted transaction's: gas used {fmt(gas_used)}, no "
+                  f"logs, its nonce before the deposit ({nonce_before}) and receipt version 1", "SATIN-OUT-014",
+                  "SATIN-DEP-009", "SATIN-POOL-018")
         if self.outcomes:
             d.add("limit", "the deposit's own frame reverted with data of its own making, which is no limit stop: the "
                   "transaction reports none", "SATIN-OUT-014", "SATIN-STOP-020")

@@ -62,6 +62,7 @@ class CreationMixin:
               f"{fmt(state - legacy - min(reservoir, state - legacy))}, from regular gas", "SATIN-HIST-011",
               "SATIN-STATE-001", "SATIN-STATE-003", "SATIN-STATE-012", "SATIN-POOL-008")
         remaining = frame["regular"]
+        self.probe.setdefault("create-forward", remaining)
         forward = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
         self.draw_regular(frame, forward)
         self.regular_charges += forward
@@ -81,11 +82,12 @@ class CreationMixin:
         self.history_gas += history
         self.history_bytes += WRITE_RECORD_SIZE * len(records)
         whose = "the created account's" + (" and the creator's nonce record" if len(records) == 2 else "")
-        d.add("gasLedgers", f"the forward {fmt(remaining)} - {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / "
-              f"{GAS_RETAINED_DENOMINATOR} = {fmt(forward)}; after it the history of the start's {len(records)} records "
-              f"({whose}), {len(records)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(history)}: "
+        d.add("gasLedgers", f"the forward, CREATE having no gas operand, is the cap {fmt(remaining)} - {fmt(remaining)} x "
+              f"{GAS_RETAINED_NUMERATOR} / {GAS_RETAINED_DENOMINATOR} = {fmt(forward)}, with no stipend; after it the history "
+              f"of the start's {len(records)} records ({whose}), {len(records)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(history)}: "
               f"{fmt(from_reservoir)} from the reservoir and {fmt(history - from_reservoir)} from regular gas",
-              "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-HIST-009", "SATIN-HIST-011", "SATIN-POOL-008")
+              "SATIN-FWD-001", "SATIN-FWD-002", "SATIN-FWD-004", "SATIN-FWD-006", "SATIN-HIST-009", "SATIN-HIST-011",
+              "SATIN-POOL-008")
         share = self.reservoir_share(frame, "the creation")
         name = f"the creation of {h(target)}"
         child = self.new_child(frame, forward, share)

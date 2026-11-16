@@ -1,0 +1,191 @@
+{
+  "caseId": "satin/gas-forwarding/reservoir/value-call-requesting-nothing",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x7056",
+      "floor": "0x3a98",
+      "gasUsed": "0x10426",
+      "history": "0x93d0",
+      "historyBytes": "0x24e",
+      "refund": "0x0",
+      "regular": "0x7056",
+      "state": "0x0",
+      "total": "0x10426"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x10426",
+      "logs": [
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de1",
+            "0x00000000000000000000000000000000000000000000000000000000000c0e09"
+          ]
+        },
+        {
+          "address": "0x00000000000000000000000000000000000c0e09",
+          "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "topics": []
+        }
+      ],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "750",
+        "reported": "0x2ee"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "2",
+        "reported": "0x2"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x5f5f5f5f6001620c0e095ff100",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0e09": {
+          "balance": "0x1",
+          "code": "0x60a85fa000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x1",
+          "code": "0x5f5f5f5f6001620c0e095ff100",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0e09": {
+          "balance": "0x0",
+          "code": "0x60a85fa000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8618080840bfb04409400000000000000000000000000000000000c0de1808025a05d464d929b4102ebff1efbf7c17808fcc682ba5cd4918f2f0446ca3b37cb6aada07b6687554d3e5b5e3c496940e1c6c5de5fb785faacf81467dab3cada12a06e3a"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a value-transferring CALL requesting no gas, with a reservoir: the child receives the 2,300 stipend as its regular gas and the reservoir share all the same (SATIN-FWD-005); it logs 168 bytes, 200 bytes of history, 40 past the 160 the value call's history allowance covers, which is no part of its gas (SATIN-FWD-003): the share pays the history past it, which the stipend left after the log's regular charges could not, and the log is kept"
+    },
+    "definition": "tools/make_slice.py::forwarding_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-FWD-001",
+    "SATIN-FWD-002",
+    "SATIN-FWD-003",
+    "SATIN-FWD-005",
+    "SATIN-FWD-006",
+    "SATIN-POOL-011"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+    "name": "megaeth/Satin"
+  }
+}

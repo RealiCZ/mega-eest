@@ -1,6 +1,6 @@
 # The vertical slice
 
-474 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+503 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 66 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 27 for the
 edges of the charge-order principles, 5 for gas detention, 3 for the Oracle's reads, 2 for the
@@ -11,9 +11,10 @@ the limit-stop page's rules at `cdded1e` (`specs/satin-cdded1e`), 60 for the out
 order of validation's refusals, 45 for the authorization page's rules and 105 for KeylessDeploy's
 page at `c130558` (`specs/satin-c130558`), and 4 whose derivation takes a reading the specification
 states from `bcf260d` on (2 for gas detention's rules whose precompile halts, a failed deposit's
-reads and a promoted system transaction's receipt) at `bcf260d` (`specs/satin-bcf260d`, the
-snapshot new cases cite), each case naming its own spec (decisions D-54, D-59, D-60, D-61, D-62,
-D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78, D-79, D-80, D-85, D-88, D-94, D-96). Every
+reads and a promoted system transaction's receipt) and 29 for the system-transaction page and gas
+forwarding at `bcf260d` (`specs/satin-bcf260d`, the snapshot new cases cite), each case naming its
+own spec (decisions D-54, D-59, D-60, D-61, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77,
+D-78, D-79, D-80, D-82, D-83, D-85, D-88, D-94, D-96). Every
 case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
@@ -73,13 +74,15 @@ to the exact rule text, the decoded transaction, and the case's pins and its are
 | `take-backs` | 17 | the worked examples of the take-back page (`SATIN-TAKE-005` to `-012`), one case each: a slot's record another frame takes back by `DELEGATECALL` (four endings); a value round trip, after a nonce bump, and with its signs turned by an earlier transfer, the second start paid, or charged to a caller left too little regular gas, which runs out of gas (`SATIN-TAKE-006`, `SATIN-HIST-009`); a creation destroyed with no balance and to a new beneficiary; a log in a reverted child and in a value call's child whose allowance pays it; a value start answered without a frame that crosses its frame budget; a child with a reservoir share that reverts or halts; a list whose two entries for one absent authority delegate and then clear (`SATIN-TAKE-008`, `SATIN-AUTH-009`); and a failed deposit, whose ledgers are `SATIN-DEP-005`'s (D-66) and whose history bytes are the body and calldata it keeps (`SATIN-HIST-022`). The first frame's pools show where each give-back lands: in a reservoir (`SATIN-HIST-012`, `SATIN-POOL-014`) |
 | `selfdestruct` | 29 | the destruction page's own rules (D-70): a destruction of an account the transaction did not create moves the balance, writes the account it clears and its beneficiary, and applies no table (`SATIN-SD-001`, `-012`), to an existing, a new, a changed or the sending account, to itself, with no balance, at a bucket multiplier of 2 and under a reverting caller; the first effective destruction of an account created in the transaction (`SATIN-SD-002`), at an absent address and at one whose leaf the state holds with storage, which does not collide, keeps its leaf's charge and reads its slots as zero (`SATIN-SD-003`, `-016`, `-017`), in its constructor and after a slot restored to zero; a repeated destruction that applies the table for nothing (`SATIN-SD-011`); the marked account, whose stores pay their regular gas and no state gas (`SATIN-SD-013`, on little gas against the unmarked control), whose code deposited after the mark keeps no state gas (`SATIN-SD-014`), and which keeps its logs and is removed with a value sent to it (`SATIN-SD-015`); a mark discarded by a frame that reverts or halts (`SATIN-SD-010`); and the read of a destruction's beneficiary, the block beneficiary, marked once the destruction completed and not when it halts in its charges (`SATIN-SD-020`); and a creation destroyed, whose give-back returns to its creator as reservoir (`SATIN-SD-005`, `SATIN-SD-010`), before the creator calls a child that halts, which a give-back credited to regular gas would let the creator forward and the child burn |
 | `pre-frame` | 3 | the reservoir pays the authorities' records first (`SATIN-HIST-005`), shown by a first frame that halts; the transaction's own start record charged before interception answers its `keylessDeploy` call, one gas below step 1's overhead and at it |
+| `system-tx` | 16 | the system shape (D-82): from the live system address, a legacy call off `MEGA_SYSTEM_TX_WHITELIST`, a legacy creation and type-1, type-2 and type-4 calls to the Oracle, each otherwise valid, refused with `not-system-shape` (`SATIN-VAL-005`, `SATIN-MST-001`, `-003`); a caller that is not the live system address validated and charged as a user's: the system shape from an address a rotation retired, its fee paid, and one gas short of its intrinsic gas with its body's history, refused where the live address's would be a failed deposit, and a typed call to the Oracle from the address an untrusted registry names (`SATIN-MST-004`, `SATIN-REG-002`); a promoted Mega System Transaction that runs as a deposit, no fee charged (`SATIN-MST-002`, `-005`); and the protocol's own transactions (`SATIN-MST-007` to `-010`, D-83): a deposit carrying `MEGA_SYSTEM_TRANSACTION_SOURCE_HASH` and a `SYSTEM_CALLER` message writing in a crowded bucket at `m = 1`, against a user's deposit and a user's message there at `m = 2`, the source-hash deposit not detained, past the data-size limit, and from the live system address a failed deposit; each pays history gas |
+| `gas-forwarding` | 13 | the forward (D-82): the cap `remaining − remaining × 2 / 100` against a request one below and one above it (`SATIN-FWD-001`, `-003`); the remainders 1, 49, 50 and 99, where the subtraction and the frame-budget multiplication differ (`SATIN-FWD-006`); the specification's value call with 10,000 left, its child receiving the cap and the stipend (`SATIN-FWD-002`); a `DELEGATECALL` in a frame entered with value and an endowed `CREATE`, with no stipend (`SATIN-FWD-004`); the reservoir share of 99 and of 1, a value call requesting no gas whose child's share pays the history past its allowance (`SATIN-FWD-005`), and a source-hash deposit's share of 99 (`SATIN-FWD-007`) |
 
 The `value-transfer` area also holds the contrast to the authority: a value recipient present as an
 empty leaf is new under EIP-161. Each case of the `interception`, `keyless` and `authorizations`
 areas, and each case of the last three areas that calls a system contract, holds the code of the
 system contracts a call can reach (D-55).
 
-The gating cases pin 232 rules in 22 areas of the specification. `index.json` lists each case with
+The gating cases pin 250 rules in 24 areas of the specification. `index.json` lists each case with
 its area, the rules it pins, its file and its file digest.
 
 ## Quarantine and the wrong expectation
@@ -104,8 +107,8 @@ implementation's result carries, D-62), a stop of the KV-update limit (half a mi
 records cost more gas than a transaction holds; for the same reason the answer-stopped example's KV
 budget of 3 is pinned on the state-growth budget instead, D-65), gas detention's crossing at an
 intercepted answer that spends regular gas (`SATIN-DET-025`), a node's own precompiles
-(`SATIN-DET-027`), a system-originated transaction (`SATIN-DET-026`; the block resolves the system
-address), the precompiles beyond the identity's run and the prices of ModExp and an over-size BN254
+(`SATIN-DET-027`), the source hash a promotion stamps (`SATIN-MST-006`, which no observation
+carries) and a system-originated transaction's counts on the block (`SATIN-MST-009`, D-82), the precompiles beyond the identity's run and the prices of ModExp and an over-size BN254
 pairing (D-67) and a destruction's read of the block beneficiary, frames and
 creations beyond the shapes the take-back examples and the destruction page's cases build (D-65,
 D-70), a slot of an address the transaction accessed before creating onto it and a store after a

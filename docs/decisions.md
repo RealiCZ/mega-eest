@@ -1233,6 +1233,84 @@ and choices:
 
   None of this changes what a case tests.
 
+From the system-transaction page and gas forwarding:
+
+**D-82. The system-transaction page and gas forwarding are pinned by cases at `c130558`.** No case
+cited `SATIN-MST-001` to `-009` or `SATIN-FWD-001` to `-007`, though every call's derivation applied
+the forward. Two areas hold them: `system-tx` (scope: the page's family, `SATIN-VAL-005` and
+`SATIN-REG-002`) and `gas-forwarding` (the forward's family and `SATIN-POOL-011`). A case of either
+asks for the page's rules (`system_tx` in `tools/make_slice.py`, as `outcomes` did, D-85): its
+derivation also cites how the transaction's origin is decided and what that origin exempts it
+from; the forward, the `CREATE` forward and the reservoir share now cite the rules that state them
+(`SATIN-FWD-004` to `-007`), which no other area's scope holds, so no existing case pins more than
+it did. Both adapters now map the refusal of a transaction from the live system address without
+the system shape to `not-system-shape`, each from its implementation's own message for it, so
+D-87's third point is withdrawn and the refusal's main clause has cases. The cases:
+
+- **The system shape.** From the live system address, a legacy call to MegaLimitControl, a system
+  contract off `MEGA_SYSTEM_TX_WHITELIST`, a legacy creation, and type-1, type-2 and type-4 calls to
+  the Oracle, each otherwise valid, are refused (`SATIN-VAL-005`, `SATIN-MST-001`, `-003`).
+- **Other callers.** The system shape from an address a rotation retired is a user's, its fee
+  charged and credited, and one gas short of its intrinsic gas with its body's history it is refused,
+  where the live address's is a failed deposit; an untrusted registry names no live address, so a
+  typed call to the Oracle from the address it names is admitted (`SATIN-MST-004`, `SATIN-REG-002`).
+- **A promoted transaction that runs.** A Mega System Transaction to the Oracle's `getSlot`, signed at
+  a gas price from a system address holding no balance, runs as a deposit with no fee charged or
+  credited, its nonce bumped and its history paid (`SATIN-MST-002`, `-005`, `-008`).
+- **The protocol's own transactions.** A deposit carrying `MEGA_SYSTEM_TRANSACTION_SOURCE_HASH` from
+  an ordinary sender, and an execution message from `SYSTEM_CALLER`, write in a bucket at twice the
+  minimum capacity at `m = 1`, against a user's deposit and a user's message there at `m = 2`; such a
+  deposit reads `TIMESTAMP` and runs past detention's cap, and logs past the data-size limit, its
+  usage reported over it; from the live system address it is a failed deposit (`SATIN-MST-003`,
+  `-007` to `-010`).
+- **The forward.** The cap against a request one below and one above it; the remainders 1, 49, 50
+  and 99; the specification's value call with 10,000 left after its transfer charge, whose caller's
+  account and callee's an earlier transfer recorded, so that it charges no history after the
+  forward; a `DELEGATECALL` in a frame entered with value and an endowed `CREATE`, neither adding a
+  stipend; the reservoir share of 99 and of 1, read by the child's `GAS` after a fresh slot the share
+  pays in part; a value call requesting no gas whose child's share pays the history past its
+  allowance; and a source-hash deposit's share of 99 (`SATIN-FWD-001` to `-007`).
+
+Two rules have no case. `SATIN-MST-006`'s source hash is carried by no observation of a
+`state-transition` case: the promoted transaction's receipt is its envelope's (D-87), and the hash
+decides nothing the transaction's origin does not already decide. `SATIN-MST-009`'s block counters
+and packing budgets need a block; its first clause, the usage reported, is pinned with
+`SATIN-MST-008`'s.
+
+**D-83. The model learns the protocol's own transactions.** `tools/satin_model/` now decides a
+transaction's origin on its own fields (`SATIN-MST-007`): a promoted Mega System Transaction, a
+transaction from `SYSTEM_CALLER`, or a deposit carrying `MEGA_SYSTEM_TRANSACTION_SOURCE_HASH`. Such a
+transaction's state charges are priced at `m = 1` and read no bucket's capacity, a volatile read sets
+no limit, no write or start is held to a frame budget or a transaction limit, a hint past the
+data-size limit is admitted, and its usage is counted and reported in every dimension; it pays
+history gas as any transaction (`SATIN-MST-008`), and its children receive the reservoir share
+(`SATIN-FWD-007`). A promoted Mega System Transaction that passes its deposit's checks now runs as a
+deposit, its receipt its envelope's (D-87), and its Oracle reads ask no service
+(`SATIN-ORCL-005`). Since no key signs for `SYSTEM_CALLER`, its transaction is a synthetic message
+(docs/format.md, "Transactions"), the first in the slice; both adapters run synthetic messages.
+
+- **An empty system address.** A promoted transaction from a system address empty under EIP-161 is
+  a deposit whose caller it creates (`SATIN-DEP-003`), and the model charges that caller's state gas
+  before the first frame; the promoted case's system address holds a nonce of 1, so that its gas
+  limit pays no account creation.
+- **A promoted transaction's value** reaches the Oracle, whose methods are not payable; no case
+  sends one, and the Oracle's restricted writes, which ask `SequencerRegistry.currentSystemAddress()`
+  by a call, are not modelled.
+- **The text.** `SATIN-MST-004` holds a transaction from any address but the live one to being
+  validated and charged as a user's, and `SATIN-MST-008` prices a `SYSTEM_CALLER` transaction at
+  `m = 1`; the model reads the first as the transaction's validation and fee and the second as the
+  exemptions its origin gives, which the `SYSTEM_CALLER` case takes together.
+
+**D-84. Every case of D-82 gates at the revm-based pin `1a981f4b`.** At its previous pin,
+`7110d87b`, the revm-based implementation charged a system-originated transaction and a deposit no
+history gas, against `SATIN-MST-008` and `SATIN-HIST-016`: the promoted transaction, the source-hash
+deposits, the `SYSTEM_CALLER` message, the user's deposit in the crowded bucket and the source-hash
+deposit's reservoir share used less gas there than the rule's, by their history bytes at the history
+price, and the source-hash deposit from the live system address, a failed deposit, reported no
+history bytes. At `1a981f4b` it charges them history gas (D-94), and all eight pass on both
+implementations, plain and instrumented; none is quarantined, and each pins the rules its own
+derivation cites.
+
 From the cases of the outcomes page and of validation's order:
 
 **D-85. The outcomes page and validation's order are pinned by cases that ask for them.** The outcomes
@@ -1359,9 +1437,9 @@ registry.
   transaction has; it is a legacy transaction in its block, so the model gives it the envelope's
   receipt, type `0x0` with no deposit fields, which both implementations report. A promoted
   transaction that runs is not modelled.
-- **The refusal of a transaction without the system shape** from that address has no case: neither
-  adapter maps it to a reason (each reports an error for it), and only the evm2-based adapter may
-  change here, which alone would not let the case gate or be quarantined.
+- **The refusal of a transaction without the system shape** from that address had no case: neither
+  adapter mapped it to a reason (each reported an error for it). Withdrawn by D-82, under which both
+  adapters map it to `not-system-shape` and the refusal has cases.
 
 From the authorization page's uncited rules:
 

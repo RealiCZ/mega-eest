@@ -96,6 +96,7 @@ class Tx:
     # EIP-7702 entries, each (chain id, delegation target, nonce, the authority its signature recovers).
     authorizations: list[tuple[int, bytes, int, bytes]] = field(default_factory=list)
     system_flag: bool = False  # a deposit's base-layer isSystemTransaction flag
+    source_hash: bytes | None = None  # a deposit's source hash
 
 
 @dataclass

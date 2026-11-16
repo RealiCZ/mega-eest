@@ -20,6 +20,10 @@ class DetentionMixin:
         """A volatile read marked at the transaction's present compute: the limit compute + cap, which only goes
         down (SATIN-DET-012)."""
         at, new = self.compute, self.compute + cap
+        if self.exempt:
+            self.d.add("gasLedgers", f"{what} is a volatile read; a system-originated transaction is not detained, "
+                       "whatever it reads, so no limit is set", "SATIN-MST-008")
+            return
         if self.limit is None or new < self.limit:
             self.limit = new
             self.d.add("gasLedgers", f"{what} is a volatile read, marked at compute {fmt(at)}: the transaction's limit "
@@ -44,6 +48,8 @@ class DetentionMixin:
                    f"{fmt(self.compute)}, the charges before the first frame being no compute", "SATIN-DET-008",
                    "SATIN-DET-003", "SATIN-DET-009")
         self.mark(BLOCK_ENV_ACCESS_COMPUTE_GAS, "the read of the beneficiary's account before the first frame")
+        if self.exempt:
+            return
         self.split(frame)
         self.d.add("gasLedgers", f"the first frame starts detained: of its {fmt(frame['regular'])} regular gas, "
                    f"{fmt(frame['spendable'])} is spendable, the cap, and the rest withheld", "SATIN-DET-014")
@@ -51,6 +57,8 @@ class DetentionMixin:
     def volatile_read(self, frame, what: str, cap: int = BLOCK_ENV_ACCESS_COMPUTE_GAS) -> None:
         """A volatile read whose opcode completed: marked, then the frame split (SATIN-DET-003, SATIN-DET-014)."""
         self.mark(cap, what)
+        if self.exempt:
+            return
         self.split(frame)
         self.d.add("gasLedgers", f"the frame's regular gas {fmt(frame['regular'])} is split: {fmt(frame['spendable'])} "
                    "spendable, what the limit leaves the transaction, and the rest withheld", "SATIN-DET-014")

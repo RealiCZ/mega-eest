@@ -7,9 +7,9 @@ Uncited-rule registry: [satin-bcf260d], source commit `bcf260d3de62c50cd1700e4f8
 (committed `2026-11-16T12:04:00+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **474** (474 gating, 0 quarantined).
-Cited rule IDs: **232**. Uncited rule IDs in that registry: **179**
-(169 active, 10 retired).
+Cases: **503** (503 gating, 0 quarantined).
+Cited rule IDs: **250**. Uncited rule IDs in that registry: **161**
+(151 active, 10 retired).
 
 Each case resolves its citations against its own pinned registry, linked in its row.
 The citation column preserves row qualifiers; an unqualified citation is shown as `unqualified`.
@@ -1331,6 +1331,98 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/detention/deposit/user-deposit] | gating | unqualified | [satin-cdded1e] |
+
+### SATIN-FWD-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/delegatecall/frame-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-FWD-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/delegatecall/frame-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-FWD-003
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/delegatecall/frame-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-FWD-004
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/gas-forwarding/create/endowed] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-FWD-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-FWD-006
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/create/endowed] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/delegatecall/frame-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-49] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-50] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/small-remainder/remaining-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-FWD-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-HIST-002
 
@@ -2965,6 +3057,87 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/refused-read] | gating | unqualified | [satin-5fb2688] |
 | [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
 
+### SATIN-MST-001
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/shape/access-list-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/authorization-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/fee-market-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/legacy-call-off-whitelist] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/legacy-creation] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-MST-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-MST-003
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/origin/source-hash-deposit-from-live-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/access-list-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/authorization-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/fee-market-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/legacy-call-off-whitelist] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/legacy-creation] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-MST-004
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/other-caller/retired-address-below-intrinsic] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/other-caller/retired-address-charged] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/other-caller/untrusted-registry] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-MST-005
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-MST-007
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/origin/source-hash-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-from-live-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-not-detained] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-past-data-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-MST-008
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/origin/source-hash-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-not-detained] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-past-data-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-MST-009
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/origin/source-hash-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-not-detained] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/source-hash-deposit-past-data-size-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/promoted/oracle-read] | gating | unqualified | [satin-bcf260d] |
+
+### SATIN-MST-010
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/origin/user-deposit-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+
 ### SATIN-ORCL-002
 
 | Case | Status | Citation | Registry |
@@ -3289,6 +3462,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
 
+### SATIN-POOL-011
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/gas-forwarding/reservoir/share-of-1] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
+
 ### SATIN-POOL-012
 
 | Case | Status | Citation | Registry |
@@ -3450,6 +3632,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/value-transfer/absent-recipient/bucket-x4] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/absent-recipient/minimum-bucket] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/empty-leaf-recipient] | gating | unqualified | [satin-d334ef8] |
+
+### SATIN-REG-002
+
+| Case | Status | Citation | Registry |
+| --- | --- | --- | --- |
+| [satin/system-tx/origin/source-hash-deposit-from-live-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/system-caller-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/origin/user-message-crowded-bucket] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/other-caller/retired-address-below-intrinsic] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/other-caller/retired-address-charged] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/other-caller/untrusted-registry] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-SCHED-003
 
@@ -4613,6 +4806,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/system-tx/origin/source-hash-deposit-from-live-address] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/access-list-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/authorization-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/fee-market-call-to-oracle] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/legacy-call-off-whitelist] | gating | unqualified | [satin-bcf260d] |
+| [satin/system-tx/shape/legacy-creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/validation/system-address/deposit-from-live-system-address] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-VAL-006
@@ -4820,13 +5019,6 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-DEP-013` | active | [block/deposits.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/block/deposits.md) |
 | `SATIN-DET-025` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-detention.md) |
 | `SATIN-DET-027` | active | [evm/gas-detention.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-detention.md) |
-| `SATIN-FWD-001` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-forwarding.md) |
-| `SATIN-FWD-002` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-forwarding.md) |
-| `SATIN-FWD-003` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-forwarding.md) |
-| `SATIN-FWD-004` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-forwarding.md) |
-| `SATIN-FWD-005` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-forwarding.md) |
-| `SATIN-FWD-006` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-forwarding.md) |
-| `SATIN-FWD-007` | active | [evm/gas-forwarding.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-forwarding.md) |
 | `SATIN-HIST-001` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
 | `SATIN-HIST-007` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
 | `SATIN-HIST-008` | active | [evm/history-gas.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/history-gas.md) |
@@ -4857,16 +5049,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-MLC-002` | active | [system-contracts/mega-limit-control.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/mega-limit-control.md) |
 | `SATIN-MLC-003` | active | [system-contracts/mega-limit-control.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/mega-limit-control.md) |
 | `SATIN-MLC-004` | active | [system-contracts/mega-limit-control.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/mega-limit-control.md) |
-| `SATIN-MST-001` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-002` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-003` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-004` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-005` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-MST-006` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-007` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-008` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-009` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
-| `SATIN-MST-010` | active | [system-contracts/system-tx.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/system-tx.md) |
 | `SATIN-ORCL-001` | active | [system-contracts/oracle.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/oracle.md) |
 | `SATIN-ORCL-007` | active | [system-contracts/oracle.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/oracle.md) |
 | `SATIN-ORCL-008` | active | [system-contracts/oracle.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/oracle.md) |
@@ -4893,14 +5076,12 @@ Retired rules are labeled separately from active rules; their absence is not an 
 | `SATIN-POOL-002` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-003` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-004` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
-| `SATIN-POOL-011` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-013` | retired | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-015` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-016` | retired | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-021` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-POOL-022` | active | [evm/gas-model.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/evm/gas-model.md) |
 | `SATIN-REG-001` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/sequencer-registry.md) |
-| `SATIN-REG-002` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/sequencer-registry.md) |
 | `SATIN-REG-003` | retired | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/sequencer-registry.md) |
 | `SATIN-REG-004` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/sequencer-registry.md) |
 | `SATIN-REG-005` | active | [system-contracts/sequencer-registry.md](https://github.com/RealiCZ/mega-evm-satin-spec/blob/bcf260d3de62c50cd1700e4f82f91560c4f8df48/docs/spec/satin/system-contracts/sequencer-registry.md) |
@@ -5083,6 +5264,19 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/detention/withheld/sstore-check-sees-whole-write-paid]: ../slice/cases/satin/detention/withheld/sstore-check-sees-whole-write-paid.json
 [satin/detention/withheld/state-gas-at-limit]: ../slice/cases/satin/detention/withheld/state-gas-at-limit.json
 [satin/detention/withheld/state-gas-one-past-limit]: ../slice/cases/satin/detention/withheld/state-gas-one-past-limit.json
+[satin/gas-forwarding/call/request-above-cap]: ../slice/cases/satin/gas-forwarding/call/request-above-cap.json
+[satin/gas-forwarding/call/request-below-cap]: ../slice/cases/satin/gas-forwarding/call/request-below-cap.json
+[satin/gas-forwarding/create/endowed]: ../slice/cases/satin/gas-forwarding/create/endowed.json
+[satin/gas-forwarding/delegatecall/frame-with-value]: ../slice/cases/satin/gas-forwarding/delegatecall/frame-with-value.json
+[satin/gas-forwarding/reservoir/share-of-1]: ../slice/cases/satin/gas-forwarding/reservoir/share-of-1.json
+[satin/gas-forwarding/reservoir/share-of-99]: ../slice/cases/satin/gas-forwarding/reservoir/share-of-99.json
+[satin/gas-forwarding/reservoir/value-call-requesting-nothing]: ../slice/cases/satin/gas-forwarding/reservoir/value-call-requesting-nothing.json
+[satin/gas-forwarding/small-remainder/remaining-1]: ../slice/cases/satin/gas-forwarding/small-remainder/remaining-1.json
+[satin/gas-forwarding/small-remainder/remaining-49]: ../slice/cases/satin/gas-forwarding/small-remainder/remaining-49.json
+[satin/gas-forwarding/small-remainder/remaining-50]: ../slice/cases/satin/gas-forwarding/small-remainder/remaining-50.json
+[satin/gas-forwarding/small-remainder/remaining-99]: ../slice/cases/satin/gas-forwarding/small-remainder/remaining-99.json
+[satin/gas-forwarding/system-originated/reservoir-share-of-99]: ../slice/cases/satin/gas-forwarding/system-originated/reservoir-share-of-99.json
+[satin/gas-forwarding/value-call/ten-thousand-left]: ../slice/cases/satin/gas-forwarding/value-call/ten-thousand-left.json
 [satin/gas-pools/answered-call-history-returns]: ../slice/cases/satin/gas-pools/answered-call-history-returns.json
 [satin/gas-pools/fresh-slot-partly-from-regular]: ../slice/cases/satin/gas-pools/fresh-slot-partly-from-regular.json
 [satin/gas-pools/fresh-slot-restored]: ../slice/cases/satin/gas-pools/fresh-slot-restored.json
@@ -5360,6 +5554,22 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/sstore/reset/non-zero-to-non-zero]: ../slice/cases/satin/sstore/reset/non-zero-to-non-zero.json
 [satin/sstore/sload-then-fresh-write]: ../slice/cases/satin/sstore/sload-then-fresh-write.json
 [satin/sstore/two-fresh-slots/two-buckets]: ../slice/cases/satin/sstore/two-fresh-slots/two-buckets.json
+[satin/system-tx/origin/source-hash-deposit-crowded-bucket]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-crowded-bucket.json
+[satin/system-tx/origin/source-hash-deposit-from-live-address]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-from-live-address.json
+[satin/system-tx/origin/source-hash-deposit-not-detained]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-not-detained.json
+[satin/system-tx/origin/source-hash-deposit-past-data-size-limit]: ../slice/cases/satin/system-tx/origin/source-hash-deposit-past-data-size-limit.json
+[satin/system-tx/origin/system-caller-message-crowded-bucket]: ../slice/cases/satin/system-tx/origin/system-caller-message-crowded-bucket.json
+[satin/system-tx/origin/user-deposit-crowded-bucket]: ../slice/cases/satin/system-tx/origin/user-deposit-crowded-bucket.json
+[satin/system-tx/origin/user-message-crowded-bucket]: ../slice/cases/satin/system-tx/origin/user-message-crowded-bucket.json
+[satin/system-tx/other-caller/retired-address-below-intrinsic]: ../slice/cases/satin/system-tx/other-caller/retired-address-below-intrinsic.json
+[satin/system-tx/other-caller/retired-address-charged]: ../slice/cases/satin/system-tx/other-caller/retired-address-charged.json
+[satin/system-tx/other-caller/untrusted-registry]: ../slice/cases/satin/system-tx/other-caller/untrusted-registry.json
+[satin/system-tx/promoted/oracle-read]: ../slice/cases/satin/system-tx/promoted/oracle-read.json
+[satin/system-tx/shape/access-list-call-to-oracle]: ../slice/cases/satin/system-tx/shape/access-list-call-to-oracle.json
+[satin/system-tx/shape/authorization-call-to-oracle]: ../slice/cases/satin/system-tx/shape/authorization-call-to-oracle.json
+[satin/system-tx/shape/fee-market-call-to-oracle]: ../slice/cases/satin/system-tx/shape/fee-market-call-to-oracle.json
+[satin/system-tx/shape/legacy-call-off-whitelist]: ../slice/cases/satin/system-tx/shape/legacy-call-off-whitelist.json
+[satin/system-tx/shape/legacy-creation]: ../slice/cases/satin/system-tx/shape/legacy-creation.json
 [satin/take-backs/answer-stopped]: ../slice/cases/satin/take-backs/answer-stopped.json
 [satin/take-backs/descendant/both-reverted]: ../slice/cases/satin/take-backs/descendant/both-reverted.json
 [satin/take-backs/descendant/descendant-reverted]: ../slice/cases/satin/take-backs/descendant/descendant-reverted.json

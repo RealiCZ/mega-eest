@@ -108,6 +108,16 @@ specification's text and constants:
   exceptional halt, and a `CALL` to a keyless signer that holds an EIP-7702 delegation, which runs
   its delegate's code, with the delegate's access among the opcode's charges (D-80); a `CREATE` by
   that signer whose initcode fails gives the created account's charges back (`SATIN-TAKE-007`).
+- **The system-transaction page and gas forwarding** (D-82, D-83): a transaction from the live system
+  address without the system shape, refused; one from an address the registry does not name, a
+  user's; a Mega System Transaction promoted and run as a deposit, its receipt its envelope's and its
+  Oracle reads asking no service; and the protocol's own transactions, decided on their own fields
+  (`SATIN-MST-007`) — a promoted transaction, a deposit carrying `MEGA_SYSTEM_TRANSACTION_SOURCE_HASH`
+  and a synthetic message from `SYSTEM_CALLER` — priced at `m = 1` without reading a bucket's
+  capacity, not detained, held to no limit or frame budget, a hint past the data-size limit admitted,
+  their usage counted and reported and their history paid (`SATIN-MST-008`). The forward's figures
+  are read at three more points (the last `CALL`'s, the first `DELEGATECALL`'s and the first
+  `CREATE`'s), so that a case can sit on the cap's small remainders; no opcode is added.
 
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
@@ -139,8 +149,8 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `constants.py` | The specification's constants and prices with the rules that state them, the system contracts' addresses and selectors, and the encodings built from them; `tools/check_derived_text.py` changes these in turn |
 | `records.py` | The model's exceptions, the derivation record, the inputs (accounts, the transaction, the block environment), the result, and the observations' value formats |
 | `run.py` | `Run`: the run state, composed of the mixins below |
-| `transaction.py` | Validation's refusals in the order of `SATIN-VAL-003`, intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, a creation's code over `MAX_CONTRACT_SIZE`, the out-of-gas path before it |
-| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; the live system address; a deposit's run, its validation, its value and its start record, a reverted deposit, a stopped deposit, and a failed deposit |
+| `transaction.py` | Validation's refusals in the order of `SATIN-VAL-003`, the system shape and a caller the registry does not name, the transaction's origin (`SATIN-MST-007`), intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, a creation's code over `MAX_CONTRACT_SIZE`, the out-of-gas path before it |
+| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; the live system address; a deposit's run, its validation, its value and its start record, a reverted deposit, a stopped deposit, and a failed deposit; a promoted Mega System Transaction's run and a system-originated transaction's history and usage |
 | `precompiles.py` | A call to a precompile: the funds check, the price read before it runs, and under gas detention the decision from it (`SATIN-DET-021` to `-024`) |
 | `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, the give-back into the reservoir |
 | `detention.py` | The limit a volatile read sets, the caps it is set from, a frame's spendable and withheld parts, and a transaction detained from its start |
@@ -152,8 +162,8 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `keyless.py` | A keyless deployment past step 3's encoding check: the carried transaction and its signer, steps 3 to 15, the creation, its collision, the signer's nonce and records, `gasUsed` and the answer (D-79) |
 | `authorizations.py` | An EIP-7702 list before the first frame: its simulation, each entry's gates and the checks of its authority's code and nonce, a list that does not fit and is skipped, each entry's charges and records, the sender's own entry, a further entry for one authority |
 | `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, in a detained frame its static cost apart and its state and history drawn from the withheld part first, and a creation's deposited code |
-| `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it |
-| `limits.py` | A write held to its frame's budget, the transaction's own or a child's, and then the transaction's limit, and the rules a case that pins the limit-stop page cites (D-73) |
+| `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it; a state charge's multiplier, `m = 1` for a system-originated transaction, which reads no capacity |
+| `limits.py` | A write held to its frame's budget, the transaction's own or a child's, and then the transaction's limit, and the rules a case that pins the limit-stop page cites (D-73); a system-originated transaction's write, held to neither |
 
 A case's explanation, which `tools/make_slice.py --explain <caseId>` prints, names the model by its
 package, `tools/satin_model/`. Until schema 2 (D-76) that sentence was part of every case's bytes

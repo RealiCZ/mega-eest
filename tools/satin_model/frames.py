@@ -66,8 +66,10 @@ class FramesMixin:
         if remaining:
             self.d.add("gasLedgers", f"{who} receives the reservoir share {fmt(remaining)} - {fmt(remaining)} x "
                        f"{GAS_RETAINED_NUMERATOR} / {GAS_RETAINED_DENOMINATOR} = {fmt(share)} of the {fmt(remaining)} the "
-                       f"caller has left after the start's charges, and the caller keeps {fmt(remaining - share)}",
-                       "SATIN-POOL-011", "SATIN-HIST-010")
+                       f"caller has left after the start's charges, and the caller keeps {fmt(remaining - share)}; the share "
+                       "is outside the regular gas the start forwards and the request, which bound none of it",
+                       "SATIN-POOL-011", "SATIN-HIST-010", "SATIN-FWD-005", "SATIN-FWD-006",
+                       *(("SATIN-FWD-007",) if self.exempt else ()))
         return share
 
     def new_child(self, frame, regular: int, share: int, allowance: bool = False) -> dict:
@@ -238,6 +240,9 @@ class FramesMixin:
         the transaction's limit, in the order of SATIN-LIM-010 and -011. Returns (kind, the limit the stop names, which
         it is, the start's rises), or None when the start fits."""
         rises = tuple(n - c for n, c in zip(self.counts(), child["counts"]))
+        if self.exempt:
+            self.exempt_from_limits(f"the start of {child.get('name', 'the frame')}", 0, 0, 0)
+            return None
         for kind, rise, budget, used, limit in zip(KINDS, rises, child["budget"], (self.data_size, len(self.kv), self.growth),
                                                    LIMITS):
             if rise <= 0:
@@ -252,7 +257,7 @@ class FramesMixin:
         """SATIN-STOP-006: a failed child's discard puts back what the frames above it kept, a record of theirs it took
         back included, while a hint it admitted stays counted; when that leaves the transaction over its data-size
         limit, the frame it returns into returns the stop of that limit before it runs another instruction."""
-        if self.data_size <= TX_DATA_LIMIT:
+        if self.data_size <= TX_DATA_LIMIT or self.exempt:
             return
         self.d.add("outcome", f"{what} returns, and the transaction's data size is {fmt(self.data_size)}, over TX_DATA_LIMIT "
                    f"{fmt(TX_DATA_LIMIT)}: the failed frame's discard put back the record it took back and kept the hint it "
