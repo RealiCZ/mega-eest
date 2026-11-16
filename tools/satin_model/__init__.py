@@ -5,9 +5,11 @@ This is the independent evidence behind the vertical slice's expectations: it re
 specification at `d34e626` (`specs/satin-d34e626`), for calls, interception and EIP-7702 at
 `d334ef8` (`specs/satin-d334ef8`), for the charge-order principles at `5fb2688`
 (`specs/satin-5fb2688`), for the take-back page's worked examples and the destruction page's own
-rules at `cdded1e` (`specs/satin-cdded1e`), and for a precompile that halts at `c130558`
-(`specs/satin-c130558`), the arithmetic a `state-transition` case's observations follow, for the
-narrow class of transactions the slice uses:
+rules at `cdded1e` (`specs/satin-cdded1e`), for a precompile that halts at `c130558`
+(`specs/satin-c130558`), and for a precompile's halt over its size limit, a failed deposit's step-4
+load and a promoted system transaction's receipt at `bcf260d` (`specs/satin-bcf260d`), the
+arithmetic a `state-transition` case's observations follow, for the narrow class of transactions
+the slice uses:
 
 - the transaction's own frame: the opcodes `STOP`, `ADD`, `POP`, `PUSH0`..`PUSH32`, `CALLER`, `ORIGIN`,
   `GASPRICE`, `CHAINID`, `CALLVALUE`, `GAS`, `TIMESTAMP`, `BALANCE`, `MSTORE`, `SLOAD`, `SSTORE`,
@@ -81,7 +83,9 @@ narrow class of transactions the slice uses:
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check
 each number against the pinned rule text, and the case's assertions cite exactly the rules its
 steps applied. The model shares no code with either implementation or adapter. It is not an
-implementation of Satin: anything outside the class above raises `Unmodelled`. Its scope, and what
+implementation of Satin: anything outside the class above raises `Unmodelled`, and a pre-state the
+specification excludes, storage at a system contract's address in an account without code
+(`SATIN-SYSC-005`), raises `InvalidPrestate` before anything is derived (D-97). Its scope, and what
 lies outside it, is docs/model.md's.
 
 The package is cut by domain (docs/model.md, "Modules"): `constants` and `records` hold the

@@ -476,12 +476,15 @@ class SettlementMixin:
         resources = {"dataSize": dim(TX_DATA_LIMIT, body), "kvUpdates": dim(TX_KV_UPDATE_LIMIT, 0),
                      "stateGrowth": dim(TX_STATE_GROWTH_LIMIT, self.growth)}
         if self.promoted:
-            # A promoted Mega System Transaction is a legacy transaction in its block: its receipt is the legacy one, with
-            # no deposit fields (D-87).
+            # A promoted Mega System Transaction is a legacy transaction in its block: promotion changes execution only,
+            # and its receipt is the legacy one, with no deposit fields, its status and gas used the promoted execution's
+            # (SATIN-MST-005 from bcf260d on, D-96; D-87's reading before).
             receipt = {"type": q(tx.ty), "status": "0x0", "gasUsed": q(gas), "logs": [], "depositNonce": None,
                        "depositReceiptVersion": None}
-            d.add("receipt", f"the promoted transaction's receipt is its envelope's, a legacy receipt: status 0x0, gas used "
-                  f"{fmt(gas)}, no logs and no deposit fields (D-87)", "SATIN-DEP-004", "SATIN-POOL-018")
+            d.add("receipt", f"promotion changes execution only, and the block holds the transaction as a legacy one: its "
+                  f"receipt is a legacy (type {q(tx.ty)}) receipt with no deposit nonce and no deposit receipt version, "
+                  f"whose status and gas used are the failed deposit's, status 0x0 and gas used {fmt(gas)}, its whole gas "
+                  "limit, with no logs", "SATIN-MST-005", "SATIN-DEP-004", "SATIN-POOL-018")
         else:
             receipt = {"type": "0x7e", "status": "0x0", "gasUsed": q(gas), "logs": [],
                        "depositNonce": q(nonce_before), "depositReceiptVersion": "0x1"}
@@ -493,6 +496,16 @@ class SettlementMixin:
         if self.pools:
             raise Unmodelled("the pools of a failed deposit")
         if self.reads:
+            # SATIN-DEP-012 from bcf260d on (D-96): the load for the first frame's start is made at step 4 of the charges
+            # before the first frame; a deposit that fails earlier makes none, one that reaches step 4 keeps it.
+            if cause in ("validation", "pre-frame"):
+                if tx.to not in self.loaded_accounts:
+                    d.add("reads", f"the recipient {h(tx.to)} is not loaded: a deposit that fails validation, or cannot pay "
+                          "a charge made before step 4 of the charges before the first frame, makes no load for its first "
+                          "frame's start", "SATIN-DEP-012", "SATIN-SCHED-008")
+            else:
+                d.add("reads", f"the deposit reached step 4, where it loaded its recipient {h(tx.to)} for its first frame's "
+                      "start, and keeps that load though its first frame then fails", "SATIN-DEP-012", "SATIN-SCHED-008")
             d.add("reads", "a failed deposit takes back what it wrote, not what it loaded: its reads are every load its "
                   "execution made before it failed", "SATIN-WIT-002", "SATIN-DEP-004")
             observations["reads"] = self.reads_observation()

@@ -34,16 +34,22 @@ def modexp_price(data: bytes) -> tuple[int, int, int]:
     return max(MODEXP_MIN_GAS, complexity * iterations), complexity, iterations
 
 
+# How a precompile's input fails (SATIN-PCMP-005, -007): over a size limit, before any gas check; or on a check made
+# after the gas charge, ModExp's EIP-7823 bound.
+SIZE_LIMIT, AFTER_CHARGE = "size-limit", "after-charge"
+
+
 class PrecompilesMixin:
     """A call to a precompile: warm, its own charges made in the opcode, then decided from its price."""
 
-    def precompile_price(self, target: bytes, data: bytes) -> tuple[int, str, bool]:
-        """The precompile's price for this input, read before it runs (SATIN-DET-023), how it is priced, and whether
-        the input fails a check the precompile makes after its gas charge or before any (SATIN-PCMP-005, -007)."""
+    def precompile_price(self, target: bytes, data: bytes) -> tuple[int, str, str | None]:
+        """The precompile's price for this input, read before it runs (SATIN-DET-023), how it is priced, and how the
+        input fails, if it does: `SIZE_LIMIT`, over a size limit, before any gas check and charging no price
+        (SATIN-PCMP-005), or `AFTER_CHARGE`, on a check the precompile makes after its gas charge (SATIN-PCMP-007)."""
         if target == IDENTITY:
             words = (len(data) + 31) // 32
             price = IDENTITY_BASE + IDENTITY_WORD * words
-            return price, f"the identity precompile's {IDENTITY_BASE} + {IDENTITY_WORD} x {words} words = {fmt(price)}", False
+            return price, f"the identity precompile's {IDENTITY_BASE} + {IDENTITY_WORD} x {words} words = {fmt(price)}", None
         if target == MODEXP:
             base_len, exp_len, mod_len = modexp_lengths(data)
             price, complexity, iterations = modexp_price(data)
@@ -52,7 +58,8 @@ class PrecompilesMixin:
                            f"a modulus of {fmt(mod_len)}: max({MODEXP_MIN_GAS}, multiplication complexity {fmt(complexity)} "
                            f"x iteration count {fmt(iterations)}) = {fmt(price)}"
                            + (f", whatever the lengths: the base is over EIP-7823's bound of {fmt(MODEXP_MAX_INPUT_SIZE)} "
-                              "bytes, which ModExp checks after it charges that price" if over else "")), over
+                              "bytes, which ModExp checks after it charges that price" if over else "")), \
+                (AFTER_CHARGE if over else None)
         if target == BN254_PAIRING:
             if len(data) <= BN254_PAIRING_MAX_INPUT_SIZE:
                 if any(data) or len(data) % BN254_PAIR_SIZE or not self.outcomes:
@@ -60,13 +67,13 @@ class PrecompilesMixin:
                 pairs = len(data) // BN254_PAIR_SIZE
                 price = BN254_PAIRING_BASE + BN254_PAIRING_PER_PAIR * pairs
                 return price, (f"the BN254 pairing's EIP-1108 price for {pairs} pairs, {fmt(BN254_PAIRING_BASE)} + "
-                               f"{fmt(BN254_PAIRING_PER_PAIR)} x {pairs} = {fmt(price)}"), False
+                               f"{fmt(BN254_PAIRING_PER_PAIR)} x {pairs} = {fmt(price)}"), None
             return 0, (f"zero: the BN254 pairing's {fmt(len(data))} input bytes are over its size limit of "
-                       f"{fmt(BN254_PAIRING_MAX_INPUT_SIZE)}, refused before any gas check"), True
+                       f"{fmt(BN254_PAIRING_MAX_INPUT_SIZE)}, refused before any gas check"), SIZE_LIMIT
         raise Unmodelled(f"the precompile at {h(target)}")
 
     def precompile_value_start(self, frame, caller_acct, caller: bytes, target: bytes, value: int, data: bytes,
-                               child_gas: int, records: list, history: int, price: int, fails: bool):
+                               child_gas: int, records: list, history: int, price: int, fails: str | None):
         """A value call to the identity precompile where no limit is set (D-85): the start moves the value and makes its
         records and transfer log; a precompile that then fails takes them back, counts nothing and is no stop
         (SATIN-LIM-014); one that would succeed has its start held to the limits first (SATIN-LIM-013)."""
@@ -180,6 +187,8 @@ class PrecompilesMixin:
             if value:
                 return self.precompile_value_start(frame, caller_acct, caller, target, value, data, child_gas, records,
                                                    history, price, fails)
+            if fails == AFTER_CHARGE:
+                raise Unmodelled("a precompile that fails a check after its gas charge where no limit is set")
             if fails:
                 d.add("outcome", f"the precompile at {h(target)} is given {fmt(len(data))} input bytes, over its size limit: "
                       f"the call fails before any gas check and consumes all the gas forwarded to it, {fmt(child_gas)}, a "
@@ -212,16 +221,24 @@ class PrecompilesMixin:
             d.add("gasLedgers", f"what the failed precompile burns, its forward of {fmt(child_gas)}, is not compute: the "
                   f"transaction's compute stays {fmt(self.compute)}", "SATIN-DET-011", "SATIN-DET-020")
             return False, b"", 0
-        if fails:
+        if fails == SIZE_LIMIT:
+            d.add("outcome", f"the precompile at {h(target)} is given {fmt(len(data))} input bytes, over its size limit: "
+                  f"the call fails before any gas check, charging no price, and consumes its whole forward of "
+                  f"{fmt(child_gas)}, as without the read", "SATIN-PCMP-005", "SATIN-DET-021")
+        elif fails:
             d.add("outcome", f"the precompile at {h(target)} runs on its forward of {fmt(child_gas)}, charges its price "
                   f"{fmt(price)}, then fails its input's check and consumes the whole forward, as without the read",
                   "SATIN-PCMP-005", "SATIN-PCMP-007", "SATIN-DET-021")
-            # A halting precompile counts none of what it burns as compute, its charged price included; only the
-            # crossing returns its forward (SATIN-DET-011 from c130558 on, D-78).
-            d.add("gasLedgers", f"a precompile that halts burns its whole forward, {fmt(child_gas)}, its charged price "
-                  f"{fmt(price)} included, and none of it is compute: the transaction's compute stays "
-                  f"{fmt(self.compute)}; only a precompile that is the crossing returns its forward", "SATIN-DET-009",
-                  "SATIN-DET-011", "SATIN-DET-021")
+        if fails:
+            # A halting precompile counts none of what it burns as compute: its charged price, when it charged one, is
+            # part of the forward it burns and not paid work that still counts; only the crossing returns its forward
+            # (SATIN-DET-011 from c130558 on, D-78; its size-limit halt and SATIN-DET-019's exception from bcf260d on,
+            # D-96).
+            charged = ("charging no price, as it fails before any gas check" if fails == SIZE_LIMIT else
+                       f"its charged price {fmt(price)} included, which is no paid work that still counts")
+            d.add("gasLedgers", f"a precompile that halts burns its whole forward, {fmt(child_gas)}, {charged}, and none "
+                  f"of it is compute: the transaction's compute stays {fmt(self.compute)}; only a precompile that is the "
+                  "crossing returns its forward", "SATIN-DET-009", "SATIN-DET-011", "SATIN-DET-019", "SATIN-DET-021")
             return False, b"", 0
         self.compute += price
         d.add("outcome", f"the precompile at {h(target)} runs on its forward of {fmt(child_gas)}, charges its price "

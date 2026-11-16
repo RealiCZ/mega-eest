@@ -7,11 +7,13 @@ edges of the charge-order principles, 5 for gas detention, 3 for the Oracle's re
 refused volatile read, 5 for the stops of a transaction's own frame, 5 that observe the gas pools
 and 7 that observe the reads at `5fb2688` (`specs/satin-5fb2688`), 17 for the take-back page's
 worked examples, 29 for the destruction page's own rules, 53 for gas detention's rules and 26 for
-the limit-stop page's rules at `cdded1e` (`specs/satin-cdded1e`), and 2 for gas detention's rules
-whose precompile halts, 62 for the outcomes page and the order of validation's refusals, 45 for the
-authorization page's rules and 105 for KeylessDeploy's page at `c130558` (`specs/satin-c130558`,
-the snapshot new cases cite), each case naming its own spec (decisions D-54, D-59, D-60, D-61,
-D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78, D-79, D-80, D-85, D-88, D-94). Every
+the limit-stop page's rules at `cdded1e` (`specs/satin-cdded1e`), 60 for the outcomes page and the
+order of validation's refusals, 45 for the authorization page's rules and 105 for KeylessDeploy's
+page at `c130558` (`specs/satin-c130558`), and 4 whose derivation takes a reading the specification
+states from `bcf260d` on (2 for gas detention's rules whose precompile halts, a failed deposit's
+reads and a promoted system transaction's receipt) at `bcf260d` (`specs/satin-bcf260d`, the
+snapshot new cases cite), each case naming its own spec (decisions D-54, D-59, D-60, D-61, D-62,
+D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78, D-79, D-80, D-85, D-88, D-94, D-96). Every
 case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
