@@ -1948,3 +1948,39 @@ can be derived from such a state, and no case may hold one.
     `SATIN-SYSC-005` says. The registry of the six D-87 cases is one.
 - **No case pins it.** `SATIN-SYSC-005` bounds the inputs, and no derivation step applies it. The
   rule-to-case index lists it among the uncited rules.
+
+From the move of the evm2-based pin to `ccbdb23e`:
+
+**D-98. The evm2-based pin moves to `ccbdb23e`; the adapter, its lockfile and every observation
+stay as they were.** The evm2-based pin moved from `353608b9` (fork `390a3876`) to `ccbdb23e`
+(fork `c0a91cbb`, upstream evm2 `e681662b` with the implementation's patches), the fork the
+revision's own `next/evm2-fork.env` pins. Its toolchain (`nightly-2026-04-23`) is unchanged.
+Between the two revisions the implementation:
+
+- reports what a block reads, for its stateless witness. A transaction's fee computation now
+  reads the L1 block contract's account, and its slots only when the account exists
+  (`SATIN-WIT-011`); the slots it reads, and their order, are unchanged. The pre-block sequence no
+  longer reads the contract;
+- keeps the storage of an account without code that a new SequencerRegistry is installed over
+  (`SATIN-REG-008` at `bcf260d`). That is a step of the pre-block sequence, which a single
+  transaction's EVM never runs (D-52, D-97);
+- moves its fork onto upstream `e681662b`. Upstream's #898 drops `GasSettlement::state_refund`,
+  which the implementation always set to zero; `OpPrecompiles` delegates `warm_addresses`; and
+  the step tracers of `evm2-inspectors` leave the state gas a step spills out of its cost. The
+  adapter calls none of these.
+
+No API the adapter uses moved, and it builds `--locked` with no change to its source or its
+manifest. Its lockfile stays the implementation's, less what the adapter does not build, plus
+the adapter and the format crate (D-52). The implementation's lockfile only gains eighty
+packages, removes none and moves no version. The new packages are the dependencies of its
+inspector tests (`evm2-inspectors` with the JavaScript tracer, `alloy-rpc-types-trace`), which
+the adapter does not build. Every package in the adapter's lockfile is in the implementation's
+at the same version, source and checksum, and each of its dependency edges is there too.
+
+The read of the L1 block contract is the only change an observation could show: a case without
+the contract would no longer report its slots among its `reads`. Every case's pre-state holds the
+contract, so none moves. Every gating case passes on both adapters, plain and instrumented, with
+identical observations, and the negative case fails as it must. The evm2-based adapter's
+response to every run request of the slice, its 611 gating cases and the negative case, plain and
+instrumented, is byte-identical at `353608b9` and at `ccbdb23e`. No case, model rule or tool
+changes.
