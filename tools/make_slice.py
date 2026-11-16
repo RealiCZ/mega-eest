@@ -1550,6 +1550,26 @@ RESTORER = bytes.fromhex("00000000000000000000000000000000000c0e21")  # a child 
 SAME_BUCKET_SLOTS = (4677, 6750)  # two slots of CONTRACT that salt-v1 puts in one bucket
 RELAY = bytes.fromhex("00000000000000000000000000000000000c0e22")  # a child that calls a writer and stops
 CROWDED_WRITER = bytes.fromhex("00000000000000000000000000000000000c0e23")  # a writer whose slot's bucket is crowded
+SHARE_WRITER = bytes.fromhex("00000000000000000000000000000000000c0e24")  # a child that fills one fresh slot
+DEPOSITOR = bytes.fromhex("00000000000000000000000000000000000c0e25")  # a creator that returns its CREATE's result
+MERGE_RELAY = bytes.fromhex("00000000000000000000000000000000000c0e26")  # a child that calls a child and stops
+MERGE_LEAF = bytes.fromhex("00000000000000000000000000000000000c0e27")  # a child that stops at once
+HOLLOW = bytes.fromhex("000000000000000000000000000000000000e3e8")  # a destruction's beneficiary, present as a leaf
+
+
+def least_passing(make, lo: int, hi: int, holds) -> int:
+    """The least value in [lo, hi] whose case, `make(value)`, gives a result that `holds`, which is monotone in it."""
+    while lo < hi:
+        mid = (lo + hi) // 2
+        try:
+            passing = holds(build(make(mid))[1])
+        except model.Unmodelled:  # too little for the run to reach the edge at all
+            passing = False
+        if passing:
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
 
 
 def pricing_cases() -> list[Case]:
@@ -1658,6 +1678,48 @@ def pricing_cases() -> list[Case]:
                  + " (SATIN-POOL-021)", boundary=f"computation {'at' if not extra else 'one past'} the regular budget",
                  gas=cap + body + 1_000_000, pools=not extra, code=burn(words) + b"\x5b" * (pad + extra) + STOP, **kw))
 
+    # SATIN-POOL-008, SATIN-STATE-012: a fresh slot's legacy share from regular gas whatever the reservoir holds: a child
+    # forwarded one gas short of its pushes, its write and the share, and forwarded exactly that.
+    need = 2 * model.G_VERYLOW + model.COLD_SSTORE_ACCESS + model.SSTORE_SET + model.LEGACY_SSTORE_SHARE
+    for name, forward, ending in (("one-short", need - 1, "it runs out of gas paying the share though its reservoir share "
+                                   "could pay the whole charge, so its slot is not written and the transaction keeps no "
+                                   "state gas"),
+                                  ("exact", need, "it pays the share and completes, the reservoir paying the rest")):
+        add(Case(f"satin/gas-pools/legacy-share/child-{name}", f"a child forwarded {fmt(forward)} of regular gas, with a "
+                 "large reservoir share, fills a cold fresh slot: its pushes, the access and the write, "
+                 f"{fmt(need - model.LEGACY_SSTORE_SHARE)}, then the legacy share {fmt(model.LEGACY_SSTORE_SHARE)} from "
+                 f"regular gas: {ending} (SATIN-POOL-008, SATIN-STATE-012)", boundary=f"the child's regular gas "
+                 f"{'one below' if forward < need else 'at'} its charges with the share", gas=cap + body + 1_000_000,
+                 pools=True, code=call(forward, SHARE_WRITER, 0, 0) + b"\x50" + STOP,
+                 accounts={SHARE_WRITER: model.Account(nonce=1, code=sstore(1, 1) + STOP)}, **kw))
+
+    # SATIN-POOL-011, -012, -002: a reservoir share returned unspent through two merges, against one merge.
+    for name, relay, tail in (("two-merges", call(MAX_GAS, MERGE_LEAF, 0, 0) + b"\x50" + STOP, "Q keeps 1 and R receives "
+                               "97; R returns 97 into Q's 1, and Q returns 98 into P's 1"),
+                              ("one-merge", STOP, "Q stops at once and returns 98 into P's 1")):
+        add(Case(f"satin/gas-pools/child-merge/unspent-share-{name}", "the first frame P, with 99 of reservoir, calls Q "
+                 f"without value: P keeps 1 and Q receives 98; {tail}: P ends with 99, and no merge credits regular gas "
+                 "(SATIN-POOL-011, SATIN-POOL-012)", gas=cap + body + 99, pools=True,
+                 code=b"\x5b" + call(MAX_GAS, MERGE_RELAY, 0, 0) + b"\x50" + STOP,
+                 accounts={MERGE_RELAY: model.Account(nonce=1, code=relay), MERGE_LEAF: model.Account(nonce=1, code=STOP)},
+                 **kw))
+
+    # SATIN-POOL-003, -024: a value start's record, paid by the regular budget below the cap, and a first frame that halts.
+    add(Case("satin/gas-pools/pre-frame-spill/value-start-record-halts", "a value transfer to a contract whose code halts, "
+             f"below the execution cap: the start record's {fmt(record)} is paid by the regular budget before the frame, and "
+             "with the halt the value, its log and the record are taken back and that regular gas stays spent, none of it "
+             "returning (SATIN-POOL-003, SATIN-POOL-024)", value=1, code=INVALID, gas=1_000_000, **kw))
+
+    # The keyless creation destroying the deploy address after a fresh slot: the table gives back the leaf and the
+    # slot, and the call's gasUsed adds back the leaf and its own record alone.
+    keyless_raw = carried(sstore(1, 1) + b"\x32\xff", gas=500_000)
+    add(Case("satin/gas-pools/keyless/destroyed-after-fresh-slot", "the transaction's own keylessDeploy call, its constructor "
+             "filling a fresh slot and then destroying the deploy address: the destruction table gives back the slot and "
+             "the created account with their records into the creation's reservoir, and the call's gasUsed adds back what "
+             "step 14 charged for the account and its one record, not the slot's record (SATIN-KEY-015, SATIN-SD-004)",
+             system=True,
+             to=model.KEYLESS_DEPLOY, code=None, data=keyless_data(keyless_raw, 500_000, padded=False), gas=1_500_000, **kw))
+
     # SATIN-STATE-004, -005: where a charge is made, and what m scales.
     made = model.created_address(CONTRACT, 1)
     code10 = bytes(range(0x60, 0x6a))
@@ -1682,8 +1744,8 @@ def pricing_cases() -> list[Case]:
     k1, k2 = SAME_BUCKET_SLOTS
     add(Case("satin/state-gas/same-bucket/two-slots-one-restored", f"slots {k1} and {k2} of one contract, which SALT's "
              "mapping puts in one bucket, at five times the minimum capacity, are filled, and the second is restored: both "
-             f"charges and the give-back are priced at m = 5, {fmt(slot * 5)} each, and the bucket's capacity, the one the "
-             "incomplete SALT input lists, is read once (SATIN-STATE-006, SATIN-STATE-010)", gas=3_000_000,
+             f"charges and the give-back are priced at the one m = 5, {fmt(slot * 5)} each, the capacity the incomplete "
+             "SALT input lists for that bucket alone (SATIN-STATE-006, SATIN-STATE-010)", gas=3_000_000,
              code=sstore(k1, 1) + sstore(k2, 1) + sstore(k2, 0) + STOP, salt={(CONTRACT, k1): 5}, salt_complete=False,
              reads=True, **kw))
 
@@ -1716,6 +1778,50 @@ def pricing_cases() -> list[Case]:
                  code=call(MAX_GAS, RELAY, 0, 0) + b"\x50" + STOP, salt={(CROWDED_WRITER, 1): 4},
                  accounts={RELAY: model.Account(nonce=1, code=call(MAX_GAS, CROWDED_WRITER, 0, 0) + b"\x50" + STOP),
                            CROWDED_WRITER: model.Account(nonce=1, code=sstore(1, 1) + tail)}, **kw))
+
+    # SATIN-STATE-006, SATIN-POOL-015, SATIN-SCHED-011: a creation whose constructor wrote a crowded slot, one gas short of
+    # its code deposit's last charge, its history, and exactly paid.
+    held = model.created_address(DEPOSITOR, 1)
+    depositor = (bytes_to_memory(returning(b"\x00", sstore(1, 1))) + push(len(returning(b"\x00", sstore(1, 1)))) + push(0)
+                 + push(0) + b"\xf0" + push(0) + b"\x52" + ret(0, 32))
+
+    def deposit_case(request: int, name: str, ending: str) -> Case:
+        return Case(f"satin/state-gas/give-back-price/code-deposit-{name}-after-crowded-write", "a contract creates an "
+                    "account in a bucket at three times the minimum capacity, whose constructor fills slot 1 in a bucket at "
+                    "four times it and returns one byte, its regular gas set " + ending + " (SATIN-STATE-006, "
+                    "SATIN-POOL-015, SATIN-SCHED-011)", boundary=f"the creation {name} its deposit's last charge",
+                    gas=3_000_000, code=call(request, DEPOSITOR, 0, 0) + b"\x50" + RETURN_RETURNDATA,
+                    accounts={DEPOSITOR: model.Account(nonce=1, code=depositor)},
+                    salt={(held, None): 3, (held, 1): 4}, **kw)
+    deployed = lambda result: (result.observations.get("state") or {}).get("accounts", {}).get(h(held), {}).get("code") == "0x00"
+    least = least_passing(lambda r: deposit_case(r, "paid", ""), 100_000, 2_900_000, deployed)
+    add(deposit_case(least - 1, "one-short", f"one gas short of the deposit's history, {model.COST_PER_HISTORY_BYTE}: the "
+                     "creation halts, nothing of it is kept, the slot's state gas goes with its rollback at m = 4 and the "
+                     "account's comes back to the creator at m = 3, its legacy share included, and the CREATE answers zero"))
+    add(deposit_case(least, "paid", "to pay the deposit's last charge exactly: the account, its slot and its byte are kept"))
+
+    # SATIN-STATE-004, -011: a SELFDESTRUCT's beneficiary present as an empty leaf, with and without storage, is a new
+    # account; one with a nonce is not.
+    for name, leaf, ending in (("empty-leaf-at-m3", model.Account(), "empty under EIP-161: the destruction adds it and "
+                                f"charges {fmt(account * 3)} of state gas at its m = 3, its legacy share "
+                                f"{fmt(model.LEGACY_SELFDESTRUCT_SHARE)} first, and one unit of state growth"),
+                               ("empty-leaf-with-storage-at-m3", model.Account(storage={7: 9}), "empty under EIP-161 though "
+                                "it holds a slot: the same new-account charge and growth, and its slot stays"),
+                               ("nonce-one-leaf", model.Account(nonce=1), "not empty, its nonce being 1: no new-account "
+                                "charge and no growth")):
+        add(Case(f"satin/state-gas/sites/selfdestruct-to-{name}", "the transaction's own frame, a contract it did not "
+                 "create holding 1 wei, SELFDESTRUCTs to an account whose leaf the state holds with no balance and no code, "
+                 f"{ending} (SATIN-STATE-004, SATIN-STATE-011)", contract_balance=1, destruction=True, reads=True,
+                 code=selfdestruct_to(HOLLOW), accounts={HOLLOW: leaf}, salt={(HOLLOW, None): 3}, gas=2_000_000, **kw))
+
+    # SATIN-STATE-002, SATIN-STATE-007's valid side: a capacity listed at the minimum, and one below twice it and at it.
+    for name, m, label in (("listed-at-minimum", 1, f"exactly {model.MIN_BUCKET_SIZE}, the minimum, a bucket: m = 1"),
+                           ("one-below-twice-minimum", (2 * model.MIN_BUCKET_SIZE - 1) / model.MIN_BUCKET_SIZE,
+                            f"{2 * model.MIN_BUCKET_SIZE - 1}, one below twice the minimum: m = 1"),
+                           ("twice-minimum", 2, f"{2 * model.MIN_BUCKET_SIZE}, twice the minimum: m = 2")):
+        add(Case(f"satin/state-gas/capacity/{name}", f"a fresh slot whose bucket the incomplete SALT input lists alone at "
+                 f"{label} (SATIN-STATE-002)", boundary=f"a capacity of {int(m * model.MIN_BUCKET_SIZE)}",
+                 code=sstore(1, 1) + STOP, salt={(CONTRACT, 1): m}, salt_complete=False, reads=True, **kw))
 
     # SATIN-STATE-010: an account's bucket and its slot's are SALT's, each its own.
     rt = b"\x60\x00\x60\x00"
@@ -1773,8 +1879,8 @@ def pricing_cases() -> list[Case]:
              f"accessed, {fmt(model.WARM_READ + model.COLD_ACCOUNT_SURCHARGE)} (SATIN-SCHED-014)",
              code=balance(SENDER) + balance(CONTRACT) + balance(UNTOUCHED) + STOP, **kw))
     add(Case("satin/schedule/warm-from-start/access-list-address-without-keys", "an access list naming a contract with no "
-             f"storage keys: BALANCE of it costs {model.WARM_READ}, and its first CALL-family access, a CALL without value, "
-             "makes no cold access (SATIN-SCHED-012)", ty=1, access_list=[(PLAIN, [])], accounts=dict(target),
+             f"storage keys: BALANCE, its first access, costs {model.WARM_READ}, the list having warmed it; the CALL after it "
+             "is warm too (SATIN-SCHED-012)", ty=1, access_list=[(PLAIN, [])], accounts=dict(target),
              code=balance(PLAIN) + call(0, PLAIN, 0, 0) + b"\x50" + STOP, **kw))
     add(Case("satin/schedule/warm-from-start/access-list-address-with-keys", "an access list naming a contract with a "
              f"storage key: the first CALL to it, without value, makes no cold access, its warm read {model.WARM_READ} "
@@ -1794,6 +1900,28 @@ def pricing_cases() -> list[Case]:
              f"the transaction's start: its access is the warm read {model.WARM_READ} (SATIN-SCHED-012)",
              code=call(0, COINBASE, 0, 0) + b"\x50" + STOP, accounts={COINBASE: model.Account(nonce=1, code=STOP)},
              detention=True, **kw))
+    add(Case("satin/schedule/warm-from-start/first-call-access-listed", "an access list naming a contract with no storage "
+             f"keys, whose first access is a CALL without value: its warm read {model.WARM_READ} alone, no cold access, "
+             "nothing having touched it before (SATIN-SCHED-012)", ty=1, access_list=[(PLAIN, [])], accounts=dict(target),
+             code=call(0, PLAIN, 0, 0) + b"\x50" + STOP, **kw))
+    add(Case("satin/schedule/warm-from-start/first-staticcall-access-listed", "the same first access by a STATICCALL: its "
+             f"warm read {model.WARM_READ} alone (SATIN-SCHED-012)", ty=1, access_list=[(PLAIN, [])],
+             accounts=dict(target), code=staticcall(0, PLAIN) + b"\x50" + STOP, **kw))
+    extcodecopy = lambda who, dest, offset, size: (push(size) + push(offset) + push(dest) + push(int.from_bytes(who, "big"))
+                                                   + b"\x3c")
+    add(Case("satin/schedule/static-gas/extcodecopy-cold-zero-length-twice", "EXTCODECOPY of zero bytes of a contract "
+             f"that is not warm, twice: the first pays its static gas, two warm reads, {2 * model.WARM_READ}, and the cold "
+             f"access {fmt(model.COLD_ACCOUNT_SURCHARGE)}, the second its static gas alone, though neither copies a byte "
+             "(SATIN-SCHED-002)", accounts=dict(target),
+             code=extcodecopy(PLAIN, 0, 0, 0) + extcodecopy(PLAIN, 0, 0, 0) + STOP, **kw))
+    add(Case("satin/schedule/static-gas/extcodecopy-cold-copies-code", "EXTCODECOPY of a cold contract's 3 bytes of code "
+             f"into memory, returned: {2 * model.WARM_READ} of static gas, the cold access, the copy of one word and the "
+             "memory's word (SATIN-SCHED-002)", accounts=dict(target), code=extcodecopy(PLAIN, 0, 0, 3) + ret(0, 32), **kw))
+    for size in (96, 97):
+        add(Case(f"satin/schedule/intrinsic/initcode-{size}-bytes", f"a creation transaction whose initcode is STOP and "
+                 f"{size - 1} zero bytes, {size} bytes in {(size + 31) // 32} words: EIP-3860's word cost and the calldata "
+                 "tokens are in its intrinsic regular gas, and every byte is in its body's history and its floor "
+                 "(SATIN-SCHED-006)", boundary=f"initcode of {size} bytes", to=None, data=STOP + bytes(size - 1), **kw))
     code33 = bytes(range(1, 34))
     add(Case("satin/schedule/code-deposit/history-per-byte", f"a CREATE that deploys {len(code33)} bytes: the regular "
              f"code-deposit cost is zero a byte, the hashing {model.KECCAK_WORD} a word, the code's state gas "

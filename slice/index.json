@@ -16131,7 +16131,7 @@
       "area": "gas-pools",
       "caseId": "satin/gas-pools/first-frame-revert/authorization-charges-kept",
       "file": "cases/satin/gas-pools/first-frame-revert/authorization-charges-kept.json",
-      "fileDigest": "sha256:08a566c4d48921e5074e94ed7df504865d4f16accb2ec343a1bc4c0f3ec17dc7",
+      "fileDigest": "sha256:e03662ff5c8656ad1b62ae44015fb5e42b4dffa9b80bad970dbeafecd303ff1d",
       "rules": [
         "SATIN-POOL-001",
         "SATIN-POOL-002",
@@ -16139,7 +16139,6 @@
         "SATIN-POOL-006",
         "SATIN-POOL-007",
         "SATIN-POOL-014",
-        "SATIN-POOL-015",
         "SATIN-POOL-017",
         "SATIN-POOL-018",
         "SATIN-POOL-019",
@@ -16284,6 +16283,169 @@
       }
     },
     {
+      "area": "gas-pools",
+      "caseId": "satin/gas-pools/legacy-share/child-one-short",
+      "file": "cases/satin/gas-pools/legacy-share/child-one-short.json",
+      "fileDigest": "sha256:c8c1de2c4b29b1ae4c1a0b2e2aec1ff7a084bc6ce0c694c672dae42f9d5ed221",
+      "rules": [
+        "SATIN-POOL-001",
+        "SATIN-POOL-004",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-010",
+        "SATIN-POOL-011",
+        "SATIN-POOL-012",
+        "SATIN-POOL-014",
+        "SATIN-POOL-017",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-POOL-022",
+        "SATIN-POOL-024",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-pools",
+      "caseId": "satin/gas-pools/legacy-share/child-exact",
+      "file": "cases/satin/gas-pools/legacy-share/child-exact.json",
+      "fileDigest": "sha256:b1a1f01cd94290bfa727b93788b057a8d8c5f48feea1e057ebbee120c50d703e",
+      "rules": [
+        "SATIN-POOL-001",
+        "SATIN-POOL-002",
+        "SATIN-POOL-004",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-010",
+        "SATIN-POOL-011",
+        "SATIN-POOL-012",
+        "SATIN-POOL-017",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-POOL-022",
+        "SATIN-POOL-024",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-pools",
+      "caseId": "satin/gas-pools/child-merge/unspent-share-two-merges",
+      "file": "cases/satin/gas-pools/child-merge/unspent-share-two-merges.json",
+      "fileDigest": "sha256:16fc94ec27a693528771bd928f136d600363b08310b92a8a150eaa4cbfa0df1b",
+      "rules": [
+        "SATIN-POOL-001",
+        "SATIN-POOL-002",
+        "SATIN-POOL-004",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-010",
+        "SATIN-POOL-011",
+        "SATIN-POOL-012",
+        "SATIN-POOL-017",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-POOL-022",
+        "SATIN-POOL-024"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-pools",
+      "caseId": "satin/gas-pools/child-merge/unspent-share-one-merge",
+      "file": "cases/satin/gas-pools/child-merge/unspent-share-one-merge.json",
+      "fileDigest": "sha256:a245ff99c5e31dbdf12384dfe575077b29862adf687fea3535a2eb899cc7ef76",
+      "rules": [
+        "SATIN-POOL-001",
+        "SATIN-POOL-002",
+        "SATIN-POOL-004",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-010",
+        "SATIN-POOL-011",
+        "SATIN-POOL-012",
+        "SATIN-POOL-017",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-POOL-022",
+        "SATIN-POOL-024"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-pools",
+      "caseId": "satin/gas-pools/pre-frame-spill/value-start-record-halts",
+      "file": "cases/satin/gas-pools/pre-frame-spill/value-start-record-halts.json",
+      "fileDigest": "sha256:285b8ea87e6ec7c815c0280f3f2d8adb30c303d8e8671b34f92a47122e088462",
+      "rules": [
+        "SATIN-POOL-001",
+        "SATIN-POOL-003",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-014",
+        "SATIN-POOL-017",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-POOL-024"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-pools",
+      "caseId": "satin/gas-pools/keyless/destroyed-after-fresh-slot",
+      "file": "cases/satin/gas-pools/keyless/destroyed-after-fresh-slot.json",
+      "fileDigest": "sha256:8679e66ccbd690a654fef4533962fcd8af4d01ac69c0e91ae4a37f59ba223845",
+      "rules": [
+        "SATIN-KEY-015",
+        "SATIN-POOL-001",
+        "SATIN-POOL-002",
+        "SATIN-POOL-004",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-011",
+        "SATIN-POOL-012",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-POOL-022",
+        "SATIN-SD-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
       "area": "state-gas",
       "caseId": "satin/state-gas/multiplier/creation-at-m3",
       "file": "cases/satin/state-gas/multiplier/creation-at-m3.json",
@@ -16307,14 +16469,13 @@
       "area": "state-gas",
       "caseId": "satin/state-gas/multiplier/value-call-new-account-at-m5",
       "file": "cases/satin/state-gas/multiplier/value-call-new-account-at-m5.json",
-      "fileDigest": "sha256:f74aca30262b97831cc1a1a5e9c41b35860e235a432ee56baf01a38a52d79869",
+      "fileDigest": "sha256:485402d057a9a22a1cd3c5281ad330faa78b8b5d4dd42fc5b49d7777e789901c",
       "rules": [
         "SATIN-STATE-001",
         "SATIN-STATE-002",
         "SATIN-STATE-003",
         "SATIN-STATE-004",
         "SATIN-STATE-005",
-        "SATIN-STATE-006",
         "SATIN-STATE-010",
         "SATIN-STATE-012"
       ],
@@ -16340,7 +16501,7 @@
       "area": "state-gas",
       "caseId": "satin/state-gas/same-bucket/two-slots-one-restored",
       "file": "cases/satin/state-gas/same-bucket/two-slots-one-restored.json",
-      "fileDigest": "sha256:44c59f90c07dbe3b3d3d041e6cbcf151e63983192a269ffc30da2765e8b27732",
+      "fileDigest": "sha256:a94f582b26bd300160a25895f849ac469a86b217c9c6464e2cea2ee988c48e66",
       "rules": [
         "SATIN-STATE-001",
         "SATIN-STATE-002",
@@ -16400,10 +16561,51 @@
       "area": "state-gas",
       "caseId": "satin/state-gas/give-back-price/inner-frame-reverts-at-m4",
       "file": "cases/satin/state-gas/give-back-price/inner-frame-reverts-at-m4.json",
-      "fileDigest": "sha256:3b4db586135d5c2950dec9ffdc68a492ee972f08789c41c4a752e1b11d6f3850",
+      "fileDigest": "sha256:7b585e79f471004bdc2fe3f51f971fd55fc821f839e9c5d2f921ee89c4886a55",
       "rules": [
         "SATIN-STATE-001",
         "SATIN-STATE-002",
+        "SATIN-STATE-004",
+        "SATIN-STATE-005",
+        "SATIN-STATE-008",
+        "SATIN-STATE-010",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "state-gas",
+      "caseId": "satin/state-gas/give-back-price/inner-frame-keeps-at-m4",
+      "file": "cases/satin/state-gas/give-back-price/inner-frame-keeps-at-m4.json",
+      "fileDigest": "sha256:cb81e0a9269380243d4c407228539324ea63d69c71f124e3180c7f5c0bc0f406",
+      "rules": [
+        "SATIN-STATE-001",
+        "SATIN-STATE-002",
+        "SATIN-STATE-004",
+        "SATIN-STATE-005",
+        "SATIN-STATE-008",
+        "SATIN-STATE-010",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "state-gas",
+      "caseId": "satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write",
+      "file": "cases/satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write.json",
+      "fileDigest": "sha256:2278d63b67852ee98a2d8ee7ce7ac8c1ac24b8102df3ba3596c13e191e3815b4",
+      "rules": [
+        "SATIN-POOL-015",
+        "SATIN-SCHED-011",
+        "SATIN-STATE-001",
+        "SATIN-STATE-002",
+        "SATIN-STATE-003",
         "SATIN-STATE-004",
         "SATIN-STATE-005",
         "SATIN-STATE-006",
@@ -16418,15 +16620,122 @@
     },
     {
       "area": "state-gas",
-      "caseId": "satin/state-gas/give-back-price/inner-frame-keeps-at-m4",
-      "file": "cases/satin/state-gas/give-back-price/inner-frame-keeps-at-m4.json",
-      "fileDigest": "sha256:ac0747db42f6b74f471a16ac679bc257501a90c5cc36097a98b48ff3a9100118",
+      "caseId": "satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write",
+      "file": "cases/satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write.json",
+      "fileDigest": "sha256:778df405c368be3e9910399650c34ea1ebb322a845094c9d02985ddce0cfbd67",
+      "rules": [
+        "SATIN-SCHED-011",
+        "SATIN-STATE-001",
+        "SATIN-STATE-002",
+        "SATIN-STATE-003",
+        "SATIN-STATE-004",
+        "SATIN-STATE-005",
+        "SATIN-STATE-006",
+        "SATIN-STATE-008",
+        "SATIN-STATE-010",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "state-gas",
+      "caseId": "satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3",
+      "file": "cases/satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3.json",
+      "fileDigest": "sha256:d0b2e56cfc43ce86a52a4632097e5ad84ae89deec1824ea49bc7567f47550323",
+      "rules": [
+        "SATIN-STATE-002",
+        "SATIN-STATE-004",
+        "SATIN-STATE-010",
+        "SATIN-STATE-011",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "state-gas",
+      "caseId": "satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3",
+      "file": "cases/satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3.json",
+      "fileDigest": "sha256:20b178b8986b1b6c3a5f2bd8e5317a69e7d3941b0cc7df9247f7c7b2171b45f2",
+      "rules": [
+        "SATIN-STATE-002",
+        "SATIN-STATE-004",
+        "SATIN-STATE-010",
+        "SATIN-STATE-011",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "state-gas",
+      "caseId": "satin/state-gas/sites/selfdestruct-to-nonce-one-leaf",
+      "file": "cases/satin/state-gas/sites/selfdestruct-to-nonce-one-leaf.json",
+      "fileDigest": "sha256:4ad0bbe9e604b9e44ed54c4f3c4d4139ea253398664c654775356086940ef2a7",
+      "rules": [
+        "SATIN-STATE-004",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "state-gas",
+      "caseId": "satin/state-gas/capacity/listed-at-minimum",
+      "file": "cases/satin/state-gas/capacity/listed-at-minimum.json",
+      "fileDigest": "sha256:fb6c69282059c61ebd2f1714338ffa6002ec3cd094cde44a24c22fa03f2470d3",
       "rules": [
         "SATIN-STATE-001",
         "SATIN-STATE-002",
         "SATIN-STATE-004",
         "SATIN-STATE-005",
-        "SATIN-STATE-006",
+        "SATIN-STATE-008",
+        "SATIN-STATE-010",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "state-gas",
+      "caseId": "satin/state-gas/capacity/one-below-twice-minimum",
+      "file": "cases/satin/state-gas/capacity/one-below-twice-minimum.json",
+      "fileDigest": "sha256:7eaa4710ad9a54b849ccec0eda74d728e4639709add18cee950ac766d25c787c",
+      "rules": [
+        "SATIN-STATE-001",
+        "SATIN-STATE-002",
+        "SATIN-STATE-004",
+        "SATIN-STATE-005",
+        "SATIN-STATE-008",
+        "SATIN-STATE-010",
+        "SATIN-STATE-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "state-gas",
+      "caseId": "satin/state-gas/capacity/twice-minimum",
+      "file": "cases/satin/state-gas/capacity/twice-minimum.json",
+      "fileDigest": "sha256:2fde62f28b04349ee449fe43a78ea92c84ed9058d5800e5514769b2226233f93",
+      "rules": [
+        "SATIN-STATE-001",
+        "SATIN-STATE-002",
+        "SATIN-STATE-004",
+        "SATIN-STATE-005",
         "SATIN-STATE-008",
         "SATIN-STATE-010",
         "SATIN-STATE-012"
@@ -16498,14 +16807,13 @@
       "area": "state-gas",
       "caseId": "satin/state-gas/deposit/user-deposit-new-account",
       "file": "cases/satin/state-gas/deposit/user-deposit-new-account.json",
-      "fileDigest": "sha256:5610099f496ff64b04c70030afca862b67a71ed817d7fd43b01b797332a3aec2",
+      "fileDigest": "sha256:9a45fca89c64a4844c8488e9801d0adcca9fc6ced599d161f12d7c03586de610",
       "rules": [
         "SATIN-STATE-001",
         "SATIN-STATE-002",
         "SATIN-STATE-003",
         "SATIN-STATE-004",
         "SATIN-STATE-005",
-        "SATIN-STATE-006",
         "SATIN-STATE-009",
         "SATIN-STATE-010",
         "SATIN-STATE-012"
@@ -16620,7 +16928,7 @@
       "area": "schedule",
       "caseId": "satin/schedule/warm-from-start/access-list-address-without-keys",
       "file": "cases/satin/schedule/warm-from-start/access-list-address-without-keys.json",
-      "fileDigest": "sha256:aa79bfc2171e7d16741999272a450937e6e98f7b37813c0c0be62d2f76ef8c1d",
+      "fileDigest": "sha256:19d76b1a9b2a9865c61cec20c6652ebe37aa160cea67d0c14073519329b0f218",
       "rules": [
         "SATIN-SCHED-001",
         "SATIN-SCHED-002",
@@ -16699,6 +17007,108 @@
         "SATIN-SCHED-005",
         "SATIN-SCHED-006",
         "SATIN-SCHED-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "schedule",
+      "caseId": "satin/schedule/warm-from-start/first-call-access-listed",
+      "file": "cases/satin/schedule/warm-from-start/first-call-access-listed.json",
+      "fileDigest": "sha256:bb1797da0885ee3f39920d7e00c661c4cf563980da2e935f3ffe13b20e4eaeaa",
+      "rules": [
+        "SATIN-SCHED-001",
+        "SATIN-SCHED-002",
+        "SATIN-SCHED-003",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-SCHED-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "schedule",
+      "caseId": "satin/schedule/warm-from-start/first-staticcall-access-listed",
+      "file": "cases/satin/schedule/warm-from-start/first-staticcall-access-listed.json",
+      "fileDigest": "sha256:0d04aac45607e5b95508fbff7780839c8523a0401d935fb46fd68907a0cf3b61",
+      "rules": [
+        "SATIN-SCHED-001",
+        "SATIN-SCHED-002",
+        "SATIN-SCHED-003",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-SCHED-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "schedule",
+      "caseId": "satin/schedule/static-gas/extcodecopy-cold-zero-length-twice",
+      "file": "cases/satin/schedule/static-gas/extcodecopy-cold-zero-length-twice.json",
+      "fileDigest": "sha256:19ecc558627517cd357b8d6f8dcb24c27a7441426c2807a6a07dea601388dc72",
+      "rules": [
+        "SATIN-SCHED-002",
+        "SATIN-SCHED-003",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "schedule",
+      "caseId": "satin/schedule/static-gas/extcodecopy-cold-copies-code",
+      "file": "cases/satin/schedule/static-gas/extcodecopy-cold-copies-code.json",
+      "fileDigest": "sha256:9529352193d6a69c69bf8c51947806b532225c71dabefb8b63d86e3287f802ac",
+      "rules": [
+        "SATIN-SCHED-002",
+        "SATIN-SCHED-003",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "schedule",
+      "caseId": "satin/schedule/intrinsic/initcode-96-bytes",
+      "file": "cases/satin/schedule/intrinsic/initcode-96-bytes.json",
+      "fileDigest": "sha256:64a22328dd89fb51fd1b4051f65d8bd9010c09cd4990e2704ce7b1b8fc95255b",
+      "rules": [
+        "SATIN-SCHED-001",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-SCHED-008",
+        "SATIN-SCHED-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "schedule",
+      "caseId": "satin/schedule/intrinsic/initcode-97-bytes",
+      "file": "cases/satin/schedule/intrinsic/initcode-97-bytes.json",
+      "fileDigest": "sha256:16db9d7421db72a58a6f23036361915210e179acf38af7f51974160582cb165f",
+      "rules": [
+        "SATIN-SCHED-001",
+        "SATIN-SCHED-005",
+        "SATIN-SCHED-006",
+        "SATIN-SCHED-008",
+        "SATIN-SCHED-011"
       ],
       "spec": {
         "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",

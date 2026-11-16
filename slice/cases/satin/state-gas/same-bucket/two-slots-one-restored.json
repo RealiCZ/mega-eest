@@ -182,7 +182,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "slots 4677 and 6750 of one contract, which SALT's mapping puts in one bucket, at five times the minimum capacity, are filled, and the second is restored: both charges and the give-back are priced at m = 5, 489,600 each, and the bucket's capacity, the one the incomplete SALT input lists, is read once (SATIN-STATE-006, SATIN-STATE-010)"
+      "intent": "slots 4677 and 6750 of one contract, which SALT's mapping puts in one bucket, at five times the minimum capacity, are filled, and the second is restored: both charges and the give-back are priced at the one m = 5, 489,600 each, the capacity the incomplete SALT input lists for that bucket alone (SATIN-STATE-006, SATIN-STATE-010)"
     },
     "definition": "tools/make_slice.py::pricing_cases",
     "generator": "tools/make_slice.py",

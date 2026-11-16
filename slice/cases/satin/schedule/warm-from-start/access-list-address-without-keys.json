@@ -132,7 +132,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "an access list naming a contract with no storage keys: BALANCE of it costs 100, and its first CALL-family access, a CALL without value, makes no cold access (SATIN-SCHED-012)"
+      "intent": "an access list naming a contract with no storage keys: BALANCE, its first access, costs 100, the list having warmed it; the CALL after it is warm too (SATIN-SCHED-012)"
     },
     "definition": "tools/make_slice.py::pricing_cases",
     "generator": "tools/make_slice.py",

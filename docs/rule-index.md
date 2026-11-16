@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-bcf260d], source commit `bcf260d3de62c50cd1700e4f8
 (committed `2026-11-16T12:04:00+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **908** (908 gating, 0 quarantined).
+Cases: **928** (928 gating, 0 quarantined).
 Cited rule IDs: **324**. Uncited rule IDs in that registry: **87**
 (77 active, 10 retired).
 
@@ -4118,6 +4118,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/keyless/abi/override-2-64] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/abi/trailing-byte] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/abi/unaligned-offset] | gating | unqualified | [satin-c130558] |
@@ -5398,16 +5399,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-one-above-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 
@@ -5416,7 +5423,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-POOL-003
 
@@ -5424,6 +5435,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 
@@ -5432,10 +5444,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-one-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5446,6 +5463,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5453,12 +5472,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
@@ -5469,6 +5492,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5476,12 +5501,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
@@ -5492,6 +5521,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5499,7 +5530,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
@@ -5514,13 +5548,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-one-above-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
@@ -5556,6 +5595,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5563,6 +5604,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
@@ -5583,8 +5626,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-forwarding/reservoir/share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/reservoir/value-call-requesting-nothing] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-POOL-012
@@ -5604,8 +5652,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/call-order/unfunded/limit-control] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-POOL-014
@@ -5615,9 +5668,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/outcomes/deposit/reverted] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/reverted-new-caller] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/deposit/reverted-with-value] | gating | unqualified | [satin-c130558] |
@@ -5651,10 +5706,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
-| [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-POOL-017
 
@@ -5662,6 +5717,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5670,11 +5727,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
@@ -5712,6 +5772,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5719,12 +5781,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
@@ -5735,6 +5801,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5742,12 +5810,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
@@ -5775,6 +5847,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5782,12 +5856,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/one-past-regular-budget] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
@@ -5813,10 +5891,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-one-above-cap] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5833,6 +5916,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/gas-pools/answered-call-history-returns] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/child-merge/returned-reservoir-after-spill] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-one-merge] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/child-merge/unspent-share-two-merges] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/execution-cap/gas-limit-at-cap] | gating | unqualified | [satin-bcf260d] |
@@ -5841,10 +5926,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/fresh-slot-partly-from-regular] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/fresh-slot-restored] | gating | unqualified | [satin-5fb2688] |
 | [satin/gas-pools/legacy-share-from-regular] | gating | unqualified | [satin-5fb2688] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/no-compute-limit/regular-budget-spent] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
@@ -5878,10 +5966,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/schedule/code-deposit/history-per-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/forward/one-thousand-forwards-980] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-96-bytes] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-97-bytes] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/access-list-address-with-keys] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/access-list-address-without-keys] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/call-beneficiary] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/callcode-access-listed] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-call-access-listed] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-staticcall-access-listed] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-SCHED-002
 
@@ -5889,6 +5981,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/schedule/code-deposit/history-per-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/forward/one-thousand-forwards-980] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/static-gas/extcodecopy-cold-copies-code] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/static-gas/extcodecopy-cold-zero-length-twice] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodehash-warm-sender] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodesize-cold] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodesize-warm-recipient] | gating | unqualified | [satin-bcf260d] |
@@ -5897,6 +5991,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/schedule/warm-from-start/call-beneficiary] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/callcode-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/extcodesize-precompile] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-call-access-listed] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-staticcall-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/selfdestruct-beneficiary-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/sender-recipient-and-cold] | gating | unqualified | [satin-bcf260d] |
 
@@ -5906,6 +6002,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/schedule/code-deposit/history-per-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/forward/one-thousand-forwards-980] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/static-gas/extcodecopy-cold-copies-code] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/static-gas/extcodecopy-cold-zero-length-twice] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodehash-warm-sender] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodesize-cold] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodesize-warm-recipient] | gating | unqualified | [satin-bcf260d] |
@@ -5914,6 +6012,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/schedule/warm-from-start/call-beneficiary] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/callcode-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/extcodesize-precompile] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-call-access-listed] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-staticcall-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/selfdestruct-beneficiary-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/sender-recipient-and-cold] | gating | unqualified | [satin-bcf260d] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
@@ -5970,6 +6070,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/intrinsic/calldata/zero-bytes] | gating | unqualified | [satin-d34e626] |
 | [satin/schedule/code-deposit/history-per-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/forward/one-thousand-forwards-980] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-96-bytes] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-97-bytes] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/static-gas/extcodecopy-cold-copies-code] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/static-gas/extcodecopy-cold-zero-length-twice] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodehash-warm-sender] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodesize-cold] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodesize-warm-recipient] | gating | unqualified | [satin-bcf260d] |
@@ -5978,6 +6082,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/schedule/warm-from-start/call-beneficiary] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/callcode-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/extcodesize-precompile] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-call-access-listed] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-staticcall-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/selfdestruct-beneficiary-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/sender-recipient-and-cold] | gating | unqualified | [satin-bcf260d] |
 
@@ -6002,6 +6108,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/intrinsic/calldata/zero-bytes] | gating | unqualified | [satin-d34e626] |
 | [satin/schedule/code-deposit/history-per-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/forward/one-thousand-forwards-980] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-96-bytes] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-97-bytes] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/static-gas/extcodecopy-cold-copies-code] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/static-gas/extcodecopy-cold-zero-length-twice] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodehash-warm-sender] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodesize-cold] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodesize-warm-recipient] | gating | unqualified | [satin-bcf260d] |
@@ -6010,6 +6120,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/schedule/warm-from-start/call-beneficiary] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/callcode-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/extcodesize-precompile] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-call-access-listed] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-staticcall-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/selfdestruct-beneficiary-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/sender-recipient-and-cold] | gating | unqualified | [satin-bcf260d] |
 
@@ -6073,6 +6185,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/delegated-recipient/cold-delegate-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/delegated-recipient/own-sender] | gating | unqualified | [satin-5fb2688] |
 | [satin/delegated-recipient/warm-delegate] | gating | unqualified | [satin-5fb2688] |
+| [satin/schedule/intrinsic/initcode-96-bytes] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-97-bytes] | gating | unqualified | [satin-bcf260d] |
 | [satin/value-transfer/absent-recipient/bucket-x4] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/absent-recipient/minimum-bucket] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/contract-revert] | gating | unqualified | [satin-d34e626] |
@@ -6104,6 +6218,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/schedule/code-deposit/history-per-byte] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-96-bytes] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/intrinsic/initcode-97-bytes] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-SCHED-012
 
@@ -6114,6 +6232,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/schedule/warm-from-start/call-beneficiary] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/callcode-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/extcodesize-precompile] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-call-access-listed] | gating | unqualified | [satin-bcf260d] |
+| [satin/schedule/warm-from-start/first-staticcall-access-listed] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/warm-from-start/selfdestruct-beneficiary-access-listed] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-SCHED-014
@@ -6208,6 +6328,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/gas-pools/keyless/destroyed-after-fresh-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
@@ -6708,7 +6829,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/sstore/fresh-then-restored-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/sstore/sload-then-fresh-write] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/two-fresh-slots/two-buckets] | gating | unqualified | [satin-d34e626] |
+| [satin/state-gas/capacity/listed-at-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/one-below-twice-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/twice-minimum] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/deposit/user-deposit-new-account] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/created-account-reverted-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/destroyed-after-another-creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/inner-frame-keeps-at-m4] | gating | unqualified | [satin-bcf260d] |
@@ -6757,7 +6883,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/sstore/fresh-then-restored-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/sstore/sload-then-fresh-write] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/two-fresh-slots/two-buckets] | gating | unqualified | [satin-d34e626] |
+| [satin/state-gas/capacity/listed-at-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/one-below-twice-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/twice-minimum] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/deposit/user-deposit-new-account] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/created-account-reverted-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/destroyed-after-another-creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/inner-frame-keeps-at-m4] | gating | unqualified | [satin-bcf260d] |
@@ -6766,6 +6897,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/state-gas/multiplier/creation-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/multiplier/value-call-new-account-at-m5] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/same-bucket/two-slots-one-restored] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/system-originated/fresh-slots-and-give-back] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-STATE-003
@@ -6813,6 +6946,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
 | [satin/state-gas/deposit/user-deposit-new-account] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/created-account-reverted-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/destroyed-after-another-creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/mapping/account-and-slot-buckets] | gating | unqualified | [satin-bcf260d] |
@@ -6827,7 +6962,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/state-gas/capacity/listed-at-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/one-below-twice-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/twice-minimum] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/deposit/user-deposit-new-account] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/created-account-reverted-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/destroyed-after-another-creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/inner-frame-keeps-at-m4] | gating | unqualified | [satin-bcf260d] |
@@ -6836,6 +6976,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/state-gas/multiplier/creation-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/multiplier/value-call-new-account-at-m5] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/same-bucket/two-slots-one-restored] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-nonce-one-leaf] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/sites/zero-value-call-to-absent] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/system-originated/creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/system-originated/fresh-slots-and-give-back] | gating | unqualified | [satin-bcf260d] |
@@ -6844,7 +6987,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/state-gas/capacity/listed-at-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/one-below-twice-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/twice-minimum] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/deposit/user-deposit-new-account] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/created-account-reverted-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/destroyed-after-another-creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/inner-frame-keeps-at-m4] | gating | unqualified | [satin-bcf260d] |
@@ -6860,14 +7008,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
-| [satin/state-gas/deposit/user-deposit-new-account] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/created-account-reverted-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/destroyed-after-another-creation] | gating | unqualified | [satin-bcf260d] |
-| [satin/state-gas/give-back-price/inner-frame-keeps-at-m4] | gating | unqualified | [satin-bcf260d] |
-| [satin/state-gas/give-back-price/inner-frame-reverts-at-m4] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/mapping/account-and-slot-buckets] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/multiplier/creation-at-m3] | gating | unqualified | [satin-bcf260d] |
-| [satin/state-gas/multiplier/value-call-new-account-at-m5] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/same-bucket/two-slots-one-restored] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-STATE-008
@@ -6904,6 +7050,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/sstore/fresh-then-restored-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/sstore/sload-then-fresh-write] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/two-fresh-slots/two-buckets] | gating | unqualified | [satin-d34e626] |
+| [satin/state-gas/capacity/listed-at-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/one-below-twice-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/twice-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/inner-frame-keeps-at-m4] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/inner-frame-reverts-at-m4] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/mapping/account-and-slot-buckets] | gating | unqualified | [satin-bcf260d] |
@@ -6922,7 +7073,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/state-gas/capacity/listed-at-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/one-below-twice-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/twice-minimum] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/deposit/user-deposit-new-account] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/created-account-reverted-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/destroyed-after-another-creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/inner-frame-keeps-at-m4] | gating | unqualified | [satin-bcf260d] |
@@ -6931,6 +7087,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/state-gas/multiplier/creation-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/multiplier/value-call-new-account-at-m5] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/same-bucket/two-slots-one-restored] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-STATE-011
 
@@ -6977,6 +7135,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/creation-over-storage/survives] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-nonce-one-leaf] | gating | unqualified | [satin-bcf260d] |
 | [satin/value-transfer/empty-leaf-recipient] | gating | unqualified | [satin-d334ef8] |
 
 ### SATIN-STATE-012
@@ -6984,6 +7145,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
+| [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
+| [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/beneficiary-read/halted-unmarked] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
@@ -7032,7 +7195,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/sstore/fresh-then-restored-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/sstore/sload-then-fresh-write] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/two-fresh-slots/two-buckets] | gating | unqualified | [satin-d34e626] |
+| [satin/state-gas/capacity/listed-at-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/one-below-twice-minimum] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/capacity/twice-minimum] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/deposit/user-deposit-new-account] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/created-account-reverted-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/destroyed-after-another-creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/give-back-price/inner-frame-keeps-at-m4] | gating | unqualified | [satin-bcf260d] |
@@ -7041,6 +7209,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/state-gas/multiplier/creation-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/multiplier/value-call-new-account-at-m5] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/same-bucket/two-slots-one-restored] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3] | gating | unqualified | [satin-bcf260d] |
+| [satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/system-originated/creation] | gating | unqualified | [satin-bcf260d] |
 | [satin/state-gas/system-originated/fresh-slots-and-give-back] | gating | unqualified | [satin-bcf260d] |
 
@@ -8132,6 +8302,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/gas-forwarding/value-call/ten-thousand-left]: ../slice/cases/satin/gas-forwarding/value-call/ten-thousand-left.json
 [satin/gas-pools/answered-call-history-returns]: ../slice/cases/satin/gas-pools/answered-call-history-returns.json
 [satin/gas-pools/child-merge/returned-reservoir-after-spill]: ../slice/cases/satin/gas-pools/child-merge/returned-reservoir-after-spill.json
+[satin/gas-pools/child-merge/unspent-share-one-merge]: ../slice/cases/satin/gas-pools/child-merge/unspent-share-one-merge.json
+[satin/gas-pools/child-merge/unspent-share-two-merges]: ../slice/cases/satin/gas-pools/child-merge/unspent-share-two-merges.json
 [satin/gas-pools/created-account-give-back/initcode-halts]: ../slice/cases/satin/gas-pools/created-account-give-back/initcode-halts.json
 [satin/gas-pools/created-account-give-back/initcode-reverts]: ../slice/cases/satin/gas-pools/created-account-give-back/initcode-reverts.json
 [satin/gas-pools/execution-cap/gas-limit-at-cap]: ../slice/cases/satin/gas-pools/execution-cap/gas-limit-at-cap.json
@@ -8139,12 +8311,16 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/gas-pools/first-frame-revert/authorization-charges-kept]: ../slice/cases/satin/gas-pools/first-frame-revert/authorization-charges-kept.json
 [satin/gas-pools/fresh-slot-partly-from-regular]: ../slice/cases/satin/gas-pools/fresh-slot-partly-from-regular.json
 [satin/gas-pools/fresh-slot-restored]: ../slice/cases/satin/gas-pools/fresh-slot-restored.json
+[satin/gas-pools/keyless/destroyed-after-fresh-slot]: ../slice/cases/satin/gas-pools/keyless/destroyed-after-fresh-slot.json
 [satin/gas-pools/legacy-share-from-regular]: ../slice/cases/satin/gas-pools/legacy-share-from-regular.json
+[satin/gas-pools/legacy-share/child-exact]: ../slice/cases/satin/gas-pools/legacy-share/child-exact.json
+[satin/gas-pools/legacy-share/child-one-short]: ../slice/cases/satin/gas-pools/legacy-share/child-one-short.json
 [satin/gas-pools/new-account-give-back/unfunded-value-call]: ../slice/cases/satin/gas-pools/new-account-give-back/unfunded-value-call.json
 [satin/gas-pools/no-compute-limit/one-past-regular-budget]: ../slice/cases/satin/gas-pools/no-compute-limit/one-past-regular-budget.json
 [satin/gas-pools/no-compute-limit/regular-budget-spent]: ../slice/cases/satin/gas-pools/no-compute-limit/regular-budget-spent.json
 [satin/gas-pools/pre-frame-spill/creation-halts]: ../slice/cases/satin/gas-pools/pre-frame-spill/creation-halts.json
 [satin/gas-pools/pre-frame-spill/creation-reverts]: ../slice/cases/satin/gas-pools/pre-frame-spill/creation-reverts.json
+[satin/gas-pools/pre-frame-spill/value-start-record-halts]: ../slice/cases/satin/gas-pools/pre-frame-spill/value-start-record-halts.json
 [satin/gas-pools/total-gas/at-block-gas-limit]: ../slice/cases/satin/gas-pools/total-gas/at-block-gas-limit.json
 [satin/gas-pools/total-gas/one-above-eip-8037-cap]: ../slice/cases/satin/gas-pools/total-gas/one-above-eip-8037-cap.json
 [satin/gas-pools/value-transfer-control]: ../slice/cases/satin/gas-pools/value-transfer-control.json
@@ -8519,6 +8695,10 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/reads/oracle-slot-before-charge]: ../slice/cases/satin/reads/oracle-slot-before-charge.json
 [satin/schedule/code-deposit/history-per-byte]: ../slice/cases/satin/schedule/code-deposit/history-per-byte.json
 [satin/schedule/forward/one-thousand-forwards-980]: ../slice/cases/satin/schedule/forward/one-thousand-forwards-980.json
+[satin/schedule/intrinsic/initcode-96-bytes]: ../slice/cases/satin/schedule/intrinsic/initcode-96-bytes.json
+[satin/schedule/intrinsic/initcode-97-bytes]: ../slice/cases/satin/schedule/intrinsic/initcode-97-bytes.json
+[satin/schedule/static-gas/extcodecopy-cold-copies-code]: ../slice/cases/satin/schedule/static-gas/extcodecopy-cold-copies-code.json
+[satin/schedule/static-gas/extcodecopy-cold-zero-length-twice]: ../slice/cases/satin/schedule/static-gas/extcodecopy-cold-zero-length-twice.json
 [satin/schedule/static-gas/extcodehash-warm-sender]: ../slice/cases/satin/schedule/static-gas/extcodehash-warm-sender.json
 [satin/schedule/static-gas/extcodesize-cold]: ../slice/cases/satin/schedule/static-gas/extcodesize-cold.json
 [satin/schedule/static-gas/extcodesize-warm-recipient]: ../slice/cases/satin/schedule/static-gas/extcodesize-warm-recipient.json
@@ -8527,6 +8707,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/schedule/warm-from-start/call-beneficiary]: ../slice/cases/satin/schedule/warm-from-start/call-beneficiary.json
 [satin/schedule/warm-from-start/callcode-access-listed]: ../slice/cases/satin/schedule/warm-from-start/callcode-access-listed.json
 [satin/schedule/warm-from-start/extcodesize-precompile]: ../slice/cases/satin/schedule/warm-from-start/extcodesize-precompile.json
+[satin/schedule/warm-from-start/first-call-access-listed]: ../slice/cases/satin/schedule/warm-from-start/first-call-access-listed.json
+[satin/schedule/warm-from-start/first-staticcall-access-listed]: ../slice/cases/satin/schedule/warm-from-start/first-staticcall-access-listed.json
 [satin/schedule/warm-from-start/selfdestruct-beneficiary-access-listed]: ../slice/cases/satin/schedule/warm-from-start/selfdestruct-beneficiary-access-listed.json
 [satin/schedule/warm-from-start/sender-recipient-and-cold]: ../slice/cases/satin/schedule/warm-from-start/sender-recipient-and-cold.json
 [satin/selfdestruct/beneficiary-read/halted-unmarked]: ../slice/cases/satin/selfdestruct/beneficiary-read/halted-unmarked.json
@@ -8591,7 +8773,12 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/sstore/reset/non-zero-to-non-zero]: ../slice/cases/satin/sstore/reset/non-zero-to-non-zero.json
 [satin/sstore/sload-then-fresh-write]: ../slice/cases/satin/sstore/sload-then-fresh-write.json
 [satin/sstore/two-fresh-slots/two-buckets]: ../slice/cases/satin/sstore/two-fresh-slots/two-buckets.json
+[satin/state-gas/capacity/listed-at-minimum]: ../slice/cases/satin/state-gas/capacity/listed-at-minimum.json
+[satin/state-gas/capacity/one-below-twice-minimum]: ../slice/cases/satin/state-gas/capacity/one-below-twice-minimum.json
+[satin/state-gas/capacity/twice-minimum]: ../slice/cases/satin/state-gas/capacity/twice-minimum.json
 [satin/state-gas/deposit/user-deposit-new-account]: ../slice/cases/satin/state-gas/deposit/user-deposit-new-account.json
+[satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write]: ../slice/cases/satin/state-gas/give-back-price/code-deposit-one-short-after-crowded-write.json
+[satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write]: ../slice/cases/satin/state-gas/give-back-price/code-deposit-paid-after-crowded-write.json
 [satin/state-gas/give-back-price/created-account-reverted-at-m3]: ../slice/cases/satin/state-gas/give-back-price/created-account-reverted-at-m3.json
 [satin/state-gas/give-back-price/destroyed-after-another-creation]: ../slice/cases/satin/state-gas/give-back-price/destroyed-after-another-creation.json
 [satin/state-gas/give-back-price/inner-frame-keeps-at-m4]: ../slice/cases/satin/state-gas/give-back-price/inner-frame-keeps-at-m4.json
@@ -8600,6 +8787,9 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/state-gas/multiplier/creation-at-m3]: ../slice/cases/satin/state-gas/multiplier/creation-at-m3.json
 [satin/state-gas/multiplier/value-call-new-account-at-m5]: ../slice/cases/satin/state-gas/multiplier/value-call-new-account-at-m5.json
 [satin/state-gas/same-bucket/two-slots-one-restored]: ../slice/cases/satin/state-gas/same-bucket/two-slots-one-restored.json
+[satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3]: ../slice/cases/satin/state-gas/sites/selfdestruct-to-empty-leaf-at-m3.json
+[satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3]: ../slice/cases/satin/state-gas/sites/selfdestruct-to-empty-leaf-with-storage-at-m3.json
+[satin/state-gas/sites/selfdestruct-to-nonce-one-leaf]: ../slice/cases/satin/state-gas/sites/selfdestruct-to-nonce-one-leaf.json
 [satin/state-gas/sites/zero-value-call-to-absent]: ../slice/cases/satin/state-gas/sites/zero-value-call-to-absent.json
 [satin/state-gas/system-originated/creation]: ../slice/cases/satin/state-gas/system-originated/creation.json
 [satin/state-gas/system-originated/fresh-slots-and-give-back]: ../slice/cases/satin/state-gas/system-originated/fresh-slots-and-give-back.json
