@@ -6594,6 +6594,10 @@ REFUSING = bytes.fromhex("00000000000000000000000000000000000c0e40")  # the fram
 WARMER = bytes.fromhex("00000000000000000000000000000000000c0e41")  # reads the delegator's balance, then reverts
 BENEFICIARY_DELEGATOR = bytes.fromhex("0000000000000000000000000000000000de1ea0")  # delegates to the block beneficiary
 CALL_OPS = {0xF1: "CALL", 0xF2: "CALLCODE", 0xF4: "DELEGATECALL", 0xFA: "STATICCALL"}
+STOP_DATA = len(model.limit_exceeded(model.DETENTION_STOP, 0))  # the bytes of MegaLimitExceeded(kind, limit)
+AUTHORITY_TARGET = model.DELEGATION_PREFIX + COINBASE  # an authority's code once it delegates to the beneficiary
+ONE_HOP = bytes.fromhex("0000000000000000000000000000000000de1ea1")  # delegates to an ordinary account
+ONE_HOP_DELEGATE = bytes.fromhex("0000000000000000000000000000000000de1ea2")  # that ordinary account
 
 
 def call_op(op: int, target: bytes, value: int = 0, inp: tuple = (0, 0), out: tuple = (0, 0), gas: int = 0) -> bytes:
@@ -6628,12 +6632,14 @@ def delegate_refusal_cases() -> list[Case]:
 
     def refusing(code: bytes, left: int, name: str, intent: str, before: bytes = b"", after: bytes = b"",
                  accounts: dict | None = None, boundary: str = "", probe: str = "refusal-call", spare: int = 10_000,
-                 **kw) -> None:
-        """A case whose transaction's own frame switches its access off, runs `before`, calls REFUSING, whose `code`
-        holds `left` of regular gas at its call opcode, then runs `after` and returns REFUSING's return data."""
+                 via: int = 0xF1, switch: bool = True, **kw) -> None:
+        """A case whose transaction's own frame switches its access off (unless `switch` is false), runs `before`,
+        calls REFUSING by `via`, REFUSING's `code` holding `left` of regular gas at its call opcode, then runs `after`
+        and returns REFUSING's return data."""
         add(Case(f"satin/access-control/delegate-refusal/{name}", intent, boundary=boundary,
                  accounts={**delegator, REFUSING: model.Account(nonce=1, code=code + STOP), **(accounts or {})},
-                 make=lambda gas: disable + before + call(gas, REFUSING, 0, 0) + after + RETURN_RETURNDATA,
+                 make=lambda gas: (disable if switch else b"") + before + call_op(via, REFUSING, gas=gas) + after
+                 + RETURN_RETURNDATA,
                  params={"gas": left + spare}, retune=[(probe, left, "gas", 1)], **page, **kw))
 
     static = call_op(0xFA, BENEFICIARY_DELEGATOR)
@@ -6654,7 +6660,7 @@ def delegate_refusal_cases() -> list[Case]:
     for name, left, what, boundary in (
             ("cold-target-load-skipped", cold - 1, f"its static cost leaves {fmt(cold - 1 - warm)}, below the target's "
              f"cold surcharge {fmt(surcharge)}, so the target's load is skipped with an out-of-gas halt: the frame halts, "
-             "and the delegator is not in the reads (SATIN-WIT-012)",
+             "and the delegator is not in the reads (SATIN-WIT-004, SATIN-WIT-012)",
              f"the regular gas at the call one below the static cost and the cold surcharge, {fmt(cold)}"),
             ("cold-target-loaded-at-the-load", cold, f"its static cost leaves {fmt(surcharge)}, which covers the target's "
              f"cold surcharge, so the target is loaded, and the delegation guard, the cold surcharge and {warm} for the "
@@ -6671,8 +6677,10 @@ def delegate_refusal_cases() -> list[Case]:
     refusing(static, left, "cold-target-refused", f"REFUSING holds {fmt(left)} of regular gas at a STATICCALL of an "
              "account that is not warm and holds an EIP-7702 delegation to the block beneficiary: the target is loaded, "
              "the delegation guard holds, and the delegate's load is refused as the beneficiary's account; the call "
-             f"pays its static cost and its target's cold surcharge, {fmt(cold)} in all, and the frame reverts with "
-             f"{refusal}, handing back {fmt(left - cold)}; the delegator stays in the reads (SATIN-WIT-012), and the "
+             f"pays its static cost and its target's cold surcharge, {fmt(cold)} in all (SATIN-SCHED-003), and the frame "
+             "reverts with "
+             f"{refusal} (SATIN-MAC-005), handing back {fmt(left - cold)}; the delegator stays in the reads "
+             "(SATIN-WIT-012), and the "
              "frame's revert leaves it cold for the caller, whose BALANCE of it pays the cold access",
              boundary=f"the regular gas at the call at the static cost and the guard, {fmt(left)}", after=balance,
              reads=True)
@@ -6681,7 +6689,8 @@ def delegate_refusal_cases() -> list[Case]:
                  f"holds {fmt(left)} of regular gas at a {CALL_OPS[op]} without value of an account that is not warm and "
                  "holds an EIP-7702 delegation to the block beneficiary: refused at the delegate's load, it pays its "
                  f"static cost and its target's cold surcharge, {fmt(cold)}, nothing given back that it was not charged, "
-                 f"and the frame reverts with {refusal}")
+                 f"and the frame reverts with {refusal}; the revert leaves the delegator cold for the caller, whose "
+                 "BALANCE of it pays the cold access", after=balance)
     cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
     refusing(static, left, "refusal-marks-nothing", f"REFUSING holds {fmt(left)} of regular gas at a STATICCALL of an "
              "account that is not warm and holds an EIP-7702 delegation to the block beneficiary, refused at the "
@@ -6694,7 +6703,8 @@ def delegate_refusal_cases() -> list[Case]:
                  f"{fmt(left)} of regular gas at a STATICCALL of an account the transaction's access list warms, which "
                  "holds an EIP-7702 delegation to the block beneficiary: the target is loaded with no cold surcharge, and "
                  + (f"the delegation guard, {warm} for the delegate's access, holds; the delegate's load is refused, the "
-                    f"call pays its static cost {warm} alone, and the frame reverts with {refusal}, handing back "
+                    f"call pays its static cost {warm} alone (SATIN-SCHED-003), and the frame reverts with {refusal}, "
+                    "handing back "
                     f"{fmt(left - warm)}; the access list's warmth stays, so the caller's BALANCE of the delegator pays "
                     "the warm access" if refused else
                     f"the delegation guard, {warm} for the delegate's access, is one above the {fmt(left - warm)} the "
@@ -6707,7 +6717,8 @@ def delegate_refusal_cases() -> list[Case]:
     refusing(call_op(0xF1, BENEFICIARY_DELEGATOR, value=1), left, "value-call-at-the-guard", f"REFUSING, which holds "
              f"no balance, holds {fmt(left)} of regular gas at a CALL with value 1 of an account that is not warm and "
              "holds an EIP-7702 delegation to the block beneficiary: the static cost and the value transfer, "
-             f"{fmt(warm + value_cost)}, leave the delegation guard's {fmt(cold)} exactly; the delegate's load is "
+             f"{fmt(warm + value_cost)} (SATIN-SCHED-003), leave the delegation guard's {fmt(cold)} exactly; the "
+             "delegate's load is "
              f"refused before the start checks the funds, the value transfer is given back, and the call pays its static "
              f"cost and its target's cold surcharge, {fmt(cold)}, the frame reverting with {refusal}",
              boundary=f"the regular gas at the call at the static cost, the value transfer and the guard, {fmt(left)}")
@@ -6728,7 +6739,8 @@ def delegate_refusal_cases() -> list[Case]:
     refusing(call_op(0xF4, BENEFICIARY_DELEGATOR), left, "delegatecall-cold-target-refused", f"REFUSING holds "
              f"{fmt(left)} of regular gas at a DELEGATECALL of an account that is not warm and holds an EIP-7702 "
              "delegation to the block beneficiary: refused at the delegate's load, it pays its static cost and its "
-             f"target's cold surcharge, {fmt(cold)}, and the frame reverts with {refusal}")
+             f"target's cold surcharge, {fmt(cold)}, and the frame reverts with {refusal}; the revert leaves the delegator "
+             "cold for the caller, whose BALANCE of it pays the cold access", after=balance)
     # The memory expansion stays charged: the opcode's own growth for its two ranges together, nothing for memory the
     # frame already holds.
     words = 32
@@ -6768,7 +6780,8 @@ def delegate_refusal_cases() -> list[Case]:
     refusing(call_op(0xF2, BENEFICIARY_DELEGATOR, inp=(0, 2**20)), left, "memory-halts-before-the-target",
              f"REFUSING holds {fmt(left)} of regular gas at a CALLCODE with {fmt(2**20)} bytes of input of an account that "
              "holds an EIP-7702 delegation to the block beneficiary: the memory expansion, a step before the target's "
-             "load, halts the call out of gas, so the delegator is not in the reads (SATIN-WIT-012)", reads=True)
+             "load, halts the call out of gas, so the delegator is not in the reads (SATIN-WIT-004, SATIN-WIT-012)",
+             reads=True)
     left = cold + warm
     refusing(sstore(1, 1) + sstore(1, 0) + static, left, "refusal-after-a-give-back", "REFUSING writes a fresh slot and "
              "writes it back to zero, a give-back into its reservoir, then holds "
@@ -6798,20 +6811,34 @@ def delegate_refusal_cases() -> list[Case]:
              before=call(50_000, WARMER, 0, 0) + b"\x50",
              accounts={WARMER: model.Account(nonce=1, code=balance + revert(0, 0))})
 
+    def buffered(gas: int) -> bytes:
+        """Calls REFUSING forwarding `gas`, with an output range of 68 bytes, a limit stop's size, over memory already
+        held and cleared, and returns that range at no cost: the size is pushed before the call and the call's own
+        status, zero when REFUSING fails, is the RETURN's offset (D-117)."""
+        return (mstore(0, 0) + mstore(64, 0) + push(STOP_DATA) + call_op(0xF1, REFUSING, out=(0, STOP_DATA), gas=gas)
+                + b"\xf3")
+
     # Under gas detention: the static cost, the memory expansion and the value transfer are each a charge the spendable
     # part can cross before the target's load; at the refusal the call's gas is restored, and only the target's cold
     # surcharge, charged last, can cross (SATIN-DET-018, SATIN-MAC-004).
     start = {"words": words_within(cap - 30_000), "pad": 0}
 
     def detained_refusal(code: bytes, whole: int, spendable: int, name: str, intent: str, boundary: str = "",
-                         tail: bytes = RETURN_RETURNDATA, reads: bool = True, **kw) -> None:
+                         tail: bytes | None = RETURN_RETURNDATA, reads: bool = True, gas: int = 21_000_000,
+                         area: str = "delegate-refusal", probe: str = "refusal-call", accounts: dict | None = None,
+                         **kw) -> None:
         """A case whose transaction's own frame reads TIMESTAMP, burns compute, switches its access off and calls
-        REFUSING, whose `code` holds `whole` of regular gas at its call opcode, of which it may spend `spendable`."""
-        add(Case(f"satin/detention/delegate-refusal/{name}", intent, boundary=boundary, detention=True, reads=reads,
-                 gas=21_000_000, accounts={**delegator, REFUSING: model.Account(nonce=1, code=code + STOP)},
-                 make=lambda words, pad, gas: detained(words, pad) + disable + call(gas, REFUSING, 0, 0) + tail,
+        REFUSING, whose `code` holds `whole` of regular gas at its call opcode, of which it may spend `spendable`. A
+        `tail` of None returns REFUSING's return data at no cost (`buffered`), so a caller left no allowance shows it."""
+        call_refusing = (lambda g: call(g, REFUSING, 0, 0) + tail) if tail is not None else buffered
+        add(Case(f"satin/detention/{area}/{name}", intent, boundary=boundary, detention=True, reads=reads, gas=gas,
+                 accounts={**delegator, REFUSING: model.Account(nonce=1, code=code + STOP), **(accounts or {})},
+                 make=lambda words, pad, gas: detained(words, pad) + disable + call_refusing(gas),
                  params={**start, "gas": whole + 1_000},
-                 retune=[("refusal-call", whole, "gas", 1), ("refusal-call-room", spendable, "pad", -1)], **page, **kw))
+                 retune=[(probe, whole, "gas", 1), (probe.replace("refusal-call", "refusal-call-room")
+                                                    if probe == "refusal-call" else probe.replace("call-opcode:",
+                                                                                                    "call-opcode-room:"),
+                                                    spendable, "pad", -1)], **page, **kw))
 
     whole = 5_200
     held = f"after TIMESTAMP, REFUSING holds {fmt(whole)} of regular gas at a STATICCALL of an account that is not warm " \
@@ -6819,7 +6846,8 @@ def delegate_refusal_cases() -> list[Case]:
     spendable = warm - 1
     detained_refusal(static, whole, spendable, "static-cost-crossing", f"{held} {fmt(spendable)}: its static cost {warm} "
                      f"is gas detention's crossing, so the frame is stopped with {stop} before its target's load, handing "
-                     f"back all {fmt(whole)}, and the delegator is not in the reads (SATIN-MAC-007, SATIN-WIT-012)",
+                     f"back all {fmt(whole)}, and the delegator is not in the reads (SATIN-MAC-007, SATIN-WIT-004, "
+                     "SATIN-WIT-012)",
                      boundary=f"the spendable part one below the static cost {warm}")
     for spendable, name, boundary in ((2 * warm, "surcharge-crossing", ""),
                                       (cold - 1, "surcharge-crossing-one-short",
@@ -6829,24 +6857,25 @@ def delegate_refusal_cases() -> list[Case]:
                          f"restored and its static cost {warm} charged again, and its target's cold surcharge "
                          f"{fmt(surcharge)}, charged last, is gas detention's crossing: the frame is stopped with {stop}, "
                          f"not reverted with {refusal}, handing back {fmt(whole - warm)}, the withheld part included, and "
-                         "the delegator stays in the reads (SATIN-MAC-004, SATIN-OUT-008, SATIN-STOP-020, "
-                         "SATIN-WIT-012)", boundary=boundary)
+                         "the delegator stays in the reads (SATIN-MAC-004, SATIN-MAC-007, SATIN-OUT-008, SATIN-STOP-020, "
+                         "SATIN-WIT-002, SATIN-WIT-012)", boundary=boundary)
     spendable = cold
     detained_refusal(static, whole, spendable, "surcharge-paid", f"{held} {fmt(spendable)}: refused at the delegate's "
                      f"load, the call pays its static cost and its target's cold surcharge, {fmt(cold)}, from the "
                      f"spendable part, which can, and the frame reverts with {refusal}, not a limit stop, handing back "
-                     f"{fmt(whole - cold)}; the caller, left no allowance, ends with STOP (SATIN-MAC-004, "
-                     "SATIN-OUT-008, SATIN-STOP-020)", boundary=f"the spendable part at the static cost and the cold "
-                     f"surcharge, {fmt(cold)}", tail=STOP)
+                     f"{fmt(whole - cold)}; the caller, left no allowance, returns REFUSING's return data at no cost, "
+                     f"so the refusal's error shows (SATIN-MAC-004, SATIN-MAC-005, SATIN-OUT-008, SATIN-STOP-020)",
+                     boundary=f"the spendable part at the static cost and the cold surcharge, {fmt(cold)}", tail=None)
     spendable = warm
     detained_refusal(static, whole, spendable, "warm-target-refused", f"after TIMESTAMP, REFUSING holds {fmt(whole)} of "
                      "regular gas at a STATICCALL of an account the transaction's access list warms, which holds an "
                      f"EIP-7702 delegation to the block beneficiary, of which it may spend {fmt(spendable)}: its static "
                      f"cost uses up the spendable part; refused at the delegate's load, the call's gas is restored and its "
                      f"static cost {warm} charged again, with no cold surcharge that could cross, and the frame reverts "
-                     f"with {refusal}, handing back {fmt(whole - warm)}; the caller, left no allowance, ends with STOP "
-                     "(SATIN-MAC-004, SATIN-OUT-008)", boundary=f"the spendable part at the static cost {warm}",
-                     tail=STOP, **listed)
+                     f"with {refusal}, handing back {fmt(whole - warm)}; the caller, left no allowance, returns "
+                     "REFUSING's return data at no cost, so the refusal's error shows (SATIN-MAC-004, SATIN-MAC-005, "
+                     "SATIN-OUT-008, SATIN-STOP-020)", boundary=f"the spendable part at the static cost {warm}",
+                     tail=None, **listed)
     ranged = call_op(0xFA, BENEFICIARY_DELEGATOR, out=(0, words * 32))
     held = f"after TIMESTAMP, REFUSING holds {fmt(whole)} of regular gas at a STATICCALL with an output range of " \
            f"{fmt(words * 32)} bytes, whose memory costs {fmt(grown)}, of an account that is not warm and holds an " \
@@ -6855,14 +6884,15 @@ def delegate_refusal_cases() -> list[Case]:
     detained_refusal(ranged, whole, spendable, "memory-crossing-before-the-load", f"{held} {fmt(spendable)}: the memory "
                      f"expansion, after the static cost, is gas detention's crossing, so the frame is stopped with {stop} "
                      f"before its target's load, handing back {fmt(whole - warm)}, and the delegator is not in the reads "
-                     "(SATIN-MAC-007, SATIN-WIT-012)", boundary=f"the spendable part one below the static cost and the "
-                     f"memory, {fmt(warm + grown)}")
+                     "(SATIN-MAC-007, SATIN-WIT-004, SATIN-WIT-012)", boundary=f"the spendable part one below the static "
+                     f"cost and the memory, {fmt(warm + grown)}")
     spendable = 3 * warm
     detained_refusal(ranged, whole, spendable, "surcharge-crossing-keeps-the-memory", f"{held} {fmt(spendable)}: the call "
                      "reaches its delegate's load and is refused; its static cost and its memory expansion are charged "
                      f"again, and its target's cold surcharge, charged last, is gas detention's crossing: the frame is "
                      f"stopped with {stop}, the memory staying charged, handing back {fmt(whole - warm - grown)}, and the "
-                     "delegator stays in the reads (SATIN-MAC-004, SATIN-OUT-008, SATIN-STOP-020, SATIN-WIT-012)")
+                     "delegator stays in the reads (SATIN-MAC-004, SATIN-MAC-007, SATIN-OUT-008, SATIN-STOP-020, "
+                     "SATIN-WIT-002, SATIN-WIT-012)")
     whole = 20_000
     valued = call_op(0xF1, BENEFICIARY_DELEGATOR, value=1)
     held = f"after TIMESTAMP, REFUSING, which holds no balance, holds {fmt(whole)} of regular gas at a CALL with value " \
@@ -6873,14 +6903,15 @@ def delegate_refusal_cases() -> list[Case]:
                      f"cost and its value transfer use up the spendable part, the whole regular gas loads the target and "
                      "passes the delegation guard, and at the refusal the restoration gives the value transfer back, so "
                      f"the spendable part pays the target's cold surcharge: the frame reverts with {refusal}, handing back "
-                     f"{fmt(whole - cold)}, the value transfer not among what stays spent (SATIN-MAC-004, SATIN-OUT-008)",
+                     f"{fmt(whole - cold)}, the value transfer not among what stays spent (SATIN-MAC-004, SATIN-MAC-005, "
+                     "SATIN-OUT-008)",
                      boundary=f"the spendable part at the static cost and the value transfer, {fmt(warm + value_cost)}")
     spendable = warm + value_cost - 1
     detained_refusal(valued, whole, spendable, "value-transfer-crossing", f"{held} {fmt(spendable)}: its value "
                      f"transfer, after the static cost, is gas detention's crossing, so the frame is stopped with {stop} "
                      f"before its target's load, handing back {fmt(whole - warm)}, and the delegator is not in the reads "
-                     "(SATIN-MAC-007, SATIN-WIT-012)", boundary="the spendable part one below the static cost and the "
-                     f"value transfer, {fmt(warm + value_cost)}")
+                     "(SATIN-MAC-007, SATIN-WIT-004, SATIN-WIT-012)", boundary="the spendable part one below the static "
+                     f"cost and the value transfer, {fmt(warm + value_cost)}")
     # A memory expansion past the allowance and within the whole gas, under the protocol's cap.
     forward, size = 40_000_000, 0x32_0000
     add(Case("satin/detention/delegate-refusal/memory-crossing-reads-nothing", f"after TIMESTAMP, the transaction's own "
@@ -6889,7 +6920,7 @@ def delegate_refusal_cases() -> list[Case]:
              "leaves it and within its whole regular gas, of an account holding an EIP-7702 delegation to the block "
              f"beneficiary: the memory expansion is gas detention's crossing, so the frame is stopped with {stop} before "
              "its target's load, handing back its gas at the opcode less the static cost, and the delegator is not in the "
-             "reads (SATIN-MAC-007, SATIN-WIT-012)", detention=True, reads=True, gas=50_000_000,
+             "reads (SATIN-MAC-007, SATIN-WIT-004, SATIN-WIT-012)", detention=True, reads=True, gas=50_000_000,
              accounts={**delegator, REFUSING: model.Account(nonce=1, code=call_op(0xFA, BENEFICIARY_DELEGATOR,
                                                                                   inp=(0, size)) + STOP)},
              code=b"\x42\x50" + disable + call(forward, REFUSING, 0, 0) + RETURN_RETURNDATA, **page))
@@ -6910,6 +6941,207 @@ def delegate_refusal_cases() -> list[Case]:
                  f"{fmt(2 * warm)}", precompile_page=True,
                  accounts={model.IDENTITY: model.Account(code=model.DELEGATION_PREFIX + COINBASE),
                            REFUSING: model.Account(nonce=1, code=call_op(0xFA, model.IDENTITY) + STOP)},
+                 make=lambda gas: disable + call(gas, REFUSING, 0, 0) + RETURN_RETURNDATA, params={"gas": left + 1_000},
+                 retune=[("refusal-call", left, "gas", 1)], **page))
+
+    # The edges an independent review found unpinned (D-117), in its order.
+    huge = 2**20
+    # 1. A value CALL in a frame a STATICCALL started: the static-context check, after the static cost and before the
+    # memory, the value transfer and the target's load; a call of the beneficiary itself is refused before it.
+    refusing(call_op(0xF1, BENEFICIARY_DELEGATOR, value=1, inp=(0, huge)), warm, "static-frame-value-call-halts",
+             f"the transaction's own frame switches its access off and STATICCALLs REFUSING, which holds {warm} of regular "
+             f"gas at a CALL with value 1 and {fmt(huge)} bytes of input of an account that is not warm and holds an "
+             "EIP-7702 delegation to the block beneficiary: the static cost paid, the static-context check halts the "
+             "frame before the memory, the value transfer and the target's load, so the delegator is not in the reads "
+             "(SATIN-MAC-007, SATIN-WIT-004, SATIN-WIT-012)", boundary=f"the regular gas at the call at the static cost "
+             f"{warm}", via=0xFA, reads=True)
+    left = warm // 2
+    refusing(call_op(0xF1, COINBASE, value=1, inp=(0, huge)), left, "static-frame-direct-value-call-refused",
+             f"the transaction's own frame switches its access off and STATICCALLs REFUSING, which holds {fmt(left)} of "
+             f"regular gas at a CALL with value 1 and {fmt(huge)} bytes of input of the block beneficiary itself: the "
+             f"call is refused before its static cost and before the static-context check, and the frame reverts with "
+             f"{refusal} (SATIN-MAC-003, SATIN-MAC-004)", probe="refused", via=0xFA)
+    # 6. Zero-length ranges at the largest offset grow nothing; an unaligned range rounds up to whole words.
+    top = 2**256 - 1
+    left = 2 * warm
+    refusing(call_op(0xFA, BENEFICIARY_DELEGATOR, inp=(top, 0), out=(top, 0)), left, "zero-length-ranges-at-the-top",
+             f"REFUSING holds {fmt(left)} of regular gas at a STATICCALL with empty input and output ranges at the offset "
+             "2^256 - 1, of an account the access list warms, which holds an EIP-7702 delegation to the block "
+             f"beneficiary: empty ranges grow no memory and the offset is never checked, so the call is refused at the "
+             f"delegate's load, paying its static cost {warm} alone", **listed)
+    odd = (31, 2)
+    odd_words = (odd[0] + odd[1] + 31) // 32
+    odd_cost = model.memory_cost(odd_words)
+    for refused, left in ((False, 2 * warm + odd_cost - 1), (True, 2 * warm + odd_cost)):
+        refusing(call_op(0xFA, BENEFICIARY_DELEGATOR, out=odd), left,
+                 f"unaligned-output-{'at' if refused else 'one-short-of'}-the-guard", f"REFUSING holds {fmt(left)} of "
+                 f"regular gas at a STATICCALL with an output range of {odd[1]} bytes at offset {odd[0]}, ending in its "
+                 f"{odd_words}nd word, whose memory costs {odd_cost}, of an account the access list warms, which holds an "
+                 "EIP-7702 delegation to the block beneficiary: " +
+                 (f"the guard holds and the call is refused, paying its static cost and the memory, {warm + odd_cost}"
+                  if refused else f"the static cost and the memory leave {fmt(left - warm - odd_cost)}, one below the "
+                  f"delegation guard's {warm}, so the call halts before its delegate's load"),
+                 boundary=f"the regular gas at the call {'at' if refused else 'one below'} the static cost, the memory "
+                 f"and the guard, {2 * warm + odd_cost}", **listed)
+    # 7. The forward the call asks for has no part in the refusal.
+    for name, code, left, kw in (
+            ("max-forward-cold-target-refused", call_op(0xFA, BENEFICIARY_DELEGATOR, gas=top), cold + warm, {}),
+            ("max-forward-warm-target-refused", call_op(0xFA, BENEFICIARY_DELEGATOR, gas=top), 2 * warm, listed),
+            ("max-forward-value-call-at-the-guard", call_op(0xF1, BENEFICIARY_DELEGATOR, value=1, gas=top),
+             warm + value_cost + cold, {})):
+        refusing(code, left, name, f"REFUSING holds {fmt(left)} of regular gas at a call asking to forward 2^256 - 1, "
+                 "the most a gas operand holds, of an account holding an EIP-7702 delegation to the block beneficiary: "
+                 "the refusal at the delegate's load comes before any forward is computed, so the call is settled as "
+                 "the same call asking for nothing, handing back "
+                 f"{fmt(left - (warm if kw else cold))}", **kw)
+    # 4. Warmth an EIP-7702 authorization's application gives the target (SATIN-AUTH-014).
+    to_authority = call_op(0xFA, AUTHORITY)
+    left = 2 * warm
+    refusing(to_authority, left, "authority-warm-from-application", "the transaction's EIP-7702 list makes an authority "
+             "delegate to the block beneficiary, and the application warms it; REFUSING holds "
+             f"{fmt(left)} of regular gas at a STATICCALL of the authority: the call finds its target warm, and is "
+             f"refused at the delegate's load paying its static cost {warm} alone (SATIN-AUTH-014)", ty=4,
+             authorizations=[(AUTH_KEY, CHAIN_ID, COINBASE, 0)], lists=True)
+    refusing(to_authority, left, "authority-warmed-by-a-skipped-entry", "an authority whose code already delegates to "
+             "the block beneficiary is named by an EIP-7702 entry whose nonce does not match: the application loads it "
+             f"and warms it though it skips the entry; REFUSING holds {fmt(left)} of regular gas at a STATICCALL of the "
+             f"authority, which it finds warm, and is refused paying its static cost {warm} alone (SATIN-AUTH-014)",
+             ty=4, authorizations=[(AUTH_KEY, CHAIN_ID, COINBASE, 0)], lists=True, data=b"\x01",
+             accounts={AUTHORITY: model.Account(nonce=1, code=AUTHORITY_TARGET)})
+    refusing(to_authority, left, "authority-gated-entry-leaves-it-cold", "an authority whose code already delegates to "
+             "the block beneficiary is named by an EIP-7702 entry for another chain, which its gate skips before "
+             f"anything reads or warms the authority; REFUSING holds {fmt(left)} of regular gas at a STATICCALL of it: "
+             f"the target is not warm and the {fmt(left - warm)} the static cost leaves is below its cold surcharge, so "
+             "the call halts without loading it, and the authority is not in the reads (SATIN-AUTH-014, SATIN-WIT-004, "
+             "SATIN-WIT-012)", ty=4, authorizations=[(AUTH_KEY, 2, COINBASE, 0)], reads=True,
+             accounts={AUTHORITY: model.Account(code=AUTHORITY_TARGET)})
+    # 9. The one hop: a delegator of an ordinary account is no refusal, also when that account's code is an indicator.
+    one_hop = {ONE_HOP: model.Account(nonce=1, code=model.DELEGATION_PREFIX + ONE_HOP_DELEGATE)}
+    flag = call_op(0xF1, ONE_HOP) + push(0) + b"\x52" + ret(0, 32)  # the call's success flag, returned
+    left = 10_000
+    for name, delegate_code, switch, what in (
+            ("one-hop-delegate-runs", STOP, True, "its delegate's code, STOP, runs, and the call succeeds"),
+            ("one-hop-delegate-runs-access-on", STOP, False, "with access on, the same call pays the same, the two "
+             "accounts' access at the schedule's prices (SATIN-SCHED-003), and succeeds"),
+            ("one-hop-delegate-holds-an-indicator", model.DELEGATION_PREFIX + COINBASE, True, "the delegate's own code is "
+             "an EIP-7702 indicator naming the block beneficiary, which the call does not follow: that code runs as it "
+             "is, its first byte 0xEF undefined, so the call's frame halts and the call fails")):
+        refusing(flag, left, name, f"REFUSING holds {fmt(left)} of regular gas at a CALL of an account that is not warm "
+                 "and delegates to another account that is not warm and is not the block beneficiary: the call is not "
+                 "refused and pays the target's access and its delegate's, "
+                 f"{fmt(2 * cold)}, resolving the one hop alone; " + what + ", and REFUSING returns the call's success "
+                 "flag (SATIN-MAC-003, SATIN-MAC-007)", probe="call-opcode:" + ONE_HOP.hex(), switch=switch,
+                 accounts={**one_hop, ONE_HOP_DELEGATE: model.Account(nonce=1, code=delegate_code)})
+    # The caller's BALANCE after a call that halted: the frame's end rolls back the warming its load took.
+    for name, left in (("cold-target-load-skipped-caller-probe", cold - 1),
+                       ("cold-target-loaded-at-the-load-caller-probe", cold)):
+        refusing(static, left, name, f"REFUSING holds {fmt(left)} of regular gas at a STATICCALL of an account that is "
+                 "not warm and holds an EIP-7702 delegation to the block beneficiary, and halts " +
+                 ("before the target's load" if left < cold else "at the delegation guard after it") + ": the caller's "
+                 "BALANCE of the delegator then pays the cold access, the halted frame having left it cold", after=balance)
+    # 3. Above the execution cap, where the frame holds a reservoir share: the settlement leaves the reservoir.
+    above = model.EXECUTION_CAP + 10_000_000
+    left = cold + warm
+    refusing(sstore(1, 1) + sstore(1, 0) + static, left, "refusal-after-a-give-back-above-the-cap", "a transaction "
+             f"whose gas limit is {fmt(above - model.EXECUTION_CAP)} above the execution cap calls REFUSING with a share "
+             "of its reservoir; REFUSING writes a fresh slot, whose state gas the reservoir pays past its legacy share, "
+             f"and writes it back, then holds {fmt(left)} of regular gas at a STATICCALL of an account that is not warm "
+             "and holds an EIP-7702 delegation to the block beneficiary: the refusal restores its regular gas alone and "
+             f"charges {fmt(cold)}, leaving the reservoir as the opcode found it, and the frame's revert rolls back its "
+             "own state and history charges (SATIN-MAC-004, SATIN-POOL-014)", spare=200_000, gas=above, pools=True,
+             pricing=True)
+
+    # 2. The whole regular gas at the load and the guard, under gas detention: the spendable part held at the static
+    # cost, the whole at the edges of the load and of the guard.
+    spendable = warm
+    for name, whole_at, what in (
+            ("whole-gas-load-one-short", cold - 1, f"the static cost leaves {fmt(cold - 1 - warm)} in all, below the "
+             f"target's cold surcharge, so the call halts without loading the target (SATIN-WIT-004, SATIN-WIT-012)"),
+            ("whole-gas-at-the-load", cold, f"the static cost leaves {fmt(surcharge)} in all, which covers the cold "
+             "surcharge though the spendable part cannot: the target is loaded, and the delegation guard halts the call "
+             "(SATIN-WIT-002)"),
+            ("whole-gas-one-short-of-the-guard", cold + warm - 1, "the target is loaded and the delegation guard, "
+             f"{fmt(cold)}, halts the call (SATIN-WIT-002)"),
+            ("whole-gas-at-the-guard", cold + warm, "the guard holds on the whole regular gas; refused, the call's gas is "
+             f"restored and its static cost charged again, and its target's cold surcharge is the crossing: the frame is "
+             f"stopped with {stop}, handing back {fmt(cold)}, the delegator read (SATIN-MAC-004, SATIN-OUT-008, "
+             "SATIN-STOP-020, SATIN-WIT-002, SATIN-WIT-012)")):
+        detained_refusal(static, whole_at, spendable, name, f"after TIMESTAMP, REFUSING holds {fmt(whole_at)} of regular "
+                         "gas at a STATICCALL of an account that is not warm and holds an EIP-7702 delegation to the block "
+                         f"beneficiary, of which it may spend {spendable}, its static cost: " + what + "; the caller, left "
+                         "no allowance, returns REFUSING's return data at no cost (SATIN-MAC-007)",
+                         boundary=f"the whole regular gas {'at' if whole_at in (cold, cold + warm) else 'one below'} "
+                         + ("the static cost and the cold surcharge" if whole_at in (cold - 1, cold) else
+                            "the static cost and the guard") + f", {fmt(cold if whole_at < cold + warm - 1 else cold + warm)}",
+                         tail=None)
+    for refused, whole_at in ((False, 2 * warm - 1), (True, 2 * warm)):
+        detained_refusal(static, whole_at, spendable, f"warm-whole-gas-{'at' if refused else 'one-short-of'}-the-guard",
+                         f"after TIMESTAMP, REFUSING holds {fmt(whole_at)} of regular gas at a STATICCALL of an account the "
+                         "access list warms, which holds an EIP-7702 delegation to the block beneficiary, of which it may "
+                         f"spend {spendable}, its static cost: " +
+                         (f"the guard, {warm}, holds on the whole regular gas, and the call is refused paying its static "
+                          f"cost alone, the frame reverting with {refusal} (SATIN-MAC-005, SATIN-OUT-008)" if refused else
+                          f"the {fmt(whole_at - warm)} left in all is one below the delegation guard's {warm}, so the call "
+                          "halts before its delegate's load") + "; the caller returns REFUSING's return data at no cost "
+                         "(SATIN-MAC-007)", boundary=f"the whole regular gas {'at' if refused else 'one below'} the static "
+                         f"cost and the guard, {2 * warm}", tail=None, **listed)
+    # 3, detained: a stop at the cold surcharge above the execution cap returns the frame's reservoir share untouched.
+    whole = 5_200
+    detained_refusal(static, whole, 2 * warm, "surcharge-crossing-above-the-cap", "after TIMESTAMP, in a transaction "
+                     f"whose gas limit is {fmt(above - model.EXECUTION_CAP)} above the execution cap, REFUSING holds "
+                     f"{fmt(whole)} of regular gas and a share of the reservoir at a STATICCALL of an account that is not "
+                     f"warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend {2 * warm}: "
+                     f"its target's cold surcharge is the crossing, the frame is stopped with {stop}, handing back "
+                     f"{fmt(whole - warm)} of regular gas, and its reservoir share returns untouched (SATIN-MAC-004, "
+                     "SATIN-MAC-007, SATIN-OUT-008, SATIN-STOP-020)", gas=above, pools=True, pricing=True)
+    # 5. The inherited path's cold load (D-117): an account loaded once the whole regular gas covers its cold surcharge,
+    # and kept loaded when that charge is gas detention's crossing.
+    probe_balance = push(int.from_bytes(UNTOUCHED, "big")) + b"\x31\x50" + STOP
+    for name, whole_at, what in (
+            ("balance-crossing-keeps-the-load", 5_000, "the whole regular gas covers the account's cold surcharge, so the "
+             "account is loaded, and the surcharge is then gas detention's crossing: the frame is stopped with the "
+             "account in the reads (SATIN-WIT-002, SATIN-WIT-012)"),
+            ("balance-load-skipped", cold - 1, f"the {fmt(cold - 1 - warm)} left in all is below the cold surcharge, so the "
+             "load is skipped and the frame runs out of gas, the account not in the reads (SATIN-WIT-012)"),
+            ("balance-loaded-at-the-load", cold, f"the {fmt(surcharge)} left in all covers the cold surcharge, so the "
+             "account is loaded, and the surcharge is the crossing (SATIN-WIT-002, SATIN-WIT-012)")):
+        add(Case(f"satin/detention/cold-load-crossing/{name}", f"a detained frame holds {fmt(whole_at)} of regular gas "
+                 f"at a BALANCE of an account that is not warm, of which it may spend {warm}, its static cost: " + what +
+                 "; the caller, left no allowance, returns the frame's return data at no cost (SATIN-DET-018)",
+                 boundary=("" if whole_at == 5_000 else f"the whole regular gas {'one below' if whole_at < cold else 'at'} "
+                           f"the static cost and the cold surcharge, {fmt(cold)}"),
+                 detention=True, reads=True, gas=21_000_000, accounts={REFUSING: model.Account(nonce=1, code=probe_balance)},
+                 make=lambda words, pad, gas: detained(words, pad) + buffered(gas), params={**start, "gas": 6_000},
+                 retune=[("balance", whole_at, "gas", 1), ("balance-room", warm, "pad", -1)], **page))
+    detained_refusal(call_op(0xF1, PLAIN), whole, 2 * warm, "call-crossing-keeps-the-load", "after TIMESTAMP, with "
+                     f"access off, REFUSING holds {fmt(whole)} of regular gas at a CALL of an account that is not warm and "
+                     f"holds no delegation, of which it may spend {2 * warm}: as with access on, the whole regular gas "
+                     "loads the target, and its cold surcharge is then gas detention's crossing, the frame stopped with "
+                     f"{stop} and the target in the reads (SATIN-MAC-007, SATIN-WIT-002, SATIN-WIT-012)",
+                     area="cold-load-crossing", probe="call-opcode:" + PLAIN.hex(),
+                     accounts={PLAIN: model.Account(nonce=1, code=STOP)})
+
+    # 8 and 7: a precompile's address delegating to the beneficiary, with memory and with the largest forward.
+    words4 = model.memory_cost(4)
+    for name, code, left, refused in (
+            ("beneficiary-delegate-memory-one-short-of-the-guard", call_op(0xFA, model.IDENTITY, inp=(0, 64),
+                                                                           out=(64, 64)), 2 * warm + words4 - 1, False),
+            ("beneficiary-delegate-memory-at-the-guard", call_op(0xFA, model.IDENTITY, inp=(0, 64), out=(64, 64)),
+             2 * warm + words4, True),
+            ("beneficiary-delegate-max-forward-at-the-guard", call_op(0xFA, model.IDENTITY, gas=top), 2 * warm, True)):
+        add(Case(f"satin/precompiles/delegated-address/{name}", "the identity precompile's address holds an EIP-7702 "
+                 f"delegation to the block beneficiary; with access off, REFUSING holds {fmt(left)} of regular gas at a "
+                 "STATICCALL of the address" + (" with 64 bytes of input and an output range after them, whose memory, "
+                                                f"4 words, costs {words4}" if "memory" in name else
+                                                ", asking to forward 2^256 - 1") + ": " +
+                 (f"the guard holds and the call is refused paying {fmt(left - warm)}, its static cost" +
+                  (" and its memory" if "memory" in name else "") + ", never reaching dispatch" if refused else
+                  f"the static cost and the memory leave {fmt(left - warm - words4)}, one below the delegation guard's "
+                  f"{warm}, so the call halts after its target's load and never reaches dispatch"),
+                 boundary="" if "max-forward" in name else f"the regular gas at the call {'at' if refused else 'one below'} "
+                 f"the static cost, the memory and the guard, {2 * warm + words4}", precompile_page=True,
+                 accounts={model.IDENTITY: model.Account(code=model.DELEGATION_PREFIX + COINBASE),
+                           REFUSING: model.Account(nonce=1, code=code + STOP)},
                  make=lambda gas: disable + call(gas, REFUSING, 0, 0) + RETURN_RETURNDATA, params={"gas": left + 1_000},
                  retune=[("refusal-call", left, "gas", 1)], **page))
     return out

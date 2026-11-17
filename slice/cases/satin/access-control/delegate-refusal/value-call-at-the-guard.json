@@ -163,7 +163,7 @@
   "provenance": {
     "authoring": {
       "boundary": "the regular gas at the call at the static cost, the value transfer and the guard, 14,400",
-      "intent": "REFUSING, which holds no balance, holds 14,400 of regular gas at a CALL with value 1 of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary: the static cost and the value transfer, 11,400, leave the delegation guard's 3,000 exactly; the delegate's load is refused before the start checks the funds, the value transfer is given back, and the call pays its static cost and its target's cold surcharge, 3,000, the frame reverting with VolatileDataAccessDisabled(10)"
+      "intent": "REFUSING, which holds no balance, holds 14,400 of regular gas at a CALL with value 1 of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary: the static cost and the value transfer, 11,400 (SATIN-SCHED-003), leave the delegation guard's 3,000 exactly; the delegate's load is refused before the start checks the funds, the value transfer is given back, and the call pays its static cost and its target's cold surcharge, 3,000, the frame reverting with VolatileDataAccessDisabled(10)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -184,7 +184,9 @@
     "SATIN-MAC-002",
     "SATIN-MAC-003",
     "SATIN-MAC-004",
-    "SATIN-MAC-007"
+    "SATIN-MAC-005",
+    "SATIN-MAC-007",
+    "SATIN-SCHED-003"
   ],
   "schemaVersion": "2.0",
   "specRef": {

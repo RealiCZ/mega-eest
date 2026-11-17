@@ -215,7 +215,7 @@
   "provenance": {
     "authoring": {
       "boundary": "the spendable part one below the static cost and the value transfer, 11,400",
-      "intent": "after TIMESTAMP, REFUSING, which holds no balance, holds 20,000 of regular gas at a CALL with value 1 of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend 11,399: its value transfer, after the static cost, is gas detention's crossing, so the frame is stopped with MegaLimitExceeded(2, limit) before its target's load, handing back 19,900, and the delegator is not in the reads (SATIN-MAC-007, SATIN-WIT-012)"
+      "intent": "after TIMESTAMP, REFUSING, which holds no balance, holds 20,000 of regular gas at a CALL with value 1 of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend 11,399: its value transfer, after the static cost, is gas detention's crossing, so the frame is stopped with MegaLimitExceeded(2, limit) before its target's load, handing back 19,900, and the delegator is not in the reads (SATIN-MAC-007, SATIN-WIT-004, SATIN-WIT-012)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -245,6 +245,7 @@
     "SATIN-DET-018",
     "SATIN-DET-019",
     "SATIN-MAC-007",
+    "SATIN-WIT-004",
     "SATIN-WIT-012"
   ],
   "schemaVersion": "2.0",

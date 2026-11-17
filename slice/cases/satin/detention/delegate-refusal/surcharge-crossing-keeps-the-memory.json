@@ -220,7 +220,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "after TIMESTAMP, REFUSING holds 5,200 of regular gas at a STATICCALL with an output range of 1,024 bytes, whose memory costs 98, of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend 300: the call reaches its delegate's load and is refused; its static cost and its memory expansion are charged again, and its target's cold surcharge, charged last, is gas detention's crossing: the frame is stopped with MegaLimitExceeded(2, limit), the memory staying charged, handing back 5,002, and the delegator stays in the reads (SATIN-MAC-004, SATIN-OUT-008, SATIN-STOP-020, SATIN-WIT-012)"
+      "intent": "after TIMESTAMP, REFUSING holds 5,200 of regular gas at a STATICCALL with an output range of 1,024 bytes, whose memory costs 98, of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend 300: the call reaches its delegate's load and is refused; its static cost and its memory expansion are charged again, and its target's cold surcharge, charged last, is gas detention's crossing: the frame is stopped with MegaLimitExceeded(2, limit), the memory staying charged, handing back 5,002, and the delegator stays in the reads (SATIN-MAC-004, SATIN-MAC-007, SATIN-OUT-008, SATIN-STOP-020, SATIN-WIT-002, SATIN-WIT-012)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -250,8 +250,10 @@
     "SATIN-DET-018",
     "SATIN-DET-019",
     "SATIN-MAC-004",
+    "SATIN-MAC-007",
     "SATIN-OUT-008",
     "SATIN-STOP-020",
+    "SATIN-WIT-002",
     "SATIN-WIT-012"
   ],
   "schemaVersion": "2.0",

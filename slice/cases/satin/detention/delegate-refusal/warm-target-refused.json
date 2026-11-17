@@ -22,7 +22,7 @@
       },
       "execution": {
         "createdAddress": null,
-        "output": "0x",
+        "output": "0x09416ebd000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000",
         "status": "success"
       }
     },
@@ -30,7 +30,7 @@
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "codeHash": "0x9ee516ccf0ff37e5748e33ded92d93aa81e696768b9d514cd4ac180643d4be00",
+          "codeHash": "0xcd37a497299af2b39160efc16535d03ed0dc09e83c2a75c8167383b3de757f5a",
           "nonce": "0x1"
         },
         "0x00000000000000000000000000000000000c0e40": {
@@ -69,8 +69,8 @@
         "0x1c97bf2a58a99f4958310748e9fa7f93c00b9b07892c2a0ac601624b983ab43e",
         "0x6130a3451efe15822f74fe3094449fb5411adfbe5c6a9d3e9f3d518253cf58c1",
         "0x96d0f3ba6b474e9684a97e4388ec8dbb7929818b51e6b4f19f885ccbdf642f9b",
-        "0x9ee516ccf0ff37e5748e33ded92d93aa81e696768b9d514cd4ac180643d4be00",
-        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b"
+        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+        "0xcd37a497299af2b39160efc16535d03ed0dc09e83c2a75c8167383b3de757f5a"
       ],
       "hints": [],
       "oracle": [],
@@ -146,7 +146,7 @@
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "code": "0x42506231076051505b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b7fc62e8daf000000000000000000000000000000000000000000000000000000005f525f5f60045f5f736342000000000000000000000000000000000004612710f1505f5f5f5f5f620c0e4061145df100",
+          "code": "0x42506231076051505b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b7fc62e8daf000000000000000000000000000000000000000000000000000000005f525f5f60045f5f736342000000000000000000000000000000000004612710f1505f5f525f604052604460445f5f5f5f620c0e4061145df1f3",
           "nonce": "0x1",
           "storage": {}
         },
@@ -221,7 +221,7 @@
   "provenance": {
     "authoring": {
       "boundary": "the spendable part at the static cost 100",
-      "intent": "after TIMESTAMP, REFUSING holds 5,200 of regular gas at a STATICCALL of an account the transaction's access list warms, which holds an EIP-7702 delegation to the block beneficiary, of which it may spend 100: its static cost uses up the spendable part; refused at the delegate's load, the call's gas is restored and its static cost 100 charged again, with no cold surcharge that could cross, and the frame reverts with VolatileDataAccessDisabled(10), handing back 5,100; the caller, left no allowance, ends with STOP (SATIN-MAC-004, SATIN-OUT-008)"
+      "intent": "after TIMESTAMP, REFUSING holds 5,200 of regular gas at a STATICCALL of an account the transaction's access list warms, which holds an EIP-7702 delegation to the block beneficiary, of which it may spend 100: its static cost uses up the spendable part; refused at the delegate's load, the call's gas is restored and its static cost 100 charged again, with no cold surcharge that could cross, and the frame reverts with VolatileDataAccessDisabled(10), handing back 5,100; the caller, left no allowance, returns REFUSING's return data at no cost, so the refusal's error shows (SATIN-MAC-004, SATIN-MAC-005, SATIN-OUT-008, SATIN-STOP-020)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -251,7 +251,9 @@
     "SATIN-DET-018",
     "SATIN-DET-019",
     "SATIN-MAC-004",
-    "SATIN-OUT-008"
+    "SATIN-MAC-005",
+    "SATIN-OUT-008",
+    "SATIN-STOP-020"
   ],
   "schemaVersion": "2.0",
   "specRef": {

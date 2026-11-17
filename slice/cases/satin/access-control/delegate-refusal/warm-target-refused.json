@@ -163,7 +163,7 @@
   "provenance": {
     "authoring": {
       "boundary": "the regular gas at the call at the static cost and the guard, 200",
-      "intent": "REFUSING holds 200 of regular gas at a STATICCALL of an account the transaction's access list warms, which holds an EIP-7702 delegation to the block beneficiary: the target is loaded with no cold surcharge, and the delegation guard, 100 for the delegate's access, holds; the delegate's load is refused, the call pays its static cost 100 alone, and the frame reverts with VolatileDataAccessDisabled(10), handing back 100; the access list's warmth stays, so the caller's BALANCE of the delegator pays the warm access"
+      "intent": "REFUSING holds 200 of regular gas at a STATICCALL of an account the transaction's access list warms, which holds an EIP-7702 delegation to the block beneficiary: the target is loaded with no cold surcharge, and the delegation guard, 100 for the delegate's access, holds; the delegate's load is refused, the call pays its static cost 100 alone (SATIN-SCHED-003), and the frame reverts with VolatileDataAccessDisabled(10), handing back 100; the access list's warmth stays, so the caller's BALANCE of the delegator pays the warm access"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -184,7 +184,9 @@
     "SATIN-MAC-002",
     "SATIN-MAC-003",
     "SATIN-MAC-004",
-    "SATIN-MAC-007"
+    "SATIN-MAC-005",
+    "SATIN-MAC-007",
+    "SATIN-SCHED-003"
   ],
   "schemaVersion": "2.0",
   "specRef": {

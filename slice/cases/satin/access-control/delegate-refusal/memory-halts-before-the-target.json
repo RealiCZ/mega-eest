@@ -214,7 +214,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "REFUSING holds 5,000 of regular gas at a CALLCODE with 1,048,576 bytes of input of an account that holds an EIP-7702 delegation to the block beneficiary: the memory expansion, a step before the target's load, halts the call out of gas, so the delegator is not in the reads (SATIN-WIT-012)"
+      "intent": "REFUSING holds 5,000 of regular gas at a CALLCODE with 1,048,576 bytes of input of an account that holds an EIP-7702 delegation to the block beneficiary: the memory expansion, a step before the target's load, halts the call out of gas, so the delegator is not in the reads (SATIN-WIT-004, SATIN-WIT-012)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -235,6 +235,7 @@
     "SATIN-MAC-001",
     "SATIN-MAC-002",
     "SATIN-MAC-007",
+    "SATIN-WIT-004",
     "SATIN-WIT-012"
   ],
   "schemaVersion": "2.0",

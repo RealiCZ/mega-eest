@@ -215,7 +215,7 @@
   "provenance": {
     "authoring": {
       "boundary": "the regular gas at the call one below the static cost and the cold surcharge, 3,000",
-      "intent": "REFUSING holds 2,999 of regular gas at a STATICCALL of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary: its static cost leaves 2,899, below the target's cold surcharge 2,900, so the target's load is skipped with an out-of-gas halt: the frame halts, and the delegator is not in the reads (SATIN-WIT-012)"
+      "intent": "REFUSING holds 2,999 of regular gas at a STATICCALL of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary: its static cost leaves 2,899, below the target's cold surcharge 2,900, so the target's load is skipped with an out-of-gas halt: the frame halts, and the delegator is not in the reads (SATIN-WIT-004, SATIN-WIT-012)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -236,6 +236,7 @@
     "SATIN-MAC-001",
     "SATIN-MAC-002",
     "SATIN-MAC-007",
+    "SATIN-WIT-004",
     "SATIN-WIT-012"
   ],
   "schemaVersion": "2.0",

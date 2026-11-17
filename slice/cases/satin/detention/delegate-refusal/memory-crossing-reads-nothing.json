@@ -214,7 +214,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "after TIMESTAMP, the transaction's own frame switches its access off and calls REFUSING forwarding 40,000,000; REFUSING does a STATICCALL with 3,276,800 bytes of input, whose memory costs 20,787,200, past what the limit leaves it and within its whole regular gas, of an account holding an EIP-7702 delegation to the block beneficiary: the memory expansion is gas detention's crossing, so the frame is stopped with MegaLimitExceeded(2, limit) before its target's load, handing back its gas at the opcode less the static cost, and the delegator is not in the reads (SATIN-MAC-007, SATIN-WIT-012)"
+      "intent": "after TIMESTAMP, the transaction's own frame switches its access off and calls REFUSING forwarding 40,000,000; REFUSING does a STATICCALL with 3,276,800 bytes of input, whose memory costs 20,787,200, past what the limit leaves it and within its whole regular gas, of an account holding an EIP-7702 delegation to the block beneficiary: the memory expansion is gas detention's crossing, so the frame is stopped with MegaLimitExceeded(2, limit) before its target's load, handing back its gas at the opcode less the static cost, and the delegator is not in the reads (SATIN-MAC-007, SATIN-WIT-004, SATIN-WIT-012)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -244,6 +244,7 @@
     "SATIN-DET-018",
     "SATIN-DET-019",
     "SATIN-MAC-007",
+    "SATIN-WIT-004",
     "SATIN-WIT-012"
   ],
   "schemaVersion": "2.0",

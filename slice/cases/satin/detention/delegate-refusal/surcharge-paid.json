@@ -22,7 +22,7 @@
       },
       "execution": {
         "createdAddress": null,
-        "output": "0x",
+        "output": "0x09416ebd000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000000",
         "status": "success"
       }
     },
@@ -30,7 +30,7 @@
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "codeHash": "0x03556b3db8f83658b51459db33fe4ab2c2804e42865ae0824584705f595148e3",
+          "codeHash": "0xdf5aa8b7f590206919adfba2c99d3765b23c0b5be4933660f8060ccd88ea014e",
           "nonce": "0x1"
         },
         "0x00000000000000000000000000000000000c0e40": {
@@ -66,11 +66,11 @@
       "blockHashes": {},
       "buckets": {},
       "codes": [
-        "0x03556b3db8f83658b51459db33fe4ab2c2804e42865ae0824584705f595148e3",
         "0x1c97bf2a58a99f4958310748e9fa7f93c00b9b07892c2a0ac601624b983ab43e",
         "0x6130a3451efe15822f74fe3094449fb5411adfbe5c6a9d3e9f3d518253cf58c1",
         "0x96d0f3ba6b474e9684a97e4388ec8dbb7929818b51e6b4f19f885ccbdf642f9b",
-        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b"
+        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+        "0xdf5aa8b7f590206919adfba2c99d3765b23c0b5be4933660f8060ccd88ea014e"
       ],
       "hints": [],
       "oracle": [],
@@ -146,7 +146,7 @@
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "code": "0x42506231066051505b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b7fc62e8daf000000000000000000000000000000000000000000000000000000005f525f5f60045f5f736342000000000000000000000000000000000004612710f1505f5f5f5f5f620c0e4061145df100",
+          "code": "0x42506231066051505b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b7fc62e8daf000000000000000000000000000000000000000000000000000000005f525f5f60045f5f736342000000000000000000000000000000000004612710f1505f5f525f604052604460445f5f5f5f620c0e4061145df1f3",
           "nonce": "0x1",
           "storage": {}
         },
@@ -221,7 +221,7 @@
   "provenance": {
     "authoring": {
       "boundary": "the spendable part at the static cost and the cold surcharge, 3,000",
-      "intent": "after TIMESTAMP, REFUSING holds 5,200 of regular gas at a STATICCALL of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend 3,000: refused at the delegate's load, the call pays its static cost and its target's cold surcharge, 3,000, from the spendable part, which can, and the frame reverts with VolatileDataAccessDisabled(10), not a limit stop, handing back 2,200; the caller, left no allowance, ends with STOP (SATIN-MAC-004, SATIN-OUT-008, SATIN-STOP-020)"
+      "intent": "after TIMESTAMP, REFUSING holds 5,200 of regular gas at a STATICCALL of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend 3,000: refused at the delegate's load, the call pays its static cost and its target's cold surcharge, 3,000, from the spendable part, which can, and the frame reverts with VolatileDataAccessDisabled(10), not a limit stop, handing back 2,200; the caller, left no allowance, returns REFUSING's return data at no cost, so the refusal's error shows (SATIN-MAC-004, SATIN-MAC-005, SATIN-OUT-008, SATIN-STOP-020)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -251,6 +251,7 @@
     "SATIN-DET-018",
     "SATIN-DET-019",
     "SATIN-MAC-004",
+    "SATIN-MAC-005",
     "SATIN-OUT-008",
     "SATIN-STOP-020"
   ],

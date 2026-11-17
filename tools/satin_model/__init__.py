@@ -112,6 +112,9 @@ the slice uses:
   any call opcode of the block beneficiary, refused before its charges, and one of an account whose
   one-hop delegate is the beneficiary, its steps before the delegate's load as with access on, its
   refusal there and its settlement on its static cost, its memory expansion and its target's access;
+  a value `CALL` in a frame a `STATICCALL` started, halted at its static-context check; a `CALL` of an
+  account delegating to an ordinary account outside gas detention; and the inherited path's cold load
+  made before its surcharge, which can be gas detention's crossing (D-117);
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check

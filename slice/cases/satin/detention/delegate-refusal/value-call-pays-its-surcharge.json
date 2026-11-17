@@ -221,7 +221,7 @@
   "provenance": {
     "authoring": {
       "boundary": "the spendable part at the static cost and the value transfer, 11,400",
-      "intent": "after TIMESTAMP, REFUSING, which holds no balance, holds 20,000 of regular gas at a CALL with value 1 of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend 11,400: its static cost and its value transfer use up the spendable part, the whole regular gas loads the target and passes the delegation guard, and at the refusal the restoration gives the value transfer back, so the spendable part pays the target's cold surcharge: the frame reverts with VolatileDataAccessDisabled(10), handing back 17,000, the value transfer not among what stays spent (SATIN-MAC-004, SATIN-OUT-008)"
+      "intent": "after TIMESTAMP, REFUSING, which holds no balance, holds 20,000 of regular gas at a CALL with value 1 of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary, of which it may spend 11,400: its static cost and its value transfer use up the spendable part, the whole regular gas loads the target and passes the delegation guard, and at the refusal the restoration gives the value transfer back, so the spendable part pays the target's cold surcharge: the frame reverts with VolatileDataAccessDisabled(10), handing back 17,000, the value transfer not among what stays spent (SATIN-MAC-004, SATIN-MAC-005, SATIN-OUT-008)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -251,6 +251,7 @@
     "SATIN-DET-018",
     "SATIN-DET-019",
     "SATIN-MAC-004",
+    "SATIN-MAC-005",
     "SATIN-OUT-008"
   ],
   "schemaVersion": "2.0",
