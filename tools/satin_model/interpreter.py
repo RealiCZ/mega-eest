@@ -6,12 +6,13 @@ from __future__ import annotations
 from .constants import (
     ACCESS_TYPE_BENEFICIARY, ACCESS_TYPE_ORACLE, ACCESS_TYPE_TIMESTAMP, ACCOUNT_STATE, BLOCK_ENV_ACCESS_COMPUTE_GAS, BLOCKHASH_WINDOW,
     CALL_STIPEND, delegate_of, G_BLOCKHASH, HISTORY_STORAGE_ADDRESS, PRECOMPILE_SET,
-    CALL_VALUE_COST, COLD_ACCOUNT_SURCHARGE, COLD_SLOAD, COPY_WORD, COST_PER_HISTORY_BYTE, CREATE_ACCESS, ex, G_BASE,
+    CALL_VALUE_COST, COLD_ACCOUNT_SURCHARGE, COLD_SLOAD, COPY_WORD, COST_PER_HISTORY_BYTE, CREATE_ACCESS, DETENTION_STOP,
+    ex, G_BASE,
     G_EXP, G_EXP_BYTE,
     G_HIGH, G_JUMPDEST, G_LOW, G_MID, G_VERYLOW, G_ZERO, GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR,
     INITCODE_WORD_COST, KECCAK_BASE,
     KECCAK_WORD, LEGACY_NEW_ACCOUNT_SHARE, LOG_BASE_SIZE, LOG_COST, LOG_DATA_COST, LOG_TOPIC_COST,
-    LOG_TOPIC_SIZE, MAX_INITCODE_SIZE, ORACLE, ORACLE_ACCESS_COMPUTE_GAS, PRE_FORK_NEW_ACCOUNT_COST,
+    LOG_TOPIC_SIZE, MAX_INITCODE_SIZE, ORACLE, ORACLE_ACCESS_COMPUTE_GAS, PRE_FORK_NEW_ACCOUNT_COST, SYSTEM_CONTRACTS,
     VOLATILE_DATA_ACCESS_DISABLED, WARM_READ, WRITE_RECORD_SIZE,
 )
 from .records import Account, fmt, h, Halt, LimitStop, memory_cost, Stopped, Unmodelled
@@ -68,6 +69,44 @@ class InterpreterMixin:
                         ", warm from its start"), ("SATIN-SCHED-012",)
         return None
 
+    def delegates_to_beneficiary(self, target: bytes) -> bool:
+        """SATIN-MAC-007: whether a call's target, not itself the block beneficiary, holds an EIP-7702 delegation
+        indicator whose one-hop delegate is the beneficiary, as the state stands when the call reaches it."""
+        account = self.state.get(target)
+        return (target != self.env.coinbase and account is not None
+                and delegate_of(account.code) == self.env.coinbase)
+
+    def warmth_of(self, target: bytes) -> tuple[str, tuple[str, ...]]:
+        """Why a call's target is warm when the call reaches its load (SATIN-MAC-007): warm from the transaction's
+        start, or warmed by an earlier access that no rollback took back."""
+        if target in PRECOMPILE_SET:
+            return "a precompile's address, warm from the transaction's start", ("SATIN-SCHED-012",)
+        if target in self.applied_authorities:
+            return ("an authority the transaction's EIP-7702 list applied, warm since the application loaded it",
+                    ("SATIN-AUTH-014",))
+        note = self.authority_warmth.get(target)
+        if note is not None and not note[0].startswith("is not"):
+            return f"an authority of the transaction's EIP-7702 list, which {note[0]}", tuple(note[1])
+        why = self.warm_from_start(target)
+        if why:
+            return why
+        return ("warm, an earlier access of the transaction having warmed it and no rollback having taken that "
+                "warming back"), ()
+
+    def cold_load_before_charge(self, frame, who: bytes, what: str, rules: tuple[str, ...]) -> None:
+        """SATIN-WIT-012, SATIN-DET-015: an inherited opcode loads a cold account when the regular gas left, both parts
+        counted, covers its cold surcharge, and only then makes that charge, which can be gas detention's crossing; the
+        account stays loaded when it is. A load the whole regular gas cannot pay is skipped, its charge an out-of-gas."""
+        if COLD_ACCOUNT_SURCHARGE > frame["regular"]:
+            return
+        spendable = frame.get("spendable")
+        if spendable is not None and spendable < COLD_ACCOUNT_SURCHARGE and self.reads:
+            self.d.add("reads", f"{what} {h(who)} is not warm: the {fmt(frame['regular'])} of regular gas left, both parts "
+                       f"counted, covers its cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}, so it is loaded before that charge, "
+                       f"which the spendable part {fmt(spendable)} cannot pay: the charge is gas detention's crossing, and "
+                       "the completed load stays in the reads", "SATIN-WIT-012", "SATIN-DET-015", "SATIN-DET-018")
+        self.load(who, f"{what}, loaded once the regular gas left covers its cold surcharge, before that charge", *rules)
+
     def block_field(self, op: int) -> int:
         """What a block-environment opcode pushes: the block's own field; SLOTNUM pushes zero (SATIN-BASE-005)."""
         env = self.env
@@ -120,6 +159,173 @@ class InterpreterMixin:
             steps.append(f"{what.split()[0]} refused 0")
             return done("revert", VOLATILE_DATA_ACCESS_DISABLED + access_type.to_bytes(32, "big"))
 
+        def refuse_call(name: str, value: int, ranges: tuple):
+            """SATIN-MAC-003, -004: a call opcode whose target operand is the block beneficiary, in a frame whose access
+            is off, refused once its operands are on the stack and before its body's checks and charges."""
+            body = (["its value transfer, which the frame could not fund"] if value
+                    and value > self.state.get(address, Account()).balance else ["its value transfer"] if value else [])
+            body += [f"its memory for {fmt(size)} bytes" for _, size in ranges if size]
+            d.add("outcome", f"{name}'s target operand is the block beneficiary: the call is refused before its static "
+                  f"cost, {WARM_READ}, and before anything its body charges or checks" + (f" ({', '.join(body)})" if body
+                                                                                     else "") +
+                  ", so a frame holding less than any of them is refused rather than running out of gas, and the refused "
+                  "read consumes no gas", "SATIN-MAC-003", "SATIN-MAC-004")
+            return refuse(ACCESS_TYPE_BENEFICIARY, f"{name} of the block beneficiary")
+
+        def static_halt(name: str, target: bytes):
+            """EIP-214, kept by the base layer: a CALL that carries value in a frame a STATICCALL started halts at its
+            static-context check, after its static cost and before its memory, its value transfer and its target's load
+            (SATIN-MAC-007's first item)."""
+            d.add("outcome", f"{name} of {h(target)} carries value in a frame a STATICCALL started: its static cost "
+                  f"{WARM_READ} paid, the static-context check halts the frame, before the call's memory expansion, its "
+                  "value-transfer cost and its target's load, as it would with access on", "SATIN-MAC-007",
+                  "SATIN-BASE-001")
+            raise Halt(f"{name} with value in a static frame")
+
+        def refused_at_delegate(name: str, target: bytes, value: int, ranges: tuple):
+            """SATIN-MAC-007, -004: a call opcode whose target operand is not the block beneficiary and whose target's
+            one-hop EIP-7702 delegate is, in a frame whose access is off. The call makes the steps before its delegate's
+            load as it would with access on, each of which can halt it or be gas detention's crossing; at the delegate's
+            load it is refused, and settled on its static cost, its memory expansion and its target's access."""
+            at_regular, at_spendable = frame["regular"], frame.get("spendable")
+            at_charges, at_compute, at_words = self.regular_charges, self.compute, mem_words
+            detained = at_spendable is not None
+            both = ", both parts counted," if detained else ""
+            self.probe.setdefault("refusal-call", at_regular)
+            if self.limit is not None:
+                self.probe.setdefault("refusal-call-room", self.limit - self.compute)
+            precompile = target in PRECOMPILE_SET
+            cold = target not in self.warm_accounts and not precompile
+            # The steps before the target's load, as with access on (SATIN-MAC-007's first two items): one that fails
+            # or is gas detention's crossing ends the call before the target's load, which it does not make.
+            try:
+                self.charge_regular(frame, WARM_READ, f"{name}'s static cost")
+                if value and name == "CALL" and ctx and ctx.get("static"):
+                    static_halt(name, target)
+                for (offset, size), what in zip(ranges, ("input", "output")):
+                    expand(offset, size, f"{name} {what}")
+                if value:
+                    self.charge_regular(frame, CALL_VALUE_COST, f"{name}'s value transfer")
+            except (Halt, Stopped) as e:
+                d.add("outcome", f"{name} of {h(target)}, an account whose EIP-7702 delegate is the block beneficiary, in "
+                      "a frame whose volatile-data access is off, makes the steps before its target's load as with access "
+                      f"on, and one of them ends it ({e}): it has not reached its delegate's load and ends as it would "
+                      "with access on, without the target's load" + (", never reaching precompile dispatch" if precompile
+                                                                       else ""), "SATIN-MAC-007",
+                      *(("SATIN-DET-018",) if isinstance(e, Stopped) else ()),
+                      *(("SATIN-PCMP-008",) if precompile else ()))
+                if self.reads:
+                    d.add("reads", f"{name}'s target {h(target)} is not loaded: the call ended before its target's load, "
+                          "which it never made", "SATIN-WIT-012", "SATIN-WIT-004", "SATIN-MAC-007")
+                raise
+            memory = memory_cost(mem_words) - memory_cost(at_words)
+            before = (f"its static cost {WARM_READ}" + (f", its memory expansion {fmt(memory)}, from {fmt(at_words)} to "
+                                                         f"{fmt(mem_words)} words for its input and output ranges together"
+                                                         if memory else "")
+                      + (f" and its value-transfer cost {fmt(CALL_VALUE_COST)}" if value else ""))
+            # The load of the target's account and code: a cold one the regular gas cannot pay is skipped.
+            if cold and frame["regular"] < COLD_ACCOUNT_SURCHARGE:
+                d.add("outcome", f"{name} of {h(target)} in a frame whose volatile-data access is off makes the steps "
+                      f"before its target's load as with access on, {before}; the target is not warm, and the "
+                      f"{fmt(frame['regular'])} of regular gas left{both} is below its cold surcharge, "
+                      f"{fmt(COLD_ACCOUNT_SURCHARGE)}: the load is skipped with an out-of-gas halt, before the call "
+                      "reaches its delegate, so it ends as it would with access on", "SATIN-MAC-007", "SATIN-SCHED-003",
+                      *(("SATIN-DET-015",) if detained else ()))
+                if self.reads:
+                    d.add("reads", f"{name}'s target {h(target)} is not loaded: a cold load that the regular gas left "
+                          "cannot pay is skipped, so the call never reads its target's account or code", "SATIN-WIT-012",
+                          "SATIN-WIT-004", "SATIN-MAC-007")
+                raise Halt(f"{name}'s cold target load, {fmt(COLD_ACCOUNT_SURCHARGE)}, with {fmt(frame['regular'])} "
+                           "regular gas left")
+            warmth = None if cold else self.warmth_of(target)
+            self.warm_accounts.add(target)
+            self.load(target, f"the {name}'s target, its account and code, read at the call's load of it, which is not "
+                      "a volatile read", "SATIN-WIT-002", "SATIN-MAC-007")
+            guard = (COLD_ACCOUNT_SURCHARGE if cold else 0) + WARM_READ
+            d.add("outcome", f"{name} of {h(target)} in a frame whose volatile-data access is off makes the steps before "
+                  f"its target's load as with access on, {before}; the target, " +
+                  (f"not warm when the call reaches its load, is loaded, the {fmt(frame['regular'])} of regular gas "
+                   f"left{both} covering its cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}, which is not yet deducted"
+                   if cold else f"{warmth[0]}, is loaded with no cold surcharge") +
+                  f"; it holds an EIP-7702 delegation indicator naming {h(self.env.coinbase)}, the block beneficiary, so "
+                  f"the delegation guard asks the regular gas left{both} to cover the target's cold surcharge, "
+                  f"{fmt(guard - WARM_READ)}, plus {WARM_READ} for the delegate's access: {fmt(guard)}, the static cost "
+                  "paid not counted again", "SATIN-MAC-007", "SATIN-SCHED-003", *(warmth[1] if warmth else ()),
+                  *(("SATIN-DET-015",) if detained else ()))
+            if frame["regular"] < guard:
+                d.add("outcome", f"the delegation guard: the {fmt(frame['regular'])} of regular gas left{both} does not "
+                      f"cover {fmt(guard)}: the call halts out of gas before its delegate's load, as with access on, its "
+                      "target's load made" + (", and never reaches precompile dispatch" if precompile else ""),
+                      "SATIN-MAC-007", *(("SATIN-PCMP-008",) if precompile else ()))
+                if self.reads:
+                    d.add("reads", f"the call's read of its target {h(target)} stays: it halted after the target's load, "
+                          "and a failed frame's reads are not taken back", "SATIN-WIT-002", "SATIN-MAC-007")
+                raise Halt(f"the delegation guard, {fmt(guard)}, with {fmt(frame['regular'])} regular gas left")
+            d.add("outcome", f"the delegation guard holds, {fmt(frame['regular'])} covering {fmt(guard)}, and the call "
+                  f"reaches its delegate's load: the delegate {h(self.env.coinbase)} is the block beneficiary, so the load "
+                  f"is refused as the beneficiary's account (type {ACCESS_TYPE_BENEFICIARY}), before the target's cold "
+                  "surcharge is deducted, before any new-account state gas, the forward and the start's history, and "
+                  "before any frame starts; the beneficiary's account is not loaded by the call" +
+                  (", and the call never reaches precompile dispatch" if precompile else ""), "SATIN-MAC-003",
+                  "SATIN-MAC-007", *(("SATIN-PCMP-008",) if precompile else ()))
+            # The settlement (SATIN-MAC-004): restored to the gas at the opcode, then charged in order.
+            frame["regular"] = at_regular
+            if detained:
+                frame["spendable"] = at_spendable
+            self.regular_charges, self.compute = at_charges, at_compute
+            self.charge_regular(frame, WARM_READ, f"{name}'s static cost, charged again")
+            if memory:
+                self.charge_regular(frame, memory, f"{name}'s memory expansion, charged again")
+            d.add("gasLedgers", f"the refused {name} is settled: its regular gas" + (", the spendable and the withheld "
+                  "part," if detained else "") + f" is restored to the {fmt(at_regular)} it held at the opcode" +
+                  (f" ({fmt(at_spendable)} spendable)" if detained else "") + f", then charged, as regular charges and in "
+                  f"order, its static cost {WARM_READ}" + (f", its memory expansion {fmt(memory)}, the opcode's own growth "
+                                                            "of memory at the base layer's price" if memory else
+                                                            ", and no memory expansion, its ranges growing no memory")
+                  + (f", and its target's cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)} last" if cold else
+                     ", and no cold surcharge, its target having been warm") +
+                  (f"; the value-transfer cost {fmt(CALL_VALUE_COST)} is given back by the restoration and is not "
+                   "compute" if value else "") + "; nothing it did before the delegate's load drew on the reservoir, "
+                  "which stays as the opcode found it, and the refused delegate's access is never charged" +
+                  ("; under gas detention the restoration and these charges are made before the crossing is decided, "
+                   "so only the cold surcharge, charged last, can cross" if detained else ""),
+                  "SATIN-MAC-004", "SATIN-SCHED-003", *(("SATIN-DET-009",) if value or detained else ()),
+                  *(("SATIN-DET-018",) if detained else ()))
+            d.add("outcome", "the frame's end, a revert or a stop, rolls EIP-2929's accessed addresses back to its "
+                  "checkpoint, taken when it started: the warming it took, its warming of the target included, is undone, "
+                  "and a warmth from before it started stays", "SATIN-MAC-007")
+            if cold and detained and frame["spendable"] < COLD_ACCOUNT_SURCHARGE:
+                d.add("outcome", f"the target's cold surcharge, {fmt(COLD_ACCOUNT_SURCHARGE)}, charged last, is a regular "
+                      f"charge the spendable part {fmt(frame['spendable'])} cannot pay and the whole "
+                      f"{fmt(frame['regular'])} can: gas detention's crossing, decided after the restoration and the "
+                      "charges before it, so the static cost" + (" and the memory expansion stay" if memory else " stays")
+                      + " charged" + (" and the value-transfer cost is not among what stays spent" if value else "") +
+                      f"; the frame is stopped with MegaLimitExceeded({DETENTION_STOP}, limit), a limit stop, rather than "
+                      f"reverting with VolatileDataAccessDisabled({ACCESS_TYPE_BENEFICIARY}), and does not run out of gas",
+                      "SATIN-DET-018", "SATIN-MAC-004", "SATIN-MAC-007", "SATIN-OUT-008", "SATIN-STOP-020")
+                if self.reads:
+                    d.add("reads", f"the call's completed read of its target {h(target)}, its account and code, stays in "
+                          "the reads though its cold surcharge is then gas detention's crossing", "SATIN-WIT-012",
+                          "SATIN-MAC-007")
+            if cold:
+                self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, f"{name}'s target's cold surcharge")
+            charged = WARM_READ + memory + (COLD_ACCOUNT_SURCHARGE if cold else 0)
+            if frame["regular"] != at_regular - charged:
+                raise Unmodelled("a delegate refusal's settlement that does not charge exactly its target's access and memory")
+            d.add("outcome", f"the frame reverts with VolatileDataAccessDisabled({ACCESS_TYPE_BENEFICIARY}): the refusal's "
+                  "charges are not gas detention's crossing, so it is a refused volatile read's revert and not a limit "
+                  f"stop; it spent {fmt(charged)} of the call, its static cost" +
+                  (f", its memory expansion" if memory else "") + (" and its target's cold surcharge" if cold else "") +
+                  f", and marks nothing for gas detention; its revert data is VolatileDataAccessDisabled's selector and "
+                  f"the access type {ACCESS_TYPE_BENEFICIARY}, the beneficiary's account, ABI-encoded", "SATIN-MAC-004",
+                  "SATIN-MAC-005", "SATIN-OUT-008", "SATIN-STOP-020")
+            if self.reads:
+                d.add("reads", f"the call's completed read of its target {h(target)}, its account and code, stays in the "
+                      "reads though its delegate is then refused", "SATIN-WIT-012", "SATIN-MAC-007")
+            self.probe["refusal-charged"] = charged
+            steps.append(f"{name} {fmt(charged)} refused at the delegate")
+            return done("revert", VOLATILE_DATA_ACCESS_DISABLED + ACCESS_TYPE_BENEFICIARY.to_bytes(32, "big"))
+
         def simple(name: str, cost: int, result) -> None:
             self.charge_regular(frame, cost, name)
             stack.append(result % 2**256)
@@ -149,7 +355,9 @@ class InterpreterMixin:
                       "charges, so the frame halts there, its regular gas consumed, with no charge that could have been "
                       "gas detention's crossing", "SATIN-SIZE-005", "SATIN-SIZE-006")
                 raise Halt("a creation in a static frame")
-            if ctx and ctx.get("static") and op in STATIC_UNMODELLED and not (op == 0xFA and self.system_pages):
+            static_call = op == 0xF1 and frame.get("access_off") and len(stack) >= 7  # D-116: EIP-214's check
+            if (ctx and ctx.get("static") and op in STATIC_UNMODELLED and not (op == 0xFA and self.system_pages)
+                    and not static_call):
                 raise Unmodelled(f"opcode {op:#x} in a frame a STATICCALL started")
             if op == 0x00:  # STOP
                 steps.append(f"STOP {G_ZERO}")
@@ -189,6 +397,11 @@ class InterpreterMixin:
                 steps.append(f"GASPRICE {G_BASE}")
                 d.add("outcome", f"GASPRICE pushes the transaction's effective gas price, {fmt(self.effective_price())}",
                       "SATIN-BASE-001")
+            elif op == 0xEF and self.current:  # undefined in Osaka (EIP-3541 reserves it): an exceptional halt
+                steps.append("undefined 0xef")
+                d.add("outcome", "the frame's code starts an instruction with 0xEF, which Osaka leaves undefined: an "
+                      "exceptional halt", "SATIN-BASE-001")
+                raise Halt("the undefined opcode 0xef")
             elif 0x0C <= op <= 0x0F:  # undefined in Osaka, which Satin's base keeps: an exceptional halt
                 steps.append(f"undefined {op:#04x}")
                 raise Halt(f"the undefined opcode {op:#04x}")
@@ -634,6 +847,7 @@ class InterpreterMixin:
                         d.add("reads", f"BALANCE's account {h(who)} is not loaded: the regular gas left, "
                               f"{fmt(frame['regular'])}, cannot pay its cold access, and a load gas skipped is not made",
                               "SATIN-WIT-012")
+                    self.cold_load_before_charge(frame, who, "BALANCE's account", ("SATIN-WIT-002", "SATIN-WIT-012"))
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "BALANCE's cold access")
                     self.warm_accounts.add(who)
                 note = self.authority_warmth.get(who) if self.lists else None
@@ -696,6 +910,18 @@ class InterpreterMixin:
             elif op == 0xF1:  # CALL
                 gas_req, target_w, value, a_off, a_size, r_off, r_size = [pop() for _ in range(7)]
                 target = (target_w % 2**160).to_bytes(20, "big")
+                if frame.get("access_off") and target == self.env.coinbase:
+                    return refuse_call("CALL", value, ((a_off, a_size), (r_off, r_size)))
+                if frame.get("access_off") and self.delegates_to_beneficiary(target):
+                    return refused_at_delegate("CALL", target, value, ((a_off, a_size), (r_off, r_size)))
+                self.probe.setdefault("call-opcode:" + target.hex(), frame["regular"])
+                if self.limit is not None:
+                    self.probe.setdefault("call-opcode-room:" + target.hex(), self.limit - self.compute)
+                if ctx and ctx.get("static"):
+                    if not value:
+                        raise Unmodelled("a CALL without value in a frame a STATICCALL started")
+                    self.charge_regular(frame, WARM_READ, "CALL")
+                    static_halt("CALL", target)
                 before = self.regular_charges
                 self.charge_regular(frame, WARM_READ, "CALL")
                 expand(a_off, a_size, "CALL input")
@@ -704,6 +930,7 @@ class InterpreterMixin:
                     self.charge_regular(frame, CALL_VALUE_COST, "the value transfer")
                 cold = target not in self.warm_accounts and target not in PRECOMPILE_SET
                 if cold:
+                    self.cold_load_before_charge(frame, target, "the CALL's target", ("SATIN-WIT-002", "SATIN-WIT-008"))
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
                     self.warm_accounts.add(target)
                 elif target in PRECOMPILE_SET:
@@ -726,27 +953,17 @@ class InterpreterMixin:
                         # charges as any delegated call, and then dispatch runs the precompile.
                         if value:
                             raise Unmodelled("a value call to a precompile's address that holds a delegation")
-                        if frame.get("access_off") and delegate == self.env.coinbase:
-                            # SATIN-MAC-007, -004: the delegation guard, then the delegate's load refused as the
-                            # beneficiary's account, the call settled on its static cost and memory, never dispatched.
-                            if frame["regular"] < WARM_READ:
-                                d.add("outcome", f"the delegation guard: the {fmt(frame['regular'])} of regular gas left "
-                                      f"does not cover the delegate's access, {WARM_READ}, the target being warm: the call "
-                                      "halts out of gas before the delegate's load", "SATIN-MAC-007")
-                                raise Halt("the delegation guard")
-                            d.add("outcome", f"the CALL's target {h(target)}, a precompile's address and warm from the "
-                                  f"transaction's start, holds an EIP-7702 delegation to {h(delegate)}, the block "
-                                  "beneficiary, in a frame whose volatile-data access is off: the call makes its static "
-                                  "cost, its memory and its target's load, passes the delegation guard, and its delegate's "
-                                  "load is refused as the beneficiary's account, before anything else on the call's path, "
-                                  "so it never reaches precompile dispatch: the frame reverts with "
-                                  f"VolatileDataAccessDisabled({ACCESS_TYPE_BENEFICIARY}), charged its static cost and its "
-                                  "memory and nothing else, the delegate's access never charged", "SATIN-MAC-003",
-                                  "SATIN-MAC-004", "SATIN-MAC-005", "SATIN-MAC-007", "SATIN-PCMP-008")
-                            steps.append(f"CALL {fmt(self.regular_charges - before)} refused at the delegate")
-                            return done("revert", VOLATILE_DATA_ACCESS_DISABLED + ACCESS_TYPE_BENEFICIARY.to_bytes(32, "big"))
-                    elif int.from_bytes(delegate, "big") <= 0x100 or self.keyless_signer != target:
-                        raise Unmodelled("a CALL to a delegated account other than a keyless creation's signer")
+                    elif self.keyless_signer != target and (int.from_bytes(delegate, "big") <= 0x100
+                                                           or delegate in SYSTEM_CONTRACTS or delegate == self.env.coinbase
+                                                           or frame.get("spendable") is not None or not self.current):
+                        raise Unmodelled("a CALL to a delegated account other than a keyless creation's signer, or "
+                                         "one delegating to an ordinary account outside gas detention (D-116)")
+                    elif self.keyless_signer != target:
+                        d.add("outcome", f"the CALL's target {h(target)} holds an EIP-7702 delegation to {h(delegate)}, "
+                              "an ordinary account and not the block beneficiary: the call is not refused and resolves "
+                              "the one hop alone, running the delegate's code as it is, whatever that code holds, in the "
+                              "target's frame", *(("SATIN-MAC-003", "SATIN-MAC-007") if frame.get("access_off") else ()),
+                              "SATIN-BASE-001")
                     dcold = delegate not in self.warm_accounts
                     delegate_access = WARM_READ + (COLD_ACCOUNT_SURCHARGE if dcold else 0)
                     self.charge_regular(frame, delegate_access, "the delegate's access")
@@ -812,7 +1029,7 @@ class InterpreterMixin:
                 self.regular_charges += forward
                 child_gas = forward + (CALL_STIPEND if value else 0)
                 operand = fmt(gas_req) if gas_req < 2**256 - 1 else "the gas operand 2^256 - 1"
-                shown_delegate = delegate_access if delegate is not None and target in PRECOMPILE_SET else 0
+                shown_delegate = delegate_access if delegate is not None else 0
                 d.add("gasLedgers", f"CALL to {h(target)} with value {value}: the opcode's own charges {fmt(opcode_charges)} = "
                       f"warm read {WARM_READ}" + (f" + value transfer {fmt(CALL_VALUE_COST)}" if value else "") +
                       (f" + cold surcharge {fmt(COLD_ACCOUNT_SURCHARGE)}" if cold else "") +
@@ -920,7 +1137,7 @@ class InterpreterMixin:
                           "SATIN-DET-014", "SATIN-DET-015", "SATIN-DET-019")
                 returndata = out
                 if r_size:
-                    if not self.system_pages:
+                    if not self.system_pages and not self.current:
                         raise Unmodelled("a call that copies its output")
                     n = min(r_size, len(out))
                     memory[r_off:r_off + n] = out[:n]
@@ -934,6 +1151,10 @@ class InterpreterMixin:
                 value = pop() if op == 0xF2 else 0
                 a_off, a_size, r_off, r_size = pop(), pop(), pop(), pop()
                 target = (target_w % 2**160).to_bytes(20, "big")
+                if frame.get("access_off") and target == self.env.coinbase:
+                    return refuse_call(name, value, ((a_off, a_size), (r_off, r_size)))
+                if frame.get("access_off") and self.delegates_to_beneficiary(target):
+                    return refused_at_delegate(name, target, value, ((a_off, a_size), (r_off, r_size)))
                 before = self.regular_charges
                 self.charge_regular(frame, WARM_READ, name)
                 expand(a_off, a_size, f"{name} input")
@@ -942,6 +1163,8 @@ class InterpreterMixin:
                     self.charge_regular(frame, CALL_VALUE_COST, "the value transfer")
                 cold = target not in self.warm_accounts and target not in PRECOMPILE_SET
                 if cold:
+                    self.cold_load_before_charge(frame, target, f"the {name}'s code account", ("SATIN-WIT-002",
+                                                                                                 "SATIN-WIT-008"))
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
                     self.warm_accounts.add(target)
                 elif self.pricing:
@@ -987,7 +1210,7 @@ class InterpreterMixin:
                 self.split(frame)
                 returndata = out
                 if r_size:
-                    if not self.system_pages:
+                    if not self.system_pages and not self.current:
                         raise Unmodelled("a call that copies its output")
                     n = min(r_size, len(out))
                     memory[r_off:r_off + n] = out[:n]
@@ -996,6 +1219,10 @@ class InterpreterMixin:
             elif op == 0xF4:  # DELEGATECALL
                 gas_req, target_w, a_off, a_size, r_off, r_size = [pop() for _ in range(6)]
                 target = (target_w % 2**160).to_bytes(20, "big")
+                if frame.get("access_off") and target == self.env.coinbase:
+                    return refuse_call("DELEGATECALL", 0, ((a_off, a_size), (r_off, r_size)))
+                if frame.get("access_off") and self.delegates_to_beneficiary(target):
+                    return refused_at_delegate("DELEGATECALL", target, 0, ((a_off, a_size), (r_off, r_size)))
                 before = self.regular_charges
                 self.charge_regular(frame, WARM_READ, "DELEGATECALL")
                 expand(a_off, a_size, "DELEGATECALL input")
@@ -1006,6 +1233,8 @@ class InterpreterMixin:
                           "DELEGATECALL makes no cold access, its own regular charges coming first, as any opcode's",
                           "SATIN-SCHED-012", "SATIN-DET-021")
                 if cold:
+                    self.cold_load_before_charge(frame, target, "the DELEGATECALL's code account", ("SATIN-WIT-002",
+                                                                                                     "SATIN-WIT-008"))
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
                     self.warm_accounts.add(target)
                 self.load(target, "the DELEGATECALL's code account, once the opcode's access is paid", "SATIN-WIT-002",
@@ -1035,7 +1264,7 @@ class InterpreterMixin:
                 self.split(frame)
                 returndata = out
                 if r_size:
-                    if not self.system_pages:
+                    if not self.system_pages and not self.current:
                         raise Unmodelled("a call that copies its output")
                     n = min(r_size, len(out))
                     memory[r_off:r_off + n] = out[:n]

@@ -2679,3 +2679,205 @@ slice holds 930 cases.
   and its gas used 45,435, the call refused at its delegate's load having paid its static cost.
   Implementation (a), at `1a981f4b`, already matched it. Implementation (b) at `ccbdb23e` charged 100
   less; at `62f2964a` it matches the case, plain and instrumented (D-113).
+
+From a call refused at its target's EIP-7702 delegate:
+
+**D-115. Thirty-six cases pin the refusal at its target's delegate, at `83c0d26`.** Specification
+changes #8 and #10 moved a call whose target delegates to the block beneficiary, in a frame whose
+volatile-data access is off, from a refusal before any charge to a refusal at the delegate's load,
+settled on the call's static cost, its memory expansion and its target's access (`SATIN-MAC-003`,
+`-004`, `-007`). Both implementations implement it at their pins, (a) at `1a981f4b` and (b) at
+`62f2964a` (D-113), and every case below gates on both, plain and instrumented. Each cites
+`83c0d26` and is defined by `delegate_refusal_cases` in `tools/make_slice.py`. The transaction's own
+frame switches its access off and calls a frame, `REFUSING`, forwarding what leaves its call the
+regular gas the case names; under gas detention it first reads `TIMESTAMP` and burns compute so that
+the limit leaves `REFUSING` the spendable part the case names.
+
+- **`satin/access-control/delegate-refusal/`, 24 cases.**
+  - The control: a value `CALL` of the beneficiary itself with 1 MiB of input from 50 of regular
+    gas, and a `DELEGATECALL` of it from 10, each refused for nothing.
+  - A cold delegator at 2,999 (its load skipped, not read), 3,000 (loaded, then halted by the
+    delegation guard), 3,099 (one short of the guard) and 3,100 (refused, paying 3,000, the caller's
+    `BALANCE` of it after the frame's revert paying the cold access), each with the reads; the same
+    3,100 by `CALL`, `CALLCODE` and `DELEGATECALL` without value, and followed by a memory expansion
+    past the cap, which completes, a refused read marking nothing.
+  - A delegator the access list warms at 199 and 200 (refused, paying 100, still warm for the
+    caller).
+  - A value `CALL` from a frame without balance at 14,400, the guard exactly (refused, the value
+    transfer given back), and at 14,399 (halted after the target's load); a value `CALLCODE` at
+    15,000.
+  - The memory expansion: an output range of 1,024 bytes (98, kept), the same range within memory
+    the frame holds (nothing), ranges partly past it (the growth, 112, not the frame's whole memory
+    cost), input and output ranges together with value and a cold target, and a 1 MiB input that
+    halts before the target's load.
+  - A refusal after the frame gave a fresh slot's state gas back into its reservoir, which the
+    settlement leaves as it found it; and the warmth the call pays for: a warming the frame took
+    itself, rolled back by its revert; one from before the frame, which stays; and one a reverted
+    sibling took, which does not count.
+- **`satin/detention/delegate-refusal/`, 10 cases.** `REFUSING` holds 5,200 at a cold
+  `STATICCALL`: spendable 99 (stopped at the static cost, not read), 200 and 2,999 (the cold
+  surcharge, charged last, is the crossing: `MegaLimitExceeded(2, limit)`, 5,100 handed back, the
+  target read) and 3,000 (refused, paying 3,000); a warm target at 100 (refused); with an output
+  range whose memory costs 98, spendable 197 (stopped at the memory, not read) and 300 (stopped at
+  the surcharge, the memory kept, 5,002 handed back); a value `CALL` holding 20,000 at 11,400
+  (refused, the restored value transfer leaving room for the surcharge, 17,000 handed back) and
+  11,399 (stopped at the value transfer, not read); and a `STATICCALL` with 0x320000 bytes of input
+  forwarded 40,000,000 under the protocol's cap, stopped at its memory with 39,999,886 handed back,
+  the frame's gas at the opcode less its static cost.
+- **`satin/precompiles/delegated-address/`, 2 cases.** The identity precompile's address delegating
+  to the beneficiary, at 199 (halted by the guard) and 200 (refused, paying 100): neither reaches
+  dispatch.
+
+Together they pin `SATIN-MAC-003`, `-004` and `-007` (the last for the first time), `SATIN-OUT-008`,
+`SATIN-STOP-020`, `SATIN-WIT-012`, `SATIN-DET-018` and `SATIN-PCMP-008` at the refusal's edges,
+and `SATIN-WIT-002` and `SATIN-POOL-014` where their intents name them. The
+conformance figures proposed with the specification change were derived again by the model: a direct
+call refused for nothing from 50; a cold delegator halting unread at 2,999, halting read at 3,050,
+refused at 3,100 with 100 handed back; a warm one halting at 199 and refused at 200; a value `CALL`
+at 15,000 with 12,000 handed back; a memory crossing that reads nothing; and spendable 200 of 5,200
+stopped at the surcharge with 5,100 handed back. None differs. The memory crossing's "whole less
+100" is the frame's gas at the opcode: from a 40,000,000 forward the frame's pushes first take 14.
+An independent review then found ten edges unpinned and three citation errors; 31 more cases and
+the corrections follow from it (D-117). The slice holds 997 cases.
+
+**D-116. How the model reads the refusal.** The model gained one path, in `interpreter.py`, for the
+four call opcodes; no opcode was added and no existing case moved. The readings it takes:
+
+- **The direct refusal.** A call opcode whose target operand is the beneficiary, in a frame whose
+  access is off, is refused once its operands are on the stack, before its static cost, a memory
+  expansion or a value transfer, so a frame holding less than any of them is refused and does not
+  run out of gas (`SATIN-MAC-003`'s second item, `-004`). The model refused only `BALANCE` there
+  before.
+- **Which calls take the refusal path.** One whose target operand is not the beneficiary and whose
+  target, as the state stands when the call reaches it, holds an EIP-7702 indicator naming it. A
+  precompile's address holding one takes the same path (`SATIN-PCMP-008`).
+- **The steps before the delegate's load.** The static cost, the memory expansion of the input and
+  then the output range, and the value-transfer cost of a `CALL` or `CALLCODE` carrying value, each
+  a regular charge held to the spendable part. One that fails halts the frame and one that is the
+  crossing stops it, the target not loaded (`SATIN-MAC-007`, `SATIN-WIT-004`, `-012`). The
+  static-context check of a value `CALL` is not reached: the model runs no call in a static frame.
+- **The target's load and the guard.** A target that is not warm is loaded only when the regular
+  gas left, both parts counted, covers the cold surcharge, and an out-of-gas halt ends the call
+  otherwise. The delegation guard then asks that gas for the surcharge not yet deducted (2,900, or
+  nothing for a warm target) plus 100 for the delegate's access, and halts the call short of it,
+  the target loaded (`SATIN-MAC-007`, `SATIN-DET-015`).
+- **Warmth.** The target is warm when the warm set holds it as it stands at the load: the
+  addresses warm from the transaction's start, the access list's among them, and those an earlier
+  access warmed that no rollback took back. The precompiles are warm from the start. The call's
+  own load does not count. A frame's end restores the warm set to its checkpoint, as every failed
+  frame does in the model.
+- **The settlement.** At the delegate's load, the frame's regular gas, both parts, and the
+  transaction's compute are put back to their values at the opcode. The call is then charged, as
+  regular charges and in order, its static cost, its memory expansion and, for a target that was
+  not warm, the cold surcharge. The memory expansion is the cost of the words its two ranges reach
+  less the cost of the words the frame held at the opcode. So the static cost and the memory count
+  as compute once, and the value-transfer cost does not (`SATIN-DET-009`). The reservoir is not
+  touched.
+- **The crossing.** Only the cold surcharge can be gas detention's crossing at the settlement, and
+  the model raises its stop there. It checks that the settlement charged exactly the target's
+  access and the memory, which the guard guarantees, and raises `Unmodelled` otherwise
+  (`SATIN-MAC-004`, `-007`, `SATIN-DET-018`).
+- **The ending.** The frame reverts with `VolatileDataAccessDisabled(10)`, or is stopped with
+  `MegaLimitExceeded(2, limit)` at the crossing (`SATIN-OUT-008`, `SATIN-STOP-020`). The refusal marks
+  nothing, and the target's completed read stays in the reads (`SATIN-WIT-012`).
+
+- **The error's encoding.** The revert data is `VolatileDataAccessDisabled`'s selector and access
+  type 10, ABI-encoded, which the step cites (`SATIN-MAC-005`).
+- **Warmth an authorization gave.** A target the transaction's EIP-7702 list applied, or one an entry
+  skipped after loading it, is warm from the list's application (`SATIN-AUTH-014`). The refusal
+  path names that warmth.
+- **A value `CALL` in a static frame.** In a frame a `STATICCALL` started whose access is off, a value
+  `CALL` of the beneficiary is refused before any charge. One of any other account pays its static
+  cost and then halts at EIP-214's static-context check, before its memory, its value transfer and
+  its target's load (`SATIN-MAC-007`'s first item). The model still runs no other call in a static
+  frame.
+- **What the cases around the refusal need.**
+  - A call's output copied into its caller's memory is modelled in the cases citing `bcf260d` and
+    `83c0d26`. Before, only the cases of the system pages modelled it.
+  - A `CALL` of an account delegating to an ordinary account, neither a precompile, a system
+    contract nor the beneficiary, is modelled outside gas detention: the delegate's access is one of
+    the opcode's charges, the one hop alone is resolved, and the delegate's code runs as it is. Under
+    detention the base layer's single charge for both accesses is not modelled, and the model raises
+    `Unmodelled`.
+  - The byte 0xEF, which Osaka leaves undefined, halts its frame.
+
+The existing case that took the refusal, `satin/precompiles/delegated-address/beneficiary-delegate-access-off`
+(D-114), now derives through this path. Its file, its pins and its digest are unchanged.
+
+**D-117. A review's edges, the inherited path's cold load, and what stays without a case.** An
+independent review of D-115's cases found no wrong expected value, ten unpinned edges and three
+citation errors. Thirty-one cases fill nine of the ten edges, each at the boundary the review
+named. Every figure comes from the model, and the review's figures agree with it. Every new case
+gates on both implementations, plain and instrumented.
+
+- **The edges.**
+  1. **A value `CALL` in a frame a `STATICCALL` started.** With 100 at the call it halts at its
+     static-context check, its target not read (`static-frame-value-call-halts`). One of the
+     beneficiary itself, from 50, is refused for nothing. The review's companion at 99 halts at the
+     static cost instead. Both halts consume the frame's gas and read nothing, so no observation
+     tells them apart, and it is not a case.
+  2. **The whole regular gas at the load and the guard, under detention.** With the spendable part
+     held at the static cost, 100, a cold target at a whole 2,999 (halted, not read), 3,000 and
+     3,099 (halted at the guard, read) and 3,100 (refused, the surcharge the crossing, 3,000 handed
+     back), and a warm one at 199 and 200 (`whole-gas-*`, `warm-whole-gas-*`).
+  3. **Above the execution cap**, where the frame holds a reservoir share. The give-back case again,
+     with the pools observed, and a stop at the cold surcharge returning its 5,100 and its share
+     untouched.
+  4. **The warmth an authorization gives the target** (`SATIN-AUTH-014`): an authority the list
+     applies, one whose entry's nonce does not match (loaded and warmed, then skipped), each
+     refused for 100 at 200; and one whose entry its chain-id gate skips, left cold and not read.
+  5. **The inherited path's cold load,** below.
+  6. **Memory edges.** Empty ranges at the offset 2^256 − 1 grow nothing, so the call is refused for
+     100. An output range of 2 bytes at offset 31 grows two words, 6, so the call is refused for
+     106 at 206 and halts at 205.
+  7. **A requested forward of 2^256 − 1** changes nothing before the refusal: cold, warm, a value
+     call and a precompile's address.
+  8. **The precompile's address with memory:** input `(0, 64)` and output `(64, 64)`, four words, 12.
+     The call is refused for 112 at 212 and halts at the guard at 211.
+  9. **The one hop.** A delegator of an ordinary account is not refused: it pays both accounts'
+     access, 6,000, and its delegate's code runs, with access off and on. A delegate whose own code is
+     an indicator naming the beneficiary is not followed: its code runs as it is, and its first byte,
+     0xEF, halts the frame.
+  10. **The error's identity at the exact boundaries.** `surcharge-paid` and the detained
+      `warm-target-refused` leave their caller no allowance. Instead of ending with `STOP`, the
+      caller now calls with a 68-byte output range over memory it already holds, the size pushed
+      beforehand. It returns that range with the call's status as the offset, which costs nothing.
+      So the observation shows `VolatileDataAccessDisabled(10)`, followed by the buffer's zeros, and
+      not `MegaLimitExceeded`. Gap 2's cases end the same way.
+- **The citation errors.**
+  - A refusal at the delegate now cites `SATIN-MAC-005` where it encodes the error.
+  - The two exact-boundary cases above observe the error they pin.
+  - Under D-76's filter a case pins a rule its area does not scope only when its intent names it.
+    The intents now name `SATIN-MAC-007` and `SATIN-WIT-002` where a detained case decides the
+    whole-gas load and the failed frame's kept read, `SATIN-WIT-004` where a case's target is not
+    loaded, and `SATIN-SCHED-003` where a case's figure decides the warm read, the cold surcharge or
+    the value transfer.
+  - `SATIN-MAC-005` stays unpinned by the detention cases whose intent does not name it, and
+    `SATIN-WIT-004` by the `BALANCE` twin whose load is skipped. That twin's reads note is shared
+    with an existing reads case, which would change.
+- **The CALL refusals' caller probes.** `CALL`, `CALLCODE` and `DELEGATECALL` at 3,100 are now each
+  followed by the caller's `BALANCE` of the delegator, which pays the cold access. Two more cases
+  probe the caller after the halts at 2,999 and 3,000.
+- **The inherited path's cold load.** The model charged a cold account's surcharge before it loaded
+  the account, so a crossing at that charge left the account out of the reads. `SATIN-WIT-012`
+  skips a cold load only when the whole regular gas cannot pay its surcharge.
+  - The model now loads the account first whenever the whole regular gas covers the surcharge. This
+    covers `BALANCE` and the `CALL`, `CALLCODE`, `STATICCALL` and `DELEGATECALL` of an account
+    without a beneficiary delegate.
+  - The change is a load's order alone, and no existing case's file moves. In
+    `satin/detention/balance-static-paid`, the one existing case that crosses there, the account is
+    loaded and not observed: it carries no reads group.
+  - `satin/detention/cold-load-crossing/` holds its current-specification twin with the reads, at a
+    whole 5,000 (loaded, then the crossing). It also holds the companions at 2,999 (halted, not
+    loaded) and 3,000 (loaded, then the crossing), and a `CALL` with access off whose target
+    surcharge crosses with the target loaded.
+  - An `SLOAD` in a detained frame is not modelled, so it has no such crossing.
+- **What stays without a case.**
+  - **A failed read of the target.** `SATIN-MAC-007` makes the target's load a required read whose
+    failure has no outcome (`SATIN-VAL-010`). A state-transition case's pre-state is complete, so no
+    case can inject that failure.
+  - **The block's witness.** The reads group holds what the transaction loads. The witness a block
+    carries, and its replay, belong to the stateless-block profile, which no consumer runs yet.
+  - **A detention cap other than the protocol's.** Both implementations' tests build stacks of tens
+    of levels under a cap they configure. The cases use the protocol's cap (D-67), and one level's
+    crossing stands for the tail.

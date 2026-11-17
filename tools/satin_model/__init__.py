@@ -108,6 +108,13 @@ the slice uses:
   Karst's BN254 and BLS12-381 additions and the BN254 multiplication on points at infinity, a `CALL` to a
   precompile's address holding an EIP-7702 indicator, refused at a beneficiary delegate when access is
   off, and `CREATE2`'s access and hashing as one charge;
+- for a call refused at its target's EIP-7702 delegate at `83c0d26` (D-115, D-116): with access off,
+  any call opcode of the block beneficiary, refused before its charges, and one of an account whose
+  one-hop delegate is the beneficiary, its steps before the delegate's load as with access on, its
+  refusal there and its settlement on its static cost, its memory expansion and its target's access;
+  a value `CALL` in a frame a `STATICCALL` started, halted at its static-context check; a `CALL` of an
+  account delegating to an ordinary account outside gas detention; and the inherited path's cold load
+  made before its surcharge, which can be gas detention's crossing (D-117);
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check
