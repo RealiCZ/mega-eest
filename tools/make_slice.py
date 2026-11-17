@@ -14,8 +14,10 @@ page's own rules and KeylessDeploy's page `specs/satin-c130558`, D-79, D-80, D-8
 four whose derivation takes a reading the specification states from `bcf260d` on, a precompile's
 halt, a failed deposit's step-4 load and a promoted system transaction's receipt,
 `specs/satin-bcf260d`, D-96, as do those for the rules of the two gas pools, state gas and the gas
-schedule that no case pinned, D-106). No implementation is run: the filler's output is a candidate to
-compare with, never the source of these values
+schedule that no case pinned, D-106, and the two cases held out of the precompile and size batch, a
+deposit whose top-level creation's initcode is over its limit and a call refused at a precompile
+address's beneficiary delegate, `specs/satin-83c0d26`, D-112 and D-114). No implementation is run: the
+filler's output is a candidate to compare with, never the source of these values
 (`tools/run-slice.sh` runs both implementations against them).
 
 A case file holds what a consumer compares and a pointer to where it came from (D-76): its `rules`
@@ -6191,8 +6193,8 @@ def precompile_gap_cases() -> list[Case]:
 
     # SATIN-PCMP-008: a precompile's address holding a delegation indicator runs the precompile, priced by it, after
     # the opcode's charges, the delegate's access among them. With access off, a delegate that is the beneficiary is
-    # refused at its load and the call never reaches dispatch (SATIN-MAC-007): that case waits for the evm2-based pin to
-    # take the delegate refusal's settlement (D-105).
+    # refused at its load and the call never reaches dispatch (SATIN-MAC-007), charged the refusal's settlement
+    # (SATIN-MAC-004): that case waited for the evm2-based pin to take it (D-105) and enters at `83c0d26` (D-114).
     other_word = mstore(0, 0xD15EA5E) + ret(0, 32)
     echoed = word(0xC0FFEE)
     price = model.IDENTITY_BASE + model.IDENTITY_WORD
@@ -6203,6 +6205,15 @@ def precompile_gap_cases() -> list[Case]:
              gas=200_000, accounts={model.IDENTITY: model.Account(code=indicator(PRECOMPILE_DELEGATE)),
                                     PRECOMPILE_DELEGATE: model.Account(nonce=1, code=other_word)},
              code=precompile_call(price, model.IDENTITY, echoed), **page))
+    disable = mstore(0, int.from_bytes(model.DISABLE_VOLATILE_DATA_ACCESS, "big") << 224)
+    add(Case("satin/precompiles/delegated-address/beneficiary-delegate-access-off", "the identity precompile's address "
+             "holds an EIP-7702 delegation to the block beneficiary; a contract switches its volatile-data access off and "
+             "calls the address with one word: the call pays its static cost, loads its warm target and passes the "
+             "delegation guard, and its delegate's load is refused as the beneficiary's account, so it never reaches "
+             "dispatch and the contract reverts with VolatileDataAccessDisabled(10)", gas=500_000, system=True,
+             accounts={model.IDENTITY: model.Account(code=indicator(COINBASE))},
+             code=disable + call(10_000, model.MEGA_ACCESS_CONTROL, 0, 4) + b"\x50" + mstore(0, 0xC0FFEE)
+             + call(1_000, model.IDENTITY, 0, 32) + POP_RETURN, **dict(page, spec=CURRENT_SPEC)))
     words32 = 32 * 32
     identity_price = model.IDENTITY_BASE + model.IDENTITY_WORD * 32
     add(Case("satin/precompiles/delegated-address/priced-past-allowance-detained", "the identity precompile's address "
@@ -6358,7 +6369,7 @@ def size_cases() -> list[Case]:
     history = model.COST_PER_HISTORY_BYTE
 
     # SATIN-SIZE-002, -004: a creation transaction's initcode at MAX_INITCODE_SIZE runs; one byte over is rejected at
-    # validation. Zero bytes of initcode stop at once. A deposit one byte over has no case yet (D-105).
+    # validation. Zero bytes of initcode stop at once. A deposit's top-level creation one byte over runs (below).
     gas = 150_000_000
     for over in (False, True):
         size = init_max + (1 if over else 0)
@@ -6370,6 +6381,16 @@ def size_cases() -> list[Case]:
                   "account without code"),
                  boundary=f"the initcode {'one byte over' if over else 'at'} MAX_INITCODE_SIZE", to=None, data=bytes(size),
                  gas=gas, **page))
+    # From `83c0d26` on, a deposit's top-level creation is not checked against MAX_INITCODE_SIZE: its creation runs
+    # subject to its other checks and charges, where at `bcf260d` it was a failed deposit (D-112, closing D-105's hold).
+    # The model derives a creating deposit as the deposits page's cases do (`system_pages`, D-109).
+    add(Case("satin/contract-limits/deposit/initcode-over-limit", f"a deposit minting 1 ether that creates with "
+             f"{fmt(init_max + 1)} zero bytes of initcode, one over MAX_INITCODE_SIZE, with a gas limit of {fmt(gas)}: a "
+             "deposit's top-level creation is not checked against MAX_INITCODE_SIZE, so the deposit is no failed deposit "
+             "for it and its creation runs, paying for its initcode as any creation transaction does; the initcode stops "
+             "at once and creates an account without code", boundary="the initcode one byte over MAX_INITCODE_SIZE",
+             deposit=(ETH, gas), sender_nonce=3, to=None, data=bytes(init_max + 1),
+             **dict(page, spec=CURRENT_SPEC, system_pages=True)))
 
     # SATIN-SIZE-001, -003: deployed code at MAX_CONTRACT_SIZE is deposited; one byte over halts the creation, a creation
     # transaction's (satin/outcomes/size/deployed-code-over-limit) or a CREATE's, consuming the creation's regular gas.

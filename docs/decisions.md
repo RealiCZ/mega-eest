@@ -2658,3 +2658,24 @@ No API the adapter uses moved. It builds `--locked` with no change to its source
 its lockfile. The implementation's lockfile, its manifests and its fork pin are unchanged between
 the two revisions. Every gating case, the 928 of the slice and the two of D-114, passes on both
 adapters, plain and instrumented, and the negative case fails as it must.
+
+**D-114. The two cases D-105 held enter the slice at `83c0d26`, and the hold is closed.** Both are
+gating and cite `83c0d26`, the snapshot new cases cite. Every rule they pin is active there. The
+slice holds 930 cases.
+
+- **`satin/contract-limits/deposit/initcode-over-limit`.** Its input is the held case's: a deposit
+  minting 1 ether that creates with `MAX_INITCODE_SIZE + 1` zero bytes of initcode, with a gas limit
+  of 150,000,000. At `bcf260d` the model derived a failed deposit that used its whole gas limit. At
+  `83c0d26` it derives the executed creation (D-112): the deposit is admitted, its initcode stops at
+  once, and it creates an account without code at `0x0c243ebe6a031753dc0dd850acf422844a3efb76`. Its
+  regular ledger is 4,283,846, its state ledger 183,600 and its history ledger 92,305,576. Its gas
+  used is 96,773,022 and its block gas the floor, 67,132,928. The receipt has status 1, deposit
+  nonce 3 and receipt version 1. Data size is 1,048,927, with one KV update and one unit of state
+  growth. Every observation group matches both implementations' fills of the held input exactly.
+  Its intent now states the exemption, and it carries `system_pages`, so the model derives its
+  creation as the deposits page's creating deposits do. It pins `SATIN-SIZE-002` and `-004`.
+- **`satin/precompiles/delegated-address/beneficiary-delegate-access-off`.** It derives exactly as
+  held: the same input, expected value and pinned rule (`SATIN-PCMP-008`). Its block gas is 18,155
+  and its gas used 45,435, the call refused at its delegate's load having paid its static cost.
+  Implementation (a), at `1a981f4b`, already matched it. Implementation (b) at `ccbdb23e` charged 100
+  less; at `62f2964a` it matches the case, plain and instrumented (D-113).
