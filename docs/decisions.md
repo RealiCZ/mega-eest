@@ -2594,3 +2594,48 @@ run them.** Two readings the cases take where the text is terse:
   when the frame holds more; the cases detain by the sender and by an authority.
 
 Both implementations answer every case as the model derives it.
+
+From the specification at `83c0d26`:
+
+**D-112. The specification at `83c0d26` is bundled; a deposit's top-level creation is not checked
+against `MAX_INITCODE_SIZE`.** `specs/satin-83c0d26` is the specification's main after one merged
+change, its QI-38. The snapshot holds 411 ids, 401 active: `SATIN-SIZE-002`, `-004`, `SATIN-VAL-008`
+and `SATIN-DEP-004` are reworded, none is added or retired, and the contract-limits page's constant
+table names the exception in its `MAX_INITCODE_SIZE` row ([spec identity](spec-identity.md)). It is
+the snapshot new cases cite (`CURRENT_SPEC` in `tools/make_slice.py`); the cases that cite `bcf260d`
+name it as `SECOND_FILL_SPEC`. `Run.current` holds for the cases of both (`CURRENT_SPECS`), as it held
+for `bcf260d`'s: `83c0d26` moves none of the readings it gates.
+
+- **The new reading of `SATIN-SIZE-004`.** At `bcf260d` the rule said that "a deposit is never
+  rejected, and one that fails this check is a failed deposit", and the model made a creating
+  deposit whose initcode is over `MAX_INITCODE_SIZE` a failed deposit that creates nothing (D-104).
+  At `83c0d26` only a creation transaction other than a deposit is rejected for its initcode, and "a
+  deposit's top-level creation MUST NOT be checked against this initcode size limit; its creation
+  MUST be executed subject to its other applicable checks and charges".
+  - The model now makes no check of a deposit's own initcode (`tools/satin_model/settlement.py`,
+    `run_deposit`). Its step says the limit does not apply and the creation runs, and cites
+    `SATIN-SIZE-002`, `-004`, `SATIN-VAL-008` and `SATIN-DEP-004`. The creation then runs as the
+    deposits page's creating deposits do (`deposit_frame`, D-109): its intrinsic gas pays for the
+    initcode as any creation transaction's does, and its start record and created account are
+    charged at steps 3 and 4.
+  - The exemption is that creation's alone (`SATIN-SIZE-002`). A `CREATE` or `CREATE2` that a
+    deposit's initcode runs is checked as any creation opcode is, and a keyless deployment that a
+    deposit makes is refused by its own step 5. The model's checks for both are unchanged.
+- **A check that applies to deposits.** `SATIN-VAL-008` and `SATIN-DEP-004` now make a failed deposit
+  of a check "that applies to deposits", and keep the base layer's deposit exemptions in force. The
+  model makes a deposit fail validation for three checks, and a rule names each as a deposit's: the
+  base layer's system-transaction flag and a caller that is the live system address
+  (`SATIN-DEP-008`, `SATIN-MST-003`), and a gas limit below its intrinsic regular gas and its body's
+  history (`SATIN-DEP-001`). No reading of them moves.
+- **No existing case moves.** Each rule reworded between `bcf260d` and `83c0d26` was held against the
+  cases that pin it and the cases whose derivation applies it, through the model. Every expected
+  value still holds, and every case keeps its snapshot.
+  - `SATIN-DEP-004` is pinned by 43 cases and applied by 114, and `SATIN-VAL-008` is pinned by 5
+    and applied by 35. Each of their failed deposits fails one of the three checks above, a charge
+    before its first frame, or its own frame, none of which the change touches.
+  - `SATIN-SIZE-002` is pinned by eight cases and applied by 13: a creation transaction other than
+    a deposit, a creation opcode in a child, `CREATE2` and a keyless deployment, each at or over the
+    limit. `SATIN-SIZE-004` is pinned and applied by four of them, the creation transaction's and the
+    keyless deployment's. Each is checked under the new text as under the old.
+  - Eleven cases make a creating deposit, none with more than 39 bytes of initcode, so none takes
+    the new step. The only case that takes it is the deposit D-105 held, which now enters (D-114).

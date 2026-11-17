@@ -236,15 +236,15 @@ class SettlementMixin:
                 self.growth += 1
             return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
         if tx.to is None and len(tx.data) > MAX_INITCODE_SIZE:
-            # SATIN-SIZE-004, SATIN-VAL-008: a deposit is never rejected; one whose initcode fails EIP-3860's check at
-            # MegaETH's size is a failed deposit, which runs no creation.
+            # SATIN-SIZE-004, SATIN-VAL-008 (from `83c0d26` on, D-112): a deposit's top-level creation is not checked
+            # against MAX_INITCODE_SIZE, a deposit exemption of the base layer's that stays in force, so it is no failed
+            # deposit for its initcode; its creation runs subject to its other checks and charges. A CREATE or CREATE2 its
+            # initcode runs is checked as any creation opcode is (SATIN-SIZE-002), in the interpreter.
             d.add("outcome", f"the deposit is a creation whose initcode is {fmt(len(tx.data))} bytes, over "
-                  f"MAX_INITCODE_SIZE {fmt(MAX_INITCODE_SIZE)}: it fails that validation check, and a deposit is never "
-                  "rejected, so it is included as a failed deposit, which creates nothing", "SATIN-SIZE-002",
-                  "SATIN-SIZE-004", "SATIN-VAL-008", "SATIN-DEP-004")
-            if was_empty:
-                self.growth += 1
-            return self.failed_deposit(self.snapshot(), nonce_before, was_empty, 0, "", cause="validation")
+                  f"MAX_INITCODE_SIZE {fmt(MAX_INITCODE_SIZE)}: a deposit's top-level creation is not checked against "
+                  "that limit, the base layer's deposit exemption staying in force, so this is no validation check that "
+                  "applies to it and no failed deposit; the creation is executed subject to its other checks and charges",
+                  "SATIN-SIZE-002", "SATIN-SIZE-004", "SATIN-VAL-008", "SATIN-DEP-004")
         if (tx.to is None or tx.to == tx.sender) and not self.system_pages:
             raise Unmodelled("a creating or self-addressed deposit")
         if tx.gas_limit < intrinsic + body_history:
