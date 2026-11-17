@@ -12,6 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import make_examples as ex  # noqa: E402  (Keccak-256, RLP)
 
 EXECUTION_CAP = 200_000_000  # SATIN-POOL-005
+TX_MAX_TOTAL_GAS_LIMIT = 2**32 - 1  # EIP-8037's cap on a transaction's total gas, which Satin does not apply (SATIN-POOL-003)
 TX_BASE_COST = 12_000  # SATIN-SCHED-006
 COLD_ACCOUNT_ACCESS = 3_000  # SATIN-SCHED-006
 TX_VALUE_COST = 6_000  # SATIN-SCHED-006

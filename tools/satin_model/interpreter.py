@@ -49,6 +49,25 @@ STATIC_UNMODELLED = {0x55, 0x5D, 0xA0, 0xA1, 0xA2, 0xA3, 0xA4, 0xF0, 0xF1, 0xF2,
 class InterpreterMixin:
     """One frame's bytecode: the opcodes the slice's cases and the system contracts' dispatchers use, each charge"""
 
+    def warm_from_start(self, who: bytes):
+        """Why `who` is warm from the transaction's start, with the rule that makes it so, or None: the sender and a
+        call's recipient (SATIN-SCHED-014), and the precompiles, the block beneficiary and the access list's addresses,
+        listed with or without storage keys (SATIN-SCHED-012)."""
+        tx = self.tx
+        if who == tx.sender:
+            return "the sender, warm from the transaction's start", ("SATIN-SCHED-014",)
+        if tx.to is not None and who == tx.to:
+            return "the transaction's recipient, warm from its start", ("SATIN-SCHED-014",)
+        if who in PRECOMPILE_SET:
+            return "a precompile, warm from the transaction's start", ("SATIN-SCHED-012",)
+        if who == self.env.coinbase:
+            return "the block beneficiary, warm from the transaction's start", ("SATIN-SCHED-012",)
+        for address, keys in tx.access_list:
+            if address == who:
+                return ("named by the transaction's access list" + (" without storage keys" if not keys else "") +
+                        ", warm from its start"), ("SATIN-SCHED-012",)
+        return None
+
     def block_field(self, op: int) -> int:
         """What a block-environment opcode pushes: the block's own field; SLOTNUM pushes zero (SATIN-BASE-005)."""
         env = self.env
@@ -455,6 +474,36 @@ class InterpreterMixin:
                 stack.append(value)
                 steps.append(f"{name} {G_BASE}")
                 self.volatile_read(frame, f"{name}, a read of the block environment, once it completes,")
+            elif op in (0x3B, 0x3F) and self.pricing and frame.get("spendable") is None and not frame.get("access_off") \
+                    and stack and (stack[-1] % 2**160).to_bytes(20, "big") != self.env.coinbase:
+                # EXTCODESIZE or EXTCODEHASH of an account other than the block beneficiary, in a case of the schedule's own
+                # rules (D-106): the static gas, then the cold access for an account that is not warm (SATIN-SCHED-002).
+                who = (pop() % 2**160).to_bytes(20, "big")
+                name = "EXTCODESIZE" if op == 0x3B else "EXTCODEHASH"
+                static = 2 * WARM_READ if op == 0x3B else WARM_READ
+                self.charge_regular(frame, static, f"{name}'s static cost")
+                why = self.warm_from_start(who)
+                cold = who not in self.warm_accounts and who not in PRECOMPILE_SET
+                if cold:
+                    self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, f"{name}'s cold access")
+                    self.warm_accounts.add(who)
+                self.load(who, f"{name}'s account, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
+                acct = self.state.get(who)
+                ext = acct.code if acct is not None else b""
+                stack.append(len(ext) if op == 0x3B else
+                             0 if acct is None or acct.empty() else int.from_bytes(ex.keccak256(ext), "big"))
+                steps.append(f"{name} {fmt(static + (COLD_ACCOUNT_SURCHARGE if cold else 0))}")
+                parts = (f"its static gas {static}, " + ("one warm read for the account and one for its code" if op == 0x3B
+                                                         else "one warm read, as Osaka's"))
+                if cold:
+                    d.add("gasLedgers", f"{name} of {h(who)}, which is not warm: {parts}, then the additional cold account "
+                          f"access {fmt(COLD_ACCOUNT_SURCHARGE)}, {fmt(static + COLD_ACCOUNT_SURCHARGE)} in all; it pushes "
+                          f"{stack[-1] if op == 0x3B else hex(stack[-1])}", "SATIN-SCHED-002", "SATIN-SCHED-003")
+                else:
+                    d.add("gasLedgers", f"{name} of {h(who)}, " + (why[0] if why else "warm, accessed earlier in the "
+                          "transaction") + f": {parts}, and no cold access; it pushes "
+                          f"{stack[-1] if op == 0x3B else hex(stack[-1])}", "SATIN-SCHED-002", "SATIN-SCHED-003",
+                          *(why[1] if why else ()))
             elif op in (0x3B, 0x3F):  # EXTCODESIZE, EXTCODEHASH
                 who = (pop() % 2**160).to_bytes(20, "big")
                 name = "EXTCODESIZE" if op == 0x3B else "EXTCODEHASH"
@@ -484,6 +533,36 @@ class InterpreterMixin:
                 d.add("gasLedgers", f"{name} of the block beneficiary {h(who)}, warm from the transaction's start: its static "
                       f"cost {static}, no cold access", "SATIN-SCHED-002", "SATIN-SCHED-003", "SATIN-SCHED-012")
                 self.volatile_read(frame, f"{name} of the block beneficiary's account, once it completes,")
+            elif op == 0x3C and self.pricing and frame.get("spendable") is None and not frame.get("access_off") \
+                    and stack and (stack[-1] % 2**160).to_bytes(20, "big") != self.env.coinbase:
+                # EXTCODECOPY of an account other than the block beneficiary, in a case of the schedule's own rules
+                # (D-106): its static gas, two warm reads, then the cold access, the copy and the memory.
+                who = (pop() % 2**160).to_bytes(20, "big")
+                dest, off, size = pop(), pop(), pop()
+                static = 2 * WARM_READ  # SATIN-SCHED-002: one access for the account and one for its code
+                self.charge_regular(frame, static, "EXTCODECOPY's static cost")
+                why = self.warm_from_start(who)
+                cold = who not in self.warm_accounts and who not in PRECOMPILE_SET
+                if cold:
+                    self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "EXTCODECOPY's cold access")
+                    self.warm_accounts.add(who)
+                words = (size + 31) // 32
+                if words:
+                    self.charge_regular(frame, COPY_WORD * words, "EXTCODECOPY's copy")
+                expand(dest, size, "EXTCODECOPY")
+                self.load(who, "EXTCODECOPY's account, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
+                acct = self.state.get(who)
+                ext = acct.code if acct is not None else b""
+                if size:
+                    memory[dest:dest + size] = ext[off:off + size].ljust(size, b"\x00") if off < len(ext) else bytes(size)
+                steps.append(f"EXTCODECOPY {fmt(static + (COLD_ACCOUNT_SURCHARGE if cold else 0))} + {COPY_WORD * words}"
+                             f" + memory to {mem_words} words")
+                access = (f"then the additional cold account access {fmt(COLD_ACCOUNT_SURCHARGE)}" if cold else
+                          (why[0] if why else "warm, accessed earlier in the transaction") + ", no cold access")
+                d.add("gasLedgers", f"EXTCODECOPY of {h(who)}, {size} bytes from offset {off}: its static gas {static}, one "
+                      f"warm read for the account and one for its code, {access}, and its copy {COPY_WORD} x {words} words "
+                      "with its memory, a zero-length copy paying the static gas and the access all the same",
+                      "SATIN-SCHED-002", "SATIN-SCHED-003", *(why[1] if why and not cold else ()))
             elif op == 0x3C:  # EXTCODECOPY, of the block beneficiary
                 who = (pop() % 2**160).to_bytes(20, "big")
                 dest, off, size = pop(), pop(), pop()
@@ -562,6 +641,12 @@ class InterpreterMixin:
                     d.add("gasLedgers", f"BALANCE's account {h(who)}, an authority of the list, {note[0]}: its access costs "
                           f"{fmt(WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0))}", *note[1])
                 self.load(who, "BALANCE's account, once its access is paid", "SATIN-WIT-002", "SATIN-WIT-012")
+                if self.pricing and who != self.env.coinbase:
+                    why = self.warm_from_start(who)
+                    d.add("gasLedgers", f"BALANCE of {h(who)}, " + ("which is not warm: its warm read and the additional "
+                          f"cold account access, {fmt(WARM_READ + COLD_ACCOUNT_SURCHARGE)}" if cold else
+                          (why[0] if why else "warm, accessed earlier in the transaction") + f": its warm read {WARM_READ} "
+                          "alone"), "SATIN-SCHED-002", "SATIN-SCHED-003", *(why[1] if why and not cold else ()))
                 stack.append(self.state.get(who, Account()).balance)
                 steps.append(f"BALANCE {fmt(WARM_READ + (COLD_ACCOUNT_SURCHARGE if cold else 0))}")
                 if who == self.env.coinbase:
@@ -625,6 +710,11 @@ class InterpreterMixin:
                     d.add("gasLedgers", f"the precompile at {h(target)} is warm from the transaction's start: the CALL makes "
                           "no cold access, its own regular charges coming first, as any opcode's", "SATIN-SCHED-012",
                           "SATIN-DET-021")
+                elif self.pricing:
+                    why = self.warm_from_start(target)
+                    d.add("gasLedgers", f"the CALL's target {h(target)} is " + (why[0] if why else "warm, accessed earlier "
+                          "in the transaction") + f": this access is charged as warm, the warm read {WARM_READ} alone, "
+                          "no cold access", "SATIN-SCHED-003", *(why[1] if why else ()))
                 self.load(target, "the CALL's target, once the opcode's access is paid", "SATIN-WIT-002", "SATIN-WIT-008")
                 callee = self.state.get(target)
                 delegate = delegate_of(callee.code) if callee is not None else None
@@ -679,9 +769,14 @@ class InterpreterMixin:
                     if not self.principles:
                         raise Unmodelled("a value call to an account empty under EIP-161")
                     # SATIN-HIST-010 step 2: the new account's state gas, its legacy share first, before the forward.
-                    m = self.multiplier(self.salt_bucket(target, None))
+                    m = self.multiplier(self.salt_bucket(target, None), f"the new account at {h(target)}")
                     new_account = ACCOUNT_STATE * m
                     legacy = min(new_account, LEGACY_NEW_ACCOUNT_SHARE)
+                    if self.pricing:
+                        d.add("gasLedgers", f"the CALL moves value to {h(target)}, an account empty under EIP-161: the new "
+                              f"account is added by this CALL, which makes the charge, and m = {m} scales its state gas "
+                              f"alone, not the legacy share {fmt(legacy)}, the value transfer {fmt(CALL_VALUE_COST)} or the "
+                              "records' history", "SATIN-STATE-004", "SATIN-STATE-005")
                     self.charge_state(frame, new_account, legacy, "the new account")
                     self.state_gas += new_account
                     d.add("gasLedgers", f"step 2 of the value CALL to {h(target)}, an account empty under EIP-161, after the "
@@ -691,6 +786,10 @@ class InterpreterMixin:
                           f"{fmt(legacy)} from regular gas first, then the reservoir, which holds nothing, then the rest "
                           f"{fmt(new_account - legacy)} from regular gas, which the forward is then computed from",
                           "SATIN-HIST-010", "SATIN-STATE-001", "SATIN-STATE-003", "SATIN-STATE-012", "SATIN-POOL-008")
+                if self.pricing and not value and (callee is None or callee.empty()):
+                    d.add("gasLedgers", f"the CALL to {h(target)}, " + ("an account the state does not hold" if callee is None
+                          else "an account empty under EIP-161") + ", moves no value: no account is added, so it makes "
+                          "no new-account state charge", "SATIN-STATE-004")
                 remaining = frame["regular"]
                 self.probe.setdefault("forward", remaining)
                 self.probe.setdefault("forward:" + target.hex(), remaining)  # each target's first CALL
@@ -703,6 +802,12 @@ class InterpreterMixin:
                           "gas spendable: the forward is computed from the whole regular gas, the withheld part included, "
                           "and drawn from the withheld part first; it is not compute", "SATIN-DET-015", "SATIN-DET-017",
                           "SATIN-DET-009")
+                if self.pricing:
+                    d.add("gasLedgers", f"the forward's cap is the 98/100 cap of the schedule, where Amsterdam keeps EIP-150's "
+                          f"63/64: the caller keeps {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / {GAS_RETAINED_DENOMINATOR} = "
+                          f"{fmt(remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR)}, not {fmt(remaining)} / 64 = "
+                          f"{fmt(remaining // 64)}, so it may forward {fmt(cap)}, not {fmt(remaining - remaining // 64)}",
+                          "SATIN-SCHED-001", "SATIN-FWD-001")
                 self.draw_regular(frame, forward)
                 self.regular_charges += forward
                 child_gas = forward + (CALL_STIPEND if value else 0)
@@ -839,6 +944,11 @@ class InterpreterMixin:
                 if cold:
                     self.charge_regular(frame, COLD_ACCOUNT_SURCHARGE, "the cold access")
                     self.warm_accounts.add(target)
+                elif self.pricing:
+                    why = self.warm_from_start(target)
+                    d.add("gasLedgers", f"the {name}'s target {h(target)} is " + (why[0] if why else "warm, accessed "
+                          "earlier in the transaction") + f": this access is charged as warm, the warm read {WARM_READ} "
+                          "alone, no cold access", "SATIN-SCHED-003", *(why[1] if why else ()))
                 self.load(target, f"the {name}'s code account, once the opcode's access is paid", "SATIN-WIT-002",
                           "SATIN-WIT-008")
                 opcode_charges = self.regular_charges - before
@@ -846,6 +956,12 @@ class InterpreterMixin:
                 self.probe.setdefault("callcode-forward" if op == 0xF2 else "static-forward", remaining)
                 cap = remaining - remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR
                 forward = min(gas_req, cap)
+                if self.pricing:
+                    d.add("gasLedgers", f"the forward's cap is the 98/100 cap of the schedule, where Amsterdam keeps EIP-150's "
+                          f"63/64: the caller keeps {fmt(remaining)} x {GAS_RETAINED_NUMERATOR} / {GAS_RETAINED_DENOMINATOR} = "
+                          f"{fmt(remaining * GAS_RETAINED_NUMERATOR // GAS_RETAINED_DENOMINATOR)}, not {fmt(remaining)} / 64 = "
+                          f"{fmt(remaining // 64)}, so it may forward {fmt(cap)}, not {fmt(remaining - remaining // 64)}",
+                          "SATIN-SCHED-001", "SATIN-FWD-001")
                 self.draw_regular(frame, forward)
                 self.regular_charges += forward
                 child_gas = forward + (CALL_STIPEND if value else 0)

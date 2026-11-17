@@ -27,16 +27,35 @@ class ReadsMixin:
             if self.reads:
                 self.d.add("reads", f"slot {key} of {h(address)} is loaded: {why}", *rules)
 
-    def multiplier(self, bucket: int) -> int:
+    def multiplier(self, bucket: int, what: str = "") -> int:
         """The bucket multiplier of a state charge, its capacity served by the SALT environment and exported
         (SATIN-WIT-013). A system-originated transaction's charge is priced at m = 1 and reads no capacity
-        (SATIN-MST-008)."""
+        (SATIN-MST-008). A case of the pricing rules (D-106) cites the bucket's mapping, the one read of its
+        capacity in the transaction and, for a deposit or a system-originated transaction, how it is priced (`what`
+        names the state the charge or give-back is for)."""
         if self.exempt:
             capacity = self.env.buckets.get(bucket, MIN_BUCKET_SIZE)
             self.d.add("gasLedgers", f"the state charge's bucket {bucket:#x}, of capacity {capacity:,}, would give the "
                        f"multiplier {bucket_multiplier(self.env, bucket)}; the transaction is system-originated, so the charge "
                        "is priced at m = 1 and the bucket's capacity is not read", "SATIN-MST-008")
+            if self.pricing:
+                self.d.add("gasLedgers", f"{what or 'the state charge'}: priced at m = 1, as every state charge of a "
+                           "system-originated transaction is, and no bucket capacity is read for it", "SATIN-STATE-009")
             return 1
+        if self.pricing:
+            m = bucket_multiplier(self.env, bucket)
+            capacity = self.env.buckets.get(bucket, MIN_BUCKET_SIZE)
+            if bucket in self.served_buckets:
+                self.d.add("gasLedgers", f"{what or 'the state charge'} lands in bucket {bucket:#x}, in which the "
+                           f"transaction already made a charge: the same m = {m}, as for every later charge and give-back "
+                           "in the bucket, so a give-back cancels its charge exactly", "SATIN-STATE-006", "SATIN-STATE-010")
+            else:
+                self.d.add("gasLedgers", f"{what or 'the state charge'} lands in bucket {bucket:#x}, the bucket SALT's own "
+                           f"mapping (salt-v1) assigns its key; the bucket's capacity, {capacity:,}, gives m = "
+                           f"floor({capacity:,} / {MIN_BUCKET_SIZE}) = {m}", "SATIN-STATE-002", "SATIN-STATE-010")
+                if self.tx.kind == "deposit":
+                    self.d.add("gasLedgers", "the deposit is not system-originated: it is priced by its buckets, as any "
+                               "transaction is", "SATIN-STATE-009")
         self.served_buckets.setdefault(bucket, self.env.buckets.get(bucket, MIN_BUCKET_SIZE))
         return bucket_multiplier(self.env, bucket)
 

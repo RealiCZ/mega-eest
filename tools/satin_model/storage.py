@@ -8,7 +8,7 @@ from .constants import (
     LEGACY_SSTORE_SHARE, REFUND_CLEARED, REFUND_RESTORED_FRESH, REFUND_RESTORED_RESET, SLOT_STATE, SSTORE_RESET,
     SSTORE_SET, WARM_READ, WRITE_RECORD_SIZE,
 )
-from .records import Account, fmt, Halt, Unmodelled
+from .records import Account, fmt, h, Halt, Unmodelled
 
 
 class StorageMixin:
@@ -70,7 +70,7 @@ class StorageMixin:
         pools = [frame["reservoir"]]  # a child's reservoir before each state or history charge (SATIN-POOL-008)
         m = None
         if original == 0 and present == 0 and new != 0:
-            m = self.multiplier(self.salt_bucket(address, key))
+            m = self.multiplier(self.salt_bucket(address, key), f"the fresh slot {key} of {h(address)}")
             charge = SLOT_STATE * m
             legacy = min(charge, max(0, LEGACY_SSTORE_SHARE))
             before = (frame["regular"], frame.get("spendable"))
@@ -86,13 +86,18 @@ class StorageMixin:
             self.growth += 1
             label += f"; state gas {fmt(SLOT_STATE)} x m={m} = {fmt(charge)} ({fmt(legacy)} legacy share first)"
             rules += ["SATIN-STATE-001", "SATIN-STATE-002", "SATIN-STATE-008", "SATIN-STATE-012", "SATIN-POOL-008"]
+            if self.pricing:
+                d.add("gasLedgers", f"slot {key} of {h(address)} is filled from zero by this SSTORE, which makes the fresh "
+                      f"slot's state charge; m = {m} scales its state gas alone: the access {fmt(access)}, the write "
+                      f"{fmt(write)}, the legacy share {fmt(legacy)} and the record's history are not scaled",
+                      "SATIN-STATE-004", "SATIN-STATE-005")
             d.add("resources", f"slot {key} filled from zero: state growth +1", "SATIN-ACCT-016")
             if m > 1:
                 d.add("gasLedgers", f"the slot's bucket gives m = {m}, which scales its state gas and not the history of its "
                       f"write record: {WRITE_RECORD_SIZE} x COST_PER_HISTORY_BYTE {COST_PER_HISTORY_BYTE}, whatever the "
                       "bucket", "SATIN-HIST-001", "SATIN-HIST-002")
         elif original == 0 and present != 0 and new == 0:
-            m = self.multiplier(self.salt_bucket(address, key))
+            m = self.multiplier(self.salt_bucket(address, key), f"the give-back of slot {key} of {h(address)}")
             charge = SLOT_STATE * m
             self.give_back(frame, charge)
             self.state_gas -= charge
@@ -224,13 +229,26 @@ class StorageMixin:
         d = self.d
         words = (len(code) + 31) // 32
         keccak = KECCAK_WORD * words
-        self.charge_regular(frame, keccak, "code deposit hashing")
         marked = address in self.destroyed
-        m = self.multiplier(self.salt_bucket(address, None))
-        state = 0 if marked else CODE_STATE_PER_BYTE * m * len(code)
-        self.charge_state(frame, state, 0, "deposited code")
         history = COST_PER_HISTORY_BYTE * len(code)
-        self.charge_state(frame, history, 0, "deposited code's history")
+        charged, pending = [], f"the hashing {keccak}"
+        try:
+            self.charge_regular(frame, keccak, "code deposit hashing")
+            charged.append(f"hashing {keccak}")
+            m = self.multiplier(self.salt_bucket(address, None), f"the code deposited at {h(address)}")
+            state = 0 if marked else CODE_STATE_PER_BYTE * m * len(code)
+            pending = f"the state gas {fmt(state)}"
+            self.charge_state(frame, state, 0, "deposited code")
+            charged.append(f"state {fmt(state)}")
+            pending = f"the history {fmt(history)}"
+            self.charge_state(frame, history, 0, "deposited code's history")
+        except Halt:
+            if self.pricing:
+                d.add("gasLedgers", f"the code deposit of {len(code)} bytes, charged in the order hashing, state gas, "
+                      f"history: {', '.join(charged) or 'nothing'} paid, and the frame's regular gas and reservoir "
+                      f"together cannot pay {pending}, so the creation runs out of gas and no code is deposited",
+                      "SATIN-SCHED-011")
+            raise
         self.state_gas += state
         self.history_gas += history
         self.history_bytes += len(code)
@@ -246,5 +264,11 @@ class StorageMixin:
                   f"{CODE_STATE_PER_BYTE} x m={m} x {len(code)} = {fmt(state)}; history {COST_PER_HISTORY_BYTE} x "
                   f"{len(code)} = {fmt(history)}", "SATIN-SCHED-011", "SATIN-STATE-003", "SATIN-HIST-002",
                   *(("SATIN-HIST-001",) if m > 1 else ()))
+            if self.pricing:
+                d.add("gasLedgers", f"the code is added at its deposit, which makes its state charge, in the created "
+                      f"account's bucket; m = {m} scales that state gas alone: the hashing {keccak} and the history "
+                      f"{fmt(history)} are not scaled, and the history of deposited code, COST_PER_HISTORY_BYTE "
+                      f"{COST_PER_HISTORY_BYTE} a byte where Amsterdam prices it at zero, and its regular deposit cost, "
+                      "zero a byte, are the schedule's", "SATIN-STATE-004", "SATIN-STATE-005", "SATIN-SCHED-001")
         d.add("resources", f"deposited code adds {len(code)} bytes of data size, no state growth of its own",
               "SATIN-ACCT-002", "SATIN-ACCT-013")

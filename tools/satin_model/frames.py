@@ -71,6 +71,9 @@ class FramesMixin:
                        "is outside the regular gas the start forwards and the request, which bound none of it",
                        "SATIN-POOL-011", "SATIN-HIST-010", "SATIN-FWD-005", "SATIN-FWD-006",
                        *(("SATIN-FWD-007",) if self.exempt else ()))
+            if self.pricing:
+                self.d.add("gasLedgers", f"{who}'s share of the reservoir, where EIP-8037 passes the whole of it: one of "
+                           "Satin's departures, on the profile frozen at dbc6d457cb", "SATIN-POOL-022", "SATIN-POOL-004")
         return share
 
     def new_child(self, frame, regular: int, share: int, allowance: bool = False) -> dict:
@@ -190,6 +193,12 @@ class FramesMixin:
                                     "history stays spent and is not given back to regular gas" if child["drawn"] else ""),
                       "SATIN-POOL-012", "SATIN-TAKE-004",
                       "SATIN-LIM-006", "SATIN-HIST-012")
+            if self.pricing and shown:
+                d.add("gasLedgers", f"the {fmt(child['reservoir'])} {name} returns joins the reservoir its caller kept and "
+                      "never draws it: no part of it is credited to the caller's regular gas, which keeps "
+                      f"{fmt(frame['regular'])} until the child's {fmt(child['regular'])} of regular gas returns, whatever "
+                      f"regular gas the caller paid for state before ({fmt(frame.get('drawn', 0) - child['drawn'])})",
+                      "SATIN-POOL-002", "SATIN-POOL-012", "SATIN-POOL-022")
             return child["regular"]
         kept_logs = len(snap[0][4])
         dropped = [log for log in self.logs[kept_logs:] if log[0] != TRANSFER_LOG_ADDRESS]
@@ -299,6 +308,13 @@ class FramesMixin:
         given the start's charges back (SATIN-HIST-014, SATIN-POOL-015). Returns (success, return data, the
         regular gas the child returns)."""
         d = self.d
+        if not value and self.pricing:
+            frame["reservoir"] += share  # a start answered without a frame returns its share (SATIN-POOL-012)
+            d.add("gasLedgers", f"the CALL to {h(target)}, an account without code, moves no value: a start answered "
+                  "without a frame, with a success and no return data; it keeps nothing, and the child's "
+                  f"{fmt(child_gas)} of regular gas returns untouched, with its reservoir share", "SATIN-POOL-012",
+                  "SATIN-LIM-013")
+            return True, b"", child_gas
         if not value:
             raise Unmodelled("a call without value to an account without code")
         moved = {caller: self.state.get(caller, Account()).balance - value,

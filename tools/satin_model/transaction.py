@@ -12,7 +12,8 @@ from .constants import (
     MAX_INITCODE_SIZE, MAX_U64, MEGA_LIMIT_CONTROL, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, ORACLE, PER_AUTH_BASE_COST,
     PRECOMPILE_SET, INTERCEPTED, NON_ZERO_TRANSFER, SEND_HINT,
     STOP_DIMENSIONS, SYSTEM_CALLER, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
-    TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
+    TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT, TX_MAX_TOTAL_GAS_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
+    COST_PER_STATE_BYTE,
 )
 from .records import (
     Account, created_address, fmt, h, Halt, InvalidPrestate, LimitStop, OutOfGasBeforeFrame, pad_address, refused,
@@ -282,6 +283,17 @@ class TransactionMixin:
         reservoir = max(0, tx.gas_limit - EXECUTION_CAP)
         d.add("gasLedgers", f"pools: regular budget min({fmt(tx.gas_limit)}, {fmt(EXECUTION_CAP)}) - {fmt(intrinsic)} = "
               f"{fmt(regular)}, reservoir {fmt(reservoir)}", "SATIN-POOL-005")
+        if self.pricing:
+            d.add("gasLedgers", f"EIP-8037 as of c406bdb2ff, with Satin's parameters: the execution cap {fmt(EXECUTION_CAP)} "
+                  f"bounds the regular gas, the gas limit past it being the reservoir, and every state charge is its "
+                  f"entry, its bytes at COST_PER_STATE_BYTE {fmt(COST_PER_STATE_BYTE)}, times its bucket's multiplier",
+                  "SATIN-POOL-001")
+            if tx.gas_limit > TX_MAX_TOTAL_GAS_LIMIT:
+                d.add("gasLedgers", f"the gas limit {fmt(tx.gas_limit)} is above TX_MAX_TOTAL_GAS_LIMIT "
+                      f"{fmt(TX_MAX_TOTAL_GAS_LIMIT)}, the cap on a transaction's total gas of EIP-8037's commit d7087803ca, "
+                      f"which is not applied: bounded by the block's gas limit {fmt(env.block_gas_limit)} alone, the "
+                      f"transaction is admitted, and the whole of its gas limit past the execution cap is its reservoir",
+                      "SATIN-POOL-003", "SATIN-POOL-005")
         from_res = min(reservoir, body_history)
         reservoir -= from_res
         regular -= body_history - from_res
@@ -360,7 +372,8 @@ class TransactionMixin:
             rec = self.state.get(recipient)
             new_account = rec is None or rec.empty()
         if new_account:
-            m = self.multiplier(self.salt_bucket(recipient, None))
+            m = self.multiplier(self.salt_bucket(recipient, None),
+                                f"the {'created account' if create else 'new account'} at {h(recipient)}")
             pre_frame_state = ACCOUNT_STATE * m
             d.add("gasLedgers", f"{'created' if create else 'new'}-account state gas {fmt(ACCOUNT_STATE)} x m={m} = "
                   f"{fmt(pre_frame_state)} at step 4, no legacy share", "SATIN-SCHED-008", "SATIN-STATE-001",
@@ -369,6 +382,10 @@ class TransactionMixin:
                 d.add("gasLedgers", f"the account's bucket gives m = {m}, which scales its state gas and not the history of "
                       f"its start record: {WRITE_RECORD_SIZE} x COST_PER_HISTORY_BYTE {COST_PER_HISTORY_BYTE}, whatever the "
                       "bucket", "SATIN-HIST-001", "SATIN-HIST-002")
+            if self.pricing:
+                d.add("gasLedgers", f"the {'created account is added by the creation transaction, its address' if create else 'new account is added by the transaction whose value goes to its recipient,'} "
+                      "empty under EIP-161: the transaction makes the charge, and m scales its state gas alone",
+                      "SATIN-STATE-004", "SATIN-STATE-005")
         # Of step 3's history, the authorities' records drew the reservoir first, when the list was
         # applied; the first frame's start record draws what they left (D-58).
         drawn = []  # what the reservoir paid of the start record and of the start's state gas
@@ -611,6 +628,10 @@ class TransactionMixin:
                   f"and the authorizations the list applied before it are kept: {', '.join(h(a) for a in kept)} keep their "
                   "nonce and delegation writes, their state gas, their write records and the history those cost",
                   "SATIN-AUTH-016")
+        if self.pricing and status != "success" and tx.authorizations:
+            d.add("gasLedgers", "the list's charges, made before the first frame and drawn from the reservoir first, are "
+                  "no part of the frame's net_charged: its failure returns none of the reservoir they drew, each being kept "
+                  "by its own rule", "SATIN-POOL-002", "SATIN-POOL-024", "SATIN-AUTH-016")
 
         if status == "halt":
             # SATIN-POOL-014: the halting frame's reservoir becomes what it received, its regular gas
@@ -648,6 +669,14 @@ class TransactionMixin:
             if frame["reservoir_at_start"] and (pre_frame_history or pre_frame_state) and not start_from_reservoir \
                     and not self.outcomes:
                 raise Unmodelled("a halt after start charges the reservoir paid")
+            if self.pricing and (pre_frame_history or pre_frame_state):
+                paid = pre_frame_history + pre_frame_state - sum(drawn)
+                d.add("gasLedgers", f"of the charges made for the first frame's start before it, "
+                      f"{fmt(pre_frame_history + pre_frame_state)}, the reservoir paid {fmt(sum(drawn))} and the regular "
+                      f"budget {fmt(paid)}: with the halt the reservoir's part returns to the transaction's reservoir, and "
+                      f"the {fmt(paid)} regular gas paid stays spent, consumed with the frame's regular gas, no pre-execution "
+                      "spill being committed or unwound as a rule of its own and nothing of it returning to the sender",
+                      "SATIN-POOL-003", "SATIN-POOL-024", *(("SATIN-POOL-015",) if pre_frame_state else ()))
             if self.outcomes and drawn[1]:
                 # SATIN-POOL-014, -015, SATIN-HIST-005: what the reservoir paid of the start returns to it with the halt.
                 d.add("gasLedgers", f"the halt takes the first frame's start back: of its record's history and the created "
@@ -655,7 +684,8 @@ class TransactionMixin:
                       "body's history stays charged", "SATIN-POOL-014", "SATIN-POOL-015", "SATIN-HIST-005")
                 total = tx.gas_limit - frame["reservoir_at_start"] - sum(drawn)
                 d.add("gasLedgers", f"halt: every regular gas the frame held is consumed, the reservoir {fmt(frame['reservoir_at_start'])} "
-                      f"returns; total = gas limit {fmt(tx.gas_limit)} - {fmt(frame['reservoir_at_start'])} = {fmt(total)}; the "
+                      f"returns with the {fmt(sum(drawn))} given back to it; total = gas limit {fmt(tx.gas_limit)} - "
+                      f"{fmt(frame['reservoir_at_start'] + sum(drawn))} = {fmt(total)}; the "
                       "frame's state and history charges are not kept, so what regular gas paid of them is on the regular "
                       "ledger (D-51)", "SATIN-POOL-014", "SATIN-POOL-017")
             elif start_from_reservoir:
@@ -704,10 +734,20 @@ class TransactionMixin:
                       "for a value the answer never moved, is given back into the reservoir and returns to the sender",
                       "SATIN-HIST-005", "SATIN-HIST-023", "SATIN-ICPT-004", "SATIN-ICPT-007")
             total = intrinsic + self.pre_frame_regular + self.regular_charges + self.history_gas + self.state_gas
+            if self.pricing and (pre_frame_history or pre_frame_state):
+                d.add("gasLedgers", f"the charges made for the first frame's start before it, "
+                      f"{fmt(pre_frame_history + pre_frame_state)}, of which the reservoir paid {fmt(sum(drawn))} and the "
+                      f"regular budget {fmt(pre_frame_history + pre_frame_state - sum(drawn))}, are no part of the frame's "
+                      "own rollback: after it each is given back by its own rule into the transaction's reservoir, the "
+                      "part regular gas paid included, which is not credited to regular gas", "SATIN-POOL-024",
+                      "SATIN-POOL-003", *(("SATIN-POOL-015",) if pre_frame_state else ()))
+            # A case of the pricing rules cites the give-back of a first frame's recipient or created account only where
+            # one was charged (D-108); every other case's step is as it was.
+            revert_rules = (("SATIN-POOL-014", "SATIN-POOL-015", "SATIN-HIST-005", "SATIN-POOL-017")
+                            if pre_frame_state or not self.pricing else ("SATIN-POOL-014", "SATIN-HIST-005", "SATIN-POOL-017"))
             d.add("gasLedgers", "revert: the frame's state and history charges, and the first frame's start record and "
                   "recipient or created-account state gas, are given back into the reservoir and return to the sender; its "
-                  f"regular charges {fmt(self.regular_charges)} stay spent", "SATIN-POOL-014", "SATIN-POOL-015",
-                  "SATIN-HIST-005", "SATIN-POOL-017")
+                  f"regular charges {fmt(self.regular_charges)} stay spent", *revert_rules)
             if self.stop is not None:
                 d.add("limit", f"the stop of the transaction's own frame is its result: {STOP_DIMENSIONS[self.stop[0]]}, limit "
                       f"{fmt(self.stop[1])}, return data MegaLimitExceeded({self.stop[0]}, {fmt(self.stop[1])}); the "

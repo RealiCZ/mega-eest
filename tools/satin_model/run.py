@@ -29,7 +29,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
                  stops: bool = False, lists: bool = False, outcomes: bool = False, system_tx: bool = False,
                  current: bool = False, system_pages: bool = False, precompile_page: bool = False,
-                 size_page: bool = False):
+                 size_page: bool = False, pricing: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
         # A case of the precompile page's own rules (decision D-103): a call to a precompile where no limit is set is
         # decided by SATIN-PCMP-001 to -007, and the model runs KZG point evaluation, P256VERIFY and the BLS12-381
@@ -41,6 +41,12 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         # A case citing the snapshot `c130558`, which retires SATIN-STOP-016: a value precompile's crossing is held to the
         # price by SATIN-STOP-014 and SATIN-DET-022 there (D-78).
         self.current = current
+        # A case of the gas pools', state gas's and gas schedule's own rules (decision D-106): its derivation also cites
+        # the EIP-8037 profile, where each state charge is made and what its multiplier scales, the bucket it lands in
+        # and the multiplier's one read, the forward's and the code deposit's departures from Amsterdam, and the
+        # accounts warm from the transaction's start, where its steps apply them (SATIN-POOL-001 to -004, -021, -022,
+        # SATIN-STATE-004 to -006, -009, -010, SATIN-SCHED-001, -002, -012, -014).
+        self.pricing = pricing
         # A case of the authorization page's own rules (decision D-88): its derivation cites the list's simulation,
         # each entry's gates and checks, and the warmth the application leaves (SATIN-AUTH-001 to -018).
         self.lists = lists
