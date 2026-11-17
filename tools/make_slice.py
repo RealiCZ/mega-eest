@@ -61,15 +61,19 @@ SPEC_COMMITS = {"satin-d34e626": "d34e6266e6d7b69963701baa5ae25ccb8a548260",
                 "satin-5fb2688": "5fb26884b5ed1d02bb622073dfdf1d7ea814f1be",
                 "satin-cdded1e": "cdded1e1d131a1d16a2c4b1cd873557f16a6a558",
                 "satin-c130558": "c130558e2f38a913982dc17f0cd8eb8834967262",
-                "satin-bcf260d": "bcf260d3de62c50cd1700e4f82f91560c4f8df48"}
+                "satin-bcf260d": "bcf260d3de62c50cd1700e4f82f91560c4f8df48",
+                "satin-83c0d26": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa"}
 DEFAULT_SPEC = "satin-d34e626"
 INTERCEPTION_SPEC = "satin-d334ef8"  # interception before the frame start, SATIN-ICPT-007
 ORDERING_SPEC = "satin-5fb2688"  # the charge-order principles, SATIN-HIST-023
 TAKE_BACK_SPEC = "satin-cdded1e"  # one home for each rule, and the take-back page's worked examples as cases
 FILL_SPEC = "satin-c130558"  # the first fill batch's clarifications (D-78), and the cases of D-79, D-80, D-85, D-88
-CURRENT_SPEC = "satin-bcf260d"  # the snapshot new cases cite (D-96)
+SECOND_FILL_SPEC = "satin-bcf260d"  # QI-36 and QI-37's wordings (D-96), and the cases of D-82, D-91, D-100, D-103, D-104, D-106, D-109
+CURRENT_SPEC = "satin-83c0d26"  # the snapshot new cases cite (D-112)
 # The snapshots that state the principles the model cites.
-PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC, FILL_SPEC, CURRENT_SPEC}
+PRINCIPLES_SPECS = {ORDERING_SPEC, TAKE_BACK_SPEC, FILL_SPEC, SECOND_FILL_SPEC, CURRENT_SPEC}
+# The snapshots whose cases the model derives with `Run.current`: `83c0d26` moves none of the readings it gates (D-112).
+CURRENT_SPECS = {SECOND_FILL_SPEC, CURRENT_SPEC}
 OUT = os.path.join(ROOT, "slice")
 
 KEY = ex.TEST_KEY
@@ -1125,7 +1129,7 @@ def detention_rule_cases() -> list[Case]:
     for name, room, tail, intent, edge, snapshot in (
             ("modexp/over-bound-at-allowance", modexp_price, STOP, "the allowance exactly: it runs, charges its price, "
              "fails EIP-7823's bound and consumes its forward, as without the read", "the price at the allowance",
-             CURRENT_SPEC),
+             SECOND_FILL_SPEC),
             ("modexp/over-bound-past-allowance", modexp_price - 1, RETURN_RETURNDATA, "one past the allowance and within "
              "its forward: an input that would fail a check made after the gas charge is the crossing too",
              "the price one past the allowance", spec)):
@@ -1140,7 +1144,7 @@ def detention_rule_cases() -> list[Case]:
     add(Case("satin/detention/precompile/bn254-pairing-over-size-limit", f"after TIMESTAMP, a BN254 pairing call of "
              f"{fmt(pairing)} bytes, one over its size limit, with an allowance of 100 and a forward past the pairing "
              "formula's price for that many bytes: priced at zero, it runs on its forward, fails before any gas check and "
-             "consumes the forward, as without the read", spec=CURRENT_SPEC, detention=True, gas=31_000_000,
+             "consumes the forward, as without the read", spec=SECOND_FILL_SPEC, detention=True, gas=31_000_000,
              make=lambda words, pad: detained(words, pad) + call(MAX_GAS, model.BN254_PAIRING, 0, pairing) + STOP,
              params=dict(start), retune=[("precompile-room", 100, "pad", -1)]))
     # A user's deposit is detained as any transaction (SATIN-DET-026).
@@ -1167,7 +1171,7 @@ def delegatecall_with(gas: int, target: bytes, in_size: int) -> bytes:
 def detention_gap_cases() -> list[Case]:
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
     cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
     big = over_cap(cap)
     start = {"words": words_within(cap - 30_000), "pad": 0}
@@ -1583,7 +1587,7 @@ def pricing_cases() -> list[Case]:
     and the accounts warm from the transaction's start."""
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
     kw = dict(spec=spec, pricing=True)
     record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
     body = model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE
@@ -2368,7 +2372,7 @@ def selfdestruct_gap_cases() -> list[Case]:
     """The destruction page's edges a review of the first batch found unpinned."""
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
     heir = {HEIR: model.Account(balance=1)}
     first, second = model.created_address(CONTRACT, 1), model.created_address(CONTRACT, 2)
     warm_heir = push(int.from_bytes(HEIR, "big")) + b"\x31\x50"
@@ -2753,7 +2757,7 @@ def limit_stop_gap_cases() -> list[Case]:
     """The limit-stop page's edges a review of the first batch found unpinned."""
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
     limit = fmt(model.TX_DATA_LIMIT)
     record, transfer_log, log0 = model.WRITE_RECORD_SIZE, model.TRANSFER_LOG_SIZE, model.LOG_BASE_SIZE
     start = 2 * record + transfer_log  # a value start's two records and its transfer log
@@ -3772,7 +3776,7 @@ def outcome_edge_cases() -> list[Case]:
     add(Case("satin/validation/system-address/system-tx-below-intrinsic-and-history", f"a Mega System Transaction with a gas "
              f"limit of {fmt(call_plain + body - 1)}, one below its intrinsic gas with its body's history: it passes its own "
              "checks and is promoted to a deposit, which that check makes a failed deposit, not a refusal (SATIN-VAL-008)",
-             boundary="one below the intrinsic gas with the body's history", spec=CURRENT_SPEC, outcomes=True, system=True,
+             boundary="one below the intrinsic gas with the body's history", spec=SECOND_FILL_SPEC, outcomes=True, system=True,
              to=model.ORACLE, code=None, gas=call_plain + body - 1, accounts=dict(live)))
     add(Case("satin/validation/deposit/system-transaction-flag", "a deposit carrying the base layer's system-transaction "
              "flag, which the base layer refuses from Regolith on: a deposit is never rejected, so it is a failed deposit "
@@ -3797,7 +3801,7 @@ def outcome_edge_cases() -> list[Case]:
     add(Case("satin/outcomes/deposit/value-unfunded-reads", f"a deposit of 2 wei from a sender holding 1 wei, minting "
              f"nothing, with a gas limit of {fmt(call_value + body)}, its intrinsic gas with its body's history: no start "
              "record is charged for the value it cannot fund, its recipient is loaded before the frame's start fails, and "
-             "the failed deposit's reads keep that load (SATIN-OUT-013)", spec=CURRENT_SPEC, outcomes=True, reads=True,
+             "the failed deposit's reads keep that load (SATIN-OUT-013)", spec=SECOND_FILL_SPEC, outcomes=True, reads=True,
              deposit=(0, call_value + body), sender_nonce=3, sender_balance=1, to=EOA, code=b"", value=2))
     return out
 
@@ -3824,7 +3828,7 @@ def forwarding_cases() -> list[Case]:
     multiplication differ, and the reservoir share, outside the request and the cap."""
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
     num, den, stipend = model.GAS_RETAINED_NUMERATOR, model.GAS_RETAINED_DENOMINATOR, model.CALL_STIPEND
     reporter = {REPORTER: model.Account(nonce=1, code=REPORT_GAS)}
     report = lambda gas, value=0: call(gas, REPORTER, value, 0) + b"\x50" + RETURN_RETURNDATA
@@ -4063,7 +4067,7 @@ def system_tx_cases() -> list[Case]:
     Transaction promoted and run, and the protocol's own transactions, priced at m = 1, not detained and not stopped."""
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
     live = registry_naming(SENDER)
     history = model.COST_PER_HISTORY_BYTE
     body = model.TX_BODY_SIZE * history
@@ -4813,7 +4817,7 @@ def deposit_page_cases() -> list[Case]:
     call_value = call_plain + model.TX_VALUE_COST
     least = call_value + body + record  # a value deposit's charges up to its start record, paid exactly
     created = model.TX_BASE_COST + model.CREATE_ACCESS + body + record  # an empty creation's, up to its start record
-    pages = dict(spec=CURRENT_SPEC, system_pages=True, sender_nonce=3)
+    pages = dict(spec=SECOND_FILL_SPEC, system_pages=True, sender_nonce=3)
     seen = dict(pages, reads=True)
     account = model.ACCOUNT_STATE
 
@@ -4929,7 +4933,7 @@ def oracle_page_cases() -> list[Case]:
     the address of the frame that sent it, and a sendHint run by DELEGATECALL, which reaches no service."""
     out: list[Case] = []
     add = out.append
-    pages = dict(spec=CURRENT_SPEC, system_pages=True, system=True)
+    pages = dict(spec=SECOND_FILL_SPEC, system_pages=True, system=True)
     sel = model.selector
     oracle = {model.ORACLE: model.Account(code=system_contracts()[model.ORACLE], storage={1: 0xAA, 2: 0xBB})}
 
@@ -4982,7 +4986,7 @@ def system_contract_cases() -> list[Case]:
     its update a restricted write of the Oracle, and its accessors."""
     out: list[Case] = []
     add = out.append
-    pages = dict(spec=CURRENT_SPEC, system_pages=True, system=True)
+    pages = dict(spec=SECOND_FILL_SPEC, system_pages=True, system=True)
     sel = model.selector
     remaining = sel("remainingComputeGas()")
     ask = mstore(0, int.from_bytes(remaining, "big") << 224)
@@ -5101,7 +5105,7 @@ def system_pages_gap_cases() -> list[Case]:
     out: list[Case] = []
     add = out.append
     sel = model.selector
-    pages = dict(spec=CURRENT_SPEC, system_pages=True)
+    pages = dict(spec=SECOND_FILL_SPEC, system_pages=True)
     sys_pages = dict(pages, system=True)
     history = model.COST_PER_HISTORY_BYTE
     body = model.TX_BODY_SIZE * history
@@ -5460,7 +5464,7 @@ def jumpdests(n: int) -> bytes:
 def history_cases() -> list[Case]:
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
     record = model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE
     log0 = model.LOG_BASE_SIZE * model.COST_PER_HISTORY_BYTE
     allowance = model.HISTORY_ALLOWANCE_BYTES * model.COST_PER_HISTORY_BYTE
@@ -5739,7 +5743,7 @@ def history_cases() -> list[Case]:
 def accounting_cases() -> list[Case]:
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
 
     def case(name: str, intent: str, **kw) -> None:
         add(Case(f"satin/accounting/{name}", intent, spec=spec, **kw))
@@ -6017,7 +6021,7 @@ def precompile_cases() -> list[Case]:
     ModExp on the Osaka schedule, and the OP input size limits, each at its edge, where no limit is set."""
     out: list[Case] = []
     add = out.append
-    spec = CURRENT_SPEC
+    spec = SECOND_FILL_SPEC
     page = {"spec": spec, "precompile_page": True}
 
     # SATIN-PCMP-001, -006: KZG point evaluation at KZG_POINT_EVALUATION_GAS, charged exactly; a forward one short fails
@@ -6180,7 +6184,7 @@ def precompile_gap_cases() -> list[Case]:
     """The precompile page's edges an independent review found unpinned (D-103, second round), in its rank order."""
     out: list[Case] = []
     add = out.append
-    page = {"spec": CURRENT_SPEC, "precompile_page": True}
+    page = {"spec": SECOND_FILL_SPEC, "precompile_page": True}
     cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
     start = {"words": words_within(cap - 20_000), "pad": 0}
     indicator = lambda d: model.DELEGATION_PREFIX + d  # noqa: E731
@@ -6349,7 +6353,7 @@ def size_cases() -> list[Case]:
     where a charge made out of order would be the crossing."""
     out: list[Case] = []
     add = out.append
-    page = {"spec": CURRENT_SPEC, "size_page": True}
+    page = {"spec": SECOND_FILL_SPEC, "size_page": True}
     code_max, init_max = model.MAX_CONTRACT_SIZE, model.MAX_INITCODE_SIZE
     history = model.COST_PER_HISTORY_BYTE
 
@@ -6460,7 +6464,7 @@ def size_gap_cases() -> list[Case]:
     """The contract-limits page's edges an independent review found unpinned (D-104, second round)."""
     out: list[Case] = []
     add = out.append
-    page = {"spec": CURRENT_SPEC, "size_page": True}
+    page = {"spec": SECOND_FILL_SPEC, "size_page": True}
     code_max, init_max = model.MAX_CONTRACT_SIZE, model.MAX_INITCODE_SIZE
     cap = model.BLOCK_ENV_ACCESS_COMPUTE_GAS
     start = {"words": words_within(cap - 20_000), "pad": 0}
@@ -6642,7 +6646,7 @@ def build(c: Case):
         source = {"kind": "signed", "raw": h(raw)}
     run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
                     destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists,
-                    outcomes=c.outcomes, system_tx=c.system_tx, current=c.spec == CURRENT_SPEC,
+                    outcomes=c.outcomes, system_tx=c.system_tx, current=c.spec in CURRENT_SPECS,
                     system_pages=c.system_pages, precompile_page=c.precompile_page, size_page=c.size_page,
                     pricing=c.pricing)
     result = run.run()

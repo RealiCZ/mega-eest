@@ -115,13 +115,15 @@ the same script, beside the earlier ones (decision D-35):
 | `specs/satin-cdded1e` | `cdded1e1d131a1d16a2c4b1cd873557f16a6a558` | 410 (401 active) | 52 rules reworded and no id added or retired: each rule has one home that the others cite (the give-back rule in `SATIN-HIST-012`, the frame it credits in `SATIN-HIST-007`, the `SSTORE` transitions in `SATIN-STATE-008`, a start that does not happen in `SATIN-HIST-023`), worked examples move into conformance cases once their cases exist, and a statement no execution reaches is marked once in its home |
 | `specs/satin-c130558` | `c130558e2f38a913982dc17f0cd8eb8834967262` | 410 (400 active) | `SATIN-STOP-016` retired (no transaction reaches it) and 25 rules reworded: a call refused at its target's EIP-7702 delegate pays its target's access and its memory expansion, and stops with `MegaLimitExceeded(2, limit)` when its cold surcharge is gas detention's crossing (`SATIN-MAC-003`, `-004`, `-007`, `SATIN-DET-018`, `SATIN-OUT-008`, `SATIN-PCMP-008`, `SATIN-STOP-020`, `SATIN-WIT-012`); a precompile that halts burns its whole forward and counts none of it as compute, and a value call to a precompile's absent or empty account pays its new-account state gas (`SATIN-DET-011`, `-021`, `-022`); the first fill batch's clarifications (`SATIN-SCHED-003`, `-004`, `SATIN-SD-013`, `SATIN-STOP-017`); the take-back page's worked examples, and the conformance cases the text named, removed (`SATIN-TAKE-005` to `-012`, `SATIN-ICPT-006`, `SATIN-POOL-019`) |
 | `specs/satin-bcf260d` | `bcf260d3de62c50cd1700e4f82f91560c4f8df48` | 411 (401 active) | `SATIN-SYSC-005` added (a block-start state that holds storage at a system contract's address, in an account without code, is an invalid prestate, outside the specification) and six rules reworded: a failed deposit makes no load for its first frame's start only when it fails validation or a charge of steps 1 to 3 of `SATIN-SCHED-008`, and keeps the load step 4 makes when it fails later (`SATIN-DEP-012`); the registry installed over an account without code keeps the account's storage, its seed overwriting its seven slots (`SATIN-REG-008`); a precompile's halt on an input over its size limit is named among a precompile's halts, and a halting precompile's charged price is excepted from the paid work that still counts (`SATIN-DET-011`, `-019`); system origin is left to `SATIN-MST-007`, with `SATIN-MST-008` overriding a system-originated transaction's pricing (`SATIN-MST-004`), and a promoted Mega System Transaction keeps a legacy receipt whose status and gas used follow the promoted execution (`SATIN-MST-005`) |
+| `specs/satin-83c0d26` | `83c0d269a92aaa580bb1805e3168d3cbd4b290aa` | 411 (401 active) | four rules reworded and no id added or retired: a deposit's top-level creation is not checked against `MAX_INITCODE_SIZE` and is executed subject to its other checks and charges, where it was a failed deposit, and only a creation transaction other than a deposit is rejected for its initcode (`SATIN-SIZE-004`); the initcode limit holds at a creation opcode, in a creation transaction other than a deposit and in a keyless deployment, a `CREATE` or `CREATE2` a deposit's initcode runs and a keyless deployment a deposit makes being checked all the same (`SATIN-SIZE-002`); a deposit becomes a failed deposit for a validation check that applies to deposits, the base layer's deposit exemptions remaining in force (`SATIN-VAL-008`, `SATIN-DEP-004`); the constant table's `MAX_INITCODE_SIZE` row names the exception |
 
 The vertical slice's first 63 cases and its quarantine pin `d34e626`; the cases added for
 interception, the keyless decoder and EIP-7702 existence pin `d334ef8` (decision D-54); the cases
 added for the edges of the charge-order principles pin `5fb2688` (decision D-59); the cases for the
 take-back page's worked examples pin `cdded1e` (decision D-65); the two cases whose derivation takes
-`SATIN-DET-011`'s halting precompile pin `c130558` (decision D-78); `bcf260d` is the newest, which new
-cases cite (decision D-96).
+`SATIN-DET-011`'s halting precompile pin `c130558` (decision D-78); the cases whose derivation takes a
+reading `bcf260d` states, and the cases added after it, pin `bcf260d` (decision D-96); `83c0d26` is the
+newest, which new cases cite (decision D-112).
 Digests (SHA-256 of canonical bytes):
 
 | Bundle | descriptor.json | rules.json | sources.json |
@@ -133,6 +135,7 @@ Digests (SHA-256 of canonical bytes):
 | `satin-cdded1e` | `sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658` | `sha256:e175134bd65d0cef4f81de55b68ea1d9f62e5c3f92c0f11ae69f9d260af69bf9` | `sha256:cb21a9c3129bbda223c253346dbd326a5c78cc13d5bf3d0c686ae8f9fd03c3e1` |
 | `satin-c130558` | `sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da` | `sha256:9abb2cfa2d022251bc7415704bfc49a4d43057c8cd690791840bdf836bcec07f` | `sha256:f430f5f5ed753ba075ed89a070d8d02707531b8331d1d54d03e62e73b252f12c` |
 | `satin-bcf260d` | `sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3` | `sha256:df0ecc5afa552b72e9e8f14b5722ba7acf4d735d6a509848232b6aee3e174038` | `sha256:e8e155ff26c5564e7d83cf21a88acefe5d04cfe07e937694173d158d1af76d4e` |
+| `satin-83c0d26` | `sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84` | `sha256:64fbc97e01e1f415576514f258d4b848b56b8a99d5d9830accb0e5fbf9fbc1f7` | `sha256:6945af2d423b51270772f855d31992d311ac095c59f1445875e7fab78c3042d3` |
 | `rex6-d4c913c5` | `sha256:93186256dad9ae5c4b7bdde48243732cdeb6b1cdc5127823cbcf1dd4c4782a57` | `sha256:38a3669c27ae74755aae16efbbbba822ec00e147ae52ae814c9a4d85e030d00a` | `sha256:36445afc3cc90eaffefe3484c81088c47db4adc116731576436dd25b2dcc9d5d` |
 
 ```bash
@@ -143,6 +146,7 @@ python3 -I tools/gen_registry.py <spec-checkout> 5fb2688 specs/satin-5fb2688 --m
 python3 -I tools/gen_registry.py <spec-checkout> cdded1e specs/satin-cdded1e --members tools/descriptor-members/satin.json --check
 python3 -I tools/gen_registry.py <spec-checkout> c130558 specs/satin-c130558 --members tools/descriptor-members/satin.json --check
 python3 -I tools/gen_registry.py <spec-checkout> bcf260d specs/satin-bcf260d --members tools/descriptor-members/satin.json --check
+python3 -I tools/gen_registry.py <spec-checkout> 83c0d26 specs/satin-83c0d26 --members tools/descriptor-members/satin.json --check
 ```
 
 ## Descriptor members: codecs and the SALT mapping
