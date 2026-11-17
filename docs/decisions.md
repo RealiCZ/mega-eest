@@ -2639,3 +2639,22 @@ for `bcf260d`'s: `83c0d26` moves none of the readings it gates.
     keyless deployment's. Each is checked under the new text as under the old.
   - Eleven cases make a creating deposit, none with more than 39 bytes of initcode, so none takes
     the new step. The only case that takes it is the deposit D-105 held, which now enters (D-114).
+
+From the move of the evm2-based pin to `62f2964a`:
+
+**D-113. The evm2-based pin moves to `62f2964a`; the adapter and its lockfile stay as they were.**
+Implementation (b) moved from `ccbdb23e` to `62f2964a`, its integration head. Its evm2 fork stays at
+`c0a91cbb`, the fork `next/evm2-fork.env` still pins. Between the two revisions the implementation:
+
+- refuses a call at its target's EIP-7702 delegate after the call's steps
+  (`SATIN-MAC-004`, `-007`). The call pays its static cost, its memory expansion and its target's
+  access, which is a cold surcharge, held to the spendable part, only when the target was not warm.
+  Before, a call whose target delegated to the block beneficiary was refused before it charged
+  anything. The change is in `next/mega-evm2/src/` (`lib.rs`, `ledger.rs`, `satin_ext.rs`);
+- tests the refusal, admits it in its differential harness as a signed-off class, and drops the
+  engine tests and keyless scenarios that Mega EEST's cases duplicate.
+
+No API the adapter uses moved. It builds `--locked` with no change to its source, its manifest or
+its lockfile. The implementation's lockfile, its manifests and its fork pin are unchanged between
+the two revisions. Every gating case, the 928 of the slice and the two of D-114, passes on both
+adapters, plain and instrumented, and the negative case fails as it must.
