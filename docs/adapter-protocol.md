@@ -202,7 +202,7 @@ case that does not require it.
 | Adapter | Implementation | Pinned by | Build |
 | --- | --- | --- | --- |
 | `adapters/revm` (`adapter-revm`) | revm-based Satin: `megaeth-labs/mega-evm` at `1a981f4b`, through `MegaEvm::execute_transaction` | a cargo git dependency at that commit, with the patches of its own root manifest | `cd adapters/revm && cargo build --locked` |
-| `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `ccbdb23e` with `RealiCZ/evm2` at `c0a91cbb`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
+| `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `62f2964a` with `RealiCZ/evm2` at `c0a91cbb`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
 Both declare `state-transition` with its mandatory groups, `group:gas-pools`, `group:limit-stop`,
 `group:reads` and the features `deposit`, `salt` and `synthetic-transaction`. The revm-based adapter

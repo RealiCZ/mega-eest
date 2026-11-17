@@ -204,8 +204,10 @@ specification's text and constants:
   whose access is off with the beneficiary as the delegate, is refused at the delegate's load and
   settled on its static cost and memory (`SATIN-MAC-007`, `-004`).
 - **The contract-limits page's own rules** (D-104): a creation transaction's initcode over
-  `MAX_INITCODE_SIZE`, refused at validation (`initcode-too-large`), and a deposit's, a failed
-  deposit (`SATIN-SIZE-004`; no case holds it yet, D-105); a creation's deposited code over
+  `MAX_INITCODE_SIZE`, refused at validation (`initcode-too-large`), and a deposit's top-level
+  creation over it, which is not checked against the limit and runs as the deposits page's creating
+  deposits do, where the model made it a failed deposit before `83c0d26` (`SATIN-SIZE-004`,
+  `SATIN-VAL-008` at `83c0d26`, D-112); a creation's deposited code over
   `MAX_CONTRACT_SIZE` from `CREATE` or `CREATE2`, which halts the creation; a creation in a frame a
   `STATICCALL` started, which halts it before its operands and charges (`SATIN-SIZE-005` step 1,
   `-006`); the offset of empty initcode left unchecked, a non-empty one's checked after its
@@ -261,7 +263,7 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `records.py` | The model's exceptions, the derivation record, the inputs (accounts, the transaction, the block environment), the result, and the observations' value formats |
 | `run.py` | `Run`: the run state, composed of the mixins below |
 | `transaction.py` | Validation's refusals in the order of `SATIN-VAL-003` and the base layer's after them, a creation's initcode over `MAX_INITCODE_SIZE` among them, the system shape, a Mega System Transaction's own checks and a caller the registry does not name, the transaction's origin (`SATIN-MST-007`), intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, a creation's code over `MAX_CONTRACT_SIZE`, the out-of-gas path before it |
-| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; the live system address; a deposit's run, its validation (from the live system address whatever its destination, and a creating deposit's initcode over `MAX_INITCODE_SIZE`), its value and its start record, its charges at steps 3 to 5 and its first frame (`deposit_frame`), a creation from `MAX_NONCE`, a reverted deposit, a stopped deposit, and a failed deposit, its hints and its reads; a promoted Mega System Transaction's run and a system-originated transaction's history and usage |
+| `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; the live system address; a deposit's run, its validation (from the live system address whatever its destination; a creating deposit's initcode over `MAX_INITCODE_SIZE` is not checked, from `83c0d26` on), its value and its start record, its charges at steps 3 to 5 and its first frame (`deposit_frame`), a creation from `MAX_NONCE`, a reverted deposit, a stopped deposit, and a failed deposit, its hints and its reads; a promoted Mega System Transaction's run and a system-originated transaction's history and usage |
 | `precompiles.py` | A call to a precompile, by any call opcode the model has or as the transaction's own: the funds check, the price read before it runs, and under gas detention the decision from it (`SATIN-DET-021` to `-024`); the identity's, RIPEMD-160's and ModExp's outputs; and the precompile page's own call (D-103): the OP size limits, KZG point evaluation, `P256VERIFY` and the BLS12-381 precompiles |
 | `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, the give-back into the reservoir |
 | `detention.py` | The limit a volatile read sets, the caps it is set from, a frame's spendable and withheld parts, and a transaction detained from its start |

@@ -2594,3 +2594,88 @@ run them.** Two readings the cases take where the text is terse:
   when the frame holds more; the cases detain by the sender and by an authority.
 
 Both implementations answer every case as the model derives it.
+
+From the specification at `83c0d26`:
+
+**D-112. The specification at `83c0d26` is bundled; a deposit's top-level creation is not checked
+against `MAX_INITCODE_SIZE`.** `specs/satin-83c0d26` is the specification's main after one merged
+change, its QI-38. The snapshot holds 411 ids, 401 active: `SATIN-SIZE-002`, `-004`, `SATIN-VAL-008`
+and `SATIN-DEP-004` are reworded, none is added or retired, and the contract-limits page's constant
+table names the exception in its `MAX_INITCODE_SIZE` row ([spec identity](spec-identity.md)). It is
+the snapshot new cases cite (`CURRENT_SPEC` in `tools/make_slice.py`); the cases that cite `bcf260d`
+name it as `SECOND_FILL_SPEC`. `Run.current` holds for the cases of both (`CURRENT_SPECS`), as it held
+for `bcf260d`'s: `83c0d26` moves none of the readings it gates.
+
+- **The new reading of `SATIN-SIZE-004`.** At `bcf260d` the rule said that "a deposit is never
+  rejected, and one that fails this check is a failed deposit", and the model made a creating
+  deposit whose initcode is over `MAX_INITCODE_SIZE` a failed deposit that creates nothing (D-104).
+  At `83c0d26` only a creation transaction other than a deposit is rejected for its initcode, and "a
+  deposit's top-level creation MUST NOT be checked against this initcode size limit; its creation
+  MUST be executed subject to its other applicable checks and charges".
+  - The model now makes no check of a deposit's own initcode (`tools/satin_model/settlement.py`,
+    `run_deposit`). Its step says the limit does not apply and the creation runs, and cites
+    `SATIN-SIZE-002`, `-004`, `SATIN-VAL-008` and `SATIN-DEP-004`. The creation then runs as the
+    deposits page's creating deposits do (`deposit_frame`, D-109): its intrinsic gas pays for the
+    initcode as any creation transaction's does, and its start record and created account are
+    charged at steps 3 and 4.
+  - The exemption is that creation's alone (`SATIN-SIZE-002`). A `CREATE` or `CREATE2` that a
+    deposit's initcode runs is checked as any creation opcode is, and a keyless deployment that a
+    deposit makes is refused by its own step 5. The model's checks for both are unchanged.
+- **A check that applies to deposits.** `SATIN-VAL-008` and `SATIN-DEP-004` now make a failed deposit
+  of a check "that applies to deposits", and keep the base layer's deposit exemptions in force. The
+  model makes a deposit fail validation for three checks, and a rule names each as a deposit's: the
+  base layer's system-transaction flag and a caller that is the live system address
+  (`SATIN-DEP-008`, `SATIN-MST-003`), and a gas limit below its intrinsic regular gas and its body's
+  history (`SATIN-DEP-001`). No reading of them moves.
+- **No existing case moves.** Each rule reworded between `bcf260d` and `83c0d26` was held against the
+  cases that pin it and the cases whose derivation applies it, through the model. Every expected
+  value still holds, and every case keeps its snapshot.
+  - `SATIN-DEP-004` is pinned by 43 cases and applied by 114, and `SATIN-VAL-008` is pinned by 5
+    and applied by 35. Each of their failed deposits fails one of the three checks above, a charge
+    before its first frame, or its own frame, none of which the change touches.
+  - `SATIN-SIZE-002` is pinned by eight cases and applied by 13: a creation transaction other than
+    a deposit, a creation opcode in a child, `CREATE2` and a keyless deployment, each at or over the
+    limit. `SATIN-SIZE-004` is pinned and applied by four of them, the creation transaction's and the
+    keyless deployment's. Each is checked under the new text as under the old.
+  - Eleven cases make a creating deposit, none with more than 39 bytes of initcode, so none takes
+    the new step. The only case that takes it is the deposit D-105 held, which now enters (D-114).
+
+From the move of the evm2-based pin to `62f2964a`:
+
+**D-113. The evm2-based pin moves to `62f2964a`; the adapter and its lockfile stay as they were.**
+Implementation (b) moved from `ccbdb23e` to `62f2964a`, its integration head. Its evm2 fork stays at
+`c0a91cbb`, the fork `next/evm2-fork.env` still pins. Between the two revisions the implementation:
+
+- refuses a call at its target's EIP-7702 delegate after the call's steps
+  (`SATIN-MAC-004`, `-007`). The call pays its static cost, its memory expansion and its target's
+  access, which is a cold surcharge, held to the spendable part, only when the target was not warm.
+  Before, a call whose target delegated to the block beneficiary was refused before it charged
+  anything. The change is in `next/mega-evm2/src/` (`lib.rs`, `ledger.rs`, `satin_ext.rs`);
+- tests the refusal, admits it in its differential harness as a signed-off class, and drops the
+  engine tests and keyless scenarios that Mega EEST's cases duplicate.
+
+No API the adapter uses moved. It builds `--locked` with no change to its source, its manifest or
+its lockfile. The implementation's lockfile, its manifests and its fork pin are unchanged between
+the two revisions. Every gating case, the 928 of the slice and the two of D-114, passes on both
+adapters, plain and instrumented, and the negative case fails as it must.
+
+**D-114. The two cases D-105 held enter the slice at `83c0d26`, and the hold is closed.** Both are
+gating and cite `83c0d26`, the snapshot new cases cite. Every rule they pin is active there. The
+slice holds 930 cases.
+
+- **`satin/contract-limits/deposit/initcode-over-limit`.** Its input is the held case's: a deposit
+  minting 1 ether that creates with `MAX_INITCODE_SIZE + 1` zero bytes of initcode, with a gas limit
+  of 150,000,000. At `bcf260d` the model derived a failed deposit that used its whole gas limit. At
+  `83c0d26` it derives the executed creation (D-112): the deposit is admitted, its initcode stops at
+  once, and it creates an account without code at `0x0c243ebe6a031753dc0dd850acf422844a3efb76`. Its
+  regular ledger is 4,283,846, its state ledger 183,600 and its history ledger 92,305,576. Its gas
+  used is 96,773,022 and its block gas the floor, 67,132,928. The receipt has status 1, deposit
+  nonce 3 and receipt version 1. Data size is 1,048,927, with one KV update and one unit of state
+  growth. Every observation group matches both implementations' fills of the held input exactly.
+  Its intent now states the exemption, and it carries `system_pages`, so the model derives its
+  creation as the deposits page's creating deposits do. It pins `SATIN-SIZE-002` and `-004`.
+- **`satin/precompiles/delegated-address/beneficiary-delegate-access-off`.** It derives exactly as
+  held: the same input, expected value and pinned rule (`SATIN-PCMP-008`). Its block gas is 18,155
+  and its gas used 45,435, the call refused at its delegate's load having paid its static cost.
+  Implementation (a), at `1a981f4b`, already matched it. Implementation (b) at `ccbdb23e` charged 100
+  less; at `62f2964a` it matches the case, plain and instrumented (D-113).

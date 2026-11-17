@@ -15160,6 +15160,20 @@
     },
     {
       "area": "contract-limits",
+      "caseId": "satin/contract-limits/deposit/initcode-over-limit",
+      "file": "cases/satin/contract-limits/deposit/initcode-over-limit.json",
+      "fileDigest": "sha256:1e6b507199b0c2b18fa297e5197a42a534a3eed36bef3ef0e64e9e8e255fdfdc",
+      "rules": [
+        "SATIN-SIZE-002",
+        "SATIN-SIZE-004"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
       "caseId": "satin/contract-limits/creation-tx/deployed-code-at-limit",
       "file": "cases/satin/contract-limits/creation-tx/deployed-code-at-limit.json",
       "fileDigest": "sha256:7361234848bb87ff5c436690bc3681e09a4067949145c19b86ce40c7aa0ea3eb",
@@ -15325,6 +15339,19 @@
       ],
       "spec": {
         "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "precompiles",
+      "caseId": "satin/precompiles/delegated-address/beneficiary-delegate-access-off",
+      "file": "cases/satin/precompiles/delegated-address/beneficiary-delegate-access-off.json",
+      "fileDigest": "sha256:6d182a34c9f7d907eb5a5dcbd42e074e8172f6a9758a5b65fb076371af2cd884",
+      "rules": [
+        "SATIN-PCMP-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
         "name": "megaeth/Satin"
       }
     },

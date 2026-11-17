@@ -101,7 +101,8 @@ the slice uses:
   to a precompile where no limit is set, decided by `SATIN-PCMP-001` to `-007`, with KZG point evaluation
   on commitments and proofs at the point at infinity, `P256VERIFY`, ModExp's lengths too large to price
   and the BN254 and BLS12-381 precompiles on points at infinity, at and over their size limits; a
-  creation transaction's initcode over `MAX_INITCODE_SIZE`, refused, and a deposit's, a failed deposit;
+  creation transaction's initcode over `MAX_INITCODE_SIZE`, refused, and from `83c0d26` on a deposit's,
+  not checked, its creation run (D-112);
   a creation's code over `MAX_CONTRACT_SIZE` from `CREATE` or `CREATE2`; a creation in a static frame;
   the offset of empty initcode, unchecked; and after a review's edges, a KZG scalar outside the field,
   Karst's BN254 and BLS12-381 additions and the BN254 multiplication on points at infinity, a `CALL` to a

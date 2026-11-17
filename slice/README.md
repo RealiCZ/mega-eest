@@ -1,6 +1,6 @@
 # The vertical slice
 
-928 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+930 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 66 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 27 for the
 edges of the charge-order principles, 5 for gas detention, 3 for the Oracle's reads, 2 for the
@@ -16,9 +16,12 @@ forwarding, 64 for the edges two reviews of the first batch found unpinned, 101 
 page, the Oracle and the small system contracts, 77 for the history page and the resource-accounting
 page, 58 for the precompile page's and 24 for the contract-limits page's own rules, and 57 for the
 rules of the two gas pools, state gas and the gas schedule that no case pinned at `bcf260d`
-(`specs/satin-bcf260d`, the snapshot new cases cite), each case naming its own spec
+(`specs/satin-bcf260d`), and 2 at `83c0d26` (`specs/satin-83c0d26`, the snapshot new cases cite):
+a deposit whose top-level creation's initcode is over its limit, which that snapshot exempts, and a
+call refused at a precompile address's beneficiary delegate. Each case names its own spec
 (decisions D-54, D-59, D-60, D-61, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78, D-79,
-D-80, D-82, D-83, D-84, D-85, D-88, D-91, D-93, D-94, D-96, D-100, D-103, D-104, D-106, D-109). Every
+D-80, D-82, D-83, D-84, D-85, D-88, D-91, D-93, D-94, D-96, D-100, D-103, D-104, D-106, D-109,
+D-112, D-114). Every
 case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
