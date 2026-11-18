@@ -110,8 +110,8 @@ RECEIPT_FORMULA = re.compile(
     rf"status (?P<status>0x[01]), gas used (?P<gasUsed>{DECIMAL}), (?P<logs>{DECIMAL}) logs in execution order"
 )
 POOL_RETURN_FORMULA = re.compile(
-    rf"returned to the sender: gas limit (?P<gasLimit>{DECIMAL}) - gas used (?P<gasUsed>{DECIMAL}) "
-    rf"= (?P<returned>{DECIMAL}), the unspent regular gas and the reservoir left"
+    rf"returned to the sender: gas limit (?P<gasLimit>{DECIMAL}) - receipt gas used (?P<gasUsed>{DECIMAL}) "
+    rf"= (?P<returned>{DECIMAL})"
 )
 
 
@@ -211,7 +211,7 @@ def derived_spans(step: str, path: str, expected: dict, tx: dict) -> set[tuple[i
     if path == "/expected/gasPools" and (pools := expected.get("gasPools")):
         if match := POOL_RETURN_FORMULA.fullmatch(step):
             gas_limit = int(tx["gasLimit"], 16)
-            gas_used = int(expected["gasLedgers"]["gasUsed"], 16)
+            gas_used = int(expected["receipt"]["gasUsed"], 16)
             returned = int(pools["returned"], 16)
             if (decimal(match["gasLimit"]) == gas_limit and decimal(match["gasUsed"]) == gas_used
                     and decimal(match["returned"]) == returned == gas_limit - gas_used):
