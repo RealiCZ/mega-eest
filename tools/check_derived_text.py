@@ -22,7 +22,7 @@ its contract code pushes (the system contracts' code aside) — is that input, w
 sets, and is not taken for a stale figure: a call requesting 100,000 gas, or a gas limit of
 100,000, does not follow `KEYLESS_DEPLOY_OVERHEAD_GAS`.
 
-Known ledger and receipt formulas identify the positions of their observation fields. A figure in
+Known ledger, pool and receipt formulas identify the positions of their observation fields. A figure in
 one of those positions can equal an old figure from another case if the full step matches the
 formula and its operands agree with this case's regenerated fields.
 
@@ -109,6 +109,10 @@ LEDGER_FORMULAS = (
 RECEIPT_FORMULA = re.compile(
     rf"status (?P<status>0x[01]), gas used (?P<gasUsed>{DECIMAL}), (?P<logs>{DECIMAL}) logs in execution order"
 )
+POOL_RETURN_FORMULA = re.compile(
+    rf"returned to the sender: gas limit (?P<gasLimit>{DECIMAL}) - gas used (?P<gasUsed>{DECIMAL}) "
+    rf"= (?P<returned>{DECIMAL}), the unspent regular gas and the reservoir left"
+)
 
 
 def generate(out: str, changes: dict[str, int] | None = None) -> tuple[dict[str, str], dict]:
@@ -186,7 +190,7 @@ def decimal(text: str) -> int:
     return int(text.replace(",", ""))
 
 
-def derived_spans(step: str, path: str, expected: dict) -> set[tuple[int, int]]:
+def derived_spans(step: str, path: str, expected: dict, tx: dict) -> set[tuple[int, int]]:
     """Positions of observation fields in a complete formula that agrees with this case's expectation."""
     if path == "/expected/gasLedgers" and (ledgers := expected.get("gasLedgers")):
         if match := FLOOR_FORMULA.fullmatch(step):
@@ -204,6 +208,14 @@ def derived_spans(step: str, path: str, expected: dict) -> set[tuple[int, int]]:
         if (match and match["status"] == receipt["status"] and decimal(match["logs"]) == len(receipt["logs"])
                 and decimal(match["gasUsed"]) == int(receipt["gasUsed"], 16)):
             return {match.span("gasUsed")}
+    if path == "/expected/gasPools" and (pools := expected.get("gasPools")):
+        if match := POOL_RETURN_FORMULA.fullmatch(step):
+            gas_limit = int(tx["gasLimit"], 16)
+            gas_used = int(expected["gasLedgers"]["gasUsed"], 16)
+            returned = int(pools["returned"], 16)
+            if (decimal(match["gasLimit"]) == gas_limit and decimal(match["gasUsed"]) == gas_used
+                    and decimal(match["returned"]) == returned == gas_limit - gas_used):
+                return {match.span("gasUsed"), match.span("returned")}
     return set()
 
 
@@ -222,10 +234,11 @@ def texts(files: dict[str, str], explained: dict):
         for key, value in sorted(prov.get("authoring", {}).items()):
             yield f"{rel} authoring.{key}", value, own, set()
         expected = doc.get("expected") or {}
+        tx = (explanation or {}).get("transaction", {})
         for d in (explanation or {}).get("derivation", []):
             path = d["path"]
             for i, step in enumerate(d["steps"]):
-                proven = derived_spans(step, path, expected)
+                proven = derived_spans(step, path, expected, tx)
                 yield f"{rel} --explain derivation {path} step {i}", step, own, proven
         if "quarantine" in prov:
             yield f"{rel} quarantine.verdict", prov["quarantine"]["verdict"], own, set()
