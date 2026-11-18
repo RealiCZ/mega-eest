@@ -1,0 +1,308 @@
+{
+  "caseId": "satin/selfdestruct/create2/ordered-logs-on-repeat",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xfdd6",
+      "floor": "0x3a98",
+      "gasUsed": "0x1bae6",
+      "history": "0xbd10",
+      "historyBytes": "0x2c6",
+      "refund": "0x0",
+      "regular": "0xfdd6",
+      "state": "0x0",
+      "total": "0x1bae6"
+    },
+    "gasPools": {
+      "regular": {
+        "final": "0x45d1ca",
+        "initial": "0x4ba618"
+      },
+      "reservoir": {
+        "final": "0x4be90",
+        "initial": "0x0"
+      },
+      "returned": "0x4a905a",
+      "spilled": "0x51110"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x1bae6",
+      "logs": [
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de1",
+            "0x00000000000000000000000025d407b1eac65714aefd7dda9c8aac5489a16313"
+          ]
+        },
+        {
+          "address": "0x25d407b1eac65714aefd7dda9c8aac5489a16313",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "topics": [
+            "0x0000000000000000000000000000000000000000000000000000000000000001",
+            "0x0000000000000000000000000000000000000000000000000000000000000002",
+            "0x0000000000000000000000000000000000000000000000000000000000000003"
+          ]
+        },
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000025d407b1eac65714aefd7dda9c8aac5489a16313",
+            "0x00000000000000000000000000000000000000000000000000000000000000e1"
+          ]
+        },
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de1",
+            "0x00000000000000000000000025d407b1eac65714aefd7dda9c8aac5489a16313"
+          ]
+        },
+        {
+          "address": "0x25d407b1eac65714aefd7dda9c8aac5489a16313",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0x0000000000000000000000000000000000000000000000000000000000000001",
+            "0x0000000000000000000000000000000000000000000000000000000000000002",
+            "0x0000000000000000000000000000000000000000000000000000000000000003"
+          ]
+        },
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000025d407b1eac65714aefd7dda9c8aac5489a16313",
+            "0x00000000000000000000000000000000000000000000000000000000000000e1"
+          ]
+        }
+      ],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "1350",
+        "reported": "0x546"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "2",
+        "reported": "0x2"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "returnedState": {
+      "accounts": {
+        "0x00000000000000000000000000000000000000e1": {
+          "balance": "0x3",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x8",
+          "codeHash": "0xe0f2210daa9f5dd4c7e919f48652b029657d5b9c695204c13d837e6794abe93d",
+          "nonce": "0x2"
+        },
+        "0x25d407b1eac65714aefd7dda9c8aac5489a16313": {},
+        "0x4200000000000000000000000000000000000011": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001a": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001b": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {
+        "0x25d407b1eac65714aefd7dda9c8aac5489a16313": {
+          "0x0000000000000000000000000000000000000000000000000000000000000001": {}
+        }
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000000e1": {
+          "balance": "0x3",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x8",
+          "code": "0x7f60016001557f345f5260036002600160205fa360e1ff000000000000000000005f52795f5260105ff300000000000000000000000000000000000000006020525f602c5f6001f5505f5f5f5f5f7325d407b1eac65714aefd7dda9c8aac5489a16313620493e0f1505f5f5f5f60017325d407b1eac65714aefd7dda9c8aac5489a16313620493e0f15000",
+          "nonce": "0x2",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000000e1": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0xa",
+          "code": "0x7f60016001557f345f5260036002600160205fa360e1ff000000000000000000005f52795f5260105ff300000000000000000000000000000000000000006020525f602c5f6001f5505f5f5f5f5f7325d407b1eac65714aefd7dda9c8aac5489a16313620493e0f1505f5f5f5f60017325d407b1eac65714aefd7dda9c8aac5489a16313620493e0f15000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080834c4b409400000000000000000000000000000000000c0de1808025a03022ef2d6ab5a7a9ff1bec71b1fe306a1b1b0dabec4e622231d7fe091a22c806a0348b612861f9fa8a8c0adae2d1c192b54cbe2b3d0ccaf4e893aa7628cb21f27c"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "CREATE2's own address and initcode hashing are observed (SATIN-SIZE-005). The first frame observes its two pools (SATIN-POOL-008).",
+      "intent": "Two calls to the funded target emit LOG3 before destroying it. The second call supplies a wei, so the log words differ. The logs stay in receipt order with both destruction transfers (SATIN-SD-011, SATIN-SD-015)."
+    },
+    "definition": "tools/make_slice.py::create2_destruction_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:gas-pools",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:returned-state",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-POOL-008",
+    "SATIN-SD-001",
+    "SATIN-SD-002",
+    "SATIN-SD-004",
+    "SATIN-SD-005",
+    "SATIN-SD-006",
+    "SATIN-SD-007",
+    "SATIN-SD-008",
+    "SATIN-SD-009",
+    "SATIN-SD-010",
+    "SATIN-SD-011",
+    "SATIN-SD-013",
+    "SATIN-SD-015",
+    "SATIN-SD-018",
+    "SATIN-SD-019",
+    "SATIN-SIZE-005",
+    "SATIN-STATE-001",
+    "SATIN-STATE-002",
+    "SATIN-STATE-003",
+    "SATIN-STATE-008",
+    "SATIN-STATE-012",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+    "name": "megaeth/Satin"
+  }
+}

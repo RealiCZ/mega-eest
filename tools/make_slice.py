@@ -500,11 +500,13 @@ def cases() -> list[Case]:
         c.definition = "cases"
     for group in (interception_cases, ordering_cases, detention_cases, detention_rule_cases, detention_gap_cases,
                   reads_cases, limit_cases,
-                  gas_pools_cases, take_back_cases, selfdestruct_cases, selfdestruct_gap_cases, limit_stop_cases,
+                  gas_pools_cases, take_back_cases, selfdestruct_cases, selfdestruct_gap_cases, create2_destruction_cases,
+                  limit_stop_cases,
                   limit_stop_gap_cases,
                   authorization_cases,
                   outcome_cases, outcome_edge_cases, keyless_cases,
-                  keyless_gap_cases, keyless_pool_cases, forwarding_cases, system_tx_cases, deposit_page_cases, oracle_page_cases,
+                  keyless_gap_cases, keyless_pool_cases, keyless_creation_budget_cases, forwarding_cases,
+                  system_tx_cases, deposit_page_cases, oracle_page_cases,
                   system_contract_cases, system_pages_gap_cases, history_cases, accounting_cases, precompile_cases,
                   size_cases, precompile_gap_cases, size_gap_cases, pricing_cases, delegate_refusal_cases):
         made = group()
@@ -2435,7 +2437,148 @@ def selfdestruct_cases() -> list[Case]:
     return out
 
 
-# --- The limit-stop page's rules: stops below the first frame, at a start, and which endings are stops --
+# --- CREATE2 variants of the destruction table ------------------------------------------------------
+
+
+def create2_destruction_cases() -> list[Case]:
+    """CREATE2 branches of the destruction table, with their own addresses and pool observations."""
+    out = []
+    high = model.EXECUTION_CAP * 2
+    low = 5_000_000
+    salt = 0
+    heir = {HEIR: model.Account(balance=1)}
+    destroy = selfdestruct_to(HEIR)
+    survivor_store = sstore(0, 1)
+
+    def address(init: bytes) -> bytes:
+        return ex.keccak256(b"\xff" + CONTRACT + word(salt) + ex.keccak256(init))[12:]
+
+    def invoke(target: bytes, value: int = 0, gas: int = MAX_GAS) -> bytes:
+        return call(gas, target, value, 0) + b"\x50"
+
+    def case(name: str, intent: str, code: bytes, *, gas: int = high, accounts: dict | None = None, **kw) -> None:
+        out.append(Case(f"satin/selfdestruct/create2/{name}", intent,
+                        boundary="CREATE2's own address and initcode hashing are observed (SATIN-SIZE-005). "
+                                 "The first frame observes its two pools (SATIN-POOL-008).",
+                        code=code, spec=CURRENT_SPEC, gas=gas, destruction=True, pools=True,
+                        returned_state=True, accounts={**heir, **(accounts or {})}, **kw))
+
+    def destroyed_then_store(name: str, intent: str, init: bytes, tail: bytes = b"", *, endowment: int = 0,
+                             **kw) -> None:
+        case(name, intent + " The surviving creator's fresh slot leaves one unit of growth (SATIN-LIM-007).",
+             create2(endowment, init, salt) + tail + survivor_store + STOP, **kw)
+
+    # A kept destruction emits LOG3 and moves the endowment. The later value stays on the marked account.
+    log_word = log(3, 0, 32, [1, 2, 3])
+    init = returning(jump_if(b"\x34", STOP, log_word + destroy), sstore(1, 1))
+    target = address(init)
+    destroyed_then_store("ended-account-with-log", "The funded constructor writes a slot and deposits code. "
+                         "The first call logs and destroys the account. A later call funds it again without a rise "
+                         "or a second log (SATIN-SD-015).", init, invoke(target) + invoke(target, 1),
+                         endowment=1, contract_balance=2)
+    destroyed_then_store("destroyed-in-constructor", "The constructor destroys itself before it stores a slot or "
+                         "deposits code. The first destruction refills the created leaf and its record.", destroy)
+    init = returning(destroy)
+    destroyed_then_store("deposit-before-destruction", "The creation deposits its code before it is called to "
+                         "destroy itself. The code's state and history charges are returned.", init, invoke(address(init)))
+
+    # Deposit after the mark. The companion cases without the survivor store expose the original kept byte count.
+    # One above the usual forward keeps the explicit operand distinct from the keyless overhead.
+    init = returning(destroy, delegatecall_with(100_001, LIBRARY, 0) + b"\x50")
+    target = address(init)
+    library = {LIBRARY: model.Account(nonce=1, code=destroy)}
+    for name, tail in (("deposit-after-mark", b""), ("deposit-after-mark-called-again", invoke(target, gas=100_000))):
+        intent = ("The constructor marks its account through DELEGATECALL before returning the runtime. "
+                  "The deposit keeps code history and data size without state gas.")
+        if tail:
+            intent += " Calling the deposited code again applies the table for nothing (SATIN-SD-011)."
+        case(name, intent, create2(0, init, salt) + tail + STOP, gas=low, accounts=library)
+        destroyed_then_store(name + "-with-survivor-store", intent, init, tail, accounts=library)
+
+    # CREATE2 mainline and restoration branches. Keep a funded CREATE2 port separately below.
+    init = returning(destroy, sstore(1, 1))
+    target = address(init)
+    for name, ending, meaning in (
+        ("discarded-halt", push(2**32 - 1) + b"\x51" + STOP, "halted by an unaffordable memory load"),
+        ("discarded-revert", revert(0, 0), "reverted"),
+    ):
+        wrapper = {WRAPPER: model.Account(nonce=1, code=invoke(target) + ending)}
+        case(name, f"The creator catches a wrapper {meaning} after the wrapper's child destroyed itself. "
+             "The mark is discarded. The CREATE2 target survives with its runtime, slot and state charges "
+             "(SATIN-SD-010, SATIN-POOL-014).", create2(0, init, salt) + invoke(WRAPPER, gas=2_000_000) + STOP,
+             accounts=wrapper)
+        if name == "discarded-revert":
+            destroyed_then_store("reverted-then-kept", "The wrapper's revert takes back the first mark. The creator "
+                                 "then destroys the target in a kept call and the table refunds its charges once "
+                                 "(SATIN-SD-010, SATIN-POOL-014).", init,
+                                 invoke(WRAPPER, gas=2_000_000) + invoke(target), accounts=wrapper)
+
+    init = returning(destroy)
+    wrapper = {WRAPPER: model.Account(nonce=1, code=invoke(address(init)) + revert(0, 0))}
+    case("discarded-revert-without-slot", "The wrapper reverts a destruction of deposited code with no storage "
+         "writes. The target's leaf, code and both account records stand (SATIN-SD-010, SATIN-POOL-014).",
+         create2(0, init, salt) + invoke(WRAPPER, gas=2_000_000) + STOP, accounts=wrapper)
+
+    init = returning(destroy, sstore(1, 1) + sstore(2, 1) + sstore(1, 0))
+    destroyed_then_store("restored-slot-before-destruction", "The constructor writes two slots and clears one. "
+                         "The table refunds only the other slot and takes back its record.", init, invoke(address(init)))
+
+    init = returning(selfdestruct_to(ABSENT))
+    target = address(init)
+    destroyed_then_store("second-destruction-without-balance", "Both calls destroy the same account with no balance. "
+                         "The repeat makes no beneficiary and subtracts no growth (SATIN-SD-011).", init,
+                         invoke(target, gas=300_000) * 2)
+    case("second-destruction-funded", "The first call marks the account with no balance. A second call sends a wei "
+         "and destroys it to the same absent beneficiary, which pays the only kept leaf charge (SATIN-STATE-001, "
+         "SATIN-STATE-012, SATIN-SD-011).", create2(0, init, salt) + invoke(target) + invoke(target, 1) + STOP,
+         contract_balance=1)
+
+    # The storage-only leaf must be at the calculated CREATE2 address. Return the actual post-creation SLOAD.
+    read_slot = push(1) + b"\x54\x5f\x52" + ret(0, 32)
+    init = returning(jump_if(b"\x36", read_slot, destroy))
+    target = address(init)
+    code = (create2(0, init, salt) + call(MAX_GAS, target, 0, 1) + push(32) + b"\x52" + returndata_to(0)
+            + call(MAX_GAS, target, 0, 0) + push(64) + b"\x52" + ret(0, 96))
+    case("present-storage-leaf", "CREATE2 lands on a zero-nonce leaf that held a nonzero slot. A call returns the "
+         "slot as zero before the following destruction. The present leaf's charge and rise remain "
+         "(SATIN-SD-017, SATIN-STATE-012).", code, accounts={target: model.Account(storage={1: 5})})
+
+    # A funded CREATE2 target with a runtime that stores calldata or destroys toward an absent beneficiary.
+    runtime = jump_if(b"\x36", b"\x5f\x35" + push(1) + b"\x55" + STOP, selfdestruct_to(ABSENT))
+    init = returning(runtime, sstore(1, 1))
+    target = address(init)
+    create_funded = create2(1, init, salt)
+    destroy_funded = invoke(target, gas=300_000)
+    case("funded-destruction", "A funded target is created, writes a slot and deposits code. Its kept destruction "
+         "returns those charges and funds the new beneficiary.", create_funded + destroy_funded + STOP,
+         gas=low, contract_balance=10)
+    for name, ending, gas, tail in (
+        ("funded-destruction-reverted", revert(0, 0), low, b""),
+        ("funded-destruction-halted", INVALID, 20_000_000, b""),
+        ("funded-destruction-reverted-then-kept", revert(0, 0), low, destroy_funded),
+    ):
+        wrapper = {WRAPPER: model.Account(nonce=1, code=destroy_funded + ending)}
+        intent = ("The wrapper discards the funded destruction and its transfer. "
+                  + ("A later kept destruction refunds the charged leaf, code and slot once." if tail else
+                     "The created account still holds its wei, runtime and slot value one.")
+                  + " (SATIN-SD-010, SATIN-POOL-014).")
+        case(name, intent, create_funded + invoke(WRAPPER, gas=2_000_000) + tail + STOP,
+             gas=gas, accounts=wrapper, contract_balance=10)
+
+    # The second call really moves value. Its LOG3 word differs from the first's and both survive.
+    init = returning(b"\x34\x5f\x52" + log_word + destroy, sstore(1, 1))
+    target = address(init)
+    case("ordered-logs-on-repeat", "Two calls to the funded target emit LOG3 before destroying it. The second call "
+         "supplies a wei, so the log words differ. The logs stay in receipt order with both destruction transfers "
+         "(SATIN-SD-011, SATIN-SD-015).", create2(1, init, salt) + invoke(target, gas=300_000)
+         + invoke(target, 1, gas=300_000) + STOP, gas=low, contract_balance=10)
+
+    init = returning(jump_if(b"\x36", b"\x5f\x35" + push(1) + b"\x55" + STOP, destroy),
+                     sstore(1, 1) + sstore(2, 1) + sstore(2, 0))
+    case("second-slot-restored", "A CREATE2 constructor clears its second slot, then the deployed code destroys "
+         "the account. The table refunds only the live slot, leaving the creator's record.",
+         create2(0, init, salt) + invoke(address(init), gas=300_000) + STOP, gas=low)
+    return out
 
 
 def selfdestruct_gap_cases() -> list[Case]:
@@ -4923,6 +5066,15 @@ def keyless_gap_cases() -> list[Case]:
     return out
 
 
+def fresh_slot_loop(slots: int) -> bytes:
+    """A constructor that writes each of a run of distinct high slots. Their keys are outside the gas figures."""
+    counter = push(slots)
+    loop = push(1) + b"\x81" + push(1 << 64) + b"\x01\x55"  # SSTORE(base + counter, 1)
+    loop += push(1) + b"\x90\x03" + push(len(counter)) + b"\x56"  # decrement and jump back
+    exit_pc = len(counter) + 6 + len(loop)
+    return counter + b"\x5b\x80\x15" + push(exit_pc) + b"\x57" + loop + b"\x5b\x50" + STOP
+
+
 def keyless_pool_cases() -> list[Case]:
     """The same keyless creation boundaries without and with an initial reservoir."""
     out = []
@@ -4962,11 +5114,7 @@ def keyless_pool_cases() -> list[Case]:
     # Each iteration writes a different high slot so its key cannot coincide with a gas figure.
     # The created leaf uses one unit before the first store.
     slots = model.TX_STATE_GROWTH_LIMIT * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
-    counter = push(slots)
-    loop = push(1) + b"\x81" + push(1 << 64) + b"\x01\x55"  # SSTORE(base + counter, 1)
-    loop += push(1) + b"\x90\x03" + push(len(counter)) + b"\x56"  # decrement and jump back
-    exit_pc = len(counter) + 6 + len(loop)
-    fill_slots = counter + b"\x5b\x80\x15" + push(exit_pc) + b"\x57" + loop + b"\x5b\x50" + STOP
+    fill_slots = fresh_slot_loop(slots)
     slot_signed = 150_000_000
     slot_data = keyless_data(carried(fill_slots, gas=slot_signed), large_override)
     slot_reservoir = (model.TX_BODY_SIZE + len(slot_data)) * model.COST_PER_HISTORY_BYTE
@@ -5075,6 +5223,30 @@ def keyless_pool_cases() -> list[Case]:
          "through seven. It sees the uncapped forward, the relayer's address and price, and the signer as caller "
          "(SATIN-KEY-011)", env_words + one, gas_price=7)
     return out
+
+
+def keyless_creation_budget_cases() -> list[Case]:
+    """A successful constructor and a constructor stop, both carried from signer nonce zero."""
+    page = dict(spec=CURRENT_SPEC, system=True, to=model.KEYLESS_DEPLOY, code=None, pools=True, returned_state=True)
+    large_override = 10_000_000_000
+    log_data = bytes([0xab]) * 32
+    writes_and_logs = sstore(1, 1) + bytes_to_memory(log_data) + log(0, 0, len(log_data), []) + init_returning(STOP)
+    succeeds = Case("satin/keyless/budget/constructor-keeps-slot-and-log", "The signer starts absent. The constructor "
+                    "writes a fresh slot and emits a nonempty word of log data from the deploy address before it "
+                    "deposits code. The state and receipt retain both effects and the ABI uses both pools "
+                    "(SATIN-KEY-015, SATIN-POOL-008).", data=keyless_data(carried(writes_and_logs, gas=1_000_000),
+                                                                         large_override),
+                    gas=model.EXECUTION_CAP * 2, **page)
+    slots = model.TX_STATE_GROWTH_LIMIT * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
+    stop_data = keyless_data(carried(fresh_slot_loop(slots), gas=150_000_000), large_override)
+    body_history = (model.TX_BODY_SIZE + len(stop_data)) * model.COST_PER_HISTORY_BYTE
+    headroom = body_history + slots * model.SLOT_STATE + 2 * model.ACCOUNT_STATE + 5_000_000
+    stops = Case("satin/keyless/budget/nonce-zero-stop-with-reservoir", "The created account uses one unit of the "
+                 "constructor's growth budget. Its fresh slots cross the budget and roll back while the parent "
+                 "keeps the nonce-zero signer's bump and record. The parent catches the stop in its ABI and "
+                 "the give-back returns to the reservoir (SATIN-KEY-015, SATIN-KEY-016, SATIN-POOL-008, "
+                 "SATIN-POOL-014, SATIN-POOL-015).", data=stop_data, gas=model.EXECUTION_CAP + headroom, **page)
+    return [succeeds, stops]
 
 
 # --- The deposits page, the Oracle and the small system contracts (D-109) ---------------------------
@@ -6800,6 +6972,11 @@ def size_cases() -> list[Case]:
                   "account without code"),
                  boundary=f"the initcode {'one byte over' if over else 'at'} MAX_INITCODE_SIZE", to=None, data=bytes(size),
                  gas=gas, **page))
+    add(Case("satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir", "A transaction with initcode at "
+             "MAX_INITCODE_SIZE runs above the execution cap. The body's history and the prepaid created leaf draw "
+             "from the reservoir. The latter has no regular legacy share (SATIN-POOL-024).",
+             to=None, data=bytes(init_max), gas=model.EXECUTION_CAP * 2, spec=CURRENT_SPEC, size_page=True,
+             pools=True, returned_state=True))
     # From `83c0d26` on, a deposit's top-level creation is not checked against MAX_INITCODE_SIZE: its creation runs
     # subject to its other checks and charges, where at `bcf260d` it was a failed deposit (D-112, closing D-105's hold).
     # The model derives a creating deposit as the deposits page's cases do (`system_pages`, D-109).

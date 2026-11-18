@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1135** (1135 gating, 0 quarantined).
+Cases: **1159** (1159 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -3536,9 +3536,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
@@ -3758,9 +3760,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1001-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -3948,9 +3952,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -4126,9 +4132,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -4273,9 +4281,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -4463,9 +4473,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -4672,9 +4684,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -4901,9 +4915,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -5047,8 +5063,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -5181,9 +5199,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -5326,9 +5346,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/answer/revert-33-bytes] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -5472,9 +5494,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/1000-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/998-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/fresh-slots-979] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/from-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/contract-call/from-constructor-with-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/absent-signer] | gating | unqualified | [satin-c130558] |
@@ -5613,6 +5637,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
@@ -5627,6 +5652,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/authorizations/999-new-authorities] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/budget/fresh-slots-980-signer-nonce-one] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/detention/earlier-limit-stands] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/detention/signer-is-beneficiary] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/limits/log-after-hints-crosses] | gating | unqualified | [satin-c130558] |
@@ -5828,6 +5854,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/limit-stops/start-crossing/value-call-one-byte-over] | gating | unqualified | [satin-cdded1e] |
 | [satin/limit-stops/state-growth-one-over] | gating | unqualified | [satin-5fb2688] |
 | [satin/limit-stops/state-growth-one-over-with-reservoir] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-LIM-008
 
@@ -7310,6 +7344,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/total-gas/at-block-gas-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/total-gas/one-above-eip-8037-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/value-transfer-control] | gating | unqualified | [satin-5fb2688] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/bare-revert/above-cap] | gating | unqualified | [satin-83c0d26] |
@@ -7389,6 +7425,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/insufficient-balance-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/limit-stops/state-growth-one-over-with-reservoir] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/capacity-between-multiples] | gating | unqualified | [satin-d34e626] |
@@ -7503,6 +7560,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/value-start-record-halts] | gating | unqualified | [satin-bcf260d] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/bare-revert/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/ef-code-deposit/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/ef-code-deposit/below-cap] | gating | unqualified | [satin-83c0d26] |
@@ -7550,6 +7608,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/outcomes/size/deployed-code-over-limit] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/stop/child-halted-control] | gating | unqualified | [satin-c130558] |
 | [satin/outcomes/stop/child-stopped-caught] | gating | unqualified | [satin-c130558] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/not-created/new-beneficiary-caller-reverts] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
 
@@ -7564,6 +7629,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/pre-frame-spill/creation-reverts] | gating | unqualified | [satin-bcf260d] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/bare-revert/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/bare-revert/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/ef-code-deposit/above-cap] | gating | unqualified | [satin-83c0d26] |
@@ -7792,6 +7858,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/creation/code-bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/empty-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/initcode-reverts] | gating | unqualified | [satin-d34e626] |
@@ -8148,6 +8215,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/beneficiary-read/marked-after-charges] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8188,6 +8276,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8218,6 +8327,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/creation-over-storage/survives] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
@@ -8230,6 +8340,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8263,6 +8394,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8296,6 +8448,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8329,6 +8502,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8362,6 +8556,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8395,6 +8610,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8427,6 +8663,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/selfdestruct/budget/absent-leaf-falls-first] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8454,6 +8711,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/repeated/no-balance] | gating | unqualified | [satin-cdded1e] |
@@ -8477,6 +8739,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/marked/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/repeated/funded-to-new-beneficiary] | gating | unqualified | [satin-cdded1e] |
@@ -8485,6 +8749,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/first-effective/in-constructor] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/code-deposited-destroyed-again] | gating | unqualified | [satin-cdded1e] |
@@ -8495,6 +8764,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/logs-stay] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/marked/value-burned] | gating | unqualified | [satin-cdded1e] |
@@ -8505,6 +8790,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/creation-over-storage/survives] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
@@ -8514,6 +8800,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/creation-over-storage/survives] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
@@ -8528,6 +8815,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/first-effective/to-itself] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/late-failure/beneficiary-read-data-fits] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/late-failure/beneficiary-read-data-stopped] | gating | unqualified | [satin-bcf260d] |
@@ -8551,6 +8848,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/discarded/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/discarded/one-of-two-accounts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/discarded/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -8616,6 +8934,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/contract-limits/create2/initcode-at-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/create2/initcode-over-limit-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/creation-tx/initcode-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/creation-tx/initcode-over-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/deposit/initcode-over-limit] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/keyless/initcode-at-limit] | gating | unqualified | [satin-bcf260d] |
@@ -8641,6 +8960,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/contract-limits/creation-tx/initcode-at-limit] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/creation-tx/initcode-over-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/deposit/initcode-over-limit] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/keyless/initcode-at-limit] | gating | unqualified | [satin-bcf260d] |
@@ -8670,6 +8990,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/contract-limits/create2/short-of-salt-memory-crossing] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/static-frame/create-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/static-frame/create2-detained] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-SIZE-006
 
@@ -8705,6 +9046,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
@@ -8775,6 +9137,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/creation-over-storage/survives] | gating | unqualified | [satin-bcf260d] |
@@ -8832,6 +9210,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
@@ -8942,6 +9341,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/creation-over-storage/survives] | gating | unqualified | [satin-bcf260d] |
@@ -9055,6 +9470,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/pools/balance-only-address/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/creation-over-storage/survives] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/first-effective/empty-leaf-with-storage] | gating | unqualified | [satin-cdded1e] |
@@ -9095,6 +9511,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/selfdestruct/budget/present-leaf-rise-crosses] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/charges/new-beneficiary-state-paid] | gating | unqualified | [satin-bcf260d] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/created/fresh-slot] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/created/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
@@ -9879,6 +10316,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/delegated-sender-funds-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/reads/absent-authorities-out-of-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
@@ -9891,6 +10329,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/keyless/callcode-runs-keyless-code] | gating | unqualified | [satin-83c0d26] |
 | [satin/interception/keyless/delegatecall-runs-keyless-code] | gating | unqualified | [satin-83c0d26] |
 | [satin/interception/keyless/staticcall-runs-keyless-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/pools/balance-only-address/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/below-cap] | gating | unqualified | [satin-83c0d26] |
@@ -9986,6 +10426,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/system-contracts/access-control/own-query-empty] | gating | unqualified | [satin-83c0d26] |
 | [satin/system-contracts/access-control/own-query-exact] | gating | unqualified | [satin-83c0d26] |
@@ -10032,6 +10493,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/delegated-sender-funds-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/reads/absent-authorities-out-of-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
@@ -10044,6 +10506,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/interception/keyless/callcode-runs-keyless-code] | gating | unqualified | [satin-83c0d26] |
 | [satin/interception/keyless/delegatecall-runs-keyless-code] | gating | unqualified | [satin-83c0d26] |
 | [satin/interception/keyless/staticcall-runs-keyless-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/pools/balance-only-address/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/below-cap] | gating | unqualified | [satin-83c0d26] |
@@ -10139,6 +10603,27 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | gating | unqualified | [satin-5fb2688] |
+| [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-after-mark-with-survivor-store] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/deposit-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/destroyed-in-constructor] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-halt] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/discarded-revert-without-slot] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ended-account-with-log] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/funded-destruction-reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/ordered-logs-on-repeat] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/present-storage-leaf] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/restored-slot-before-destruction] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/reverted-then-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-funded] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-destruction-without-balance] | gating | unqualified | [satin-83c0d26] |
+| [satin/selfdestruct/create2/second-slot-restored] | gating | unqualified | [satin-83c0d26] |
 | [satin/selfdestruct/marked/fresh-slot-on-little-gas] | gating | unqualified | [satin-cdded1e] |
 | [satin/system-contracts/access-control/own-query-empty] | gating | unqualified | [satin-83c0d26] |
 | [satin/system-contracts/access-control/own-query-exact] | gating | unqualified | [satin-83c0d26] |
@@ -10499,6 +10984,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/contract-limits/create2/short-of-salt-memory-crossing]: ../slice/cases/satin/contract-limits/create2/short-of-salt-memory-crossing.json
 [satin/contract-limits/creation-tx/deployed-code-at-limit]: ../slice/cases/satin/contract-limits/creation-tx/deployed-code-at-limit.json
 [satin/contract-limits/creation-tx/initcode-at-limit]: ../slice/cases/satin/contract-limits/creation-tx/initcode-at-limit.json
+[satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir]: ../slice/cases/satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir.json
 [satin/contract-limits/creation-tx/initcode-over-limit]: ../slice/cases/satin/contract-limits/creation-tx/initcode-over-limit.json
 [satin/contract-limits/deposit/initcode-over-limit]: ../slice/cases/satin/contract-limits/deposit/initcode-over-limit.json
 [satin/contract-limits/keyless/initcode-at-limit]: ../slice/cases/satin/contract-limits/keyless/initcode-at-limit.json
@@ -10815,9 +11301,11 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/keyless/authorizations/1001-new-authorities]: ../slice/cases/satin/keyless/authorizations/1001-new-authorities.json
 [satin/keyless/authorizations/998-new-authorities]: ../slice/cases/satin/keyless/authorizations/998-new-authorities.json
 [satin/keyless/authorizations/999-new-authorities]: ../slice/cases/satin/keyless/authorizations/999-new-authorities.json
+[satin/keyless/budget/constructor-keeps-slot-and-log]: ../slice/cases/satin/keyless/budget/constructor-keeps-slot-and-log.json
 [satin/keyless/budget/fresh-slots-979]: ../slice/cases/satin/keyless/budget/fresh-slots-979.json
 [satin/keyless/budget/fresh-slots-980]: ../slice/cases/satin/keyless/budget/fresh-slots-980.json
 [satin/keyless/budget/fresh-slots-980-signer-nonce-one]: ../slice/cases/satin/keyless/budget/fresh-slots-980-signer-nonce-one.json
+[satin/keyless/budget/nonce-zero-stop-with-reservoir]: ../slice/cases/satin/keyless/budget/nonce-zero-stop-with-reservoir.json
 [satin/keyless/contract-call/from-constructor]: ../slice/cases/satin/keyless/contract-call/from-constructor.json
 [satin/keyless/contract-call/from-constructor-with-value]: ../slice/cases/satin/keyless/contract-call/from-constructor-with-value.json
 [satin/keyless/contract-call/no-value]: ../slice/cases/satin/keyless/contract-call/no-value.json
@@ -11233,6 +11721,27 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/selfdestruct/charges/new-beneficiary-state-paid]: ../slice/cases/satin/selfdestruct/charges/new-beneficiary-state-paid.json
 [satin/selfdestruct/charges/static-cost-crossing]: ../slice/cases/satin/selfdestruct/charges/static-cost-crossing.json
 [satin/selfdestruct/charges/static-cost-out-of-gas]: ../slice/cases/satin/selfdestruct/charges/static-cost-out-of-gas.json
+[satin/selfdestruct/create2/deposit-after-mark]: ../slice/cases/satin/selfdestruct/create2/deposit-after-mark.json
+[satin/selfdestruct/create2/deposit-after-mark-called-again]: ../slice/cases/satin/selfdestruct/create2/deposit-after-mark-called-again.json
+[satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store]: ../slice/cases/satin/selfdestruct/create2/deposit-after-mark-called-again-with-survivor-store.json
+[satin/selfdestruct/create2/deposit-after-mark-with-survivor-store]: ../slice/cases/satin/selfdestruct/create2/deposit-after-mark-with-survivor-store.json
+[satin/selfdestruct/create2/deposit-before-destruction]: ../slice/cases/satin/selfdestruct/create2/deposit-before-destruction.json
+[satin/selfdestruct/create2/destroyed-in-constructor]: ../slice/cases/satin/selfdestruct/create2/destroyed-in-constructor.json
+[satin/selfdestruct/create2/discarded-halt]: ../slice/cases/satin/selfdestruct/create2/discarded-halt.json
+[satin/selfdestruct/create2/discarded-revert]: ../slice/cases/satin/selfdestruct/create2/discarded-revert.json
+[satin/selfdestruct/create2/discarded-revert-without-slot]: ../slice/cases/satin/selfdestruct/create2/discarded-revert-without-slot.json
+[satin/selfdestruct/create2/ended-account-with-log]: ../slice/cases/satin/selfdestruct/create2/ended-account-with-log.json
+[satin/selfdestruct/create2/funded-destruction]: ../slice/cases/satin/selfdestruct/create2/funded-destruction.json
+[satin/selfdestruct/create2/funded-destruction-halted]: ../slice/cases/satin/selfdestruct/create2/funded-destruction-halted.json
+[satin/selfdestruct/create2/funded-destruction-reverted]: ../slice/cases/satin/selfdestruct/create2/funded-destruction-reverted.json
+[satin/selfdestruct/create2/funded-destruction-reverted-then-kept]: ../slice/cases/satin/selfdestruct/create2/funded-destruction-reverted-then-kept.json
+[satin/selfdestruct/create2/ordered-logs-on-repeat]: ../slice/cases/satin/selfdestruct/create2/ordered-logs-on-repeat.json
+[satin/selfdestruct/create2/present-storage-leaf]: ../slice/cases/satin/selfdestruct/create2/present-storage-leaf.json
+[satin/selfdestruct/create2/restored-slot-before-destruction]: ../slice/cases/satin/selfdestruct/create2/restored-slot-before-destruction.json
+[satin/selfdestruct/create2/reverted-then-kept]: ../slice/cases/satin/selfdestruct/create2/reverted-then-kept.json
+[satin/selfdestruct/create2/second-destruction-funded]: ../slice/cases/satin/selfdestruct/create2/second-destruction-funded.json
+[satin/selfdestruct/create2/second-destruction-without-balance]: ../slice/cases/satin/selfdestruct/create2/second-destruction-without-balance.json
+[satin/selfdestruct/create2/second-slot-restored]: ../slice/cases/satin/selfdestruct/create2/second-slot-restored.json
 [satin/selfdestruct/created/fresh-slot]: ../slice/cases/satin/selfdestruct/created/fresh-slot.json
 [satin/selfdestruct/created/fresh-slot-on-little-gas]: ../slice/cases/satin/selfdestruct/created/fresh-slot-on-little-gas.json
 [satin/selfdestruct/creation-over-storage/creator-reverts]: ../slice/cases/satin/selfdestruct/creation-over-storage/creator-reverts.json
