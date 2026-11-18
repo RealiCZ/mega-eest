@@ -1,0 +1,221 @@
+{
+  "caseId": "satin/take-backs/descendant/fresh-slot-restore-halted",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x138fa",
+      "floor": "0x3a98",
+      "gasUsed": "0x32fca",
+      "history": "0x7850",
+      "historyBytes": "0x15e",
+      "refund": "0x0",
+      "regular": "0x138fa",
+      "state": "0x17e80",
+      "total": "0x32fca"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x32fca",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "350",
+        "reported": "0x15e"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "1",
+        "reported": "0x1"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "returnedState": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "codeHash": "0x1a3432b7bc27a097b352a9f76467396e6ad47d2bf3638e1fd56a3516c6ea7d7a",
+          "nonce": "0x1"
+        },
+        "0x00000000000000000000000000000000000c0de6": {
+          "balance": "0x0",
+          "codeHash": "0x841b8f14e63bc9c3b469cff0323469eaf9a3680f414964a01a2d60076f217b9e",
+          "nonce": "0x1"
+        },
+        "0x4200000000000000000000000000000000000011": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001a": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001b": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "0x0000000000000000000000000000000000000000000000000000000000000001": "0x1"
+        }
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x60016001555f5f5f5f620c0de661c350f45000",
+          "nonce": "0x1",
+          "storage": {
+            "0x0000000000000000000000000000000000000000000000000000000000000001": "0x1"
+          }
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x60016001555f5f5f5f620c0de661c350f45000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0de6": {
+          "balance": "0x0",
+          "code": "0x5f600155fe",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1808026a037abd59b2ae917db9ae6528f8e6a7e588b445bd1372ea295b330cecfdb76351da00af281f0a2f8216a03102560bc82b936a2cb1e51b7b5052600045195e427b885"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a parent writes a fresh slot and delegates to code that restores it to zero and then halts. The parent catches the halt and keeps its original write, record and state-growth unit (SATIN-ACCT-004, SATIN-ACCT-011, SATIN-POOL-014)"
+    },
+    "definition": "tools/make_slice.py::take_back_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:returned-state",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-004",
+    "SATIN-ACCT-011",
+    "SATIN-POOL-014",
+    "SATIN-TAKE-002",
+    "SATIN-TAKE-003",
+    "SATIN-TAKE-004",
+    "SATIN-TAKE-005",
+    "SATIN-TAKE-011",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+    "name": "megaeth/Satin"
+  }
+}

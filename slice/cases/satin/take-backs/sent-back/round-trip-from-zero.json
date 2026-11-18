@@ -1,0 +1,225 @@
+{
+  "caseId": "satin/take-backs/sent-back/round-trip-from-zero",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x8d59",
+      "floor": "0x3ad8",
+      "gasUsed": "0xf841",
+      "history": "0x6ae8",
+      "historyBytes": "0x137",
+      "refund": "0x0",
+      "regular": "0x8d59",
+      "state": "0x0",
+      "total": "0xf841"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xf841",
+      "logs": [
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000005",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de1",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de7"
+          ]
+        },
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000005",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de7",
+            "0x00000000000000000000000000000000000000000000000000000000000c0de1"
+          ]
+        }
+      ],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "631",
+        "reported": "0x277"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "returnedState": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0xa",
+          "codeHash": "0xfd00eb4b92b5577b3b6c3200619d532852b4f2dd255eb776efdb1410d6637812",
+          "nonce": "0x1"
+        },
+        "0x00000000000000000000000000000000000c0de7": {
+          "balance": "0x0",
+          "codeHash": "0xa3abf9ec36b806c80d74022c8eaf3703be82181d591d0746f517a88e7f7ecc03",
+          "nonce": "0x1"
+        },
+        "0x4200000000000000000000000000000000000011": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001a": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001b": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {}
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0xa",
+          "code": "0x346032575f5f5f5f6005620c0de77ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff150005b00",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0de7": {
+          "balance": "0x0",
+          "code": "0x5f5f5f5f6005620c0de17ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff15000",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1800126a0f0f9e41cd946bcd040bf1caa759fe2ff63722ee0af26507b886be09b698a1daea06c76c508be96e2ee87c75535eb50a410e09e06d073bb202d95636405bc2f99b2"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "an existing contract starts at zero balance, receives value and returns it in full to the contract that sent it. Both account records and their history are taken back. The two transfer logs and the transaction's calldata remain counted (SATIN-ACCT-004, SATIN-ACCT-006, SATIN-HIST-009)"
+    },
+    "definition": "tools/make_slice.py::take_back_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:returned-state",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-004",
+    "SATIN-ACCT-006",
+    "SATIN-HIST-009",
+    "SATIN-TAKE-004",
+    "SATIN-TAKE-006",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+    "name": "megaeth/Satin"
+  }
+}

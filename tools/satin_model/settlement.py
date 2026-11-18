@@ -289,6 +289,9 @@ class SettlementMixin:
             d.add("gasLedgers", f"the caller is empty under EIP-161: its new-account state gas {fmt(ACCOUNT_STATE)} x m={m} = "
                   f"{fmt(caller_state)}, the first charge before the frame", "SATIN-DEP-003", "SATIN-SCHED-008")
             d.add("resources", "the created caller is one unit of state growth", "SATIN-DEP-003", "SATIN-ACCT-014")
+            if self.promoted and tx.sender not in self.pre:
+                d.add("resources", "the promoted transaction's new caller is a fixed body record and does not count "
+                      "as a KV update", "SATIN-ACCT-008")
             if self.lists:
                 d.add("gasLedgers", "the caller the deposit creates is no authorization and is not held to the list rule: "
                       "it is decided by EIP-161 emptiness, not by an authority's existence, so " +

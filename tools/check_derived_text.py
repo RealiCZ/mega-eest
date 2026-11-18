@@ -14,12 +14,17 @@ The old figures of a constant are:
 - the figures it feeds directly, from the table `MUTATIONS` below: the constant itself and its
   products with the byte counts and counts the slice uses;
 - every figure of a case's expected gas ledgers, receipt gas and resources that changes when the
-  constant changes: the sums and products the derivations reach.
+  constant changes: the sums and products the derivations reach. Check these across the slice,
+  since one case can explain an old figure from another.
 
 A figure equal to one of the case's own inputs — its transaction's gas limit or value, or a number
 its contract code pushes (the system contracts' code aside) — is that input, which no constant
 sets, and is not taken for a stale figure: a call requesting 100,000 gas, or a gas limit of
 100,000, does not follow `KEYLESS_DEPLOY_OVERHEAD_GAS`.
+
+Known ledger and receipt formulas identify the positions of their observation fields. A figure in
+one of those positions can equal an old figure from another case if the full step matches the
+formula and its operands agree with this case's regenerated fields.
 
 Usage:
     tools/check_derived_text.py
@@ -79,7 +84,31 @@ MUTATIONS = {
     ),
 }
 
-NUMBER = re.compile(r"(?<![\w.\-])(\d{1,3}(?:,\d{3})+|\d+)(?![\w])")
+DECIMAL = r"(?:\d{1,3}(?:,\d{3})+|\d+)"
+NUMBER = re.compile(rf"(?<![\w.\-])({DECIMAL})(?![\w])")
+# Match the complete steps emitted by the transaction and settlement model. Named operands
+# correspond to observation fields, with floor_block denoting a second use of the same floor.
+FLOOR_FORMULA = re.compile(
+    rf"floor = base (?P<base>{DECIMAL}) \+ (?P<rate>{DECIMAL}) x (?P<bytes>{DECIMAL}) "
+    rf"calldata and access-list bytes = (?P<floor>{DECIMAL})"
+)
+LEDGER_FORMULAS = (
+    re.compile(rf"ledgers: state (?P<state>{DECIMAL}), history (?P<history>{DECIMAL}) "
+               rf"\((?P<historyBytes>{DECIMAL}) bytes\), regular = total (?P<total>{DECIMAL}) "
+               rf"- state - history = (?P<regular>{DECIMAL})"),
+    re.compile(rf"the first frame ends holding {DECIMAL} of regular gas, {DECIMAL} of it withheld: "
+               rf"the withheld part is unspent gas, returned to the sender with the rest of the unspent gas, "
+               rf"and is not part of the total (?P<total>{DECIMAL}) that caps the refund"),
+    re.compile(rf"gas used max\((?P<total>{DECIMAL}) - (?P<refund>{DECIMAL}), floor (?P<floor>{DECIMAL})\) "
+               rf"= (?P<gasUsed>{DECIMAL}); the block counts max\(regular (?P<regular>{DECIMAL}), "
+               rf"floor (?P<floor_block>(?P=floor))\) = (?P<blockGas>{DECIMAL})"),
+    re.compile(rf"gas used (?P<gasUsed>{DECIMAL}), block gas max\((?P<regular>{DECIMAL}), (?P<floor>{DECIMAL})\)"),
+    re.compile(rf"gas used max\((?P<total>{DECIMAL}), floor (?P<floor>{DECIMAL})\) = (?P<gasUsed>{DECIMAL}), "
+               rf"which the deposit does not pay; block gas max\((?P<regular>{DECIMAL}), (?P<floor_block>(?P=floor))\)"),
+)
+RECEIPT_FORMULA = re.compile(
+    rf"status (?P<status>0x[01]), gas used (?P<gasUsed>{DECIMAL}), (?P<logs>{DECIMAL}) logs in execution order"
+)
 
 
 def generate(out: str, changes: dict[str, int] | None = None) -> tuple[dict[str, str], dict]:
@@ -153,29 +182,57 @@ def inputs(doc: dict, explanation: dict | None) -> set[int]:
     return out
 
 
+def decimal(text: str) -> int:
+    return int(text.replace(",", ""))
+
+
+def derived_spans(step: str, path: str, expected: dict) -> set[tuple[int, int]]:
+    """Positions of observation fields in a complete formula that agrees with this case's expectation."""
+    if path == "/expected/gasLedgers" and (ledgers := expected.get("gasLedgers")):
+        if match := FLOOR_FORMULA.fullmatch(step):
+            floor = int(ledgers["floor"], 16)
+            computed = decimal(match["base"]) + decimal(match["rate"]) * decimal(match["bytes"])
+            if computed == floor == decimal(match["floor"]):
+                return {match.span("floor")}
+        for formula in LEDGER_FORMULAS:
+            match = formula.fullmatch(step)
+            if match and all(decimal(value) == int(ledgers[field.removesuffix("_block")], 16)
+                             for field, value in match.groupdict().items()):
+                return {match.span(field) for field in match.groupdict()}
+    if path == "/expected/receipt" and (receipt := expected.get("receipt")):
+        match = RECEIPT_FORMULA.fullmatch(step)
+        if (match and match["status"] == receipt["status"] and decimal(match["logs"]) == len(receipt["logs"])
+                and decimal(match["gasUsed"]) == int(receipt["gasUsed"], 16)):
+            return {match.span("gasUsed")}
+    return set()
+
+
 def texts(files: dict[str, str], explained: dict):
-    """(where, text, the case's input figures) for every human-readable string of the slice and of the
-    explanations of its cases."""
+    """(where, text, input figures, proven spans) for the slice and the cases' derivations."""
     for rel, raw in sorted(files.items()):
         doc = json.loads(raw)
         if rel == "index.json":
             for q in doc.get("quarantine", []):
-                yield f"{rel} {q['caseId']} knownFail.verdict", q["knownFail"]["verdict"], set()
+                yield f"{rel} {q['caseId']} knownFail.verdict", q["knownFail"]["verdict"], set(), set()
             continue
-        explanation = explained.get(doc["caseId"])
+        case_id = doc["caseId"]
+        explanation = explained.get(case_id)
         own = inputs(doc, explanation)
         prov = doc.get("provenance", {})
         for key, value in sorted(prov.get("authoring", {}).items()):
-            yield f"{rel} authoring.{key}", value, own
+            yield f"{rel} authoring.{key}", value, own, set()
+        expected = doc.get("expected") or {}
         for d in (explanation or {}).get("derivation", []):
+            path = d["path"]
             for i, step in enumerate(d["steps"]):
-                yield f"{rel} --explain derivation {d['path']} step {i}", step, own
+                proven = derived_spans(step, path, expected)
+                yield f"{rel} --explain derivation {path} step {i}", step, own, proven
         if "quarantine" in prov:
-            yield f"{rel} quarantine.verdict", prov["quarantine"]["verdict"], own
+            yield f"{rel} quarantine.verdict", prov["quarantine"]["verdict"], own, set()
         if "note" in prov:
-            yield f"{rel} note", prov["note"], own
+            yield f"{rel} note", prov["note"], own, set()
     with open(os.path.join(ROOT, "slice", "README.md"), encoding="utf-8") as f:
-        yield "slice/README.md", f.read(), set()
+        yield "slice/README.md", f.read(), set(), set()
 
 
 def figures(files: dict[str, str]) -> dict[tuple, int]:
@@ -216,11 +273,11 @@ def main() -> int:
                                                                                   getattr(model, other) - 1)}
             found = []
             scanned = 0
-            for where, text, own in texts(mutated, explained):
+            for where, text, own, proven in texts(mutated, explained):
                 scanned += 1
                 for m in NUMBER.finditer(text):
-                    figure = int(m.group(1).replace(",", ""))
-                    if figure not in stale or figure in own:
+                    figure = decimal(m[1])
+                    if figure not in stale or figure in own or m.span(1) in proven:
                         continue
                     context = text[max(0, m.start() - 40):m.end() + 40]
                     found.append((where, m.group(1), context.replace("\n", " ")))

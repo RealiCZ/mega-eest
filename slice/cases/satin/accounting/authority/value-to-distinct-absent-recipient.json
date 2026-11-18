@@ -1,0 +1,217 @@
+{
+  "caseId": "satin/accounting/authority/value-to-distinct-absent-recipient",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x93b8",
+      "floor": "0x5208",
+      "gasUsed": "0x76056",
+      "history": "0xa8c8",
+      "historyBytes": "0x1eb",
+      "refund": "0x0",
+      "regular": "0x93b8",
+      "state": "0x623d6",
+      "total": "0x76056"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x76056",
+      "logs": [
+        {
+          "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+          "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b",
+            "0x000000000000000000000000000000000000000000000000000000000000dead"
+          ]
+        }
+      ],
+      "status": "0x1",
+      "type": "0x4"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "651",
+        "reported": "0x28b"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "2",
+        "reported": "0x2"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "2",
+        "reported": "0x2"
+      }
+    },
+    "returnedState": {
+      "accounts": {
+        "0x000000000000000000000000000000000000dead": {
+          "balance": "0x1",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x125940c60de364f680a70be9c6896c520e724770": {
+          "balance": "0x0",
+          "codeHash": "0xc492bfbae8537a4545c7eef2a2100f59e2e331b1fe92fa6da384ecd1c8beaaba",
+          "nonce": "0x1"
+        },
+        "0x4200000000000000000000000000000000000011": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001a": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001b": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a763ffff",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {}
+    },
+    "state": {
+      "accounts": {
+        "0x000000000000000000000000000000000000dead": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x125940c60de364f680a70be9c6896c520e724770": {
+          "balance": "0x0",
+          "code": "0xef010000000000000000000000000000000000000de1e9",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a763ffff",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0x04f8c101808080830f424094000000000000000000000000000000000000dead0180c0f85cf85a019400000000000000000000000000000000000de1e98001a027c49554829e447d599a8f9a87400296ab844f330635446cd59157f9ac85b861a051bd1d7e0cf78236cc1ef2e997baa18311431821790a6848491f6ad5018165f680a0e0f436be32e96501345188b3c0b25234b460ac70122d5efe9263c9928b755aeaa05b4d459acee3118536f52d1a1871847ae28140e677cb395ba0affee959fc30a0"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a transaction applies an authorization to an absent authority and carries value to a different absent address. Both accounts are charged, recorded and counted for growth (SATIN-AUTH-008, SATIN-ACCT-014, SATIN-STATE-011)"
+    },
+    "definition": "tools/make_slice.py::accounting_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:returned-state",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-002",
+    "SATIN-ACCT-005",
+    "SATIN-ACCT-012",
+    "SATIN-ACCT-014",
+    "SATIN-AUTH-008",
+    "SATIN-STATE-011",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+    "name": "megaeth/Satin"
+  }
+}

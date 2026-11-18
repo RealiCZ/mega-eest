@@ -202,9 +202,10 @@ KEYLESS_DEPLOY_CALL = selector("keylessDeploy(bytes,uint256)")
 # KeylessDeploy's KEYLESS_DEPLOY_CODE_HASH (SATIN-KEY-001), version 1.0.0.
 KEYLESS_DEPLOY_CODE_HASH = bytes.fromhex("55020d41649acf7a84add6e628b887f802218d9ac86f142ef0994da43ea5eeb6")
 # SATIN-ICPT-001: the intercepted methods of the two contracts whose answer is the node's.
+IS_VOLATILE_DATA_ACCESS_DISABLED = selector("isVolatileDataAccessDisabled()")
 INTERCEPTED = {
     MEGA_ACCESS_CONTROL: {selector("disableVolatileDataAccess()"), selector("enableVolatileDataAccess()"),
-                          selector("isVolatileDataAccessDisabled()")},
+                          IS_VOLATILE_DATA_ACCESS_DISABLED},
     MEGA_LIMIT_CONTROL: {selector("remainingComputeGas()")},
 }
 NON_ZERO_TRANSFER = selector("NonZeroTransfer()")  # SATIN-ICPT-003
