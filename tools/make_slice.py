@@ -293,7 +293,7 @@ class Case:
                  detention=False, block_hashes=None, stops=False, lists=False, outcomes=False, chain=CHAIN_ID,
                  system_flag=False, gas_used_check=None, system_tx=False, source_hash=None, synthetic=False,
                  sender=None, block_number=BLOCK_NUMBER, system_pages=False, precompile_page=False,
-                 size_page=False, pricing=False):
+                 size_page=False, pricing=False, returned_state=False, forbidden_accounts=()):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -324,6 +324,8 @@ class Case:
         # into the burn (`settle_burn`).
         self.make, self.params, self.retune = make, dict(params or {}), list(retune or [])
         self.reads = reads  # the case carries the reads group (D-61)
+        self.returned_state = returned_state or bool(forbidden_accounts)
+        self.forbidden_accounts = forbidden_accounts
         self.pools = pools  # the case carries the gasPools group (D-64)
         self.destruction = destruction  # the case cites the destruction page's own rules (D-70)
         self.coinbase = coinbase  # the block beneficiary
@@ -1464,7 +1466,7 @@ def reads_cases() -> list[Case]:
              f"the SLOAD, under the warm base {model.WARM_READ}: the slot is loaded before the charge runs the frame out of "
              "gas, and is in the reads", spec=spec, system=True, deposit=(0, 1_000_000), sender_nonce=3, reads=True,
              make=lambda gas: get_slot + call(gas, model.ORACLE, 0, 36) + STOP, params={"gas": 1_000},
-             retune=[("oracle-sload", 50, "gas", 1)]))
+             retune=[("oracle-sload", 50, "gas", 1)], returned_state=True))
     # A cold account load the gas cannot pay is not made (SATIN-WIT-012).
     for short in (True, False):
         left = cold - 1 if short else cold
@@ -1475,7 +1477,7 @@ def reads_cases() -> list[Case]:
                   "the reads as read and absent"),
                  boundary=f"the regular gas at BALANCE {'one below' if short else 'at'} {fmt(cold)}", spec=spec,
                  code=push(int.from_bytes(UNTOUCHED, "big")) + b"\x31" + STOP, gas=100_000, reads=True,
-                 tune=("balance", left)))
+                 tune=("balance", left), returned_state=True, forbidden_accounts=(UNTOUCHED,) if short else ()))
     return out
 
 
@@ -2045,7 +2047,8 @@ def take_back_cases() -> list[Case]:
         p_code = jump_if(b"\x34", STOP, first + call(MAX_GAS, RETURNER, 1, 0) + b"\x50" + STOP)
         add(Case(f"satin/take-backs/sent-back/{name}", "P, a contract the transaction has not changed, calls Q, unchanged "
                  f"too, with 1 wei, and Q calls P back with 1 wei: {tail}", spec=spec, pools=True, contract_balance=10,
-                 code=p_code, accounts={RETURNER: model.Account(nonce=1, balance=10, code=back)}))
+                 code=p_code, accounts={RETURNER: model.Account(nonce=1, balance=10, code=back)},
+                 returned_state=name == "round-trip"))
     # The signs turned: Q first sends P 1 wei, then P's call to Q takes both records back, and Q's call back would make
     # them again, which Q, left 5,000 of regular gas after its forward and no reservoir, cannot pay.
     left = 5_000
@@ -4413,7 +4416,7 @@ def keyless_cases() -> list[Case]:
     case("refusal/override-and-signer-nonce", "a gasLimitOverride one below the signed gas limit and a signer at nonce "
          "2: step 6 answers before step 8", carried(code), override=signed - 1, accounts=signer(nonce=2))
     case("refusal/signer-nonce-two", "a signer at nonce 2: step 8 refuses it, the signer's account read and the "
-         "deploy address not", carried(code), accounts=signer(nonce=2), reads=True)
+         "deploy address not", carried(code), accounts=signer(nonce=2), reads=True, forbidden_accounts=(DEPLOY,))
     case("refusal/signer-nonce-and-code", "a signer at nonce 2 that holds code: step 8 answers before step 9",
          carried(code), accounts=signer(nonce=2, code=b"\x60\x00"))
     case("refusal/signer-has-code", "a signer that holds code other than a delegation indicator and cannot fund the "
@@ -4434,7 +4437,7 @@ def keyless_cases() -> list[Case]:
          "InvalidSignature()", carried(pad + code, r=NO_POINT_R))
     case("refusal/taken-and-unfunded", "a deploy address that holds code and a carried value the signer cannot fund: "
          "step 12 answers before step 13, both accounts read", carried(code, value=1),
-         accounts={**signer(nonce=1), DEPLOY: model.Account(nonce=1, code=b"\x00")}, reads=True)
+         accounts={**signer(nonce=1), DEPLOY: model.Account(nonce=1, code=b"\x00")}, reads=True, returned_state=True)
     case("refusal/insufficient-balance", "a carried value the empty signer cannot fund: step 10 charges the signer's "
          "account, then step 13 refuses, and that state gas comes back", carried(code, value=1))
     # The forward's checks, steps 11 and 15, at their edges: the call's regular gas one short of the signed gas limit.
@@ -4537,7 +4540,8 @@ def keyless_cases() -> list[Case]:
                                                        "carried signer nor the address its creation would deploy to "
                                                        "(SATIN-WIT-002)"),
                  system=True, spec=spec, code=bytes_to_memory(raw) + call(500_000, model.KEYLESS_DEPLOY, value, len(raw))
-                 + record_result() + STOP, contract_balance=10, gas=2_000_000, reads=value == 0))
+                 + record_result() + STOP, contract_balance=10, gas=2_000_000, reads=value == 0,
+                 forbidden_accounts=(SIGNER, DEPLOY) if value == 0 else ()))
     # Recognition whatever code the state holds at the address (SATIN-ICPT-006).
     held = {model.KEYLESS_DEPLOY: model.Account(code=b"\x0c")}
     add(Case("satin/keyless/recognition/held-code-unrecognized", "recognition whatever code the state holds "
@@ -5244,7 +5248,8 @@ def system_pages_gap_cases() -> list[Case]:
              "and then its frame start refuses the call")):
         add(Case(f"satin/oracle/send-hint/{name}", f"a contract's CALL of sendHint {what} (SATIN-ORCL-006, "
                  "SATIN-ORCL-007)", reads=True, contract_balance=balance,
-                 code=laid + call(gas_op, model.ORACLE, value, len(hint)) + record_result() + STOP, **sys_pages))
+                 code=laid + call(gas_op, model.ORACLE, value, len(hint)) + record_result() + STOP,
+                 returned_state=name == "stipend-unfunded", **sys_pages))
 
     # 4. Malformed and noncanonical input (SATIN-ORCL-009).
     unpadded = model.SEND_HINT + word(7) + word(0x40) + word(1) + b"\xaa"
@@ -5364,7 +5369,7 @@ def system_pages_gap_cases() -> list[Case]:
     add(Case("satin/system-contracts/limit-control/own-call-with-value", "the transaction's own call of "
              "remainingComputeGas() carrying 1 wei: answered NonZeroTransfer() at depth 0 before any value moves, the "
              "value staying with the sender and the start record's history given back (SATIN-MLC-001)",
-             to=model.MEGA_LIMIT_CONTROL, code=None, data=remaining, value=1, **sys_pages))
+             to=model.MEGA_LIMIT_CONTROL, code=None, data=remaining, value=1, returned_state=True, **sys_pages))
     add(Case("satin/interception/access-control/own-call-with-value", "the transaction's own call of "
              "disableVolatileDataAccess() carrying 1 wei: answered NonZeroTransfer() at depth 0 before any value moves, "
              "the start record's history given back (SATIN-ICPT-003)", to=model.MEGA_ACCESS_CONTROL, code=None,
@@ -5961,7 +5966,7 @@ def accounting_cases() -> list[Case]:
     case("records/pass-on-exact-to-absent", "a contract passes all the value it received to an absent recipient. Its "
          "own balance and record return to their pre-transfer state (SATIN-ACCT-004). The first sender's and last "
          "recipient's records stand, with two transfer logs and one unit of state growth (SATIN-ACCT-005, SATIN-ACCT-014)",
-         spec=CURRENT_SPEC, contract_balance=10,
+         spec=CURRENT_SPEC, contract_balance=10, returned_state=True,
          accounts={PAYEE_Q: model.Account(nonce=1, code=call(0, PAYEE_R, 1, 0) + b"\x50" + STOP)},
          code=send(PAYEE_Q) + STOP)
     # SATIN-ACCT-004, -006, -011, SATIN-HIST-006, -007: a SELFDESTRUCT of an account the transaction did not create that
@@ -6007,7 +6012,8 @@ def accounting_cases() -> list[Case]:
          "rise and the creator's nonce record", contract_balance=10, code=create(0, STOP) + STOP)
     case("merge/creation-endowment-unfunded", "a contract holding nothing creates with an endowment of 1 wei: the opcode "
          "refuses the creation before it charges anything for the start and before it reads the created address, so "
-         "nothing is created, the creator's nonce is not bumped and nothing is recorded", code=create(1, STOP) + STOP)
+         "nothing is created, the creator's nonce is not bumped and nothing is recorded", code=create(1, STOP) + STOP,
+         returned_state=True)
     # SATIN-ACCT-010: the fee accounts and the other roles an account can take.
     vault1 = {model.BASE_FEE_VAULT: model.Account(balance=1)}
     case("fee-account/destruction-to-base-fee-vault", "a contract the transaction did not create, holding 1 wei, destroys "
@@ -6816,7 +6822,7 @@ def delegate_refusal_cases() -> list[Case]:
                  "loading the target and gets that charge back at the delegate's refusal (SATIN-SCHED-003). "
                  f"It pays {fmt(cold)} in static cost and cold surcharge and reverts with {refusal}, handing back "
                  f"{fmt(left - cold)}. "
-                 "The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012)", reads=True)
+                 "The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012)", reads=True, returned_state=True)
     left = cold + warm
     refusing(call_op(0xF4, BENEFICIARY_DELEGATOR), left, "delegatecall-cold-target-refused", f"REFUSING holds "
              f"{fmt(left)} of regular gas at a DELEGATECALL of an account that is not warm and holds an EIP-7702 "
@@ -6831,7 +6837,7 @@ def delegate_refusal_cases() -> list[Case]:
                  f"{fmt(left - cold)} after paying {fmt(cold)} in static cost and cold surcharge (SATIN-SCHED-003). "
                  "The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012), with no later "
                  "access to the target",
-                 reads=True)
+                 reads=True, returned_state=True)
     # The memory expansion stays charged: the opcode's own growth for its two ranges together, nothing for memory the
     # frame already holds.
     words = 32
@@ -6950,14 +6956,15 @@ def delegate_refusal_cases() -> list[Case]:
                          f"{fmt(surcharge)}, charged last, is gas detention's crossing: the frame is stopped with {stop}, "
                          f"not reverted with {refusal}, handing back {fmt(whole - warm)}, the withheld part included, and "
                          "the delegator stays in the reads (SATIN-MAC-004, SATIN-MAC-007, SATIN-OUT-008, SATIN-STOP-020, "
-                         "SATIN-WIT-002, SATIN-WIT-012)", boundary=boundary)
+                         "SATIN-WIT-002, SATIN-WIT-012)", boundary=boundary, returned_state=True)
     spendable = cold
     detained_refusal(static, whole, spendable, "surcharge-paid", f"{held} {fmt(spendable)}: refused at the delegate's "
                      f"load, the call pays its static cost and its target's cold surcharge, {fmt(cold)}, from the "
                      f"spendable part, which can, and the frame reverts with {refusal}, not a limit stop, handing back "
                      f"{fmt(whole - cold)}; the caller, left no allowance, returns REFUSING's return data at no cost, "
                      f"so the refusal's error shows (SATIN-MAC-004, SATIN-MAC-005, SATIN-OUT-008, SATIN-STOP-020)",
-                     boundary=f"the spendable part at the static cost and the cold surcharge, {fmt(cold)}", tail=None)
+                     boundary=f"the spendable part at the static cost and the cold surcharge, {fmt(cold)}", tail=None,
+                     returned_state=True)
     spendable = warm
     detained_refusal(static, whole, spendable, "warm-target-refused", f"after TIMESTAMP, REFUSING holds {fmt(whole)} of "
                      "regular gas at a STATICCALL of an account the transaction's access list warms, which holds an "
@@ -6984,7 +6991,7 @@ def delegate_refusal_cases() -> list[Case]:
                      f"again, and its target's cold surcharge, charged last, is gas detention's crossing: the frame is "
                      f"stopped with {stop}, the memory staying charged, handing back {fmt(whole - warm - grown)}, and the "
                      "delegator stays in the reads (SATIN-MAC-004, SATIN-MAC-007, SATIN-OUT-008, SATIN-STOP-020, "
-                     "SATIN-WIT-002, SATIN-WIT-012)")
+                     "SATIN-WIT-002, SATIN-WIT-012)", returned_state=True)
     whole = 20_000
     valued = call_op(0xF1, BENEFICIARY_DELEGATOR, value=1)
     held = f"after TIMESTAMP, REFUSING, which holds no balance, holds {fmt(whole)} of regular gas at a CALL with value " \
@@ -7015,7 +7022,7 @@ def delegate_refusal_cases() -> list[Case]:
              "reads (SATIN-MAC-007, SATIN-WIT-004, SATIN-WIT-012)", detention=True, reads=True, gas=50_000_000,
              accounts={**delegator, REFUSING: model.Account(nonce=1, code=call_op(0xFA, BENEFICIARY_DELEGATOR,
                                                                                   inp=(0, size)) + STOP)},
-             code=b"\x42\x50" + disable + call(forward, REFUSING, 0, 0) + RETURN_RETURNDATA, **page))
+             forbidden_accounts=(BENEFICIARY_DELEGATOR,), code=b"\x42\x50" + disable + call(forward, REFUSING, 0, 0) + RETURN_RETURNDATA, **page))
 
     # SATIN-PCMP-008: a precompile's address delegating to the beneficiary ends at or before the delegate's load, at the
     # edge of the delegation guard, and never reaches dispatch.
@@ -7087,7 +7094,8 @@ def delegate_refusal_cases() -> list[Case]:
                  "the most a gas operand holds, of an account holding an EIP-7702 delegation to the block beneficiary: "
                  "the refusal at the delegate's load comes before any forward is computed, so the call is settled as "
                  "the same call asking for nothing, handing back "
-                 f"{fmt(left - (warm if kw else cold))}" + read_note, reads=observe_reads, **kw)
+                 f"{fmt(left - (warm if kw else cold))}" + read_note, reads=observe_reads,
+                 returned_state=observe_reads, **kw)
     # 4. Warmth an EIP-7702 authorization's application gives the target (SATIN-AUTH-014).
     to_authority = call_op(0xFA, AUTHORITY)
     left = 2 * warm
@@ -7265,7 +7273,7 @@ def synthetic_message(c: Case, sender: bytes) -> dict:
                                   for e in c.authorizations]}
 
 
-def build(c: Case):
+def build(c: Case, *, observe_returned: bool = False):
     sender = c.sender if c.sender else OTHER if c.deposit and c.absent_sender else SENDER
     pre = {
         L1_BLOCK: model.Account(code=b"\xfe"),
@@ -7323,8 +7331,12 @@ def build(c: Case):
                     destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists,
                     outcomes=c.outcomes, system_tx=c.system_tx, current=c.spec in CURRENT_SPECS,
                     system_pages=c.system_pages, precompile_page=c.precompile_page, size_page=c.size_page,
-                    pricing=c.pricing)
+                    pricing=c.pricing, returned_state=observe_returned)
     result = run.run()
+    if observe_returned:
+        if result.observations["outcome"]["commit"]["status"] != "committed":
+            raise SystemExit(f"{c.case_id}: no transaction state was returned")
+        result.observations["returnedState"] = run.returned_state_observation(c.forbidden_accounts)
     result.probe = run.probe
 
     inp = {
@@ -7366,7 +7378,7 @@ QUARANTINE: dict[str, dict] = {}
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
                "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources", "reads": "/expected/reads",
-               "limit": "/expected/limit", "gasPools": "/expected/gasPools"}
+               "limit": "/expected/limit", "gasPools": "/expected/gasPools", "returnedState": "/expected/returnedState"}
 
 
 def settle_burn(params: dict) -> None:
@@ -7476,6 +7488,10 @@ def pinned(c: Case, applied: list[str], quarantine: dict | None) -> list[str]:
     if area_of(c.case_id) not in AREA_SCOPE:
         raise SystemExit(f"{c.case_id}: the area {area_of(c.case_id)} has no scope in AREA_SCOPE")
     named = set(RULE_ID.findall(" ".join([c.intent, c.boundary, (quarantine or {}).get("verdict", "")])))
+    if c.returned_state:
+        named.update(("SATIN-WIT-005", "SATIN-WIT-008"))
+        if c.forbidden_accounts:
+            named.update(("SATIN-WIT-004", "SATIN-WIT-012"))
     pins = [r for r in applied if in_scope(r, area_of(c.case_id)) or r in named]
     if not pins:
         raise SystemExit(f"{c.case_id}: pins no rule: none of {applied} is in its area's scope or named by its definition")
@@ -7495,7 +7511,7 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, retired: set, spe
         remade(c)
     if c.tune:
         tuned(c)
-    inp, result, decoded = build(c)
+    inp, result, decoded = build(c, observe_returned=c.returned_state)
     c.probe = result.probe
     for key, want in c.check.items():
         got = int(result.observations["gasLedgers"][key], 16)
@@ -7520,7 +7536,8 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, retired: set, spe
     requires = ["group:gas-ledgers", "group:limit", "group:outcome", "group:receipts", "group:resources", "group:state",
                 "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else []) \
         + (["group:limit-stop"] if result.observations["limit"] else []) + (["group:gas-pools"] if c.pools else []) \
-        + (["feature:synthetic-transaction"] if c.synthetic else [])
+        + (["feature:synthetic-transaction"] if c.synthetic else []) \
+        + (["group:returned-state"] if c.returned_state else [])
     authoring = {"intent": c.intent, **({"boundary": c.boundary} if c.boundary else {})}
     fx = {
         "format": "mega-execution-fixture",

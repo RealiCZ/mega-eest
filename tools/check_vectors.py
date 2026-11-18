@@ -268,6 +268,8 @@ class Schemas:
                 if not -bound <= int(inst) < bound:
                     raise Reject(code, path, "out of range")
         if isinstance(inst, dict):
+            if len(inst) < s.get("minProperties", 0):
+                raise Reject(code, path, "too few properties")
             for name in s.get("required", []):
                 if name not in inst:
                     raise Reject("missing-field", child(path, name), "missing")
@@ -409,7 +411,7 @@ def derive_requirements(profile, inp, exp) -> set:
     out = set()
     if profile == "state-transition":
         out |= {"group:outcome", "group:state", "group:receipts", "group:gas-ledgers", "group:resources", "group:limit"}
-        for key, group in (("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("checkpoints", "group:checkpoints")):
+        for key, group in (("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("returnedState", "group:returned-state"), ("checkpoints", "group:checkpoints")):
             if key in exp:
                 out.add(group)
         _limit_requirements(exp.get("limit"), out)
@@ -496,6 +498,12 @@ def _valid_blocks(blocks):
 
 def semantic_checks(case, specs: Specs):
     profile, inp, exp = case["profile"], case["input"], case["expected"]
+    returned = exp.get("returnedState")
+    if returned is not None:
+        for address, slots in sorted(returned["storage"].items()):
+            if any(value is not None for value in slots.values()) and returned["accounts"].get(address) is None:
+                raise Reject("invalid-reference", child("/expected/returnedState/storage", address),
+                             "a returned slot requires its account entry")
     # 1. Specs.
     if case["specRef"]["descriptor"] not in specs.by_digest:
         raise Reject("unknown-spec", "/specRef/descriptor", "unknown descriptor")
@@ -551,6 +559,8 @@ def semantic_checks(case, specs: Specs):
         executed = _outcome(exp["outcome"], "/expected/outcome")
         groups = ["receipt", "gasLedgers", "resources"]
         if not executed:
+            if returned is not None:
+                raise Reject("inconsistent-outcome", "/expected/returnedState", "the transaction returned no state")
             groups.append("limit")
             groups += [g for g in ("gasPools", "detention") if g in exp]
             for g in groups:

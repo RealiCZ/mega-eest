@@ -8491,6 +8491,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-load-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
+| [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 
@@ -8498,6 +8501,24 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/merge/creation-endowment-unfunded] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | gating | unqualified | [satin-c130558] |
+| [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
 | [satin/reads/balance-cold-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/delegate-loaded] | gating | unqualified | [satin-5fb2688] |
@@ -8505,11 +8526,31 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | gating | unqualified | [satin-5fb2688] |
+| [satin/system-contracts/limit-control/own-call-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/take-backs/sent-back/round-trip] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-WIT-008
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/merge/creation-endowment-unfunded] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/refusal/taken-and-unfunded] | gating | unqualified | [satin-c130558] |
+| [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
 | [satin/reads/balance-cold-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/delegate-loaded] | gating | unqualified | [satin-5fb2688] |
@@ -8517,6 +8558,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/reads/list-simulated-applied] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-out-of-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/oracle-slot-before-charge] | gating | unqualified | [satin-5fb2688] |
+| [satin/system-contracts/limit-control/own-call-with-value] | gating | unqualified | [satin-bcf260d] |
+| [satin/take-backs/sent-back/round-trip] | gating | unqualified | [satin-cdded1e] |
 
 ### SATIN-WIT-011
 
@@ -8558,7 +8601,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-load-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/halt/step-10-before-taken] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/reads/balance-cold-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/delegate-not-loaded] | gating | unqualified | [satin-5fb2688] |

@@ -29,7 +29,7 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
                  stops: bool = False, lists: bool = False, outcomes: bool = False, system_tx: bool = False,
                  current: bool = False, system_pages: bool = False, precompile_page: bool = False,
-                 size_page: bool = False, pricing: bool = False):
+                 size_page: bool = False, pricing: bool = False, returned_state: bool = False):
         self.env, self.pre, self.tx = env, pre, tx
         # A case of the precompile page's own rules (decision D-103): a call to a precompile where no limit is set is
         # decided by SATIN-PCMP-001 to -007, and the model runs KZG point evaluation, P256VERIFY and the BLS12-381
@@ -91,6 +91,10 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         self.reads = reads
         self.loaded_accounts: dict[bytes, Account | None] = {}
         self.loaded_slots: dict[tuple[bytes, int], int] = {}
+        self.returned_state = returned_state
+        # These logical loads survive frame rollback. External reads can share their keys.
+        self.journal_accounts: set[bytes] = set()
+        self.journal_slots: set[tuple[bytes, int]] = set()
         self.served_buckets: dict[int, int] = {}
         self.salt_bucket = salt_bucket  # (address, slot or None) -> bucket id
         self.d = Derivation()

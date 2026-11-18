@@ -20,6 +20,7 @@ the engine:
 | Resource use and the limit stops | `resources`, `limit` |
 | Logs and the receipt | `receipt` |
 | The logical reads the specification requires a node to keep for the witness | `reads` |
+| The account and slot entries the transaction returns for commitment | `returnedState` |
 | Effects that bytecode can observe | what the case's own code returns or stores: `outcome.execution.output`, `state` |
 
 The groups are those of [format.md](format.md#observations). The slice's cases are
@@ -97,12 +98,21 @@ A case that looks like the test does not take over an obligation when:
 A completed account or slot load has two observable obligations. The transaction performs the
 logical load, and its returned state names the key before commitment, including when a cache
 serves the load, a frame rolls back or stops, or a deposit fails (`SATIN-WIT-005`, `SATIN-WIT-008`).
-A database-read observation covers the load itself. To retire a returned-key assertion, use a gate
-that inspects the unfiltered execution result and fails when the key is missing. For a skipped
-load, distinguish an unexpected database read from an unexpected returned key. Use a transaction
-where no later probe supplies the key. Record any separate assertion on an entry's value or hash.
-An untouched returned entry must carry its pre-state value, so a gate that takes over that
-assertion must compare the returned value with the pre-state.
+A database-read observation covers the load itself. To retire a returned-key assertion, identify
+the `returnedState` case that inspects the unfiltered execution result and fails if the key is
+missing. A skipped load can require both the absence of a read and the absence of a returned key.
+Use a transaction where no later probe supplies the key.
+
+Record any separate assertion on an entry's value or hash. To take over an untouched-value
+assertion, the case must compare the corresponding returned balance, nonce, code hash or slot
+with its pre-state value. For an account created and destroyed in the same transaction,
+implementations can expose different temporary metadata and slot values after finalization.
+The portable assertion checks presence of the completed load's key and compares only fields
+whose values the specification fixes.
+
+L1 fee and footprint reads made outside the journal belong to the node's block-side reporting
+under `SATIN-WIT-011`. A journal load of the same address or slot still contributes a returned
+key.
 
 ### The order of evidence
 

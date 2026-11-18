@@ -1,4 +1,4 @@
-"""The `reads` group: what the transaction loads, as the stateless witness needs it (`SATIN-WIT-001`)."""
+"""Logical loads, their transaction or block source, and the values they expose."""
 
 from __future__ import annotations
 
@@ -6,22 +6,30 @@ from .constants import (
     BASE_FEE_VAULT, ex, L1_BASE_FEE_SLOT, L1_BLOB_BASE_FEE_SLOT, L1_BLOCK_ADDRESS, L1_ECOTONE_SCALARS_SLOT,
     L1_FEE_OVERHEAD_SLOT, L1_FEE_VAULT, L1_OPERATOR_SCALARS_SLOT, MIN_BUCKET_SIZE, OPERATOR_FEE_VAULT,
 )
-from .records import bucket_multiplier, h, q, Unmodelled, word
+from .records import Account, bucket_multiplier, h, q, Unmodelled, word
+
+
+def account_values(account: Account) -> dict:
+    return {"nonce": q(account.nonce), "balance": q(account.balance), "codeHash": h(ex.keccak256(account.code))}
 
 
 class ReadsMixin:
-    """The `reads` group: what the transaction loads, as the stateless witness needs it (`SATIN-WIT-001`)."""
+    """Records the logical loads made by the model and the capacities served to it."""
 
-    def load(self, address: bytes, why: str, *rules: str) -> None:
+    def load(self, address: bytes, why: str, *rules: str, external: bool = False) -> None:
         """An account the transaction loads, as the pre-state holds it (absent: None)."""
+        if self.returned_state and not external:
+            self.journal_accounts.add(address)
         if address not in self.loaded_accounts:
             self.loaded_accounts[address] = self.pre.get(address)
             if self.reads:
                 self.d.add("reads", f"{h(address)} is loaded: {why}", *rules)
 
-    def load_slot(self, address: bytes, key: int, why: str, *rules: str) -> None:
+    def load_slot(self, address: bytes, key: int, why: str, *rules: str, external: bool = False) -> None:
         """A slot the transaction loads, as the pre-state holds it; an absent account has no slot to load
         (SATIN-WIT-006)."""
+        if self.returned_state and not external:
+            self.journal_slots.add((address, key))
         if (address, key) not in self.loaded_slots and self.pre.get(address) is not None:
             self.loaded_slots[(address, key)] = self.pre[address].storage.get(key, 0)
             if self.reads:
@@ -64,7 +72,7 @@ class ReadsMixin:
         slots, before it runs, and the fee recipients at its settlement (SATIN-WIT-008, -011)."""
         l1 = self.pre.get(L1_BLOCK_ADDRESS)
         self.load(L1_BLOCK_ADDRESS, "the L1 block information the transaction's L1 fee and data-availability "
-                  "footprint read, outside its journal, reported with it", "SATIN-WIT-003", "SATIN-WIT-011")
+                  "footprint read, outside its journal, reported with it", "SATIN-WIT-003", "SATIN-WIT-011", external=True)
         slots = [L1_BASE_FEE_SLOT, L1_ECOTONE_SCALARS_SLOT, L1_BLOB_BASE_FEE_SLOT, L1_OPERATOR_SCALARS_SLOT]
         if l1 is not None and not l1.storage.get(L1_ECOTONE_SCALARS_SLOT, 0):
             slots.append(L1_FEE_OVERHEAD_SLOT)
@@ -72,7 +80,7 @@ class ReadsMixin:
             raise Unmodelled("an L1 block contract with Ecotone scalars")
         for slot in sorted(slots):
             self.load_slot(L1_BLOCK_ADDRESS, slot, "the L1 fee computation's slots, the overhead slot as the Ecotone "
-                           "scalars are empty, and the footprint gas scalar's", "SATIN-WIT-011")
+                           "scalars are empty, and the footprint gas scalar's", "SATIN-WIT-011", external=True)
         for who, what in ((self.env.coinbase, "the block beneficiary"), (BASE_FEE_VAULT, "the base fee vault"),
                           (L1_FEE_VAULT, "the L1 fee vault"), (OPERATOR_FEE_VAULT, "the operator fee vault")):
             self.load(who, f"{what}, a fee recipient the settlement credits", "SATIN-WIT-008", "SATIN-BASE-001")
@@ -81,7 +89,7 @@ class ReadsMixin:
         """The `reads` group: the accounts and slots loaded, the code of every loaded account that has code
         (the witness holds it whether or not the load brought it, SATIN-WIT-001), and the SALT capacities
         served; no block hash, oracle service answer or hint is in this model's cases."""
-        accounts = {h(a): None if x is None else {"nonce": q(x.nonce), "balance": q(x.balance), "codeHash": h(ex.keccak256(x.code))}
+        accounts = {h(a): None if x is None else account_values(x)
                     for a, x in sorted(self.loaded_accounts.items())}
         storage: dict = {}
         for (a, k), v in sorted(self.loaded_slots.items()):
@@ -100,3 +108,25 @@ class ReadsMixin:
                        "data and the address of the frame that made the call", "SATIN-ORCL-007", "SATIN-WIT-001")
         return {"accounts": accounts, "storage": storage, "codes": codes, "blockHashes": {},
                 "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": [], "hints": hints}
+
+    def returned_state_observation(self, forbidden_accounts: tuple[bytes, ...]) -> dict:
+        """The journal's loaded keys and the model's settled values at those keys."""
+        accounts = {h(a): account_values(self.state.get(a, Account())) for a in sorted(self.journal_accounts)}
+        storage: dict = {}
+        for a, k in sorted(self.journal_slots):
+            storage.setdefault(h(a), {})[word(k)] = q(self.state.get(a, Account()).storage.get(k, 0))
+        for a in forbidden_accounts:
+            if a in self.journal_accounts:
+                raise Unmodelled(f"forbidden returned account {h(a)} was loaded")
+            accounts[h(a)] = None
+        self.d.add("returnedState", "the execution result names the journal's completed account and slot loads, "
+                   "including loads from reverted or halted frames, with the final value at each key. Entries "
+                   "whose state the transaction leaves unchanged carry their pre-state values",
+                   "SATIN-WIT-005", "SATIN-WIT-008")
+        if self.tx.kind != "deposit" and not self.promoted:
+            self.d.add("returnedState", "the L1 fee and footprint reads are outside the journal",
+                       "SATIN-WIT-011")
+        if forbidden_accounts:
+            self.d.add("returnedState", "the skipped account loads leave no returned entries at "
+                       + ", ".join(h(a) for a in forbidden_accounts), "SATIN-WIT-004", "SATIN-WIT-012")
+        return {"accounts": accounts, "storage": storage}

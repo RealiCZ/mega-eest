@@ -214,7 +214,7 @@ pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Va
             for g in ["group:outcome", "group:state", "group:receipts", "group:gas-ledgers", "group:resources", "group:limit"] {
                 add(g);
             }
-            for (key, group) in [("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("checkpoints", "group:checkpoints")] {
+            for (key, group) in [("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("returnedState", "group:returned-state"), ("checkpoints", "group:checkpoints")] {
                 if expected.get(key).is_some() {
                     add(group);
                 }
@@ -369,6 +369,9 @@ fn check_consistency(profile: Profile, input: &Value, expected: &Value) -> Resul
             let executed = check_outcome(outcome, "/expected/outcome")?;
             let mut groups = vec!["receipt", "gasLedgers", "resources"];
             if !executed {
+                if expected.get("returnedState").is_some() {
+                    return Err(err(ErrorCode::InconsistentOutcome, "/expected/returnedState", "the transaction returned no state"));
+                }
                 groups.push("limit");
                 for optional in ["gasPools", "detention"] {
                     if expected.get(optional).is_some() {

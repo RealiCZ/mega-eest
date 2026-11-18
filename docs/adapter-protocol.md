@@ -174,6 +174,21 @@ a case that does not require them (decision D-61).
 - `reads` is compared as every other group: exactly, so a load the specification does not require,
   and a load it requires that is missing, are each a difference.
 
+### Returned transaction state
+
+For a case requiring `group:returned-state`, both adapters project every entry in the transaction
+result in plain and instrumented runs. The revm adapter reads `MegaTransactionOutcome.state`
+including each storage entry's `present_value`. The evm2 adapter reads
+`ExecutedTx::account_changes()` including each storage entry's current value, before
+`ExecutedTx::commit()`. Both read the account metadata and slots before the state diff filters
+for touches and changes. The projection keeps absent-account keys and explicit zero slots.
+
+The expected keys come from the model's transaction journal loads. The recording layer for
+`reads` also observes L1 fee and footprint reads made outside the journal
+(`SATIN-WIT-011`). A journal load of the same address still belongs to `returnedState`. Block
+pre-execution reads, fees read outside the journal, and exports such as bucket capacities are
+accounted for separately by the witness rules.
+
 ### Gas pools
 
 `gasPools` describes the transaction's first frame (decision D-64). An adapter of this repository
@@ -205,7 +220,7 @@ case that does not require it.
 | `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `62f2964a` with `RealiCZ/evm2` at `c0a91cbb`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
 Both declare `state-transition` with its mandatory groups, `group:gas-pools`, `group:limit-stop`,
-`group:reads` and the features `deposit`, `salt` and `synthetic-transaction`. The revm-based adapter
+`group:reads`, `group:returned-state` and the features `deposit`, `salt` and `synthetic-transaction`. The revm-based adapter
 also runs a recorded `oracle-transcript`; the evm2-based adapter does not consume transcripts
 (D-45). Its connected service records hints and supplies no answers, so Oracle reads use the
 slot's value. Neither runs sparse pre-states, injected faults, or engine isolation of a deposit-only

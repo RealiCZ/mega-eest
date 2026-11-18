@@ -54,7 +54,7 @@ const SPEC: &str = "megaeth/Satin";
 
 /// The requirements this adapter supports: the mandatory groups of state-transition and the
 /// input features it converts.
-const SUPPORTED: [&str; 13] = [
+const SUPPORTED: [&str; 14] = [
     "feature:deposit",
     "feature:oracle-transcript",
     "feature:salt",
@@ -67,6 +67,7 @@ const SUPPORTED: [&str; 13] = [
     "group:reads",
     "group:receipts",
     "group:resources",
+    "group:returned-state",
     "group:state",
 ];
 
@@ -689,10 +690,11 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         db.block_hashes.insert(parse_u64(n)?, parse_b256(h.as_str().ok_or_else(|| bad("block hash"))?)?);
     }
     let loaded = db.loaded.clone();
-    let wants_reads = match member(request, "requires")? {
-        Value::Array(r) => r.iter().any(|x| x.as_str() == Some("group:reads")),
+    let requires = match member(request, "requires")? {
+        Value::Array(r) => r,
         _ => return Err(bad("request: requires is not a list")),
     };
+    let wants = |group| requires.iter().any(|x| x.as_str() == Some(group));
     let ctx = context(input, db)?;
     let (tx, facts) = match transaction(member(input, "transaction")?)? {
         Ok(t) => t,
@@ -700,10 +702,7 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
             return Ok(Run { observations: refused(refusal.phase, refusal.reason), diagnostics: obj(vec![]) })
         }
     };
-    let wants_pools = match member(request, "requires")? {
-        Value::Array(r) => r.iter().any(|x| x.as_str() == Some("group:gas-pools")),
-        _ => false,
-    };
+    let wants_pools = wants("group:gas-pools");
     let gas_limit = facts.gas_limit;
     let mut pools = None;
     let (executed, oracle_errors, frames): (Executed, Vec<String>, Option<u64>) = if instrumented || wants_pools {
@@ -730,7 +729,14 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         return Err(bad(e.clone()));
     }
     let mut observations = match executed {
-        Ok(outcome) => executed_observations(&outcome, &facts, &pre)?,
+        Ok(outcome) => {
+            let returned = wants("group:returned-state").then(|| returned_state(&outcome));
+            let mut observations = executed_observations(&outcome, &facts, &pre)?;
+            if let (Some(returned), Value::Object(m)) = (returned, &mut observations) {
+                m.insert("returnedState".into(), returned);
+            }
+            observations
+        }
         Err(EVMError::Transaction(e)) => {
             let reason = refusal_reason(&format!("{e:?}")).ok_or_else(|| bad(format!("unmapped refusal {e:?}")))?;
             // A gas limit above what the block has left is a skip at inclusion (SATIN-BLK-013).
@@ -738,7 +744,7 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         }
         Err(e) => return Err(bad(format!("the implementation failed: {e}"))),
     };
-    if wants_reads {
+    if wants("group:reads") {
         if let Value::Object(m) = &mut observations {
             m.insert("reads".into(), reads(&loaded.borrow(), &pre));
         }
@@ -960,6 +966,32 @@ fn executed_observations(o: &MegaTransactionOutcome, facts: &TxFacts, pre: &BTre
         ("resources", resources),
         ("limit", limit),
     ]))
+}
+
+fn returned_state(outcome: &MegaTransactionOutcome) -> Value {
+    let mut accounts = BTreeMap::new();
+    let mut storage = BTreeMap::new();
+    for (a, account) in &outcome.state {
+        let key = hex_bytes(a.as_slice());
+        let info = &account.info;
+        accounts.insert(
+            key.clone(),
+            obj(vec![
+                ("balance", qty_u256(info.balance)),
+                ("nonce", qty_u64(info.nonce)),
+                ("codeHash", b256(&info.code_hash)),
+            ]),
+        );
+        if !account.storage.is_empty() {
+            let slots = account
+                .storage
+                .iter()
+                .map(|(slot, entry)| (hex_bytes(&slot.to_be_bytes::<32>()), qty_u256(entry.present_value)))
+                .collect();
+            storage.insert(key, Value::Object(slots));
+        }
+    }
+    obj(vec![("accounts", Value::Object(accounts)), ("storage", Value::Object(storage))])
 }
 
 /// The state diff: every account whose existence, nonce, balance, code or storage differs from

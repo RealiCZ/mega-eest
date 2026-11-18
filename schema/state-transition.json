@@ -28,6 +28,34 @@
         "faults": {"$ref": "common.json#/$defs/Faults"}
       }
     },
+    "ReturnedState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accounts", "storage"],
+      "properties": {
+        "accounts": {
+          "type": "object",
+          "propertyNames": {"$ref": "common.json#/$defs/Address"},
+          "additionalProperties": {
+            "description": "A null expectation requires the address to be absent.",
+            "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/AccountRead"}]
+          }
+        },
+        "storage": {
+          "type": "object",
+          "propertyNames": {"$ref": "common.json#/$defs/Address"},
+          "additionalProperties": {
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": {"$ref": "common.json#/$defs/B256"},
+            "additionalProperties": {
+              "description": "A null expectation requires the slot key to be absent.",
+              "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/U256"}]
+            }
+          }
+        }
+      }
+    },
     "Expected": {
       "type": "object",
       "additionalProperties": false,
@@ -42,6 +70,7 @@
         "gasPools": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/GasPools"}]},
         "detention": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/Detention"}]},
         "reads": {"$ref": "common.json#/$defs/Reads"},
+        "returnedState": {"$ref": "#/$defs/ReturnedState"},
         "checkpoints": {"type": "array", "items": {"$ref": "common.json#/$defs/Checkpoint"}}
       }
     }

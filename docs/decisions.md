@@ -2958,3 +2958,25 @@ previously absent recipient, the middle contract's balance returns to its starti
 successful start takes back its record and its record history. The first sender's and final
 recipient's records and both logs stand, with the new recipient the only rise (`SATIN-ACCT-004`,
 `SATIN-ACCT-014`, `SATIN-HIST-009`).
+
+**D-150. Observe the transaction state returned for commitment.** The optional
+`group:returned-state` checks completed account and slot loads in the unfiltered execution
+result (`SATIN-WIT-005`, `SATIN-WIT-008`). Each adapter is compared independently to the
+model. A null expectation names a forbidden key, and the comparator rejects all additional
+keys. Account metadata and current slot values are read before touch or change filtering.
+The model's settled state supplies the expected values, including the pre-state value of
+any entry the transaction leaves unchanged.
+
+**D-151. Track the source of a load.** The model records journal keys at the logical load
+site and retains them across frame rollback. L1 fee and footprint reads are outside the
+journal (`SATIN-WIT-011`) and enter the witness through block-level reporting. A journal
+load of the same key still belongs to the returned state. A slot loaded in the journal is
+distinct from a witness slot, which `SATIN-WIT-006` excludes for an account absent before
+the block.
+
+**D-152. Use the existing inputs that isolate returned-state obligations.** The refusal
+cases make no later probe of the target. A memory crossing and an unpaid cold balance read
+test skipped loads. The keyless inner call forbids both derived keys. The value-bearing
+LimitControl refusal and unfunded Oracle hint check the zero balances in the returned state.
+Existing cases keep their schema envelope and gain the capability requirement with the new
+observation.
