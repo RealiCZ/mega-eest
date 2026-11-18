@@ -1,0 +1,148 @@
+{
+  "caseId": "satin/value-transfer/absent-recipient/no-value",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x3a98",
+      "floor": "0x3a98",
+      "gasUsed": "0xa528",
+      "history": "0x6a90",
+      "historyBytes": "0x136",
+      "refund": "0x0",
+      "regular": "0x3a98",
+      "state": "0x0",
+      "total": "0xa528"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0xa528",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "310",
+        "reported": "0x136"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf8608080830f424094000000000000000000000000000000000000dead808025a0da9f73a80240880ce2abe92b8e9fddd9a6abd6bd5b9b215d3fec796f5fd25a35a02c99b39427a3afb76a388b639625f8ad59010ecdced0155ac122a0d8ff7a6e4b"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "a top-level zero-value transaction to an absent recipient succeeds without creating its account, making a write record or emitting a transfer log (SATIN-ACCT-005, SATIN-ACCT-014)"
+    },
+    "definition": "tools/make_slice.py::cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-ACCT-005",
+    "SATIN-ACCT-014"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+    "name": "megaeth/Satin"
+  }
+}

@@ -360,6 +360,9 @@ class TransactionMixin:
                 d.add("gasLedgers", f"the value's recipient {h(recipient)} is an authority the list applied, whose write "
                       "record the list already made: the value to it makes no record again, so no start record and no "
                       "history for one", "SATIN-ACCT-009", "SATIN-AUTH-015", "SATIN-HIST-005")
+        elif not tx.value and recipient not in self.state:
+            d.add("resources", "the absent recipient gets zero value, so it is not created and the call makes no "
+                  "recipient record or state-growth rise", "SATIN-ACCT-005", "SATIN-ACCT-014")
         if start_record:
             pre_frame_history = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE
             d.add("gasLedgers", f"the first frame's start record ({'created account' if create else 'value recipient'}): "

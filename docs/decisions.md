@@ -2910,3 +2910,51 @@ creation received and returned across both pools (`SATIN-KEY-015`). The failure 
 `NotIntercepted()` (`SATIN-KEY-003`). The reads group observes the KeylessDeploy account and code,
 and the absence of reads of the signer and potential deploy address. Each would be an extra
 `reads.accounts` entry, even if the call returned the same error (`SATIN-WIT-002`).
+
+**D-122. Keyless checks that compete.** An empty signer one gas short of step 10's charge halts
+even when its deploy address holds code. The original unoccupied case is the control. The occupied
+case observes the signer's read and the absence of the later deploy-address read (`SATIN-KEY-005`,
+`SATIN-KEY-007`, `SATIN-WIT-012`). The successively later refusal pairs at steps 6 and 12, 8 and 12,
+8 and 13, 9 and 12, and 9 and 13 all make both predicates true. The returned custom error pins
+which check comes first (`SATIN-KEY-006`), as the existing occupied-and-unfunded case does for
+steps 12 and 13.
+
+**D-123. Keyless decoder boundaries and the funded forward.** A selector without an argument head
+runs the held bytecode. The empty revert data and regular ledger show that there was no
+interception overhead (`SATIN-ICPT-006`). A valid ABI bytes argument carrying a truncated RLP list
+is dispatched and then refused with `MalformedEncoding()` at step 3. A funded signer with a forward
+one below its signed gas limit after step 14 is refused at step 15. The encoded limits and the
+regular ledger distinguish that from an earlier refusal (`SATIN-KEY-005`).
+
+**D-124. An empty deposit caller with zero mint.** A deposit with no mint or value succeeds from
+an empty account leaf, charging that caller's new-account state gas once and reporting one unit
+of state growth (`SATIN-DEP-003`, `SATIN-STATE-011`). The successful minted and the failed deposit
+cases exercise their own boundaries.
+
+**D-125. Scaled charges through refusal and rollback.** A refused value call gives back the
+scaled new-account charge (`SATIN-POOL-015`). A first-frame revert gives back a scaled fresh-slot
+charge and the scaled beneficiary charge of a successful child that destroys a pre-existing
+contract (`SATIN-POOL-014`, `SATIN-SD-012`). The ledger retains exactly the state charges left
+standing by each transaction. An applied authorization from a crowded bucket keeps its new-account
+and indicator charges after that first frame reverts (`SATIN-STATE-001`, `SATIN-AUTH-016`).
+
+**D-126. Effective nonces and the deepest share.** Two entries for one absent authority both
+pass the admission gates. A repeated nonce is skipped after the first entry advances the effective
+nonce. Sequential nonces both apply, keeping the same single new-account and indicator charges,
+one record and one unit of growth (`SATIN-AUTH-004`, `SATIN-AUTH-008`). The third-level state-growth
+budget has both edges observed. The exact share keeps its writes and a further write returns a
+child stop to the first frame (`SATIN-LIM-003`).
+
+**D-127. Zero-balance destruction and stores after a mark.** A pre-existing contract with no
+balance destroys itself to an absent beneficiary in a crowded bucket. It owes no beneficiary state
+gas and creates no leaf (`SATIN-SD-018`). Below the cost of an ordinary fresh store, a marked
+contract stores a value and reads it back (`SATIN-SD-013`). The parent returns the child's success
+flag and bytes. The unmarked control returns failure and no child bytes, and the slot stays zero.
+
+**D-128. Transfer records at the absent-recipient boundary.** A top-level zero-value transaction
+to an absent recipient succeeds without creating the account, emitting a transfer log or making a
+recipient record (`SATIN-ACCT-005`). When a contract passes all the value it just received to a
+previously absent recipient, the middle contract's balance returns to its starting value. The
+successful start takes back its record and its record history. The first sender's and final
+recipient's records and both logs stand, with the new recipient the only rise (`SATIN-ACCT-004`,
+`SATIN-ACCT-014`, `SATIN-HIST-009`).

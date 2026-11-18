@@ -2,15 +2,15 @@
   "caseId": "satin/selfdestruct/marked/fresh-slot-on-little-gas",
   "expected": {
     "gasLedgers": {
-      "blockGas": "0xb964",
+      "blockGas": "0xb9f2",
       "floor": "0x3a98",
-      "gasUsed": "0x131b4",
+      "gasUsed": "0x13242",
       "history": "0x7850",
       "historyBytes": "0x15e",
       "refund": "0x0",
-      "regular": "0xb964",
+      "regular": "0xb9f2",
       "state": "0x0",
-      "total": "0x131b4"
+      "total": "0x13242"
     },
     "limit": null,
     "outcome": {
@@ -22,14 +22,14 @@
       },
       "execution": {
         "createdAddress": null,
-        "output": "0x",
+        "output": "0x00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000007",
         "status": "success"
       }
     },
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
-      "gasUsed": "0x131b4",
+      "gasUsed": "0x13242",
       "logs": [],
       "status": "0x1",
       "type": "0x0"
@@ -55,7 +55,7 @@
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "code": "0x7f7f36600d5734600b5760e1ff5b005b5f356001550000000000000000000000005f527e5f5260145ff30000000000000000000000000000000000000000000000000060205260275f5ff0505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff15060075f525f5f60205f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93461ea60f15000",
+          "code": "0x7f7f36600d5734600b5760e1ff5b005b5f356001556001545f5260205ff30000005f527e5f52601d5ff30000000000000000000000000000000000000000000000000060205260275f5ff0505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff15060075f525f5f60205f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93461ea60f15f523d5f60203e3d6020015ff3",
           "nonce": "0x2",
           "storage": {}
         },
@@ -100,7 +100,7 @@
         },
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "code": "0x7f7f36600d5734600b5760e1ff5b005b5f356001550000000000000000000000005f527e5f5260145ff30000000000000000000000000000000000000000000000000060205260275f5ff0505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff15060075f525f5f60205f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93461ea60f15000",
+          "code": "0x7f7f36600d5734600b5760e1ff5b005b5f356001556001545f5260205ff30000005f527e5f52601d5ff30000000000000000000000000000000000000000000000000060205260275f5ff0505f5f5f5f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a9347ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff15060075f525f5f60205f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93461ea60f15f523d5f60203e3d6020015ff3",
           "nonce": "0x1",
           "storage": {}
         },
@@ -138,7 +138,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "P creates C, which destroys itself; P then calls C with 60,000 of regular gas and a word of calldata, which C writes to a slot that was never written: the write, charged no state gas while the mark stands, completes on what pays its regular gas"
+      "intent": "P creates C, which destroys itself; P then calls C with 60,000 of regular gas and a word of calldata, which C writes to a slot that was never written: the write, charged no state gas while the mark stands, completes on what pays its regular gas. The parent returns success and the child's SLOAD of the written value 7 (SATIN-SD-013)"
     },
     "definition": "tools/make_slice.py::selfdestruct_cases",
     "generator": "tools/make_slice.py",

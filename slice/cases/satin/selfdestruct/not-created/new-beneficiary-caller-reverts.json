@@ -120,7 +120,9 @@
       "completeness": "complete"
     },
     "salt": {
-      "buckets": {},
+      "buckets": {
+        "0x296128": "0x200"
+      },
       "complete": true,
       "mapping": "salt-v1"
     },
@@ -132,7 +134,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "the same destruction, and the transaction's own frame then reverts: the beneficiary is never created, its state gas, legacy share included, comes back with the revert, and nothing of the move is kept"
+      "intent": "the destruction to a new beneficiary priced at m = 2, followed by the parent's revert. The contract predates the transaction, so no destruction-table mark is made (SATIN-SD-012). The ordinary rollback returns the scaled state charge and its legacy share in full (SATIN-POOL-014, SATIN-STATE-001) and takes back the move"
     },
     "definition": "tools/make_slice.py::selfdestruct_cases",
     "generator": "tools/make_slice.py",
@@ -149,6 +151,7 @@
     "group:state"
   ],
   "rules": [
+    "SATIN-POOL-014",
     "SATIN-SD-001",
     "SATIN-SD-012",
     "SATIN-SD-018",

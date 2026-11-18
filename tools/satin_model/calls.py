@@ -218,10 +218,7 @@ class CallsMixin:
                   "regular gas to its caller", "SATIN-POOL-012", "SATIN-OUT-001")
             left = self.end_child(frame, child, status, snap, name)
             if takes:
-                amount = WRITE_RECORD_SIZE * COST_PER_HISTORY_BYTE * len(takes)
-                self.give_back(frame, amount)
-                self.history_gas -= amount
-                self.history_bytes -= WRITE_RECORD_SIZE * len(takes)
+                amount = self.give_back_transfer_records(frame, len(takes))
                 d.add("gasLedgers", f"the started frame returned with its start kept: the price of the "
                       f"{records_of(len(takes))} the start took back, {len(takes)} x {WRITE_RECORD_SIZE} x {COST_PER_HISTORY_BYTE} = {fmt(amount)}, is "
                       "given to the caller into its reservoir, after the child's reservoir joined it, now "

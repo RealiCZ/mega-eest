@@ -259,6 +259,14 @@ specification's text and constants:
   regular gas covers it, so a crossing at that charge keeps the account in the reads
   (`SATIN-WIT-012`, D-117). No opcode is added.
 
+- **Reads and records at transaction boundaries** (D-122, D-127, D-128). A keyless halt at
+  step 10 prevents the step-12 deploy-address load. The `reads` group therefore omits that
+  address. A marked account's undetained frame can `SLOAD` the slot its store warmed and return
+  the word. A value start without a frame can restore the caller's balance to what was loaded. Its budget
+  and the transaction's counts use the net records, and a successful start gives back the
+  restored account's record history after the child share is returned. The transaction's own
+  zero-value call to an absent recipient accounts for no recipient record or rise.
+
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
 raises `Unmodelled` rather than guessing. A pre-state the specification excludes raises

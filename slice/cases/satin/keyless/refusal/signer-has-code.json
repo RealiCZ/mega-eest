@@ -2,15 +2,15 @@
   "caseId": "satin/keyless/refusal/signer-has-code",
   "expected": {
     "gasLedgers": {
-      "blockGas": "0x1cc3c",
+      "blockGas": "0x1cc24",
       "floor": "0x7398",
-      "gasUsed": "0x2852c",
+      "gasUsed": "0x28514",
       "history": "0xb8f0",
       "historyBytes": "0x21a",
       "refund": "0x0",
-      "regular": "0x1cc3c",
+      "regular": "0x1cc24",
       "state": "0x0",
-      "total": "0x2852c"
+      "total": "0x28514"
     },
     "limit": null,
     "outcome": {
@@ -29,7 +29,7 @@
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
-      "gasUsed": "0x2852c",
+      "gasUsed": "0x28514",
       "logs": [],
       "status": "0x0",
       "type": "0x0"
@@ -144,13 +144,13 @@
     },
     "transaction": {
       "kind": "signed",
-      "raw": "0xf901458080830f424094634200000000000000000000000000000000000380b8e4846365d50000000000000000000000000000000000000000000000000000000000000040ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000007af8788085174876e80083015f908080a77f0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f205f5260205ff31ca0a04937288160898e6a9e8de50456e2293fb8a8c2d83c41115956fdd51a1ddbb6a0137730231275dafb921077c7d6a2c5d18ed1efd6e92371cae303fbaaaa5906e300000000000026a016910d93b15d5ccf5beb5104a9e80c248a78a14dba2174ab8e21fa7333bff9bda066827a93901b0d90e7ceeaca113a9685e6514d87a090b3ef0c3f300591fd98ce"
+      "raw": "0xf901458080830f424094634200000000000000000000000000000000000380b8e4846365d50000000000000000000000000000000000000000000000000000000000000040ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff000000000000000000000000000000000000000000000000000000000000007af8788085174876e80083015f908001a77f0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f205f5260205ff31ba01383f072ac7feef62be7777109e4a90e01459ecc07c28481ac156a3b2e0845f0a07e05d41f1ddf864bfbc8920f008cb9ed9ff3ce9ba149d011fe007faf5ef662aa00000000000025a030c88c018dfa18287ab903f9b8ec80dc4d031cfcafc9f5f87085f095433ba065a079cb14c40f37514f4e5495e74780f7ec0e21b1da33c6a60930a91f45f9d33477"
     }
   },
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "a signer that holds code other than a delegation indicator: SignerHasCode()"
+      "intent": "a signer that holds code other than a delegation indicator and cannot fund the carried value: step 9 answers SignerHasCode() before step 13"
     },
     "definition": "tools/make_slice.py::keyless_cases",
     "generator": "tools/make_slice.py",
@@ -172,6 +172,7 @@
     "SATIN-KEY-001",
     "SATIN-KEY-004",
     "SATIN-KEY-005",
+    "SATIN-KEY-006",
     "SATIN-KEY-007"
   ],
   "schemaVersion": "2.0",
