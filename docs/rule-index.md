@@ -9792,6 +9792,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/pools/nested-contract-call/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/nested-contract-call/below-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/pools/nonce-only-collision-log-override-forward/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/pools/nonce-only-collision-log-override-forward/below-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/pools/nonce-only-collision-log-signed-forward/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | gating | unqualified | [satin-5fb2688] |
@@ -10141,6 +10145,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/halt/step-10-before-taken] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/nested-contract-call/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/nested-contract-call/below-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/pools/nonce-only-collision-log-override-forward/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/pools/nonce-only-collision-log-override-forward/below-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/pools/nonce-only-collision-log-signed-forward/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/reads/balance-cold-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |

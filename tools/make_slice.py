@@ -4957,8 +4957,13 @@ def keyless_pool_cases() -> list[Case]:
              f"record stand, while a bump from one and its record are returned {rollback}", bare_revert,
              accounts=signer(nonce=nonce, balance=1 - nonce))
         for value, label in ((0, "without-value"), (1, "with-value")):
-            pair(f"pools/nonce-{nonce}-{label}", "A funded signer deploys one byte. A bump from nonce one is taken "
-                 "back, but a carried wei changes the balance, so its record still stands (SATIN-KEY-013)", one,
+            if nonce == 0:
+                record = "Its bump from nonce zero and its record stand."
+            elif value:
+                record = "The bump is taken back, but one wei has moved, so the balance record stands."
+            else:
+                record = "The bump is taken back and the unchanged signer keeps no record."
+            pair(f"pools/nonce-{nonce}-{label}", f"A funded signer deploys one byte. {record} (SATIN-KEY-013)", one,
                  value=value, accounts=signer(nonce=nonce, balance=1_000))
 
     for balance, value, label in ((10, 10, "exact-balance"), (10_000, 7_777, "surplus-balance")):
@@ -4982,13 +4987,16 @@ def keyless_pool_cases() -> list[Case]:
          "has empty code and nonce one, while its creator deposits nonempty code (SATIN-KEY-009, SATIN-STATE-012)",
          create(0, b"") + one)
 
-    for name, init in (("runtime", one), ("empty-initcode", b""), ("invalid", INVALID),
-                       ("log", log(0, 0, 32, []) + one)):
+    balance_probe = b"\x73" + EOA + b"\x31\x50"  # PUSH20, BALANCE, POP
+    for name, init, forbidden in (("runtime", one, ()), ("empty-initcode", b"", ()), ("invalid", INVALID, ()),
+                                  ("log", balance_probe + log(0, 0, 32, []) + one, (EOA,))):
         for forward, label in ((signed_limit, "signed-forward"), (2_000_000, "override-forward")):
             pair(f"pools/nonce-only-collision-{name}-{label}", "A nonce-only deploy address passes the code check. "
                  "The subsequent collision burns the whole forward before initcode, emits no log and preserves "
-                 f"the target's empty code and nonce (SATIN-KEY-008) {rollback}", init, override=forward,
-                 accounts={DEPLOY: model.Account(nonce=1)})
+                 "the target's empty code and nonce. "
+                 + ("The constructor's BALANCE target is absent from the returned keys. " if forbidden else "")
+                 + f"(SATIN-KEY-008) {rollback}", init, override=forward,
+                 accounts={DEPLOY: model.Account(nonce=1)}, forbidden_accounts=forbidden)
 
     for signer_bucket, created_bucket in ((1, 3), (2, 1), (1, 2), (3, 2)):
         pair(f"pools/buckets-{signer_bucket}-{created_bucket}", "SALT prices the signer and created leaves separately. "

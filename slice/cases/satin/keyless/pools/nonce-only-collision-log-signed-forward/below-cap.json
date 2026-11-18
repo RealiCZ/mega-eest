@@ -2,26 +2,26 @@
   "caseId": "satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap",
   "expected": {
     "gasLedgers": {
-      "blockGas": "0x113a32",
-      "floor": "0x6b98",
-      "gasUsed": "0x14c312",
-      "history": "0xbbb0",
-      "historyBytes": "0x222",
+      "blockGas": "0x113af0",
+      "floor": "0x7398",
+      "gasUsed": "0x14ced0",
+      "history": "0xc6b0",
+      "historyBytes": "0x242",
       "refund": "0x0",
-      "regular": "0x113a32",
+      "regular": "0x113af0",
       "state": "0x2cd30",
-      "total": "0x14c312"
+      "total": "0x14ced0"
     },
     "gasPools": {
       "regular": {
-        "final": "0x2e61fae",
-        "initial": "0x2fa0020"
+        "final": "0x2e613f0",
+        "initial": "0x2f9f464"
       },
       "reservoir": {
         "final": "0xdc0",
         "initial": "0x0"
       },
-      "returned": "0x2e62d6e",
+      "returned": "0x2e621b0",
       "spilled": "0x2e8b0"
     },
     "limit": null,
@@ -41,7 +41,7 @@
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
-      "gasUsed": "0x14c312",
+      "gasUsed": "0x14ced0",
       "logs": [],
       "status": "0x1",
       "type": "0x0"
@@ -49,8 +49,8 @@
     "resources": {
       "dataSize": {
         "limit": "0xc80000",
-        "net": "546",
-        "reported": "0x222"
+        "net": "578",
+        "reported": "0x242"
       },
       "kvUpdates": {
         "limit": "0x7a120",
@@ -65,6 +65,7 @@
     },
     "returnedState": {
       "accounts": {
+        "0x000000000000000000000000000000000000beef": null,
         "0x4200000000000000000000000000000000000011": {
           "balance": "0x0",
           "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
@@ -207,14 +208,14 @@
     },
     "transaction": {
       "kind": "signed",
-      "raw": "0xf9012680808402faf08094634200000000000000000000000000000000000380b8c4846365d5000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000f4240000000000000000000000000000000000000000000000000000000000000005ef85c8085174876e800830f424080808b60205fa05f5f5260015ff31ba04d0baa77ee24c636ad247bb2b12c1d16d27181ede9b8732925e82242f7b4eee1a029ca5a015f76328c574ffb3f574af1b53fcdef258cec91ae93388968916bc7f5000025a0b717e1d720c8bce35b451ad30bd59ecb4cf3f47b9d293b503a35859bcea9a44ca035463c7995ab5b94ef08a7cc2e8e97a64f9978f3091e11c2aa4194449b45d5c2"
+      "raw": "0xf9014680808402faf08094634200000000000000000000000000000000000380b8e4846365d5000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000f42400000000000000000000000000000000000000000000000000000000000000075f8738085174876e800830f42408080a273000000000000000000000000000000000000beef315060205fa05f5f5260015ff31ca02e0fc023384eecc8e946d3195dbd114b250f95bc491db2421a7a79995c54f3dba02364906d68f787af4a1be3a0b3e301548495cc28a2e0a674453ec447614c7ca5000000000000000000000026a07eb66c2356f5d11dd9d4632633c7d22659fae3ae38ce1fb5307042c480891c0aa05c12d73d6d797b8ec28753e66b00a0e0d1ac28cdbda0bb15fdb31b1837cd0278"
     }
   },
   "profile": "state-transition",
   "provenance": {
     "authoring": {
       "boundary": "No initial reservoir. The final pools and spill record its charges (SATIN-POOL-008).",
-      "intent": "A nonce-only deploy address passes the code check. The subsequent collision burns the whole forward before initcode, emits no log and preserves the target's empty code and nonce (SATIN-KEY-008) (SATIN-POOL-014, SATIN-POOL-015)"
+      "intent": "A nonce-only deploy address passes the code check. The subsequent collision burns the whole forward before initcode, emits no log and preserves the target's empty code and nonce. The constructor's BALANCE target is absent from the returned keys. (SATIN-KEY-008) (SATIN-POOL-014, SATIN-POOL-015)"
     },
     "definition": "tools/make_slice.py::keyless_pool_cases",
     "generator": "tools/make_slice.py",
@@ -246,8 +247,10 @@
     "SATIN-KEY-014",
     "SATIN-KEY-015",
     "SATIN-POOL-008",
+    "SATIN-WIT-004",
     "SATIN-WIT-005",
-    "SATIN-WIT-008"
+    "SATIN-WIT-008",
+    "SATIN-WIT-012"
   ],
   "schemaVersion": "2.0",
   "specRef": {

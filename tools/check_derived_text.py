@@ -13,8 +13,8 @@ The old figures of a constant are:
 
 - the figures it feeds directly, from the table `MUTATIONS` below: the constant itself and its
   products with the byte counts and counts the slice uses;
-- every figure of a case's expected gas ledgers, receipt gas and resources that changes when the
-  constant changes: the sums and products the derivations reach. Check these across the slice,
+- every figure of a case's expected gas ledgers, receipt gas, returned gas and resources that changes
+  when the constant changes: the sums and products the derivations reach. Check these across the slice,
   since one case can explain an old figure from another.
 
 A figure equal to one of the case's own inputs — its transaction's gas limit or value, or a number
@@ -249,7 +249,7 @@ def texts(files: dict[str, str], explained: dict):
 
 
 def figures(files: dict[str, str]) -> dict[tuple, int]:
-    """Every gas, receipt-gas and resource figure of every case's expectation, by (file, path)."""
+    """The gas ledger, receipt gas, returned gas and resource figures, by (file, path)."""
     out = {}
     for rel, raw in files.items():
         if rel == "index.json":
@@ -260,6 +260,8 @@ def figures(files: dict[str, str]) -> dict[tuple, int]:
         receipt = expected.get("receipt") or {}
         if "gasUsed" in receipt:
             out[(rel, "receipt", "gasUsed")] = int(receipt["gasUsed"], 16)
+        if pools := expected.get("gasPools"):
+            out[(rel, "gasPools", "returned")] = int(pools["returned"], 16)
         for dim, v in (expected.get("resources") or {}).items():
             out[(rel, "resources", dim)] = int(v["net"])
     return out

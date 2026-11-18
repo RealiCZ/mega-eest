@@ -3085,4 +3085,5 @@ and CALLER to distinguish the whole forward, the outer transaction's environment
 **D-160. Check the typed operands of the pool return formula.** The gas used in the full
 returned-to-sender formula belongs to the current case's ledger. Confirm the transaction gas
 limit and the returned amount and check their subtraction before allowing either output to
-coincide with a stale value from another case.
+coincide with a stale value from another case. Include moved returned amounts in the global
+scan, so an old return fails even if no ledger or receipt held that number.

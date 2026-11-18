@@ -214,7 +214,7 @@
   "provenance": {
     "authoring": {
       "boundary": "No initial reservoir. The final pools and spill record its charges (SATIN-POOL-008).",
-      "intent": "A funded signer deploys one byte. A bump from nonce one is taken back, but a carried wei changes the balance, so its record still stands (SATIN-KEY-013)"
+      "intent": "A funded signer deploys one byte. The bump is taken back and the unchanged signer keeps no record. (SATIN-KEY-013)"
     },
     "definition": "tools/make_slice.py::keyless_pool_cases",
     "generator": "tools/make_slice.py",

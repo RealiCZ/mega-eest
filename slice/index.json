@@ -11218,7 +11218,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-0-without-value/below-cap",
       "file": "cases/satin/keyless/pools/nonce-0-without-value/below-cap.json",
-      "fileDigest": "sha256:90deebbf6d77dcb5994e541dbc602d7648e6c315fcbdcc903e263d3a06c1ecbc",
+      "fileDigest": "sha256:a195ea56ba5a7fe59a88c3d9b5d4903403d47c7666e72a0fc4cedb610d9a9f17",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11245,7 +11245,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-0-without-value/above-cap",
       "file": "cases/satin/keyless/pools/nonce-0-without-value/above-cap.json",
-      "fileDigest": "sha256:80e57b7317a4f7528ec6d7f9901311228f233e71ddc1f905d44e2a754c65749f",
+      "fileDigest": "sha256:27f92f0da453487a598ae6f2b9279e094c087b60d295d612750772873fa47760",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11272,7 +11272,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-0-with-value/below-cap",
       "file": "cases/satin/keyless/pools/nonce-0-with-value/below-cap.json",
-      "fileDigest": "sha256:5fb4b1c262d22185cd76c770e45c9fa5e2f7af8ab1b7620d662ed325b889daa3",
+      "fileDigest": "sha256:7386c3a3a06c9f0fa6a4d9c76fba7050ba112a0f25c99ed8c576c9205ff6e119",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11299,7 +11299,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-0-with-value/above-cap",
       "file": "cases/satin/keyless/pools/nonce-0-with-value/above-cap.json",
-      "fileDigest": "sha256:bec465737f189ed86e6f49ec2170bbbdc875b16663e6c048f60b4e071cd5b51b",
+      "fileDigest": "sha256:d8d311e8722ebdb7965aa39a8df3844912bb20f55d31a8d16b80df8618648de2",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11381,7 +11381,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-1-without-value/below-cap",
       "file": "cases/satin/keyless/pools/nonce-1-without-value/below-cap.json",
-      "fileDigest": "sha256:e91b5c390d0298f2129aedf837bcea8cff27fc530c304bc4b4f986ee04970ed3",
+      "fileDigest": "sha256:d3ef16f91389f79684ac0bbb303884bf23a7822e6cf37aa3faf674f589d13543",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11407,7 +11407,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-1-without-value/above-cap",
       "file": "cases/satin/keyless/pools/nonce-1-without-value/above-cap.json",
-      "fileDigest": "sha256:ddec09176c5fae2b00994ee60289373ac2ae2a117fe941488c5a64b05ba73510",
+      "fileDigest": "sha256:d5c1944c4a286685886223e556c4a3c766f65ca774f5a3c423e49930105aea04",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11433,7 +11433,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-1-with-value/below-cap",
       "file": "cases/satin/keyless/pools/nonce-1-with-value/below-cap.json",
-      "fileDigest": "sha256:bc64c96fe72f18a131ddfdab1f8a3de9d4962556056d2325d2a03c2f103e9df3",
+      "fileDigest": "sha256:950ac68b2e0d45472ffb9d7933e794e0cfc4373d616476095f96d06a19bac7b2",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11460,7 +11460,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-1-with-value/above-cap",
       "file": "cases/satin/keyless/pools/nonce-1-with-value/above-cap.json",
-      "fileDigest": "sha256:c1215184809fa3bb8c470577243392a9de7bfb6f41c07f05d5141883925dd417",
+      "fileDigest": "sha256:a05e5ea223f966bc2723acd4bb732a8a1190248693382a6d3dd8da0e30958aea",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11730,7 +11730,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-runtime-signed-forward/below-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-runtime-signed-forward/below-cap.json",
-      "fileDigest": "sha256:cca9f166ed26f88995ca4e0b2b78c45a0e65fdd3055b954c6dc66f8bef625c52",
+      "fileDigest": "sha256:b9bdf6a6fbdf3e09ec5d9eef48d9ed5b2a8c679201f31c6170e755564887cae3",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11757,7 +11757,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-runtime-signed-forward/above-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-runtime-signed-forward/above-cap.json",
-      "fileDigest": "sha256:f7aa7a9d9087f5463e355b1f3546371bfdb03e50a7133f73178fe239beded82f",
+      "fileDigest": "sha256:4ebcb90a24f20478dd12ac421d7fbc12de07349181f1d702d79a0785f709d6f2",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11784,7 +11784,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-runtime-override-forward/below-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-runtime-override-forward/below-cap.json",
-      "fileDigest": "sha256:2e45f029087a66be91fa255d10d7b2e1684f7412ab123dc4ca31eb8dbe4e8b06",
+      "fileDigest": "sha256:bcef9ffbf7ed334bfbd0e3aa1752d0807d552bc06a8e6d4e5fe9bc097ee4006c",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11811,7 +11811,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-runtime-override-forward/above-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-runtime-override-forward/above-cap.json",
-      "fileDigest": "sha256:ab7a74a85f0ffa8e7d3b19938ed3dcb943888d69921aca58a3ca83f2a2d2aef2",
+      "fileDigest": "sha256:c07541597c5d9fd729eab9abaeee195cece400e32679ef6bcf7a2e6b1041a593",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11838,7 +11838,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-empty-initcode-signed-forward/below-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-empty-initcode-signed-forward/below-cap.json",
-      "fileDigest": "sha256:93061e033ecaa4de0047aec81b259ef3e8dab452ee86bf4cd091f6b472383dbc",
+      "fileDigest": "sha256:9401240f1b58a39396c266e88d6a372a7a292eb43d3fcc6dee007388f6433a85",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11865,7 +11865,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-empty-initcode-signed-forward/above-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-empty-initcode-signed-forward/above-cap.json",
-      "fileDigest": "sha256:f0db2828c76427dff87fa2dc301f12384e6e69a09a540d09043d51cb75d7a08b",
+      "fileDigest": "sha256:60c4f059200746a46bb466c237ea52f399828e75c84e96608eb70a3d44f9cd85",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11892,7 +11892,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-empty-initcode-override-forward/below-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-empty-initcode-override-forward/below-cap.json",
-      "fileDigest": "sha256:bfc8abbe8de733081741e382753e6b67818773db28a604569502f1df9ec02cfc",
+      "fileDigest": "sha256:f2f0f70f5e8fde9d073ca2145e5b43b70cb997317cb58b29ea0812c79705e1de",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11919,7 +11919,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-empty-initcode-override-forward/above-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-empty-initcode-override-forward/above-cap.json",
-      "fileDigest": "sha256:ed89947f19d14e360d633374493bba53a46dedbe6345c494fbabe70bdfd39a86",
+      "fileDigest": "sha256:db6deba0da76b86d63057d0acefd805d273b3be5e8c491b35c66b76dc9ede120",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11946,7 +11946,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-invalid-signed-forward/below-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-invalid-signed-forward/below-cap.json",
-      "fileDigest": "sha256:30f07064fada4a1d52b270eccaae1486635c19c383ee726ea505cb8f33067b15",
+      "fileDigest": "sha256:a980cf5aa681b4560ae744eabd98e20e80cb691694cee2adb467f87265b54e18",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -11973,7 +11973,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-invalid-signed-forward/above-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-invalid-signed-forward/above-cap.json",
-      "fileDigest": "sha256:fdc672f5944f264c29aef059f9b869eaabfef8838a9e6119bbe6549b362a2bb7",
+      "fileDigest": "sha256:7797eee2ac4f4cac8adc07d2a06501cc02d1cdfd58f83d18c7b804240055cd2f",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -12000,7 +12000,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-invalid-override-forward/below-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-invalid-override-forward/below-cap.json",
-      "fileDigest": "sha256:285de96f16e6128811cecba90064136b14257aa533d8f0ce267fa8d9163da091",
+      "fileDigest": "sha256:f15501e6cd8e860acfb75a3eb39a3cb1fdc255fe24837aec4938f95a709ffc82",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -12027,7 +12027,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-invalid-override-forward/above-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-invalid-override-forward/above-cap.json",
-      "fileDigest": "sha256:04ae505e2499e418fdda94e486167f78429a4546c883ddc816f5bb6471545cad",
+      "fileDigest": "sha256:3dcad926e57c79612f2974d443870d0cd5abe9b2e8de8b773d34add9d78f2d79",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -12054,7 +12054,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap.json",
-      "fileDigest": "sha256:5e019ce95d07d6aa847694892727b6a9f2120a301385c1888add4756d06dbaec",
+      "fileDigest": "sha256:915d7fa665b61a0881c73dc671b1c09f243ce1c9ee20e75adbdddb4e7d053428",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -12069,8 +12069,10 @@
         "SATIN-KEY-014",
         "SATIN-KEY-015",
         "SATIN-POOL-008",
+        "SATIN-WIT-004",
         "SATIN-WIT-005",
-        "SATIN-WIT-008"
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -12081,7 +12083,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-log-signed-forward/above-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-log-signed-forward/above-cap.json",
-      "fileDigest": "sha256:60cb6c65119b23ab9678afec4d03f4ec19595f7ae96ba0bd867f4edcef2de08b",
+      "fileDigest": "sha256:795109a33ea5f7187942371b7d8f5cc25e665c5967ed4c298bda5a881b0001dc",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -12096,8 +12098,10 @@
         "SATIN-KEY-014",
         "SATIN-KEY-015",
         "SATIN-POOL-008",
+        "SATIN-WIT-004",
         "SATIN-WIT-005",
-        "SATIN-WIT-008"
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -12108,7 +12112,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-log-override-forward/below-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-log-override-forward/below-cap.json",
-      "fileDigest": "sha256:19470cfb569b5fe117f9d8b9e79b5af9d1934aa4e400842a1876efb311e9efed",
+      "fileDigest": "sha256:836eed8ad8f185019b9f3b177642b1e034783996f0d6ad30bf7ffd59e5a1e942",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -12123,8 +12127,10 @@
         "SATIN-KEY-014",
         "SATIN-KEY-015",
         "SATIN-POOL-008",
+        "SATIN-WIT-004",
         "SATIN-WIT-005",
-        "SATIN-WIT-008"
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -12135,7 +12141,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/pools/nonce-only-collision-log-override-forward/above-cap",
       "file": "cases/satin/keyless/pools/nonce-only-collision-log-override-forward/above-cap.json",
-      "fileDigest": "sha256:34314ec871bad007e989866d2583f3a12ce071adfb9272db596b833b004afc5a",
+      "fileDigest": "sha256:0aaf0a09d4a8b7585d4a5635c9d793196f25947936ea6b00829cb03bbb0128eb",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -12150,8 +12156,10 @@
         "SATIN-KEY-014",
         "SATIN-KEY-015",
         "SATIN-POOL-008",
+        "SATIN-WIT-004",
         "SATIN-WIT-005",
-        "SATIN-WIT-008"
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",

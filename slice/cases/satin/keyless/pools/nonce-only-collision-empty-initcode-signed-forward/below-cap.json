@@ -214,7 +214,7 @@
   "provenance": {
     "authoring": {
       "boundary": "No initial reservoir. The final pools and spill record its charges (SATIN-POOL-008).",
-      "intent": "A nonce-only deploy address passes the code check. The subsequent collision burns the whole forward before initcode, emits no log and preserves the target's empty code and nonce (SATIN-KEY-008) (SATIN-POOL-014, SATIN-POOL-015)"
+      "intent": "A nonce-only deploy address passes the code check. The subsequent collision burns the whole forward before initcode, emits no log and preserves the target's empty code and nonce. (SATIN-KEY-008) (SATIN-POOL-014, SATIN-POOL-015)"
     },
     "definition": "tools/make_slice.py::keyless_pool_cases",
     "generator": "tools/make_slice.py",
