@@ -61,6 +61,51 @@
         "reported": "0x1"
       }
     },
+    "returnedState": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x9",
+          "codeHash": "0xf63368aebd4c3ec85b0e12e4bfbfa911dc9103302547addd7717922c8b759a06",
+          "nonce": "0x1"
+        },
+        "0x00000000000000000000000000000000000c0f05": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x1"
+        },
+        "0x00000000000000000000000000000000000c0f06": {
+          "balance": "0x1",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000011": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001a": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001b": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {}
+    },
     "state": {
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
@@ -168,6 +213,7 @@
     "group:outcome",
     "group:receipts",
     "group:resources",
+    "group:returned-state",
     "group:state"
   ],
   "rules": [
@@ -177,7 +223,9 @@
     "SATIN-ACCT-011",
     "SATIN-ACCT-012",
     "SATIN-ACCT-014",
-    "SATIN-POOL-014"
+    "SATIN-POOL-014",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
   ],
   "schemaVersion": "2.0",
   "specRef": {

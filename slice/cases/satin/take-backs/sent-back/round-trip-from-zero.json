@@ -70,6 +70,46 @@
         "reported": "0x0"
       }
     },
+    "returnedState": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0xa",
+          "codeHash": "0xfd00eb4b92b5577b3b6c3200619d532852b4f2dd255eb776efdb1410d6637812",
+          "nonce": "0x1"
+        },
+        "0x00000000000000000000000000000000000c0de7": {
+          "balance": "0x0",
+          "codeHash": "0xa3abf9ec36b806c80d74022c8eaf3703be82181d591d0746f517a88e7f7ecc03",
+          "nonce": "0x1"
+        },
+        "0x4200000000000000000000000000000000000011": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001a": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001b": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {}
+    },
     "state": {
       "accounts": {
         "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
@@ -165,6 +205,7 @@
     "group:outcome",
     "group:receipts",
     "group:resources",
+    "group:returned-state",
     "group:state"
   ],
   "rules": [
@@ -172,7 +213,9 @@
     "SATIN-ACCT-006",
     "SATIN-HIST-009",
     "SATIN-TAKE-004",
-    "SATIN-TAKE-006"
+    "SATIN-TAKE-006",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
   ],
   "schemaVersion": "2.0",
   "specRef": {

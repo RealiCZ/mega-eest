@@ -51,6 +51,33 @@
         "reported": "0x1"
       }
     },
+    "returnedState": {
+      "accounts": {
+        "0x6342000000000000000000000000000000000001": {
+          "balance": "0x0",
+          "codeHash": "0x71a65239db8d0f1bb765fad36e34f57600420d103a4401ef7555bd50b229dc55",
+          "nonce": "0x0"
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "codeHash": "0xabd7e8f1c8f0f9ca0346df585b65d9791a7e9ba5c431cc4eda5d2c2f1f5e9c43",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0x1",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {
+        "0x6342000000000000000000000000000000000001": {
+          "0x0000000000000000000000000000000000000000000000000000000000000003": "0x77"
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "0x0000000000000000000000000000000000000000000000000000000000000000": "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"
+        }
+      }
+    },
     "state": {
       "accounts": {
         "0x6342000000000000000000000000000000000001": {
@@ -168,6 +195,7 @@
     "group:outcome",
     "group:receipts",
     "group:resources",
+    "group:returned-state",
     "group:state"
   ],
   "rules": [
@@ -176,7 +204,9 @@
     "SATIN-MST-007",
     "SATIN-MST-008",
     "SATIN-MST-009",
-    "SATIN-STATE-011"
+    "SATIN-STATE-011",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
   ],
   "schemaVersion": "2.0",
   "specRef": {

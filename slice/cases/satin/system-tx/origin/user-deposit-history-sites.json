@@ -66,6 +66,35 @@
         "reported": "0x3"
       }
     },
+    "returnedState": {
+      "accounts": {
+        "0x000000000000000000000000000000000000dead": {
+          "balance": "0x1",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x9",
+          "codeHash": "0x6737b52a2f915b97a790e0cefe680e2d7e3f2952ba4b9a6bc25689a0a53bdcaf",
+          "nonce": "0x2"
+        },
+        "0x93da612d2a72aa99d5ba73757f2e644fb4d6a934": {
+          "balance": "0x0",
+          "codeHash": "0x290decd9548b62a8d60345a988386fc84ba6bc95484008f6362f93160ef3e563",
+          "nonce": "0x1"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x4"
+        }
+      },
+      "storage": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "0x0000000000000000000000000000000000000000000000000000000000000001": "0x1"
+        }
+      }
+    },
     "state": {
       "accounts": {
         "0x000000000000000000000000000000000000dead": {
@@ -176,6 +205,7 @@
     "group:outcome",
     "group:receipts",
     "group:resources",
+    "group:returned-state",
     "group:state"
   ],
   "rules": [
@@ -184,7 +214,9 @@
     "SATIN-HIST-016",
     "SATIN-HIST-022",
     "SATIN-MST-007",
-    "SATIN-MST-010"
+    "SATIN-MST-010",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
   ],
   "schemaVersion": "2.0",
   "specRef": {

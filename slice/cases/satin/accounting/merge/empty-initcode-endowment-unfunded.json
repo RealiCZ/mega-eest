@@ -51,6 +51,41 @@
         "reported": "0x0"
       }
     },
+    "returnedState": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "codeHash": "0xd70908b5db5ef343ec1e87053c423eaf5376fbc61fee5b5467c2c83d778704a9",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000011": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001a": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001b": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {}
+    },
     "state": {
       "accounts": {
         "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
@@ -140,6 +175,7 @@
     "group:outcome",
     "group:receipts",
     "group:resources",
+    "group:returned-state",
     "group:state"
   ],
   "rules": [
@@ -147,7 +183,9 @@
     "SATIN-ACCT-004",
     "SATIN-ACCT-012",
     "SATIN-ACCT-014",
-    "SATIN-SIZE-005"
+    "SATIN-SIZE-005",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
   ],
   "schemaVersion": "2.0",
   "specRef": {

@@ -28,7 +28,7 @@ history and hint accounting, and account records across transfers, creation and 
 Each case names its own spec
 (decisions D-54, D-59, D-60, D-61, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78, D-79,
 D-80, D-82, D-83, D-84, D-85, D-88, D-91, D-93, D-94, D-96, D-100, D-103, D-104, D-106, D-109,
-D-112, D-114, D-115, D-117, D-118 to D-135). Every
+D-112, D-114, D-115, D-117, D-118 to D-136). Every
 case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
@@ -106,11 +106,13 @@ system contracts a call can reach (D-55).
 The gating cases pin 325 rules in 31 areas of the specification. `index.json` lists each case with
 its area, the rules it pins, its file and its file digest.
 
-Of the existing cases, 25 require `group:returned-state` (D-150 to D-152). They cover
+The slice has 64 cases that require `group:returned-state` (D-136, D-150 to D-152). They cover
 delegate refusals without a later probe, gas detention crossings before and after the
 target's load, paid and unpaid cold balance reads, the Oracle slot loaded before its charge,
 early keyless refusals and the unintercepted inner call, a round-trip transfer, an unfunded
-creation, and a pass-through transfer to an absent recipient. The value-bearing LimitControl
+creation, and a pass-through transfer to an absent recipient. The exact-return case checks both
+participant keys and their restored balances, and the empty-initcode case checks the untouched
+creator's nonce. The value-bearing LimitControl
 refusal and the unfunded Oracle hint also check their recipients' untouched zero balances.
 The marked destruction case requires the loaded account and slot keys and checks the written
 value through the existing return data assertion.

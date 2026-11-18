@@ -3008,6 +3008,12 @@ transaction's calldata and both transfer logs still count (`SATIN-ACCT-006`, `SA
 A nonce-zero creation caller attempts an unfunded endowment with empty initcode. Its return word
 is zero and its nonce and records stay as they were (`SATIN-ACCT-005`, `SATIN-SIZE-005`).
 
+**D-136. Returned state for the accounting and dispatch cases.** The exact-return case requires
+both participant entries and their restored balances. The empty-initcode refusal requires the
+untouched creator entry and its original nonce. These cases and the new dispatch, log, hint and
+accounting scenarios observe the unfiltered keys and values through `group:returned-state`
+(`SATIN-WIT-005`, `SATIN-WIT-008`).
+
 **D-150. Observe the transaction state returned for commitment.** The optional
 `group:returned-state` checks completed account and slot loads in the unfiltered execution
 result (`SATIN-WIT-005`, `SATIN-WIT-008`). Each adapter is compared independently to the
