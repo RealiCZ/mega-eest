@@ -9,6 +9,17 @@ expectation: the two implementations are compared with the model's figures, neve
 This page bounds the model (decision D-63): what it derives, what it does not, and where that other
 coverage lives.
 
+When a case opts into `returnedState` (D-150), the model records account and slot keys where
+a logical journal load completes. The sets survive frame rollback. L1 fee and footprint reads
+are marked at their source and stay in the witness reads. A separate journal load of a key
+counts even when an external read named the same key. Block and service exports have their own
+observations. The returned slot set follows journal loads, while `SATIN-WIT-006` excludes
+slots of accounts absent before the block from the witness. The model reads the settled values
+at surviving journal entries, so a rolled-back write or a transfer exactly undone leaves the
+pre-state value in the expectation. For accounts destroyed at settlement, it asserts the loaded
+account and slot keys alone. This accommodates engine lifecycle finalization while preserving
+which keys were returned.
+
 ## Scope
 
 The model derives **the expected values of small cases at the edges of rules**, from the
@@ -311,7 +322,7 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `keyless.py` | A keyless deployment past step 3's encoding check: the carried transaction and its signer, steps 3 to 15, the creation, its collision, the signer's nonce and records, `gasUsed` and the answer (D-79) |
 | `authorizations.py` | An EIP-7702 list before the first frame: its simulation, each entry's gates and the checks of its authority's code and nonce, a list that does not fit and is skipped, each entry's charges and records, the sender's own entry, a further entry for one authority |
 | `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, in a detained frame its static cost apart and its state and history drawn from the withheld part first, and a creation's deposited code |
-| `reads.py` | The `reads` group: what the transaction loads, as the stateless witness needs it, and the hints handed to the oracle service; a state charge's multiplier, `m = 1` for a system-originated transaction, which reads no capacity |
+| `reads.py` | The witness reads and hints, the keys and values of the returned transaction state, and the capacity served for each state charge |
 | `limits.py` | A write held to its frame's budget, the transaction's own or a child's, and then the transaction's limit, and the rules a case that pins the limit-stop page cites (D-73); a system-originated transaction's write, held to neither |
 
 A case's explanation, which `tools/make_slice.py --explain <caseId>` prints, names the model by its

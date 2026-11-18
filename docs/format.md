@@ -46,6 +46,7 @@ Observation groups:
 | `group:limit-diagnostics` | a stop's diagnostic members in `limit`: `scope`, `callPath`, `operation`, `phase`, `operationCommitted`, `enclosingCommitted` |
 | `group:detention` | `detention` |
 | `group:reads` | `reads` |
+| `group:returned-state` | `returnedState` (state-transition) |
 | `group:checkpoints` | `checkpoints` (state-transition) |
 | `group:validation` | `validation` (transaction-validation) |
 | `group:blocks` | the per-block results, counters, commitments and head of block profiles |
@@ -174,6 +175,7 @@ states it.
 | `limit` | the stop that ended the transaction's own frame, `null` when none. Every stop carries its `dimension` (`data-size`, `kv-updates`, `compute`, `state-growth`), its `limit` and its `returnData`, `MegaLimitExceeded(kind, limit)` of the two, which is the execution's revert output; these are what an implementation's result exposes. Its diagnostics, the transaction or frame `scope`, the `callPath`, `operation` and `phase` and whether the operation and the enclosing writes committed, are optional from schema 1.1 on, carried behind `group:limit-diagnostics` and compared only where the case carries them; a 1.0 stop carries all of them (D-62) |
 | `detention` | each volatile read (category, admitted or failed, call path, compute at the read, cap), the final compute limit (`null` if none), gas withheld, released and burned |
 | `reads` | logical reads the spec requires a node to load and export: accounts (`null`: read and absent), slots with the value read (explicit zero), code hashes, block hashes, SALT capacities served, oracle reads in order with their values, admitted hints in order. For a transaction these are its loads in the stateless witness's sense (`SATIN-WIT-001`, `-008`): values as the state held them before it, the code hash of every account read that has code, compared as an exact set ([adapter-protocol.md](adapter-protocol.md#reads), D-61) |
+| `returnedState` | the account and slot keys and their values in the unfiltered transaction result (D-150) |
 | `checkpoints` | ledger checkpoints at rule-defined boundaries, keyed by call path (child ordinal under each parent), phase and ordinal |
 
 What each value means where an implementation's result could be read two ways — a creation's
@@ -184,6 +186,35 @@ count, a deposit receipt's fields — is fixed in
 Raw opcode traces, cache behaviour, timing, backend names, inspector-only frames and debug strings
 are never observations. A refused or faulted transaction has no receipt, ledgers or resources
 (`null`), never a fabricated receipt.
+
+### Returned transaction state
+
+`returnedState` is optional in `state-transition` and requires `group:returned-state`.
+An admitted transaction or a failed deposit can carry it, including after a revert or halt.
+A refusal or fault that produced no returned state omits the group.
+
+- `accounts` maps each returned address to an object with `nonce`, `balance` and `codeHash`.
+  An expected object requires the address and compares only the fields it supplies. An empty
+  object requires presence alone. Actual objects contain all three fields. A returned address
+  without current account metadata carries nonce and balance zero and the Keccak-256 hash of
+  empty code.
+- `storage` maps each address with slots to a nonempty object of 32-byte slot keys. An expected
+  quantity asserts the current value, including explicit zero. An expected empty object requires
+  the slot key. Actual slots carry quantities. A required slot also requires its account entry.
+- An expected `null` at an account or slot key requires absence. An additional returned key fails
+  even if the expectation does not name it explicitly.
+
+The model derives the key set from completed journal loads and values from the settled state.
+It compares the pre-state values of surviving entries the transaction leaves unchanged or
+restores. When an account is created and destroyed in the same transaction, portable expectations
+require its loaded account and slot keys. They compare temporary fields only when the
+specification fixes their values. This is the engine's returned key set under `SATIN-WIT-005`
+and `SATIN-WIT-008`. `SATIN-WIT-006` excludes slots of an account absent before the block from the
+block witness.
+
+See the [adapter mapping](adapter-protocol.md#returned-transaction-state), the
+[Oracle slot case](../slice/cases/satin/reads/oracle-slot-before-charge.json), and the
+[created-and-destroyed account case](../slice/cases/satin/selfdestruct/marked/fresh-slot-on-little-gas.json).
 
 ## Semantic checks
 
@@ -205,7 +236,7 @@ rejection.
 6. **Outcomes**: a refused transaction has no execution and is not committed; a faulted one has no
    execution; an admitted one executes and commits unless a fault stops it; a failed deposit is
    committed and has no execution or a halted one; a transaction without an outcome has no receipt, ledgers, resources, limit, pools or
-   detention, and an executed one has a receipt, ledgers and resources; the receipt status is
+   detention and omits `returnedState`, and an executed one has a receipt, ledgers and resources; the receipt status is
    `0x1` exactly when execution succeeded; every transaction of a valid block is executed or a
    failed deposit; a stateless case has block results exactly when its witness verified, and a
    verified proof exactly when one is attached; an invalid block's spec and flags are `null` only

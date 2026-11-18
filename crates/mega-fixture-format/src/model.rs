@@ -179,6 +179,8 @@ pub enum Group {
     Reads,
     Receipts,
     Resources,
+    /// The unfiltered transaction state returned for commitment.
+    ReturnedState,
     State,
     Validation,
     Witness,
@@ -198,7 +200,7 @@ pub enum Feature {
     SyntheticTransaction,
 }
 
-pub const REQUIREMENTS: [(&str, Requirement); 25] = [
+pub const REQUIREMENTS: [(&str, Requirement); 26] = [
     ("feature:deposit", Requirement::Feature(Feature::Deposit)),
     ("feature:injected-faults", Requirement::Feature(Feature::InjectedFaults)),
     ("feature:oracle-transcript", Requirement::Feature(Feature::OracleTranscript)),
@@ -221,6 +223,7 @@ pub const REQUIREMENTS: [(&str, Requirement); 25] = [
     ("group:reads", Requirement::Group(Group::Reads)),
     ("group:receipts", Requirement::Group(Group::Receipts)),
     ("group:resources", Requirement::Group(Group::Resources)),
+    ("group:returned-state", Requirement::Group(Group::ReturnedState)),
     ("group:state", Requirement::Group(Group::State)),
     ("group:validation", Requirement::Group(Group::Validation)),
     ("group:witness", Requirement::Group(Group::Witness)),
@@ -318,7 +321,7 @@ impl Fixture {
         let body = match profile {
             Profile::StateTransition => Body::StateTransition {
                 input: st_input(input, &ip)?,
-                expected: st_expected(expected, &ep)?,
+                expected: st_expected(expected, &ep, true)?,
             },
             Profile::TransactionValidation => Body::TransactionValidation {
                 input: tv_input(input, &ip)?,
@@ -1298,6 +1301,103 @@ pub struct AccountRead {
     pub code_hash: B256,
 }
 
+fn account_metadata(v: &Value, p: &str) -> Result<AccountRead> {
+    let mut o = Obj::new(v, p)?;
+    o.shape(&["nonce", "balance", "codeHash"], &[])?;
+    let (n, np) = o.req("nonce");
+    let (b, bp) = o.req("balance");
+    let (c, cp) = o.req("codeHash");
+    Ok(AccountRead { nonce: u64q(n, &np)?, balance: u256(b, &bp)?, code_hash: b256(c, &cp)? })
+}
+
+/// Account fields to compare at a required returned address.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ReturnedAccount {
+    /// Nonce, when the expectation specifies it.
+    pub nonce: Option<u64>,
+    /// Balance, when the expectation specifies it.
+    pub balance: Option<U256>,
+    /// Code hash, when the expectation specifies it.
+    pub code_hash: Option<B256>,
+}
+
+/// A returned slot's key requirement and any value assertion.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ReturnedSlot {
+    /// The slot key must be absent.
+    Forbidden,
+    /// The slot key must be present.
+    Present,
+    /// The slot key must be present with this current value.
+    Value(U256),
+}
+
+/// The account and slot entries of a transaction's unfiltered return value.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ReturnedState {
+    /// Returned account metadata. A null expectation requires the key to be absent.
+    pub accounts: BTreeMap<Address, Option<ReturnedAccount>>,
+    /// Returned slot keys and their optional value assertions.
+    pub storage: BTreeMap<Address, BTreeMap<B256, ReturnedSlot>>,
+}
+
+fn returned_account(v: &Value, p: &str, expectation: bool) -> Result<ReturnedAccount> {
+    let mut o = Obj::new(v, p)?;
+    let fields = &["nonce", "balance", "codeHash"];
+    if expectation {
+        o.shape(&[], fields)?;
+    } else {
+        o.shape(fields, &[])?;
+    }
+    Ok(ReturnedAccount {
+        nonce: o.opt("nonce").map(|(v, p)| u64q(v, &p)).transpose()?,
+        balance: o.opt("balance").map(|(v, p)| u256(v, &p)).transpose()?,
+        code_hash: o.opt("codeHash").map(|(v, p)| b256(v, &p)).transpose()?,
+    })
+}
+
+fn returned_slot(v: &Value, p: &str, expectation: bool) -> Result<ReturnedSlot> {
+    if expectation {
+        match v {
+            Value::Null => return Ok(ReturnedSlot::Forbidden),
+            Value::Object(_) => {
+                Obj::new(v, p)?.closed(&[])?;
+                return Ok(ReturnedSlot::Present);
+            }
+            _ => {}
+        }
+    }
+    u256(v, p).map(ReturnedSlot::Value)
+}
+
+fn returned_state(v: &Value, p: &str, expectation: bool) -> Result<ReturnedState> {
+    let mut o = Obj::new(v, p)?;
+    o.shape(&["accounts", "storage"], &[])?;
+    let (a, ap) = o.req("accounts");
+    let accounts = map(a, &ap, address, |v, p| {
+        if expectation && matches!(v, Value::Null) {
+            Ok(None)
+        } else {
+            returned_account(v, p, expectation).map(Some)
+        }
+    })?;
+    let (s, sp) = o.req("storage");
+    let storage = map(s, &sp, address, |v, p| {
+        let slots = map(v, p, b256, |v, p| returned_slot(v, p, expectation))?;
+        if slots.is_empty() {
+            return Err(Error::new(ErrorCode::InvalidValue, p, "a returned storage map lists at least one slot"));
+        }
+        Ok(slots)
+    })?;
+    for (address, slots) in &storage {
+        if slots.values().any(|slot| *slot != ReturnedSlot::Forbidden) && !matches!(accounts.get(address), Some(Some(_))) {
+            return Err(Error::new(ErrorCode::InvalidReference, child(&sp, &address.to_string()),
+                "a returned slot requires its account entry"));
+        }
+    }
+    Ok(ReturnedState { accounts, storage })
+}
+
 /// Logical reads and external effects.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Reads {
@@ -1314,16 +1414,7 @@ fn reads(v: &Value, p: &str) -> Result<Reads> {
     let mut o = Obj::new(v, p)?;
     o.shape(&["accounts", "storage", "codes", "blockHashes", "buckets", "oracle", "hints"], &[])?;
     let (a, ap) = o.req("accounts");
-    let accounts = map(a, &ap, address, |v, p| {
-        nullable(v, p, |v, p| {
-            let mut o = Obj::new(v, p)?;
-            o.shape(&["nonce", "balance", "codeHash"], &[])?;
-            let (n, np) = o.req("nonce");
-            let (b, bp) = o.req("balance");
-            let (c, cp) = o.req("codeHash");
-            Ok(AccountRead { nonce: u64q(n, &np)?, balance: u256(b, &bp)?, code_hash: b256(c, &cp)? })
-        })
-    })?;
+    let accounts = map(a, &ap, address, |v, p| nullable(v, p, account_metadata))?;
     let (s, sp) = o.req("storage");
     let storage_reads = map(s, &sp, address, storage)?;
     let (c, cp) = o.req("codes");
@@ -1600,6 +1691,8 @@ pub struct StateTransitionExpected {
     pub gas_pools: Option<Option<GasPools>>,
     pub detention: Option<Option<Detention>>,
     pub reads: Option<Reads>,
+    /// The account and slot keys and values returned for commitment.
+    pub returned_state: Option<ReturnedState>,
     pub checkpoints: Option<Vec<Checkpoint>>,
 }
 
@@ -1623,9 +1716,9 @@ fn st_input(v: &Value, p: &str) -> Result<StateTransitionInput> {
     })
 }
 
-fn st_expected(v: &Value, p: &str) -> Result<StateTransitionExpected> {
+fn st_expected(v: &Value, p: &str, expectation: bool) -> Result<StateTransitionExpected> {
     let mut o = Obj::new(v, p)?;
-    o.shape(&["outcome", "state", "receipt", "gasLedgers", "resources", "limit"], &["gasPools", "detention", "reads", "checkpoints"])?;
+    o.shape(&["outcome", "state", "receipt", "gasLedgers", "resources", "limit"], &["gasPools", "detention", "reads", "returnedState", "checkpoints"])?;
     let (oc, ocp) = o.req("outcome");
     let (s, sp) = o.req("state");
     let (r, rp) = o.req("receipt");
@@ -1642,6 +1735,7 @@ fn st_expected(v: &Value, p: &str) -> Result<StateTransitionExpected> {
         gas_pools: o.opt("gasPools").map(|(v, p)| nullable(v, &p, gas_pools)).transpose()?,
         detention: o.opt("detention").map(|(v, p)| nullable(v, &p, detention)).transpose()?,
         reads: o.opt("reads").map(|(v, p)| reads(v, &p)).transpose()?,
+        returned_state: o.opt("returnedState").map(|(v, p)| returned_state(v, &p, expectation)).transpose()?,
         checkpoints: o.opt("checkpoints").map(|(v, p)| array(v, &p, 0, None, checkpoint)).transpose()?,
     })
 }
@@ -2027,7 +2121,7 @@ fn sb_expected(v: &Value, p: &str) -> Result<StatelessExpected> {
 /// Decodes a profile's expected result on its own (an adapter's actual observations).
 pub(crate) fn decode_expected(profile: Profile, v: &Value, p: &str) -> Result<()> {
     match profile {
-        Profile::StateTransition => st_expected(v, p).map(|_| ()),
+        Profile::StateTransition => st_expected(v, p, false).map(|_| ()),
         Profile::TransactionValidation => tv_expected(v, p).map(|_| ()),
         Profile::BlockImport => bi_expected(v, p).map(|_| ()),
         Profile::BlockBuild => bb_expected(v, p).map(|_| ()),

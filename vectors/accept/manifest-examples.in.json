@@ -9,9 +9,9 @@
   "schema/block-build.json": "sha256:0f0ef875b9f4f0cb7285ea0d98abeccbe6c38c4f3288fb844975ba440f760289",
   "schema/block-import.json": "sha256:3b4785f3d4bfd8e93f25f39d948a7a4e13f110025c32824387c2e9aafb3d89e0",
   "schema/common.json": "sha256:e0dc9d6c3429171d0d6ee8b9ad6a4769e6f9aaaef9774595df98785a910efbcd",
-  "schema/fixture.json": "sha256:45c0f6775e0606d3fd5646e6d1eb98b70e445b84a34f3053f06e79841945e9cb",
+  "schema/fixture.json": "sha256:565f32cef174473af890b09cc2c92796d595bfdf0f244e5bf74fe9b6a2abfa19",
   "schema/manifest.json": "sha256:deb06dd8c48b5b641479ffcaaa1497e23905e3f50a7910549ba11bae01292e0f",
-  "schema/state-transition.json": "sha256:7c140c7eea3dca6810e89821ad1d02600896554b647c031a3ca897642ea4af6f",
+  "schema/state-transition.json": "sha256:b90128c4a8ecddde7ecf8c749c28a9ad6b306a2433e6c100666d98c0687fbbeb",
   "schema/stateless-block.json": "sha256:5b4e64205e469652b9c7c23890409f321ce2431348d3b5e437920d0ad0833630",
   "schema/transaction-validation.json": "sha256:5055afe735744e750e58b87bcfae537768a0eccc35a2b3d46816f69edaf13378"
  },

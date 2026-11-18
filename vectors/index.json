@@ -115,6 +115,22 @@
       "semanticDigest": "sha256:ad1d22d99b1f755bd3fb1b1e8723e427c78058d0a212fccbf03907d12903cc93"
     },
     {
+      "id": "case-returned-state",
+      "kind": "case",
+      "input": "accept/case-returned-state.in.json",
+      "canonical": "accept/case-returned-state.canonical.json",
+      "fileDigest": "sha256:a43fa09c072ea380cc3f21ae38024dc65a0eca51e5173441c4c0b3bfbc2e9f0d",
+      "semanticDigest": "sha256:b90bf4f90cef1a2068974a53cb0f1e147c23d8702e34ad9dc23c9409b3ecb58a"
+    },
+    {
+      "id": "case-returned-state-destroyed",
+      "kind": "case",
+      "input": "accept/case-returned-state-destroyed.in.json",
+      "canonical": "accept/case-returned-state-destroyed.canonical.json",
+      "fileDigest": "sha256:c20a939ef8940b4e9e25150923dfa89cd5490801f6beeac80a191745c331068a",
+      "semanticDigest": "sha256:e8ccebeae33c3024a93da5377d05524787962ee65bd6780c4ab43bd984c2e80e"
+    },
+    {
       "id": "case-same-semantics-other-name",
       "kind": "case",
       "input": "accept/case-same-semantics-other-name.in.json",
@@ -501,6 +517,15 @@
       }
     },
     {
+      "id": "case-returned-slot-without-account",
+      "kind": "case",
+      "input": "reject/case-returned-slot-without-account.json",
+      "error": {
+        "code": "invalid-reference",
+        "path": "/expected/returnedState/storage/0x00000000000000000000000000000000000c0de1"
+      }
+    },
+    {
       "id": "case-build-commit-twice",
       "kind": "case",
       "input": "reject/case-build-commit-twice.json",
@@ -532,7 +557,7 @@
       "kind": "manifest",
       "input": "accept/manifest-examples.in.json",
       "canonical": "accept/manifest-examples.canonical.json",
-      "digest": "sha256:355e18d1d6b5f0cd1ef4451d517eef32ce6884934d06b1cd7e1cc1cea323dde1"
+      "digest": "sha256:841e8be94aa7db40d217a6f3059772f5f8c57e9628fb86f0c193502e913b9c66"
     },
     {
       "id": "manifest-unsorted-cases",

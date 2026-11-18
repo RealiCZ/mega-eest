@@ -70,6 +70,7 @@ const CAPABILITIES: &[&str] = &[
     "group:reads",
     "group:receipts",
     "group:resources",
+    "group:returned-state",
     "group:state",
 ];
 
@@ -719,7 +720,8 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     let mut salt = FixtureSalt::read(input.opt("salt"), block.at("parentHash")?.hash()?)?;
     let loaded = db.loaded.clone();
     salt.loaded = loaded.clone();
-    let wants_reads = matches!(req.at("requires")?.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some("group:reads")));
+    let requires = req.at("requires")?;
+    let wants = |group| matches!(requires.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some(group)));
     #[allow(clippy::arc_with_non_send_sync)]
     let salt = Arc::new(salt);
     // Record forwarded hints without supplying answers: Oracle reads still use the slot's value.
@@ -731,7 +733,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
         Ok(evm) => evm,
         Err(e) => return error(format!("the implementation could not start the transaction's EVM: {e:?}")),
     };
-    let wants_pools = matches!(req.at("requires")?.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some("group:gas-pools")));
+    let wants_pools = wants("group:gas-pools");
     if instrumented || wants_pools {
         evm.set_inspector(Messages::default());
     }
@@ -772,6 +774,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
             }
         }
     }
+    let returned = wants("group:returned-state").then(|| returned_state(executed.account_changes()));
     let touched: Vec<Touched> = executed
         .account_changes()
         .filter(|c| c.touched)
@@ -832,16 +835,48 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     let mut observations = observe(&r, ext, &sent, &listed, &touched);
     if let Value::Object(m) = &mut observations {
         m.insert("limit".into(), limit);
+        if let Some(returned) = returned {
+            m.insert("returnedState".into(), returned);
+        }
         if let Some(p) = gas_pools {
             m.insert("gasPools".into(), p);
         }
     }
-    if wants_reads {
+    if wants("group:reads") {
         if let Value::Object(m) = &mut observations {
             m.insert("reads".into(), reads(&loaded.borrow(), &listed, &oracle_service.hints()));
         }
     }
     Ok((observations, diagnostics))
+}
+
+fn returned_state<'a>(changes: impl Iterator<Item = evm2::evm::AccountChanges<'a>>) -> Value {
+    let mut accounts = BTreeMap::new();
+    let mut storage = BTreeMap::new();
+    let empty = AccountInfo::empty();
+    for account in changes {
+        let key = format!("{:#x}", account.address);
+        // A loaded account without current metadata still has a returned key.
+        let info = account.current.unwrap_or(&empty);
+        accounts.insert(
+            key.clone(),
+            object([
+                ("balance", q(info.balance)),
+                ("nonce", q(info.nonce)),
+                ("codeHash", hexs(info.code_hash.as_slice())),
+            ]),
+        );
+        if !account.storage.slots.is_empty() {
+            let slots = account
+                .storage
+                .slots
+                .iter()
+                .map(|(slot, entry)| (format!("{slot:#066x}"), q(entry.value.current)))
+                .collect();
+            storage.insert(key, Value::Object(slots));
+        }
+    }
+    object([("accounts", Value::Object(accounts)), ("storage", Value::Object(storage))])
 }
 
 /// The `reads` group: what the transaction loaded, each item as the case's inputs served it. The

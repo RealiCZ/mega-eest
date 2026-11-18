@@ -51,7 +51,7 @@ fn optional_groups(profile: Profile, path: &str) -> &'static [&'static str] {
         || matches!(segments.as_slice(), ["expected", "blocks", _, "transactions", _, "limit"])
         || matches!(segments.as_slice(), ["expected", "transactions", _, "limit"]);
     if profile == Profile::StateTransition && path == "/expected" {
-        &["gasPools", "detention", "reads", "checkpoints"]
+        &["gasPools", "detention", "reads", "returnedState", "checkpoints"]
     } else if block_tx {
         &BLOCK_TX_OPTIONAL
     } else if limit {
@@ -75,12 +75,21 @@ fn diff(profile: Profile, expected: &Value, actual: &Value, path: &str) -> Optio
                             return Some((at, Some(ev.clone()), Some(av.clone())));
                         }
                     }
+                    (Some(Value::Object(fields)), Some(Value::String(_)))
+                        if returned_slots(profile, path) && fields.is_empty() => {}
                     (Some(ev), Some(av)) => {
                         if let Some(d) = diff(profile, ev, av, &at) {
                             return Some(d);
                         }
                     }
-                    (None, Some(_)) if skippable.contains(&key.as_str()) => {}
+                    (Some(Value::Null), None) if returned_keys(profile, path) => {}
+                    // An expectation may list only forbidden slots at an address.
+                    (Some(Value::Object(slots)), None)
+                        if profile == Profile::StateTransition && path == "/expected/returnedState/storage"
+                            && slots.values().all(|v| matches!(v, Value::Null)) => {}
+                    (None, Some(_))
+                        if skippable.contains(&key.as_str())
+                            || (profile == Profile::StateTransition && path.starts_with("/expected/returnedState/accounts/")) => {}
                     (ev, av) => return Some((at, ev.cloned(), av.cloned())),
                 }
             }
@@ -103,6 +112,14 @@ fn diff(profile: Profile, expected: &Value, actual: &Value, path: &str) -> Optio
         (e, a) if e == a => None,
         (e, a) => Some((path.to_string(), Some(e.clone()), Some(a.clone()))),
     }
+}
+
+fn returned_keys(profile: Profile, path: &str) -> bool {
+    (profile == Profile::StateTransition && path == "/expected/returnedState/accounts") || returned_slots(profile, path)
+}
+
+fn returned_slots(profile: Profile, path: &str) -> bool {
+    profile == Profile::StateTransition && path.starts_with("/expected/returnedState/storage/")
 }
 
 /// An expected `reasons` list is the set of acceptable reasons: the implementation reports

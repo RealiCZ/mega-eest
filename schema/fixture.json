@@ -82,6 +82,7 @@
         "group:reads",
         "group:receipts",
         "group:resources",
+        "group:returned-state",
         "group:state",
         "group:validation",
         "group:witness"

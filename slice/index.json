@@ -3765,7 +3765,7 @@
       "area": "reads",
       "caseId": "satin/reads/oracle-slot-before-charge",
       "file": "cases/satin/reads/oracle-slot-before-charge.json",
-      "fileDigest": "sha256:94194007565447f7f545947860f57c911928e56b6db7a58072305379495abcf2",
+      "fileDigest": "sha256:c625f3c69810e9942a594e86cd2c1fbf57f8ebf8d35e2588d01ae6fa91ef90a9",
       "rules": [
         "SATIN-WIT-001",
         "SATIN-WIT-002",
@@ -3783,11 +3783,12 @@
       "area": "reads",
       "caseId": "satin/reads/balance-cold-unpaid",
       "file": "cases/satin/reads/balance-cold-unpaid.json",
-      "fileDigest": "sha256:fcf0d4857153e5e313177dc821738992002228a82c3297a7b8d77d94279ed7db",
+      "fileDigest": "sha256:cc44e20919551bf10f0c9896fe00496c26e15f09071e295b4130a41d835d32c3",
       "rules": [
         "SATIN-WIT-001",
         "SATIN-WIT-002",
         "SATIN-WIT-003",
+        "SATIN-WIT-004",
         "SATIN-WIT-005",
         "SATIN-WIT-008",
         "SATIN-WIT-011",
@@ -3803,7 +3804,7 @@
       "area": "reads",
       "caseId": "satin/reads/balance-cold-paid",
       "file": "cases/satin/reads/balance-cold-paid.json",
-      "fileDigest": "sha256:eec1ec3049991db63d8e3ce1e3e5aaa9e2feabac1d9dad90833cb1dac0194d44",
+      "fileDigest": "sha256:350f4e0b542154cd8d3750be76de75a90d717e0fa0ef106f2d789549bbe3df93",
       "rules": [
         "SATIN-WIT-001",
         "SATIN-WIT-002",
@@ -4107,11 +4108,13 @@
       "area": "take-backs",
       "caseId": "satin/take-backs/sent-back/round-trip",
       "file": "cases/satin/take-backs/sent-back/round-trip.json",
-      "fileDigest": "sha256:b121c06f8ddfa63a69e70c4be6de1af512202a47f86aa4332d053a1ba522fb2a",
+      "fileDigest": "sha256:c8e7ed55946cc822daedd042a175f6e2c1b21463d838ca291ef0b14383ddd6a6",
       "rules": [
         "SATIN-HIST-009",
         "SATIN-TAKE-004",
-        "SATIN-TAKE-006"
+        "SATIN-TAKE-006",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
@@ -4706,7 +4709,7 @@
       "area": "selfdestruct",
       "caseId": "satin/selfdestruct/marked/fresh-slot-on-little-gas",
       "file": "cases/satin/selfdestruct/marked/fresh-slot-on-little-gas.json",
-      "fileDigest": "sha256:0b5f949ed0273d49d01d5c388ed205c166efb0a90806098c6d82d4d012a3c250",
+      "fileDigest": "sha256:c20a939ef8940b4e9e25150923dfa89cd5490801f6beeac80a191745c331068a",
       "rules": [
         "SATIN-SD-001",
         "SATIN-SD-002",
@@ -4718,10 +4721,13 @@
         "SATIN-SD-009",
         "SATIN-SD-010",
         "SATIN-SD-013",
+        "SATIN-SD-015",
         "SATIN-SD-019",
         "SATIN-STATE-001",
         "SATIN-STATE-003",
-        "SATIN-STATE-012"
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
@@ -8373,14 +8379,18 @@
       "area": "keyless",
       "caseId": "satin/keyless/refusal/signer-nonce-two",
       "file": "cases/satin/keyless/refusal/signer-nonce-two.json",
-      "fileDigest": "sha256:7e030b90d6748a9a4817581f64070ea0e00aa80e599e94c9b8f0e0cb9b69dfe5",
+      "fileDigest": "sha256:6c62f8f7608889e843ecda59784679162e80236be42eadc39494d087713661c3",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
         "SATIN-KEY-001",
         "SATIN-KEY-004",
         "SATIN-KEY-005",
-        "SATIN-KEY-007"
+        "SATIN-KEY-007",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -8521,7 +8531,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/refusal/taken-and-unfunded",
       "file": "cases/satin/keyless/refusal/taken-and-unfunded.json",
-      "fileDigest": "sha256:7b88daa1331c6cf2538447a4b341b792539b8059ec4a4137f3604757979814d8",
+      "fileDigest": "sha256:fff0df492c35e6094318a606b5cd65f3f80a73e6cf61e38b9169555f151ab71f",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -8529,7 +8539,9 @@
         "SATIN-KEY-004",
         "SATIN-KEY-005",
         "SATIN-KEY-006",
-        "SATIN-KEY-007"
+        "SATIN-KEY-007",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -9222,12 +9234,16 @@
       "area": "keyless",
       "caseId": "satin/keyless/contract-call/no-value",
       "file": "cases/satin/keyless/contract-call/no-value.json",
-      "fileDigest": "sha256:1c6efe83ffeedbd6a9f180b673e4e30fe825fb4a92531d77dab67190329c1c29",
+      "fileDigest": "sha256:a43fa09c072ea380cc3f21ae38024dc65a0eca51e5173441c4c0b3bfbc2e9f0d",
       "rules": [
         "SATIN-ICPT-004",
         "SATIN-ICPT-006",
         "SATIN-KEY-003",
-        "SATIN-WIT-002"
+        "SATIN-WIT-002",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -12801,12 +12817,14 @@
       "area": "oracle",
       "caseId": "satin/oracle/send-hint/stipend-unfunded",
       "file": "cases/satin/oracle/send-hint/stipend-unfunded.json",
-      "fileDigest": "sha256:6a1d4664708959d84bb93b7c3d885d1dee43b68b60dcd229e85c26ce32986200",
+      "fileDigest": "sha256:85eccad77d5aca5cacf66c0676f6ea0da4d92e76fca5a0c6cfc375531bb7dc02",
       "rules": [
         "SATIN-ORCL-006",
         "SATIN-ORCL-007",
         "SATIN-ORCL-009",
-        "SATIN-ORCL-010"
+        "SATIN-ORCL-010",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
@@ -13108,9 +13126,11 @@
       "area": "system-contracts",
       "caseId": "satin/system-contracts/limit-control/own-call-with-value",
       "file": "cases/satin/system-contracts/limit-control/own-call-with-value.json",
-      "fileDigest": "sha256:312b4ccacb32176d5e786aeddad2f88fd8dc7a8f34f10ef0dc99692b146d5550",
+      "fileDigest": "sha256:5b92378f55a60f3a53042fc5f97095552311732a053984235eb18aa2ecac42b3",
       "rules": [
-        "SATIN-MLC-001"
+        "SATIN-MLC-001",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
@@ -14742,7 +14762,7 @@
       "area": "accounting",
       "caseId": "satin/accounting/records/pass-on-exact-to-absent",
       "file": "cases/satin/accounting/records/pass-on-exact-to-absent.json",
-      "fileDigest": "sha256:23f31b629cb78548fdc59096db53c4ac13578037665e7ae267a949cfe2545da8",
+      "fileDigest": "sha256:88ecc095458f9447a73cf4c779f4c94910c879f217b259d746ccca05c0e98f30",
       "rules": [
         "SATIN-ACCT-002",
         "SATIN-ACCT-004",
@@ -14750,7 +14770,9 @@
         "SATIN-ACCT-006",
         "SATIN-ACCT-011",
         "SATIN-ACCT-012",
-        "SATIN-ACCT-014"
+        "SATIN-ACCT-014",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -14890,12 +14912,14 @@
       "area": "accounting",
       "caseId": "satin/accounting/merge/creation-endowment-unfunded",
       "file": "cases/satin/accounting/merge/creation-endowment-unfunded.json",
-      "fileDigest": "sha256:d370b799cd8480f132401edfb92b333370a544d65983db5185f3e8bdf5c96848",
+      "fileDigest": "sha256:ce1052f865e25ac1db3d2479145e07110dcc3e6d114f84be02d97e1699588a91",
       "rules": [
         "SATIN-ACCT-002",
         "SATIN-ACCT-004",
         "SATIN-ACCT-012",
-        "SATIN-ACCT-014"
+        "SATIN-ACCT-014",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
@@ -17615,7 +17639,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/value-call-at-the-guard",
       "file": "cases/satin/access-control/delegate-refusal/value-call-at-the-guard.json",
-      "fileDigest": "sha256:1ad606b059fe11be823f883b5b64dcc6278664c9a9e86888507bbd2d129c0e59",
+      "fileDigest": "sha256:c8f1ea24f2a06ab91f59d81dd0cd956f976ce6dc2d32a67c02671fc1839d6fc8",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17625,6 +17649,8 @@
         "SATIN-MAC-007",
         "SATIN-SCHED-003",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -17652,7 +17678,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/value-call-refused",
       "file": "cases/satin/access-control/delegate-refusal/value-call-refused.json",
-      "fileDigest": "sha256:56a35f12145753b321e26ac34a93635aa3927955a1c213cd8264ecf22c0ecb06",
+      "fileDigest": "sha256:46492b40129e2b5956a1f5ab3cee856e77a62296dbde6a0614880f99877dc8eb",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17662,6 +17688,8 @@
         "SATIN-MAC-007",
         "SATIN-SCHED-003",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -17673,7 +17701,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/value-callcode-refused",
       "file": "cases/satin/access-control/delegate-refusal/value-callcode-refused.json",
-      "fileDigest": "sha256:a4ac2553b06f8f5220f7c11cfed5fffcc7aee4e859639e347192c82a44872a9b",
+      "fileDigest": "sha256:21c2d673ce4b26908761e2c21af483909ea2154f0a5b2b74852c7efbf444471e",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17683,6 +17711,8 @@
         "SATIN-MAC-007",
         "SATIN-SCHED-003",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -17712,7 +17742,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/call-cold-target-refusal-reads",
       "file": "cases/satin/access-control/delegate-refusal/call-cold-target-refusal-reads.json",
-      "fileDigest": "sha256:492e6f4e583401e9a94a52c161c7471fcfa72b447e6131477f4084c7acce67c2",
+      "fileDigest": "sha256:97d155ecbfefb3c69db96dca7e7a7276cb96ebf24a0987736ac5da0128867fd3",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17722,6 +17752,8 @@
         "SATIN-MAC-007",
         "SATIN-SCHED-003",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -17733,7 +17765,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads",
       "file": "cases/satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads.json",
-      "fileDigest": "sha256:42d1757ffcc8865346d3cda1600630c8bbbb30ba7da905926d6a699d614d4284",
+      "fileDigest": "sha256:487ee5bdcb615dc7991e4fbcaed5c84979a72577b77761a44bff6e27bb003d33",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17743,6 +17775,8 @@
         "SATIN-MAC-007",
         "SATIN-SCHED-003",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -17754,7 +17788,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads",
       "file": "cases/satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads.json",
-      "fileDigest": "sha256:465df602e118f35b7a9d8ffb908e0e19dd7fb056f193d291c06ae0c8c6ba1b99",
+      "fileDigest": "sha256:0aea799b132bafcb6e664c30616655e14f4504f97916bc8f763abb72ddc2372c",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17764,6 +17798,8 @@
         "SATIN-MAC-007",
         "SATIN-SCHED-003",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -17964,7 +18000,7 @@
       "area": "detention",
       "caseId": "satin/detention/delegate-refusal/surcharge-crossing",
       "file": "cases/satin/detention/delegate-refusal/surcharge-crossing.json",
-      "fileDigest": "sha256:c95b749051c380aeeeef5c0e299a2776c910c77550da9c47e23f974c2adb74c8",
+      "fileDigest": "sha256:636eef291972014f1a203c34371b23a0a4e2ae05b7f844cfc28707b076449d1c",
       "rules": [
         "SATIN-DET-001",
         "SATIN-DET-003",
@@ -17982,6 +18018,8 @@
         "SATIN-OUT-008",
         "SATIN-STOP-020",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -17993,7 +18031,7 @@
       "area": "detention",
       "caseId": "satin/detention/delegate-refusal/surcharge-crossing-one-short",
       "file": "cases/satin/detention/delegate-refusal/surcharge-crossing-one-short.json",
-      "fileDigest": "sha256:dcf46b896dcfc4f69ac137f6daeae52338245ab14549fc9cb59f6cfe14d58df3",
+      "fileDigest": "sha256:620af5eb367787e0a5471a0dd0d5270212dd918186c9c0429191eddc8359305b",
       "rules": [
         "SATIN-DET-001",
         "SATIN-DET-003",
@@ -18011,6 +18049,8 @@
         "SATIN-OUT-008",
         "SATIN-STOP-020",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -18022,7 +18062,7 @@
       "area": "detention",
       "caseId": "satin/detention/delegate-refusal/surcharge-paid",
       "file": "cases/satin/detention/delegate-refusal/surcharge-paid.json",
-      "fileDigest": "sha256:dfd4ede67681c800c99efa6bbeb6d504138b89b9536e1dcc6c11c2b789e83620",
+      "fileDigest": "sha256:796a9d444374c15fffa353d11c4e2b482c59af403a6152e92fd00f1dd1b1072a",
       "rules": [
         "SATIN-DET-001",
         "SATIN-DET-003",
@@ -18038,7 +18078,9 @@
         "SATIN-MAC-004",
         "SATIN-MAC-005",
         "SATIN-OUT-008",
-        "SATIN-STOP-020"
+        "SATIN-STOP-020",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -18102,7 +18144,7 @@
       "area": "detention",
       "caseId": "satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory",
       "file": "cases/satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory.json",
-      "fileDigest": "sha256:b000609e631104d1aac45ef2e053a1fbd8c6291f1119dd8cb584e951d5c71649",
+      "fileDigest": "sha256:45681dadfa2eca1b25cc8e303a2cbcb1a0f8e43c0101f840076bbfa2c4b0712c",
       "rules": [
         "SATIN-DET-001",
         "SATIN-DET-003",
@@ -18120,6 +18162,8 @@
         "SATIN-OUT-008",
         "SATIN-STOP-020",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -18183,7 +18227,7 @@
       "area": "detention",
       "caseId": "satin/detention/delegate-refusal/memory-crossing-reads-nothing",
       "file": "cases/satin/detention/delegate-refusal/memory-crossing-reads-nothing.json",
-      "fileDigest": "sha256:9cf00fb720021f97c929c8f834a7ed5e06a5142fb975614eacdf92cbf6de06b3",
+      "fileDigest": "sha256:a819dc981279b7d7f2c93f053701b43cd950fe8288ca10e8a89a0bea1abdf4e3",
       "rules": [
         "SATIN-DET-001",
         "SATIN-DET-003",
@@ -18198,6 +18242,8 @@
         "SATIN-DET-019",
         "SATIN-MAC-007",
         "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -18320,7 +18366,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/max-forward-cold-target-refused",
       "file": "cases/satin/access-control/delegate-refusal/max-forward-cold-target-refused.json",
-      "fileDigest": "sha256:3d4735d778d66c8e73d7970565ac30d9dc33d896e0bb74bca18df10e8bc8f5a8",
+      "fileDigest": "sha256:427093bb4933611fefd799bb9f464bc328f38997f6998b71f19e921be80c0119",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -18329,6 +18375,8 @@
         "SATIN-MAC-005",
         "SATIN-MAC-007",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {
@@ -18340,7 +18388,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/max-forward-warm-target-refused",
       "file": "cases/satin/access-control/delegate-refusal/max-forward-warm-target-refused.json",
-      "fileDigest": "sha256:7876ef7cab37437df9f498116bab87ba0b5aa50b19e5e694acd488fd519f2444",
+      "fileDigest": "sha256:b65090a646dbf78d8585a740b688b85c25cec2ec901c6bdc449a961f956b9cad",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -18349,6 +18397,8 @@
         "SATIN-MAC-005",
         "SATIN-MAC-007",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {

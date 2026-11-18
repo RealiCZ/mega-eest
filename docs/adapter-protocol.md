@@ -30,10 +30,14 @@ For every case of the selected manifest subset:
 2. If any `requires` entry is outside the declared capabilities, report `unsupported` with the
    missing entries and do not run it.
 3. Run the executor on the input. A panic, timeout, harness failure or missing input is `error`.
-4. Compare the actual document with `expected` (`mega_fixture_format::compare`). Equality is
-   exact on canonical values, with two rules: an optional group the case does not require is
-   ignored, and a `reasons` set matches when the implementation reports exactly one of its
-   entries (or none when it is empty).
+4. Compare the actual document with `expected` (`mega_fixture_format::compare`). Canonical
+   values compare exactly by default. Ignore optional groups the case does not require.
+   A `reasons` set matches when the implementation reports exactly one of its entries, or
+   none when the set is empty. For `returnedState`, the actual account and slot keys must
+   exactly match the non-null expected keys. An expected `null` requires the key to be
+   absent. Compare only the account fields the expectation lists. A slot expectation of
+   `{}` requires the key to be present, and a quantity also checks its value. See the
+   [returned-state comparison rules](format.md#returned-transaction-state).
 5. Map the verdict: `pass`; `fail` with the first differing semantic path and both values;
    `known-fail` when the consumer's own waiver list names this case and exactly this difference;
    `unsupported`; `error`.
@@ -171,8 +175,26 @@ a case that does not require them (decision D-61).
   off the case's pre-state outside its recording, as a node reads it for its block, and hands it
   to the implementation's context (`MegaContext::new_with_system_address`), which then reads
   nothing for it; the adapter records every load the run makes, never hiding one (D-94).
-- `reads` is compared as every other group: exactly, so a load the specification does not require,
-  and a load it requires that is missing, are each a difference.
+- The consumer compares `reads` exactly. A missing required load or an extra load is a difference.
+
+### Returned transaction state
+
+For a case requiring `group:returned-state`, both adapters project every entry in the transaction
+result in plain and instrumented runs. The revm adapter reads `MegaTransactionOutcome.state`
+including each storage entry's `present_value`. The evm2 adapter reads
+`ExecutedTx::account_changes()` including each storage entry's current value, before
+`ExecutedTx::commit()`. Both read the account metadata and slots before the state diff filters
+for touches and changes. The projection keeps absent-account keys and explicit zero slots.
+Adapters export all metadata fields and slot values they observe, even when the fixture
+asserts only presence. Lifecycle finalization can clear the temporary values of an account
+created and destroyed by the same transaction. The account and slot keys still identify
+completed loads.
+
+The expected keys come from the model's transaction journal loads. The recording layer for
+`reads` also observes L1 fee and footprint reads made outside the journal
+(`SATIN-WIT-011`). A journal load of the same address still belongs to `returnedState`. Block
+pre-execution reads, fees read outside the journal, and exports such as bucket capacities are
+accounted for separately by the witness rules.
 
 ### Gas pools
 
@@ -205,7 +227,7 @@ case that does not require it.
 | `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `62f2964a` with `RealiCZ/evm2` at `c0a91cbb`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
 Both declare `state-transition` with its mandatory groups, `group:gas-pools`, `group:limit-stop`,
-`group:reads` and the features `deposit`, `salt` and `synthetic-transaction`. The revm-based adapter
+`group:reads`, `group:returned-state` and the features `deposit`, `salt` and `synthetic-transaction`. The revm-based adapter
 also runs a recorded `oracle-transcript`; the evm2-based adapter does not consume transcripts
 (D-45). Its connected service records hints and supplies no answers, so Oracle reads use the
 slot's value. Neither runs sparse pre-states, injected faults, or engine isolation of a deposit-only
