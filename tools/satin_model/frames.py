@@ -53,10 +53,19 @@ class FramesMixin:
         """SATIN-LIM-003: a child's budget in each dimension, its share of the parent's remaining."""
         return tuple(r * FRAME_SHARE_NUMERATOR // FRAME_SHARE_DENOMINATOR for r in self.frame_remaining(frame))
 
-    def as_loaded(self, address: bytes) -> bool:
-        """SATIN-ACCT-004: whether an account's nonce, balance and code are what the transaction loaded."""
+    def as_loaded(self, address: bytes, *, balance: int | None = None) -> bool:
+        """SATIN-ACCT-004: whether an account's information matches its load, with a prospective balance if supplied."""
         now, was = self.state.get(address, Account()), self.pre.get(address, Account())
-        return (now.nonce, now.balance, now.code) == (was.nonce, was.balance, was.code)
+        return (now.nonce, now.balance if balance is None else balance, now.code) == (was.nonce, was.balance, was.code)
+
+    def give_back_transfer_records(self, frame, count: int) -> int:
+        """SATIN-HIST-009: return a successful value start's taken-back record charges to its caller."""
+        taken_bytes = WRITE_RECORD_SIZE * count
+        amount = taken_bytes * COST_PER_HISTORY_BYTE
+        self.give_back(frame, amount)
+        self.history_gas -= amount
+        self.history_bytes -= taken_bytes
+        return amount
 
     def reservoir_share(self, frame, who: str) -> int:
         """SATIN-POOL-011: the child's share of the reservoir the caller has left after every charge it made
@@ -321,9 +330,7 @@ class FramesMixin:
                  target: self.state.get(target, Account()).balance + value}
         takes = []
         for a, balance in moved.items():
-            now, was = self.state.get(a, Account()), self.pre.get(a)
-            if (a != self.tx.sender and ("a", a) in self.kv and was is not None
-                    and (now.nonce, balance, now.code) == (was.nonce, was.balance, was.code)):
+            if a != self.tx.sender and a in self.pre and ("a", a) in self.kv and self.as_loaded(a, balance=balance):
                 takes.append(a)
         budget = self.child_budget(frame)
         remaining = self.frame_remaining(frame)
@@ -336,6 +343,8 @@ class FramesMixin:
                                                    (self.data_size, len(self.kv), self.growth), LIMITS):
             if rise <= 0 or (rise <= b and used + rise <= limit):
                 continue
+            if takes:
+                raise Unmodelled("a value start that crosses a limit and takes back a write record")
             name = STOP_DIMENSIONS[kind]
             crossed, which = (b, "the started frame's budget") if rise > b else (limit, "the transaction's limit")
             d.add("limit", f"the value CALL to {h(target)}, an account without code, is a start answered without a frame: "
@@ -373,14 +382,10 @@ class FramesMixin:
         self.logs.append((TRANSFER_LOG_ADDRESS, [TRANSFER_TOPIC, pad_address(caller), pad_address(target)],
                           value.to_bytes(32, "big")))
         d.add("resources", f"the value CALL to {h(target)}, an account without code, is answered with a success without a "
-              f"frame: its start keeps {len(records)} records, a transfer log and {rises[2]} of state growth, within "
+              f"frame: its start keeps {records_net} net records, a transfer log and {rises[2]} of state growth, within "
               "the started frame's budget and the transaction's limits", "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-LOG-006")
         if takes:
-            taken_bytes = WRITE_RECORD_SIZE * len(takes)
-            takeback = taken_bytes * COST_PER_HISTORY_BYTE
-            self.give_back(frame, takeback)
-            self.history_gas -= takeback
-            self.history_bytes -= taken_bytes
+            takeback = self.give_back_transfer_records(frame, len(takes))
             d.add("resources", f"the value takes back {len(takes)} account records by restoring their accounts to what "
                   f"the transaction loaded, reducing the start's net records to {records_net}",
                   "SATIN-ACCT-004", "SATIN-ACCT-006")

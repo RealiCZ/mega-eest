@@ -154,7 +154,7 @@
     },
     "definition": "tools/make_slice.py::keyless_cases",
     "generator": "tools/make_slice.py",
-    "specCommit": "c130558e2f38a913982dc17f0cd8eb8834967262",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
     "status": "candidate"
   },
   "requires": [
@@ -176,7 +176,7 @@
   ],
   "schemaVersion": "2.0",
   "specRef": {
-    "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
     "name": "megaeth/Satin"
   }
 }

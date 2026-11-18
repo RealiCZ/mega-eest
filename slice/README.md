@@ -1,26 +1,28 @@
 # The vertical slice
 
 1,015 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
-67 at specification commit `d34e626` (`specs/satin-d34e626`), 16 for interception, the
+66 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 27 for the
 edges of the charge-order principles, 5 for gas detention, 3 for the Oracle's reads, 2 for the
 refused volatile read, 5 for the stops of a transaction's own frame, 5 that observe the gas pools
 and 7 that observe the reads at `5fb2688` (`specs/satin-5fb2688`), 17 for the take-back page's
-worked examples, 30 for the destruction page's own rules, 53 for gas detention's rules and 26 for
+worked examples, 29 for the destruction page's own rules, 53 for gas detention's rules and 26 for
 the limit-stop page's rules at `cdded1e` (`specs/satin-cdded1e`), 60 for the outcomes page and the
-order of validation's refusals, 46 for the authorization page's rules and 113 for KeylessDeploy's
+order of validation's refusals, 45 for the authorization page's rules and 105 for KeylessDeploy's
 page at `c130558` (`specs/satin-c130558`), and 4 whose derivation takes a reading the specification
 states from `bcf260d` on (2 for gas detention's rules whose precompile halts, a failed deposit's
 reads and a promoted system transaction's receipt), 73 for the system-transaction page and gas
 forwarding, 64 for the edges two reviews of the first batch found unpinned, 101 for the deposits
-page, the Oracle and the small system contracts, 78 for the history page and the resource-accounting
+page, the Oracle and the small system contracts, 77 for the history page and the resource-accounting
 page, 58 for the precompile page's and 24 for the contract-limits page's own rules, and 57 for the
 rules of the two gas pools, state gas and the gas schedule that no case pinned at `bcf260d`
-(`specs/satin-bcf260d`), and 74 at `83c0d26` (`specs/satin-83c0d26`):
+(`specs/satin-bcf260d`), and 87 at `83c0d26` (`specs/satin-83c0d26`, the snapshot new cases cite):
 a deposit whose top-level creation's initcode is over its limit, which that snapshot exempts, a
 call refused at a precompile address's beneficiary delegate, and 71 for a call refused at its
-target's EIP-7702 delegate, a review's edges and the inherited path's cold loads among them. One
-more writes to the exact state-growth budget three calls deep. Each case names its own spec
+target's EIP-7702 delegate, a review's edges and the inherited path's cold loads among them. The
+remaining 14 cover competing keyless checks and invalid encodings, the funded keyless forward,
+an empty deposit caller, effective authorization nonces, the exact third-level state-growth
+budget, and charge and record boundaries for transfers and destruction. Each case names its own spec
 (decisions D-54, D-59, D-60, D-61, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78, D-79,
 D-80, D-82, D-83, D-84, D-85, D-88, D-91, D-93, D-94, D-96, D-100, D-103, D-104, D-106, D-109,
 D-112, D-114, D-115, D-117, D-118 to D-128). Every

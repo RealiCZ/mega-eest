@@ -160,7 +160,7 @@
     },
     "definition": "tools/make_slice.py::interception_cases",
     "generator": "tools/make_slice.py",
-    "specCommit": "d334ef8748a6fb09dfcf1162704539fe22373aef",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
     "status": "candidate"
   },
   "requires": [
@@ -187,7 +187,7 @@
   ],
   "schemaVersion": "2.0",
   "specRef": {
-    "descriptor": "sha256:6fa989a0bb4e83353b71c6c30f75a5e77c27a07f73b97f786514b975429aeea2",
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
     "name": "megaeth/Satin"
   }
 }
