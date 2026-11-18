@@ -298,15 +298,18 @@ specification's text and constants:
   restored account's record history after the child share is returned. The transaction's own
   zero-value call to an absent recipient accounts for no recipient record or rise.
 
-- **Recorded Oracle requests** (D-190). An ordinary transaction's SLOAD in the Oracle's own
-  frame loads the journal slot, consumes the next service reply, marks the access and pays
-  the cold charge. A reply wins over the held value. A null reply selects the current
-  journal value, including any standing write (`SATIN-ORCL-002`, `-004`, `-005`).
-  The model retains the request even if the read's charge fails. It rejects an unexpected
-  request or unused transcript entry. It records service replies in `reads.oracle` and
-  derives the bytecode result independently. The returned Oracle slot reflects
-  journal state. On-chain persistence and block inclusion are governed by
-  `SATIN-ORCL-012` and `SATIN-ORCL-013`.
+- **Recorded Oracle requests** (D-190, D-192). SLOAD selects the Oracle path by the frame's
+  storage address. A DELEGATECALL into its bytecode from another account reads that
+  account's storage. For an ordinary transaction's Oracle SLOAD, the model loads the
+  journal slot, consumes the next service reply, marks the access and pays the cold
+  charge. A reply wins over the held value. A null reply selects the current journal
+  value, including any standing write (`SATIN-ORCL-002`, `-004`, `-005`).
+  The model retains the request even if the read's charge fails. An empty recorded
+  queue rejects a request and an unused entry rejects the result. The model records
+  every request in `oracleRequests` and keeps non-null replies in `reads.oracle`.
+  It derives the value pushed and the returned journal slot independently.
+  On-chain persistence and block inclusion are governed by `SATIN-ORCL-012`
+  and `SATIN-ORCL-013`.
 
 - **System entry checks and a static KeylessDeploy call** (D-129, D-130). A transaction's own
   `isVolatileDataAccessDisabled()` query answers false at its four-byte selector. Nonmatching

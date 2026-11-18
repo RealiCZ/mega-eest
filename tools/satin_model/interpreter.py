@@ -421,15 +421,13 @@ class InterpreterMixin:
                 steps.append(f"MSTORE {G_VERYLOW} + memory to {mem_words} words")
             elif op == 0x54:  # SLOAD
                 # The Oracle's own frame: a child at its address, or the transaction's own call of it (D-109).
-                if address == ORACLE and (ctx or self.system_pages):
+                if address == ORACLE:
                     key = pop()
-                    if frame.get("access_off") and self.system_pages:
+                    if frame.get("access_off"):
                         d.add("outcome", f"the Oracle's SLOAD of slot {key} is an Oracle read in a frame whose volatile-data "
                               "access is off: refused, asking no service and marking nothing", "SATIN-ORCL-004",
                               "SATIN-HPTS-002")
                         return refuse(ACCESS_TYPE_ORACLE, "the Oracle's SLOAD")
-                    if frame.get("access_off"):
-                        raise Unmodelled("an Oracle read refused")
                     value = self.state.get(ORACLE, Account()).storage.get(key, 0)
                     self.warm_slots.add((ORACLE, key))
                     self.load_slot(ORACLE, key, "the Oracle's SLOAD, which loads the slot before its charge, whatever the "

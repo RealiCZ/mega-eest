@@ -57,7 +57,7 @@ const SPEC: &str = "megaeth/Satin";
 
 /// The requirements this adapter supports: the mandatory groups of state-transition and the
 /// input features it converts.
-const SUPPORTED: [&str; 14] = [
+const SUPPORTED: [&str; 15] = [
     "feature:deposit",
     "feature:oracle-transcript",
     "feature:salt",
@@ -66,6 +66,7 @@ const SUPPORTED: [&str; 14] = [
     "group:gas-pools",
     "group:limit",
     "group:limit-stop",
+    "group:oracle-requests",
     "group:outcome",
     "group:reads",
     "group:receipts",
@@ -760,9 +761,12 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         }
         Err(e) => return Err(bad(format!("the implementation failed: {e}"))),
     };
-    if wants("group:reads") {
-        if let Value::Object(m) = &mut observations {
+    if let Value::Object(m) = &mut observations {
+        if wants("group:reads") {
             m.insert("reads".into(), reads(&loaded.borrow(), &pre));
+        }
+        if wants("group:oracle-requests") {
+            m.insert("oracleRequests".into(), oracle_requests(&loaded.borrow()));
         }
     }
     if let (Some(p), Value::Object(m)) = (pools, &mut observations) {
@@ -816,11 +820,11 @@ fn reads(l: &Loaded, pre: &BTreeMap<Address, PreAccount>) -> Value {
             Value::Array(
                 l.oracle
                     .iter()
-                    .map(|(slot, answer)| {
-                        obj(vec![
+                    .filter_map(|(slot, answer)| {
+                        answer.map(|value| obj(vec![
                             ("slot", b256(&B256::from(slot.to_be_bytes::<32>()))),
-                            ("value", answer.map_or(Value::Null, qty_u256)),
-                        ])
+                            ("value", qty_u256(value)),
+                        ]))
                     })
                     .collect(),
             ),
@@ -835,6 +839,15 @@ fn reads(l: &Loaded, pre: &BTreeMap<Address, PreAccount>) -> Value {
             ),
         ),
     ])
+}
+
+fn oracle_requests(loaded: &Loaded) -> Value {
+    Value::Array(loaded.oracle.iter().map(|(slot, answer)| {
+        obj(vec![
+            ("slot", b256(&B256::from(slot.to_be_bytes::<32>()))),
+            ("answer", answer.map_or(Value::Null, qty_u256)),
+        ])
+    }).collect())
 }
 
 /// The refusal reason of an implementation error, by the variant's name.

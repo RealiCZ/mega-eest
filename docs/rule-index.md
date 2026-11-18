@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1162** (1162 gating, 0 quarantined).
+Cases: **1163** (1163 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -6644,6 +6644,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/oracle/get-slot/delegatecall-own-storage] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/get-slot/recorded-null-answer] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
@@ -6657,6 +6658,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/oracle/get-slot/delegatecall-own-storage] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/get-slot/recorded-null-answer] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
@@ -6670,6 +6672,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/get-slot/recorded-null-answer] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
@@ -6681,6 +6684,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/oracle/get-slot/recorded-null-answer] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
@@ -10442,6 +10446,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/taken-and-unfunded] | gating | unqualified | [satin-c130558] |
 | [satin/limit-stops/state-growth-one-over-with-reservoir] | gating | unqualified | [satin-83c0d26] |
+| [satin/oracle/get-slot/recorded-null-answer] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
@@ -10622,6 +10627,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/taken-and-unfunded] | gating | unqualified | [satin-c130558] |
 | [satin/limit-stops/state-growth-one-over-with-reservoir] | gating | unqualified | [satin-83c0d26] |
+| [satin/oracle/get-slot/recorded-null-answer] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
@@ -11576,6 +11582,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/oracle/emit-log/live-system-address]: ../slice/cases/satin/oracle/emit-log/live-system-address.json
 [satin/oracle/emit-log/not-system-address]: ../slice/cases/satin/oracle/emit-log/not-system-address.json
 [satin/oracle/get-slot/delegatecall-own-storage]: ../slice/cases/satin/oracle/get-slot/delegatecall-own-storage.json
+[satin/oracle/get-slot/recorded-null-answer]: ../slice/cases/satin/oracle/get-slot/recorded-null-answer.json
 [satin/oracle/get-slots/in-order]: ../slice/cases/satin/oracle/get-slots/in-order.json
 [satin/oracle/get-slots/recorded-answer-then-fallback]: ../slice/cases/satin/oracle/get-slots/recorded-answer-then-fallback.json
 [satin/oracle/get-slots/repeated-slot]: ../slice/cases/satin/oracle/get-slots/repeated-slot.json

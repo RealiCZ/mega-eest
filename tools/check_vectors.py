@@ -411,7 +411,7 @@ def derive_requirements(profile, inp, exp) -> set:
     out = set()
     if profile == "state-transition":
         out |= {"group:outcome", "group:state", "group:receipts", "group:gas-ledgers", "group:resources", "group:limit"}
-        for key, group in (("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("returnedState", "group:returned-state"), ("checkpoints", "group:checkpoints")):
+        for key, group in (("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("oracleRequests", "group:oracle-requests"), ("returnedState", "group:returned-state"), ("checkpoints", "group:checkpoints")):
             if key in exp:
                 out.add(group)
         _limit_requirements(exp.get("limit"), out)
@@ -552,6 +552,8 @@ def semantic_checks(case, specs: Specs):
         elif (tx["kind"] == "deposit") != _deposit(tx["raw"]):
             raise Reject("inconsistent-transaction", path + "/raw", "kind and bytes disagree")
     # 5. Requirements.
+    if case["schemaVersion"] == "2.0" and "oracleRequests" in exp:
+        raise Reject("unsupported-schema-version", "/schemaVersion", "oracleRequests requires schema version 2.1 or later")
     if derive_requirements(profile, inp, exp) != set(case["requires"]):
         raise Reject("requirement-mismatch", "/requires", "requires differs from the content")
     # 6. Consistency.

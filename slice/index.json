@@ -15496,9 +15496,27 @@
       "area": "oracle",
       "caseId": "satin/oracle/get-slots/recorded-answer-then-fallback",
       "file": "cases/satin/oracle/get-slots/recorded-answer-then-fallback.json",
-      "fileDigest": "sha256:ad8384503c3f39d11be391f63429db48a9c0dbc6a7023272707bd44c105620de",
+      "fileDigest": "sha256:1ddd3720b569f755d70933b4eefd752510728cb1563c6a9273d7a413035beb8c",
       "rules": [
         "SATIN-ORCL-001",
+        "SATIN-ORCL-002",
+        "SATIN-ORCL-003",
+        "SATIN-ORCL-004",
+        "SATIN-ORCL-005",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "oracle",
+      "caseId": "satin/oracle/get-slot/recorded-null-answer",
+      "file": "cases/satin/oracle/get-slot/recorded-null-answer.json",
+      "fileDigest": "sha256:a45561a4b314cadda8be3c2d4bf6c4eec5e8f00756786c9b955eb70813f21e78",
+      "rules": [
         "SATIN-ORCL-002",
         "SATIN-ORCL-003",
         "SATIN-ORCL-004",
@@ -22783,6 +22801,11 @@
       "caseId": "satin/negative/wrong-expected/state-gas-off-by-one",
       "file": "negative/satin/negative/wrong-expected/state-gas-off-by-one.json",
       "wrongAt": "/expected/gasLedgers/state"
+    },
+    {
+      "caseId": "satin/negative/oracle/empty-recorded-queue",
+      "error": "unexpected oracle request for slot 0x3",
+      "file": "negative/satin/negative/oracle/empty-recorded-queue.json"
     }
   ],
   "profile": "state-transition",

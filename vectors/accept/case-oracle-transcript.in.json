@@ -13,6 +13,16 @@
    "total": "0xea17"
   },
   "limit": null,
+  "oracleRequests": [
+   {
+    "answer": "0x5b",
+    "slot": "0x0000000000000000000000000000000000000000000000000000000000000003"
+   },
+   {
+    "answer": null,
+    "slot": "0x0000000000000000000000000000000000000000000000000000000000000003"
+   }
+  ],
   "outcome": {
    "admission": {
     "status": "admitted"
@@ -59,10 +69,6 @@
     {
      "slot": "0x0000000000000000000000000000000000000000000000000000000000000003",
      "value": "0x5b"
-    },
-    {
-     "slot": "0x0000000000000000000000000000000000000000000000000000000000000003",
-     "value": null
     }
    ],
    "storage": {
@@ -262,6 +268,7 @@
   "feature:salt",
   "group:gas-ledgers",
   "group:limit",
+  "group:oracle-requests",
   "group:outcome",
   "group:reads",
   "group:receipts",
@@ -278,7 +285,7 @@
   "SATIN-WIT-005",
   "SATIN-WIT-008"
  ],
- "schemaVersion": "2.0",
+ "schemaVersion": "2.1",
  "specRef": {
   "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
   "name": "megaeth/Satin"

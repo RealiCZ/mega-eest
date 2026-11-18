@@ -120,13 +120,18 @@ class ReadsMixin:
         if hints:
             self.d.add("reads", f"the hints handed to the oracle service, in order: {len(hints)}, each with its topic, its "
                        "data and the address of the frame that made the call", "SATIN-ORCL-007", "SATIN-WIT-001")
-        oracle = [{"slot": word(slot), "value": None if answer is None else q(answer)}
-                  for slot, answer in self.oracle_answers]
-        if oracle:
-            self.d.add("reads", "the service requests are recorded in order with their answers. A null answer "
-                       "records a request that returned no value", "SATIN-ORCL-002", "SATIN-ORCL-005")
+        oracle = [{"slot": word(slot), "value": q(answer)}
+                  for slot, answer in self.oracle_answers if answer is not None]
         return {"accounts": accounts, "storage": storage, "codes": codes, "blockHashes": {},
                 "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": oracle, "hints": hints}
+
+    def oracle_requests_observation(self) -> list[dict]:
+        """Records each service request in order, including one that received no answer."""
+        if self.oracle_answers:
+            self.d.add("oracleRequests", "the service answered these requests in order, a null answer "
+                       "recording a request that received no value", "SATIN-ORCL-002", "SATIN-ORCL-005")
+        return [{"slot": word(slot), "answer": None if answer is None else q(answer)}
+                for slot, answer in self.oracle_answers]
 
     def returned_state_observation(self, forbidden_accounts: tuple[bytes, ...]) -> dict:
         """The journal's loaded keys and the values fixed by the model's settled state."""

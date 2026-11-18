@@ -109,6 +109,9 @@ pub fn validate(value: &Value, fixture: &Fixture, store: &SpecStore) -> Result<(
     check_transactions(fixture.profile, input)?;
 
     // 5. requires lists exactly the groups carried and the features used.
+    if fixture.schema_minor == 0 && expected.get("oracleRequests").is_some() {
+        return Err(err(ErrorCode::UnsupportedSchemaVersion, "/schemaVersion", "oracleRequests requires schema version 2.1 or later"));
+    }
     let derived = derive_requirements(fixture.profile, input, expected)?;
     let listed: BTreeSet<String> = arr(get(value, "requires")).iter().map(|v| str_of(v).to_string()).collect();
     if derived != listed {
@@ -214,7 +217,7 @@ pub(crate) fn derive_requirements(profile: Profile, input: &Value, expected: &Va
             for g in ["group:outcome", "group:state", "group:receipts", "group:gas-ledgers", "group:resources", "group:limit"] {
                 add(g);
             }
-            for (key, group) in [("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("returnedState", "group:returned-state"), ("checkpoints", "group:checkpoints")] {
+            for (key, group) in [("gasPools", "group:gas-pools"), ("detention", "group:detention"), ("reads", "group:reads"), ("oracleRequests", "group:oracle-requests"), ("returnedState", "group:returned-state"), ("checkpoints", "group:checkpoints")] {
                 if expected.get(key).is_some() {
                     add(group);
                 }

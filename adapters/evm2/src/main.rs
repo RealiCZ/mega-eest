@@ -65,6 +65,7 @@ const CAPABILITIES: &[&str] = &[
     "group:gas-pools",
     "group:limit",
     "group:limit-stop",
+    "group:oracle-requests",
     "group:outcome",
     "group:reads",
     "group:receipts",
@@ -907,9 +908,21 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
             m.insert("gasPools".into(), p);
         }
     }
-    if wants("group:reads") {
-        if let Value::Object(m) = &mut observations {
-            m.insert("reads".into(), reads(&loaded.borrow(), &listed, &oracle_service));
+    if let Value::Object(m) = &mut observations {
+        let wants_reads = wants("group:reads");
+        let wants_oracle_requests = wants("group:oracle-requests");
+        if wants_reads || wants_oracle_requests {
+            let calls = oracle_service.calls();
+            if wants_reads {
+                m.insert("reads".into(), reads(&loaded.borrow(), &listed, &calls));
+            }
+            if wants_oracle_requests {
+                let requests = match oracle_service.inner().transcript {
+                    OracleTranscript::Recorded(_) => oracle_requests(&calls),
+                    _ => Value::Array(Vec::new()),
+                };
+                m.insert("oracleRequests".into(), requests);
+            }
         }
     }
     Ok((observations, diagnostics))
@@ -949,7 +962,7 @@ fn returned_state<'a>(changes: impl Iterator<Item = evm2::evm::AccountChanges<'a
 /// hash: the code the witness holds for every account it names, whether or not the load that named
 /// the account brought the code (SATIN-WIT-001). Oracle requests and forwarded hints are
 /// recorded at the engine's service boundary.
-fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, service: &RecordingOracle<FixtureOracle>) -> Value {
+fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, calls: &[OracleCall]) -> Value {
     let mut codes = l.codes.clone();
     let accounts = l
         .accounts
@@ -975,13 +988,12 @@ fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, service: &RecordingOrac
     }
     let mut oracle = Vec::new();
     let mut hints = Vec::new();
-    let recorded = matches!(service.inner().transcript, OracleTranscript::Recorded(_));
-    for call in service.calls() {
+    for call in calls {
         match call {
-            OracleCall::Answer { slot, answer } if recorded => {
+            OracleCall::Answer { slot, answer: Some(value) } => {
                 oracle.push(object([
                     ("slot", Value::String(format!("{slot:#066x}"))),
-                    ("value", answer.map_or(Value::Null, q)),
+                    ("value", q(*value)),
                 ]));
             }
             OracleCall::Answer { .. } => {}
@@ -989,7 +1001,7 @@ fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, service: &RecordingOrac
                 hints.push(object([
                     ("from", hexs(from.as_slice())),
                     ("topic", hexs(topic.as_slice())),
-                    ("data", hexs(&data)),
+                    ("data", hexs(data)),
                 ]));
             }
         }
@@ -1003,6 +1015,16 @@ fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, service: &RecordingOrac
         ("oracle", Value::Array(oracle)),
         ("hints", Value::Array(hints)),
     ])
+}
+
+fn oracle_requests(calls: &[OracleCall]) -> Value {
+    Value::Array(calls.iter().filter_map(|call| match call {
+        OracleCall::Answer { slot, answer } => Some(object([
+            ("slot", Value::String(format!("{slot:#066x}"))),
+            ("answer", answer.map_or(Value::Null, q)),
+        ])),
+        OracleCall::Hint { .. } => None,
+    }).collect())
 }
 
 fn observe(r: &TxResult<MegaTypes>, ext: &mega_evm2::Lite, sent: &Sent, listed: &BTreeMap<Address, Listed>, touched: &[Touched]) -> Value {

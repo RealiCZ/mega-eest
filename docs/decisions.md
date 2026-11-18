@@ -3178,8 +3178,10 @@ assertion (`SATIN-KEY-011`, `SATIN-LOG-002`).
 
 **D-190. Record Oracle requests with a value or a null answer.**
 Both adapters consume the existing Oracle transcript in request order through the service
-boundary. The recorded `reads.oracle` list has one entry per request. A null value means
-the service was asked and supplied no answer. The ordinary transaction's Oracle bytecode
+boundary. Schema 2.1's `group:oracle-requests` adds the `oracleRequests` list, with one
+entry per request. A null answer means the service was asked and supplied no value.
+The `reads.oracle` projection continues to list non-null answers in every version.
+Older readers reject the new capability as an unknown requirement. The ordinary transaction's Oracle bytecode
 reads the same slot twice and exposes both pushed values in its output. The returned
 state retains the loaded slot's journal value (`SATIN-ORCL-002`, `-004`, `-005`,
 `SATIN-WIT-005`, `SATIN-WIT-008`). This extends the evm2 adapter capability recorded in
@@ -3196,3 +3198,10 @@ expectation. A null account entry makes the deploy address's required absence
 explicit and rejects a fabricated non-empty code hash. The new carried-nonce input
 has a sufficient override. The existing precedence input still puts both refusals
 in competition.
+
+**D-192. Dispatch Oracle SLOAD by the frame's storage address.**
+SLOAD selects the Oracle rules whenever the current frame uses the Oracle's storage.
+Code borrowed by DELEGATECALL from another address reads that caller's storage.
+An ordinary getSlot with a null transcript answer pushes the journal value. The
+same input with an empty recorded queue errors at the request. Both paths apply
+without an authoring flag (`SATIN-ORCL-002`, `-004`, `-005`).

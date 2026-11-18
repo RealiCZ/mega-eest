@@ -5435,6 +5435,13 @@ def oracle_page_cases() -> list[Case]:
              data=sel("getSlots(uint256[])") + abi_words(0x20, 2, slot, slot), reads=True, returned_state=True,
              accounts={model.ORACLE: model.Account(code=system_contracts()[model.ORACLE], storage={slot: held})},
              oracle_entries=[(slot, served), (slot, None)]))
+    add(Case("satin/oracle/get-slot/recorded-null-answer", "an ordinary transaction calls the Oracle's getSlot "
+             "bytecode. The service is asked for the slot and gives no value, so the returned word is the journal "
+             "value (SATIN-ORCL-002, SATIN-ORCL-005).",
+             spec=CURRENT_SPEC, system=True, to=model.ORACLE, code=None, gas=300_000,
+             data=sel("getSlot(uint256)") + word(slot), reads=True, returned_state=True,
+             accounts={model.ORACLE: model.Account(code=system_contracts()[model.ORACLE], storage={slot: held})},
+             oracle_entries=[(slot, None)]))
     set_slot = sel("setSlot(uint256,bytes32)") + abi_words(3, 7)
     add(Case("satin/oracle/set-slot/user-not-system-address", "a user's transaction calls the Oracle's setSlot(3, 7), its "
              "sender not the address the registry names: the body writes the fresh slot and is charged for it, then the "
@@ -7885,6 +7892,7 @@ def build(c: Case, *, observe_returned: bool = False):
         "salt": {"mapping": "salt-v1", "complete": c.salt_complete, "buckets": {q(b): q(cap) for b, cap in sorted(buckets.items())}},
     }
     if c.oracle_entries is not None:
+        result.observations["oracleRequests"] = run.oracle_requests_observation()
         inp["oracle"] = {"mode": "recorded",
                          "entries": [{"slot": h(word(slot)), "answer": None if answer is None else q(answer)}
                                      for slot, answer in c.oracle_entries]}
@@ -7911,7 +7919,8 @@ QUARANTINE: dict[str, dict] = {}
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
                "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources", "reads": "/expected/reads",
-               "limit": "/expected/limit", "gasPools": "/expected/gasPools", "returnedState": "/expected/returnedState"}
+               "limit": "/expected/limit", "gasPools": "/expected/gasPools", "returnedState": "/expected/returnedState",
+               "oracleRequests": "/expected/oracleRequests"}
 
 
 def settle_burn(params: dict) -> None:
@@ -8071,11 +8080,11 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, retired: set, spe
         + (["group:limit-stop"] if result.observations["limit"] else []) + (["group:gas-pools"] if c.pools else []) \
         + (["feature:synthetic-transaction"] if c.synthetic else []) \
         + (["group:returned-state"] if c.returned_state else []) \
-        + (["feature:oracle-transcript"] if c.oracle_entries is not None else [])
+        + (["feature:oracle-transcript", "group:oracle-requests"] if c.oracle_entries is not None else [])
     authoring = {"intent": c.intent, **({"boundary": c.boundary} if c.boundary else {})}
     fx = {
         "format": "mega-execution-fixture",
-        "schemaVersion": "2.0",
+        "schemaVersion": "2.1" if c.oracle_entries is not None else "2.0",
         "caseId": c.case_id,
         "specRef": {"name": "megaeth/Satin", "descriptor": descriptor_digest},
         "profile": "state-transition",
@@ -8134,6 +8143,19 @@ def negative(base: dict) -> dict:
     return bad
 
 
+def empty_oracle_transcript(base: dict) -> dict:
+    """A single getSlot query whose recorded service has no entry to consume."""
+    bad = json.loads(json.dumps(base))
+    bad["caseId"] = "satin/negative/oracle/empty-recorded-queue"
+    bad["input"]["oracle"]["entries"] = []
+    bad["provenance"] = {
+        "status": "example",
+        "generator": "tools/make_slice.py",
+        "note": "The ordinary getSlot still asks the service. With an empty recorded queue it must report an error.",
+    }
+    return bad
+
+
 def pretty(value) -> str:
     return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
@@ -8177,13 +8199,20 @@ def outputs(explained: dict | None = None) -> dict[str, str]:
     neg = negative(by_id["satin/sstore/fresh-slot/minimum-bucket"])
     neg_rel = f"negative/{neg['caseId']}.json"
     files[neg_rel] = pretty(neg)
+    empty_oracle = empty_oracle_transcript(by_id["satin/oracle/get-slot/recorded-null-answer"])
+    empty_rel = f"negative/{empty_oracle['caseId']}.json"
+    files[empty_rel] = pretty(empty_oracle)
+    slot = int(empty_oracle["expected"]["oracleRequests"][0]["slot"], 16)
     files["index.json"] = pretty({
         "format": "mega-fixture-slice-index",
         "spec": {"name": "megaeth/Satin", "descriptor": descriptor_digest},
         "profile": "state-transition",
         "cases": index,
         "quarantine": quarantine,
-        "negative": [{"caseId": neg["caseId"], "file": neg_rel, "wrongAt": "/expected/gasLedgers/state"}],
+        "negative": [
+            {"caseId": neg["caseId"], "file": neg_rel, "wrongAt": "/expected/gasLedgers/state"},
+            {"caseId": empty_oracle["caseId"], "file": empty_rel, "error": f"unexpected oracle request for slot {slot:#x}"},
+        ],
     })
     return files
 
@@ -8253,7 +8282,8 @@ def main(argv: list[str]) -> int:
             f.write(text)
     cases_n = sum(1 for rel in files if rel.startswith("cases/"))
     held = sum(1 for rel in files if rel.startswith("quarantine/"))
-    print(f"make_slice: wrote {len(files)} files to slice/: {cases_n} cases, {held} quarantined, 1 negative")
+    negative_n = sum(1 for rel in files if rel.startswith("negative/"))
+    print(f"make_slice: wrote {len(files)} files to slice/: {cases_n} cases, {held} quarantined, {negative_n} negative")
     return 0
 
 

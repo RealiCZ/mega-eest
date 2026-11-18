@@ -119,8 +119,16 @@
       "kind": "case",
       "input": "accept/case-oracle-transcript.in.json",
       "canonical": "accept/case-oracle-transcript.canonical.json",
-      "fileDigest": "sha256:ad8384503c3f39d11be391f63429db48a9c0dbc6a7023272707bd44c105620de",
-      "semanticDigest": "sha256:ce24da5e848c309b4e92407a6393658617d4f45b9dac371cca0426285d83b0f7"
+      "fileDigest": "sha256:1ddd3720b569f755d70933b4eefd752510728cb1563c6a9273d7a413035beb8c",
+      "semanticDigest": "sha256:542dc94fabd950a4e1facf426baa0f136cd8a29ec94779b216edd3a764975228"
+    },
+    {
+      "id": "case-oracle-transcript-legacy",
+      "kind": "case",
+      "input": "accept/case-oracle-transcript-legacy.in.json",
+      "canonical": "accept/case-oracle-transcript-legacy.canonical.json",
+      "fileDigest": "sha256:e263306d470f72980f75c5cf715ac7bac314e864b6d0dd7cbe7afea27f2e2c2d",
+      "semanticDigest": "sha256:1a85aa808e957355f65f6ded23465edd76e4ea60985f37bf9704ed37f2b0cc75"
     },
     {
       "id": "case-returned-state",
@@ -525,6 +533,24 @@
       }
     },
     {
+      "id": "case-oracle-requests-before-2.1",
+      "kind": "case",
+      "input": "reject/case-oracle-requests-before-2.1.json",
+      "error": {
+        "code": "unsupported-schema-version",
+        "path": "/schemaVersion"
+      }
+    },
+    {
+      "id": "case-legacy-oracle-null",
+      "kind": "case",
+      "input": "reject/case-legacy-oracle-null.json",
+      "error": {
+        "code": "wrong-type",
+        "path": "/expected/reads/oracle/0/value"
+      }
+    },
+    {
       "id": "case-returned-slot-without-account",
       "kind": "case",
       "input": "reject/case-returned-slot-without-account.json",
@@ -565,7 +591,7 @@
       "kind": "manifest",
       "input": "accept/manifest-examples.in.json",
       "canonical": "accept/manifest-examples.canonical.json",
-      "digest": "sha256:a89c69fd778a12196b54d3f0ebb11400ab4bfd083f0da1350201116cb82bc9f5"
+      "digest": "sha256:9830826b10586976a87292794f79589144773ab1cce0a1687b63108cbdddf6e1"
     },
     {
       "id": "manifest-unsorted-cases",

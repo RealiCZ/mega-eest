@@ -8,10 +8,10 @@
  "schemas": {
   "schema/block-build.json": "sha256:0f0ef875b9f4f0cb7285ea0d98abeccbe6c38c4f3288fb844975ba440f760289",
   "schema/block-import.json": "sha256:3b4785f3d4bfd8e93f25f39d948a7a4e13f110025c32824387c2e9aafb3d89e0",
-  "schema/common.json": "sha256:8a490c4df14bc2470bcf6ac12c9decb348b413f88747dd80801382031203b2d5",
-  "schema/fixture.json": "sha256:565f32cef174473af890b09cc2c92796d595bfdf0f244e5bf74fe9b6a2abfa19",
+  "schema/common.json": "sha256:e52d538f72c512673e15befcaba6c8dfb2eaea72253eec63a86ad6fe0547f18c",
+  "schema/fixture.json": "sha256:cbbb602b5bb8f5a44343e53f8e1da64438b98f90a407af65ba884c711004a6b4",
   "schema/manifest.json": "sha256:deb06dd8c48b5b641479ffcaaa1497e23905e3f50a7910549ba11bae01292e0f",
-  "schema/state-transition.json": "sha256:b90128c4a8ecddde7ecf8c749c28a9ad6b306a2433e6c100666d98c0687fbbeb",
+  "schema/state-transition.json": "sha256:de9faef54d35f125417840d51c549203dcd08037ff50b493fdf5f387cd1add08",
   "schema/stateless-block.json": "sha256:5b4e64205e469652b9c7c23890409f321ce2431348d3b5e437920d0ad0833630",
   "schema/transaction-validation.json": "sha256:5055afe735744e750e58b87bcfae537768a0eccc35a2b3d46816f69edaf13378"
  },
