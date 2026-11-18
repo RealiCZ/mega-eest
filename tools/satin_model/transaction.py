@@ -13,7 +13,7 @@ from .constants import (
     PRECOMPILE_SET, INTERCEPTED, NON_ZERO_TRANSFER, SEND_HINT,
     STOP_DIMENSIONS, SYSTEM_CALLER, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT, TX_MAX_TOTAL_GAS_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
-    COST_PER_STATE_BYTE, selector,
+    COST_PER_STATE_BYTE, IS_VOLATILE_DATA_ACCESS_DISABLED,
 )
 from .records import (
     Account, created_address, fmt, h, Halt, InvalidPrestate, LimitStop, OutOfGasBeforeFrame, pad_address, refused,
@@ -560,7 +560,7 @@ class TransactionMixin:
                 status, output = self.own_limit_control(frame)
             elif (self.system_pages and not create and recipient == MEGA_ACCESS_CONTROL
                   and data[:4] in INTERCEPTED[MEGA_ACCESS_CONTROL]):
-                if data[:4] != selector("isVolatileDataAccessDisabled()"):
+                if data[:4] != IS_VOLATILE_DATA_ACCESS_DISABLED:
                     raise Unmodelled("a top-level access-control call other than the state query")
                 output = bytes(32)
                 d.add("outcome", "the transaction's own CALL matches the access-control query's four-byte selector. "

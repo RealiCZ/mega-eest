@@ -160,6 +160,7 @@
   ],
   "rules": [
     "SATIN-ACCT-002",
+    "SATIN-ACCT-004",
     "SATIN-ACCT-005",
     "SATIN-ACCT-008",
     "SATIN-ACCT-012"

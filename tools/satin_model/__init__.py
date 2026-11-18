@@ -115,6 +115,8 @@ the slice uses:
   a value `CALL` in a frame a `STATICCALL` started, halted at its static-context check; a `CALL` of an
   account delegating to an ordinary account outside gas detention; and the inherited path's cold load
   made before its surcharge, which can be gas detention's crossing (D-117);
+- the transaction's own MegaAccessControl state query, a KeylessDeploy STATICCALL running held
+  bytecode, and a promoted transaction with an absent caller (D-129, D-130);
 - the refusals of transaction validation.
 
 Every charge is a step of a derivation that names the rule it applies, so a reviewer can check

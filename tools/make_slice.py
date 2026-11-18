@@ -2037,6 +2037,11 @@ def take_back_cases() -> list[Case]:
              "record and state-growth unit (SATIN-ACCT-004, SATIN-ACCT-011, SATIN-POOL-014)", spec=CURRENT_SPEC,
              code=sstore(1, 1) + delegatecall(50_000, DESCENDANT) + b"\x50" + STOP,
              accounts={DESCENDANT: model.Account(nonce=1, code=sstore(1, 0) + INVALID)}))
+    add(Case("satin/take-backs/descendant/fresh-slot-restore-kept", "a parent writes a fresh slot and delegates to "
+             "code that restores it to zero and succeeds. The record, state charge and growth are taken back "
+             "across the frame boundary (SATIN-ACCT-004, SATIN-ACCT-011)", spec=CURRENT_SPEC,
+             code=sstore(1, 1) + delegatecall(50_000, DESCENDANT) + b"\x50" + STOP,
+             accounts={DESCENDANT: model.Account(nonce=1, code=sstore(1, 0) + STOP)}))
 
     # SATIN-TAKE-006, sent-back: P (the first frame) calls Q with 1 wei, and Q calls P back with 1 wei.
     back = call(MAX_GAS, CONTRACT, 1, 0) + b"\x50" + STOP
@@ -5284,7 +5289,7 @@ def system_pages_gap_cases() -> list[Case]:
                                       ("stipend", 0, 1, "the stipend of a value call requesting zero gas")):
         add(Case(f"satin/oracle/send-hint/caller-reverts-{name}", f"an ordinary caller admits a hint on {what} and "
                  "then reverts. The service input and its data size remain (SATIN-ORCL-006, SATIN-ORCL-009)",
-                 spec=CURRENT_SPEC, system=True, system_pages=True, reads=True,
+                 spec=CURRENT_SPEC, system=True, system_pages=True, reads=True, contract_balance=1_000_000,
                  code=laid + call(forward, model.ORACLE, value, len(hint)) + b"\x50" + revert(0, 0)))
     second_hint = send_hint(8, b"\xbb\xcc")
     add(Case("satin/oracle/send-hint/two-in-order", "an ordinary caller sends two distinct hints in sequence and "
@@ -5406,7 +5411,7 @@ def system_pages_gap_cases() -> list[Case]:
              "selector, never the code, so the call is answered (SATIN-MLC-001)",
              code=ask + call(MAX_GAS, model.MEGA_LIMIT_CONTROL, 0, 4) + b"\x50" + RETURN_RETURNDATA,
              accounts={model.MEGA_LIMIT_CONTROL: model.Account(code=STOP)}, **sys_pages))
-    access_query = sel("isVolatileDataAccessDisabled()")
+    access_query = model.IS_VOLATILE_DATA_ACCESS_DISABLED
     for name, data, intent in (("exact", access_query, "the exact access-control selector"),
                                ("suffix-byte", access_query + b"\xff", "a selector followed by one byte"),
                                ("suffix-word", access_query + bytes(32), "a selector followed by one word"),

@@ -537,6 +537,9 @@ class CreationMixin:
             return
         whose = [("the cleared account's" if a == address else "the beneficiary's") for a in records_made]
         rules = ["SATIN-SD-001", "SATIN-SD-019", "SATIN-LOG-001", "SATIN-LOG-006", "SATIN-ACCT-004"]
+        if beneficiary == self.env.coinbase == tx.sender:
+            d.add("resources", "the beneficiary is also the transaction's sender, so its balance write is part of "
+                  "the body record", "SATIN-ACCT-008")
         if address in self.destroyed:
             rules += ["SATIN-SD-013"]
         if new_ben:

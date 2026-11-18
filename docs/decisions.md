@@ -2988,7 +2988,8 @@ endpoint. A value creation followed by a transfer shares its creator record. A v
 sender and a different recipient (`SATIN-ACCT-004`, `SATIN-ACCT-006`, `SATIN-ACCT-011`). Code
 delegated by the transaction's sender can fund an absent account without recording the sender.
 An absent authorization authority and a distinct value recipient each count their own state
-growth. The parent's fresh-slot write stands when a delegate restores the slot and then halts.
+growth. A successful delegate can take back its parent's fresh-slot write. The same write stands
+when the delegate restores the slot and then halts.
 
 **D-133. Execution writes at fee addresses.** Independent calls and destructions isolate
 execution's writes to each fee address. A write to a fee address other than the sender is an

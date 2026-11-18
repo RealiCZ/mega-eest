@@ -2,15 +2,15 @@
   "caseId": "satin/oracle/send-hint/caller-reverts-stipend",
   "expected": {
     "gasLedgers": {
-      "blockGas": "0x69c9",
+      "blockGas": "0x69f4",
       "floor": "0x3a98",
-      "gasUsed": "0xd459",
+      "gasUsed": "0xd484",
       "history": "0x6a90",
       "historyBytes": "0x136",
       "refund": "0x0",
-      "regular": "0x69c9",
+      "regular": "0x69f4",
       "state": "0x0",
-      "total": "0xd459"
+      "total": "0xd484"
     },
     "limit": null,
     "outcome": {
@@ -29,7 +29,7 @@
     "reads": {
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
-          "balance": "0x0",
+          "balance": "0xf4240",
           "codeHash": "0x7e5aba5f96aaa243bee455de6bf1a27a8db6f74730d7fe9d880eb7b430e658a4",
           "nonce": "0x1"
         },
@@ -81,7 +81,7 @@
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
-      "gasUsed": "0xd459",
+      "gasUsed": "0xd484",
       "logs": [],
       "status": "0x0",
       "type": "0x0"
@@ -139,7 +139,7 @@
     "pre": {
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
-          "balance": "0x0",
+          "balance": "0xf4240",
           "code": "0x7f66cdf82f000000000000000000000000000000000000000000000000000000005f527c07000000000000000000000000000000000000000000000000000000006020527c40000000000000000000000000000000000000000000000000000000006040527c01aa0000000000000000000000000000000000000000000000000000006060525f6080525f5f60845f60017363420000000000000000000000000000000000015ff1505f5ffd",
           "nonce": "0x1",
           "storage": {}
@@ -220,6 +220,7 @@
     "group:state"
   ],
   "rules": [
+    "SATIN-ORCL-001",
     "SATIN-ORCL-006",
     "SATIN-ORCL-007",
     "SATIN-ORCL-009",

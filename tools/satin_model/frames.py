@@ -383,7 +383,8 @@ class FramesMixin:
                           value.to_bytes(32, "big")))
         d.add("resources", f"the value CALL to {h(target)}, an account without code, is answered with a success without a "
               f"frame: its start keeps {records_net} net records, a transfer log and {rises[2]} of state growth, within "
-              "the started frame's budget and the transaction's limits", "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-LOG-006")
+              "the started frame's budget and the transaction's limits", "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-LOG-006",
+              *(("SATIN-ACCT-004",) if records else ()), *(("SATIN-ACCT-014",) if new_account else ()))
         if new_account and caller == self.tx.sender:
             d.add("resources", "the transaction's sender is already a body record, so the new recipient makes the "
                   "only write record", "SATIN-ACCT-008", "SATIN-HIST-003")

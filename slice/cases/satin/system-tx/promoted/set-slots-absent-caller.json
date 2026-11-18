@@ -165,6 +165,7 @@
     "group:state"
   ],
   "rules": [
+    "SATIN-ACCT-008",
     "SATIN-ACCT-014",
     "SATIN-DEP-003",
     "SATIN-MST-002",

@@ -4126,6 +4126,24 @@
     },
     {
       "area": "take-backs",
+      "caseId": "satin/take-backs/descendant/fresh-slot-restore-kept",
+      "file": "cases/satin/take-backs/descendant/fresh-slot-restore-kept.json",
+      "fileDigest": "sha256:f3304083c753019d622914fe9cf217e9aad2430f024887a12108e13a6afceb9c",
+      "rules": [
+        "SATIN-ACCT-004",
+        "SATIN-ACCT-011",
+        "SATIN-TAKE-002",
+        "SATIN-TAKE-003",
+        "SATIN-TAKE-004",
+        "SATIN-TAKE-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "take-backs",
       "caseId": "satin/take-backs/sent-back/round-trip",
       "file": "cases/satin/take-backs/sent-back/round-trip.json",
       "fileDigest": "sha256:c8e7ed55946cc822daedd042a175f6e2c1b21463d838ca291ef0b14383ddd6a6",
@@ -12931,7 +12949,7 @@
       "area": "oracle",
       "caseId": "satin/oracle/send-hint/caller-reverts-no-value",
       "file": "cases/satin/oracle/send-hint/caller-reverts-no-value.json",
-      "fileDigest": "sha256:174151505bd68095a40f7b01e91641b89b531f483015d5fdb69623a12bbe9182",
+      "fileDigest": "sha256:34b9079df872adae271d2eb881c86f185650d17ab775840895ccdce643f6b0a7",
       "rules": [
         "SATIN-ORCL-001",
         "SATIN-ORCL-006",
@@ -12948,8 +12966,9 @@
       "area": "oracle",
       "caseId": "satin/oracle/send-hint/caller-reverts-stipend",
       "file": "cases/satin/oracle/send-hint/caller-reverts-stipend.json",
-      "fileDigest": "sha256:1c235ed05ddd21419fcd26d1aa6d208f64014275bedc6a7db6af7f4070e7df65",
+      "fileDigest": "sha256:5702382b2499f012a1583eb2be956df8cc2f61c50d3aaffbb78aaf2db5774db8",
       "rules": [
+        "SATIN-ORCL-001",
         "SATIN-ORCL-006",
         "SATIN-ORCL-007",
         "SATIN-ORCL-009",
@@ -13571,8 +13590,9 @@
       "area": "system-tx",
       "caseId": "satin/system-tx/promoted/set-slots-absent-caller",
       "file": "cases/satin/system-tx/promoted/set-slots-absent-caller.json",
-      "fileDigest": "sha256:3ed56b25afca4445e58930e4e07044276b7f395849e3259d5c0842a7ee5a1268",
+      "fileDigest": "sha256:362ab494dbfbf9f6541d0a61e4ac647b29bb7fd759e574bd72ad110738b5f3fc",
       "rules": [
+        "SATIN-ACCT-008",
         "SATIN-ACCT-014",
         "SATIN-DEP-003",
         "SATIN-MST-002",
@@ -14823,9 +14843,10 @@
       "area": "accounting",
       "caseId": "satin/accounting/sender/value-call-to-sender",
       "file": "cases/satin/accounting/sender/value-call-to-sender.json",
-      "fileDigest": "sha256:d472f2a3c74f8f9ec9f1ef19a412470c4ec7eb7d77934a884f7391cad8822a34",
+      "fileDigest": "sha256:cc4b1536617434fa6ff940483d1e275a34b8c055217e583a0422832cb6ce4f87",
       "rules": [
         "SATIN-ACCT-002",
+        "SATIN-ACCT-004",
         "SATIN-ACCT-005",
         "SATIN-ACCT-008",
         "SATIN-ACCT-012"
@@ -15130,11 +15151,13 @@
       "area": "accounting",
       "caseId": "satin/accounting/records/two-absent-recipients",
       "file": "cases/satin/accounting/records/two-absent-recipients.json",
-      "fileDigest": "sha256:f1139d72ca75bd81fc6d85ffddd2af2654d491656adc07493a21c2a8364c4d3d",
+      "fileDigest": "sha256:938f9fe82b4247f904619f4c04cca4b55de365b59799807c72378cb9b6da4056",
       "rules": [
         "SATIN-ACCT-002",
+        "SATIN-ACCT-004",
         "SATIN-ACCT-005",
-        "SATIN-ACCT-012"
+        "SATIN-ACCT-012",
+        "SATIN-ACCT-014"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -15145,11 +15168,13 @@
       "area": "accounting",
       "caseId": "satin/accounting/records/three-transfers-one-absent-recipient",
       "file": "cases/satin/accounting/records/three-transfers-one-absent-recipient.json",
-      "fileDigest": "sha256:739e62caa366b235af6bec030317ca8290719d333da2b8ed3b018ea27cd2381e",
+      "fileDigest": "sha256:2444ab3648875ce7a639d48c59f6d6904c28bdd448e40cf4d576f008e5a45bea",
       "rules": [
         "SATIN-ACCT-002",
+        "SATIN-ACCT-004",
         "SATIN-ACCT-005",
-        "SATIN-ACCT-012"
+        "SATIN-ACCT-012",
+        "SATIN-ACCT-014"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -15180,13 +15205,14 @@
       "area": "accounting",
       "caseId": "satin/accounting/records/halted-transfer-then-absent-recipient",
       "file": "cases/satin/accounting/records/halted-transfer-then-absent-recipient.json",
-      "fileDigest": "sha256:2965a533fabe65aea8ffe833500f8fadac862ed80f0286af62dae1afaacd35de",
+      "fileDigest": "sha256:52a2015c02d6d14a536d51912360d0f7efa18a983f71b5927ba87a2ce6f03048",
       "rules": [
         "SATIN-ACCT-002",
         "SATIN-ACCT-004",
         "SATIN-ACCT-005",
         "SATIN-ACCT-011",
         "SATIN-ACCT-012",
+        "SATIN-ACCT-014",
         "SATIN-POOL-014"
       ],
       "spec": {
@@ -15454,9 +15480,10 @@
       "area": "accounting",
       "caseId": "satin/accounting/fee-account/beneficiary-is-sender",
       "file": "cases/satin/accounting/fee-account/beneficiary-is-sender.json",
-      "fileDigest": "sha256:99d193cedead9f7b857e787681983565208e736f4c5dd2cc1d14020b7932a552",
+      "fileDigest": "sha256:cb4587e1e06ee51364ea25fdf37968dfdc64effaf6e63028f07579e1e170b44e",
       "rules": [
         "SATIN-ACCT-002",
+        "SATIN-ACCT-004",
         "SATIN-ACCT-005",
         "SATIN-ACCT-008",
         "SATIN-ACCT-012"
@@ -15570,10 +15597,11 @@
       "area": "accounting",
       "caseId": "satin/accounting/fee-account/destruction-to-beneficiary-as-sender",
       "file": "cases/satin/accounting/fee-account/destruction-to-beneficiary-as-sender.json",
-      "fileDigest": "sha256:e171cf7f205fcfe1b36f3afecd4f7e95ac89c245a67242f3acc9318482f0eae2",
+      "fileDigest": "sha256:a02a4acce80740642c9ea9e4cdfcaa430ead7f14909e00a06933e8023972a206",
       "rules": [
         "SATIN-ACCT-002",
         "SATIN-ACCT-004",
+        "SATIN-ACCT-008",
         "SATIN-ACCT-012",
         "SATIN-DET-001"
       ],
@@ -15648,12 +15676,14 @@
       "area": "accounting",
       "caseId": "satin/accounting/sender/delegated-sender-funds-absent-recipient",
       "file": "cases/satin/accounting/sender/delegated-sender-funds-absent-recipient.json",
-      "fileDigest": "sha256:6495089668412f13ff13fb874e2458b45fe965f288fb1fee39bc6da874878703",
+      "fileDigest": "sha256:c7d3176c956cbf2ea20c11dcf30db64db451e21b2f757fc51d36fff8f881ec3d",
       "rules": [
         "SATIN-ACCT-002",
+        "SATIN-ACCT-004",
         "SATIN-ACCT-005",
         "SATIN-ACCT-008",
-        "SATIN-ACCT-012"
+        "SATIN-ACCT-012",
+        "SATIN-ACCT-014"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
