@@ -223,7 +223,8 @@ case that does not require it.
   distinguish this path from a frame that enters with a zero budget. The instrumented
   `inspectorMessageStarts` diagnostic still counts the tracer's synthetic root message.
 - An authorization list that exceeds a limit ends the transaction's own frame with a stop.
-  Both endpoints are the regular gas and reservoir left after the intrinsic and body charges.
+  For supported list skips with no additional start charge (D-89), both endpoints are the
+  regular gas and reservoir left after the intrinsic and body charges.
 
 ## The adapters of this repository
 
