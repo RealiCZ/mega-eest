@@ -26,6 +26,64 @@
         "status": "success"
       }
     },
+    "reads": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "codeHash": "0xee6c770ad0bad29cd167029d2c146f2e3f7ceaf8db4cbe736bfc2dbc713e4611",
+          "nonce": "0x1"
+        },
+        "0x00000000000000000000000000000000000c0e40": {
+          "balance": "0x0",
+          "codeHash": "0x8509f68aaaf7d59228dbde9efc72de9690ff877edf2e768870377b5eecfb0154",
+          "nonce": "0x1"
+        },
+        "0x0000000000000000000000000000000000de1ea0": {
+          "balance": "0x0",
+          "codeHash": "0x6130a3451efe15822f74fe3094449fb5411adfbe5c6a9d3e9f3d518253cf58c1",
+          "nonce": "0x1"
+        },
+        "0x4200000000000000000000000000000000000011": null,
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": null,
+        "0x420000000000000000000000000000000000001a": null,
+        "0x420000000000000000000000000000000000001b": null,
+        "0x6342000000000000000000000000000000000004": {
+          "balance": "0x0",
+          "codeHash": "0x96d0f3ba6b474e9684a97e4388ec8dbb7929818b51e6b4f19f885ccbdf642f9b",
+          "nonce": "0x0"
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        }
+      },
+      "blockHashes": {},
+      "buckets": {},
+      "codes": [
+        "0x6130a3451efe15822f74fe3094449fb5411adfbe5c6a9d3e9f3d518253cf58c1",
+        "0x8509f68aaaf7d59228dbde9efc72de9690ff877edf2e768870377b5eecfb0154",
+        "0x96d0f3ba6b474e9684a97e4388ec8dbb7929818b51e6b4f19f885ccbdf642f9b",
+        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+        "0xee6c770ad0bad29cd167029d2c146f2e3f7ceaf8db4cbe736bfc2dbc713e4611"
+      ],
+      "hints": [],
+      "oracle": [],
+      "storage": {
+        "0x4200000000000000000000000000000000000015": {
+          "0x0000000000000000000000000000000000000000000000000000000000000001": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000003": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000005": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000007": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000008": "0x0"
+        }
+      }
+    },
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
@@ -163,7 +221,7 @@
   "provenance": {
     "authoring": {
       "boundary": "the regular gas at the call at the static cost, the value transfer and the guard, 14,400",
-      "intent": "REFUSING, which holds no balance, holds 14,400 of regular gas at a CALL with value 1 of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary: the static cost and the value transfer, 11,400 (SATIN-SCHED-003), leave the delegation guard's 3,000 exactly; the delegate's load is refused before the start checks the funds, the value transfer is given back, and the call pays its static cost and its target's cold surcharge, 3,000, the frame reverting with VolatileDataAccessDisabled(10)"
+      "intent": "REFUSING, which holds no balance, holds 14,400 of regular gas at a CALL with value 1 of an account that is not warm and holds an EIP-7702 delegation to the block beneficiary: the static cost and the value transfer, 11,400 (SATIN-SCHED-003), leave the delegation guard's 3,000 exactly; the delegate's load is refused before the start checks the funds, the value transfer is given back, and the call pays its static cost and its target's cold surcharge, 3,000, the frame reverting with VolatileDataAccessDisabled(10). The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012)"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -175,6 +233,7 @@
     "group:gas-ledgers",
     "group:limit",
     "group:outcome",
+    "group:reads",
     "group:receipts",
     "group:resources",
     "group:state"
@@ -186,7 +245,9 @@
     "SATIN-MAC-004",
     "SATIN-MAC-005",
     "SATIN-MAC-007",
-    "SATIN-SCHED-003"
+    "SATIN-SCHED-003",
+    "SATIN-WIT-002",
+    "SATIN-WIT-012"
   ],
   "schemaVersion": "2.0",
   "specRef": {

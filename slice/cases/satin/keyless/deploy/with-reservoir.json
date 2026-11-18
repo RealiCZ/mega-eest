@@ -12,6 +12,18 @@
       "state": "0x659a0",
       "total": "0x93446"
     },
+    "gasPools": {
+      "regular": {
+        "final": "0xbe91702",
+        "initial": "0xbeb7c64"
+      },
+      "reservoir": {
+        "final": "0x8b8f8",
+        "initial": "0xe8950"
+      },
+      "returned": "0xbf1cffa",
+      "spilled": "0xafc8"
+    },
     "limit": null,
     "outcome": {
       "admission": {
@@ -156,7 +168,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "a deployment whose transaction has a reservoir, which steps 10 and 14 draw: an ordinary deployment above the execution cap; the creation's reservoir share and the legacy shares, which its outcome does not distinguish, are pinned by the reservoir cases"
+      "intent": "a successful deployment above the execution cap: steps 10 and 14 draw from the reservoir, and the creation's unused regular gas and reservoir return to their respective pools (SATIN-POOL-012); the ABI gasUsed nets both pools across the creation (SATIN-KEY-015)"
     },
     "definition": "tools/make_slice.py::keyless_cases",
     "generator": "tools/make_slice.py",
@@ -166,6 +178,7 @@
   "requires": [
     "feature:salt",
     "group:gas-ledgers",
+    "group:gas-pools",
     "group:limit",
     "group:outcome",
     "group:receipts",
@@ -184,7 +197,8 @@
     "SATIN-KEY-012",
     "SATIN-KEY-013",
     "SATIN-KEY-014",
-    "SATIN-KEY-015"
+    "SATIN-KEY-015",
+    "SATIN-POOL-012"
   ],
   "schemaVersion": "2.0",
   "specRef": {
