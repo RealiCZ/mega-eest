@@ -458,7 +458,8 @@ class InterpreterMixin:
                 key = pop()
                 cold = (address, key) not in self.warm_slots
                 marked_warm = self.destruction and address in self.destroyed and not cold
-                if ctx and not self.system_pages and not marked_warm:
+                created_live = self.destruction and address in self.created and address not in self.destroyed
+                if ctx and not self.system_pages and not (marked_warm or created_live):
                     raise Unmodelled("an SLOAD in a child frame")
                 cost = COLD_SLOAD if cold else WARM_READ
                 self.charge_regular(frame, cost, "SLOAD")
