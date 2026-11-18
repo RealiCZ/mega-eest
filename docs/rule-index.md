@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1163** (1163 gating, 0 quarantined).
+Cases: **1166** (1166 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -1061,18 +1061,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
 | [satin/selfdestruct/creation-over-storage/creator-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/creation-over-storage/survives] | gating | unqualified | [satin-bcf260d] |
+| [satin/validation/oracle-requests/empty-envelope] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-BLK-009
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/validation/gas-limit-above-block] | gating | unqualified | [satin-d34e626] |
+| [satin/validation/oracle-requests/gas-limit-above-block] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-BLK-013
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/validation/gas-limit-above-block] | gating | unqualified | [satin-d34e626] |
+| [satin/validation/oracle-requests/gas-limit-above-block] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-DEP-001
 
@@ -10145,6 +10148,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/validation/deposit/intrinsic-and-history-paid] | gating | unqualified | [satin-c130558] |
 | [satin/validation/floor-above-gas-limit] | gating | unqualified | [satin-d34e626] |
 | [satin/validation/nonce/below-maximum] | gating | unqualified | [satin-c130558] |
+| [satin/validation/oracle-requests/below-intrinsic-regular] | gating | unqualified | [satin-83c0d26] |
 | [satin/validation/order/below-intrinsic-and-floor] | gating | unqualified | [satin-c130558] |
 | [satin/validation/order/call-at-least-gas-limit] | gating | unqualified | [satin-c130558] |
 | [satin/validation/order/gas-limit-at-floor] | gating | unqualified | [satin-c130558] |
@@ -11981,6 +11985,9 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/validation/nonce-too-low]: ../slice/cases/satin/validation/nonce-too-low.json
 [satin/validation/nonce/at-maximum]: ../slice/cases/satin/validation/nonce/at-maximum.json
 [satin/validation/nonce/below-maximum]: ../slice/cases/satin/validation/nonce/below-maximum.json
+[satin/validation/oracle-requests/below-intrinsic-regular]: ../slice/cases/satin/validation/oracle-requests/below-intrinsic-regular.json
+[satin/validation/oracle-requests/empty-envelope]: ../slice/cases/satin/validation/oracle-requests/empty-envelope.json
+[satin/validation/oracle-requests/gas-limit-above-block]: ../slice/cases/satin/validation/oracle-requests/gas-limit-above-block.json
 [satin/validation/order/below-intrinsic-and-floor]: ../slice/cases/satin/validation/order/below-intrinsic-and-floor.json
 [satin/validation/order/call-at-least-gas-limit]: ../slice/cases/satin/validation/order/call-at-least-gas-limit.json
 [satin/validation/order/gas-limit-at-floor]: ../slice/cases/satin/validation/order/gas-limit-at-floor.json

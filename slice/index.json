@@ -870,6 +870,46 @@
       ]
     },
     {
+      "area": "validation",
+      "caseId": "satin/validation/oracle-requests/empty-envelope",
+      "file": "cases/satin/validation/oracle-requests/empty-envelope.json",
+      "fileDigest": "sha256:fb3fe23da4dc1a555f99540720ca314e6df4beda4e5d6c3bf7ef637831d23c4c",
+      "rules": [
+        "SATIN-BASE-001"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/oracle-requests/below-intrinsic-regular",
+      "file": "cases/satin/validation/oracle-requests/below-intrinsic-regular.json",
+      "fileDigest": "sha256:717b1e1721941e0bd2d00831f6c9ca061f159317609b064d274714936f24a392",
+      "rules": [
+        "SATIN-VAL-002"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "validation",
+      "caseId": "satin/validation/oracle-requests/gas-limit-above-block",
+      "file": "cases/satin/validation/oracle-requests/gas-limit-above-block.json",
+      "fileDigest": "sha256:21dbc7e31b0249b35f499b668eb6e51b6b92ebfd4da171731491ea563627f7c7",
+      "rules": [
+        "SATIN-BLK-009",
+        "SATIN-BLK-013"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
       "area": "deposits",
       "caseId": "satin/deposits/new-caller/minimum-bucket",
       "file": "cases/satin/deposits/new-caller/minimum-bucket.json",

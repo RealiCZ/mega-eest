@@ -185,7 +185,9 @@ A slot mismatch, a request past the end or an unused entry makes the run an erro
 When the request requires `group:oracle-requests`, emit the recorded callbacks as a
 top-level `oracleRequests` list of `{slot, answer}` entries. A callback that received no
 answer emits `answer: null`. A disabled transcript supplies no values and yields an
-empty list. Both versions preserve the existing `reads.oracle` projection and admitted
+empty list. A decode, validation or inclusion refusal also emits an empty list when
+the request requires this group. Unused transcript entries remain an error on these
+paths. Both versions preserve the existing `reads.oracle` projection and admitted
 hints. A completed read without an answer pushes the current journal value. Reads in
 deposits and Mega System Transactions ask no service (`SATIN-ORCL-002`,
 `SATIN-ORCL-005`).

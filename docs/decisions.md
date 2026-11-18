@@ -3205,3 +3205,9 @@ Code borrowed by DELEGATECALL from another address reads that caller's storage.
 An ordinary getSlot with a null transcript answer pushes the journal value. The
 same input with an empty recorded queue errors at the request. Both paths apply
 without an authoring flag (`SATIN-ORCL-002`, `-004`, `-005`).
+
+**D-193. Preserve the requested Oracle group on a refusal.**
+A transaction refused at decoding, validation or inclusion makes no service request.
+When the case requires `group:oracle-requests`, the adapter includes an empty list
+after checking the transcript for unused entries. Each of these refusal paths has
+a fixture with an empty recorded queue.

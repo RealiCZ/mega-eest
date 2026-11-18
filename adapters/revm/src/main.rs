@@ -714,12 +714,21 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         _ => return Err(bad("request: requires is not a list")),
     };
     let wants = |group| requires.iter().any(|x| x.as_str() == Some(group));
+    let observe_oracle_requests = |observations: &mut Value| {
+        if wants("group:oracle-requests") {
+            if let Value::Object(m) = observations {
+                m.insert("oracleRequests".into(), oracle_requests(&loaded.borrow()));
+            }
+        }
+    };
     let ctx = context(input, db)?;
     let (tx, facts) = match transaction(member(input, "transaction")?)? {
         Ok(t) => t,
         Err(refusal) => {
             ctx.external_envs().oracle_env.check()?;
-            return Ok(Run { observations: refused(refusal.phase, refusal.reason), diagnostics: obj(vec![]) })
+            let mut observations = refused(refusal.phase, refusal.reason);
+            observe_oracle_requests(&mut observations);
+            return Ok(Run { observations, diagnostics: obj(vec![]) });
         }
     };
     let wants_pools = wants("group:gas-pools");
@@ -761,14 +770,12 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         }
         Err(e) => return Err(bad(format!("the implementation failed: {e}"))),
     };
-    if let Value::Object(m) = &mut observations {
-        if wants("group:reads") {
+    if wants("group:reads") {
+        if let Value::Object(m) = &mut observations {
             m.insert("reads".into(), reads(&loaded.borrow(), &pre));
         }
-        if wants("group:oracle-requests") {
-            m.insert("oracleRequests".into(), oracle_requests(&loaded.borrow()));
-        }
     }
+    observe_oracle_requests(&mut observations);
     if let (Some(p), Value::Object(m)) = (pools, &mut observations) {
         m.insert("gasPools".into(), p);
     }

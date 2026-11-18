@@ -763,12 +763,21 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     }
     #[allow(clippy::arc_with_non_send_sync)]
     let oracle_service = Arc::new(RecordingOracle::new(FixtureOracle::read(input.opt("oracle"))?));
+    let requires = req.at("requires")?;
+    let wants = |group| matches!(requires.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some(group)));
+    let rejected = |phase, reason| {
+        oracle_service.inner().check()?;
+        let mut observations = refusal(phase, reason);
+        if wants("group:oracle-requests") {
+            if let Value::Object(m) = &mut observations {
+                m.insert("oracleRequests".into(), Value::Array(Vec::new()));
+            }
+        }
+        Ok((observations, object([])))
+    };
     let sent = match transaction(&input.at("transaction")?)? {
         Ok(s) => s,
-        Err(Undecodable(reason)) => {
-            oracle_service.inner().check()?;
-            return Ok((refusal("decode", reason), object([])));
-        }
+        Err(Undecodable(reason)) => return rejected("decode", reason),
     };
 
     let factory = SatinFactory::new(chain(input.at("chain")?.at("chainId")?.u64()?)?);
@@ -789,8 +798,6 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     let mut salt = FixtureSalt::read(input.opt("salt"), block.at("parentHash")?.hash()?)?;
     let loaded = db.loaded.clone();
     salt.loaded = loaded.clone();
-    let requires = req.at("requires")?;
-    let wants = |group| matches!(requires.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some(group)));
     #[allow(clippy::arc_with_non_send_sync)]
     let salt = Arc::new(salt);
     // The factory installs Satin's version, limits, registry and precompiles, has storage of an
@@ -818,8 +825,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
             // A gas limit above what the block has left is a skip at inclusion (SATIN-BLK-013).
             Some(reason) => {
                 let phase = if reason == "gas-limit-exceeds-block" { "inclusion" } else { "validation" };
-                oracle_service.inner().check()?;
-                return Ok((refusal(phase, reason), object([])));
+                return rejected(phase, reason);
             }
             None => return error(format!("unmapped refusal or failure: {e:?}")),
         },

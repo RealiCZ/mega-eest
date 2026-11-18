@@ -15,6 +15,10 @@ Schema 2.1 adds the ordered Oracle request observation behind `group:oracle-requ
 (D-190). Existing 2.0 transcript cases keep the `reads.oracle` projection of non-null
 answers.
 
+Upgrade the consumer before installing adapters that advertise `group:oracle-requests`,
+or upgrade both together. Older consumers reject unknown advertised capabilities at
+startup, even when the selected fixtures use schema 2.0.
+
 ## Manifest
 
 A release manifest (`schema/manifest.json`) lists:
