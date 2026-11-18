@@ -8447,7 +8447,6 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
-| [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |

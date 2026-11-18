@@ -6682,9 +6682,8 @@ def delegate_refusal_cases() -> list[Case]:
              "the delegation guard holds, and the delegate's load is refused as the beneficiary's account; the call "
              f"pays its static cost and its target's cold surcharge, {fmt(cold)} in all (SATIN-SCHED-003), and the frame "
              "reverts with "
-             f"{refusal} (SATIN-MAC-005), handing back {fmt(left - cold)}; the delegator stays in the reads "
-             "(SATIN-WIT-012), and the "
-             "frame's revert leaves it cold for the caller, whose BALANCE of it pays the cold access",
+             f"{refusal} (SATIN-MAC-005), handing back {fmt(left - cold)}. The frame's revert leaves the delegator cold "
+             "for the caller, whose BALANCE of it pays the cold access and reads the same account",
              boundary=f"the regular gas at the call at the static cost and the guard, {fmt(left)}", after=balance,
              reads=True)
     for op in (0xF1, 0xF2):
@@ -6740,7 +6739,8 @@ def delegate_refusal_cases() -> list[Case]:
                  f"{fmt(left)} of regular gas at a {CALL_OPS[op]} with value 1 to a cold account with an EIP-7702 "
                  f"delegation to the block beneficiary. It pays {fmt(value_cost)} for the value transfer before "
                  "loading the target and gets that charge back at the delegate's refusal (SATIN-SCHED-003). "
-                 f"It still pays {fmt(cold)} for the target and reverts with {refusal}, handing back {fmt(left - cold)}. "
+                 f"It pays {fmt(cold)} in static cost and cold surcharge and reverts with {refusal}, handing back "
+                 f"{fmt(left - cold)}. "
                  "The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012)", reads=True)
     left = cold + warm
     refusing(call_op(0xF4, BENEFICIARY_DELEGATOR), left, "delegatecall-cold-target-refused", f"REFUSING holds "
@@ -6753,8 +6753,9 @@ def delegate_refusal_cases() -> list[Case]:
         refusing(call_op(op, BENEFICIARY_DELEGATOR), left, f"{opcode.lower()}-cold-target-refusal-reads",
                  f"REFUSING holds {fmt(left)} of regular gas at a {opcode} without value to a cold account with "
                  f"an EIP-7702 delegation to the block beneficiary: it reverts with {refusal} and hands back "
-                 f"{fmt(left - cold)} after paying {fmt(cold)} for the target (SATIN-SCHED-003). The target's completed "
-                 "read stays in the witness (SATIN-WIT-002, SATIN-WIT-012), with no later access to the target",
+                 f"{fmt(left - cold)} after paying {fmt(cold)} in static cost and cold surcharge (SATIN-SCHED-003). "
+                 "The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012), with no later "
+                 "access to the target",
                  reads=True)
     # The memory expansion stays charged: the opcode's own growth for its two ranges together, nothing for memory the
     # frame already holds.
@@ -7000,12 +7001,11 @@ def delegate_refusal_cases() -> list[Case]:
                  boundary=f"the regular gas at the call {'at' if refused else 'one below'} the static cost, the memory "
                  f"and the guard, {2 * warm + odd_cost}", **listed)
     # 7. The forward the call asks for has no part in the refusal.
-    for name, code, left, kw in (
-            ("max-forward-cold-target-refused", call_op(0xFA, BENEFICIARY_DELEGATOR, gas=top), cold + warm, {}),
-            ("max-forward-warm-target-refused", call_op(0xFA, BENEFICIARY_DELEGATOR, gas=top), 2 * warm, listed),
+    for name, code, left, observe_reads, kw in (
+            ("max-forward-cold-target-refused", call_op(0xFA, BENEFICIARY_DELEGATOR, gas=top), cold + warm, True, {}),
+            ("max-forward-warm-target-refused", call_op(0xFA, BENEFICIARY_DELEGATOR, gas=top), 2 * warm, True, listed),
             ("max-forward-value-call-at-the-guard", call_op(0xF1, BENEFICIARY_DELEGATOR, value=1, gas=top),
-             warm + value_cost + cold, {})):
-        observe_reads = name in ("max-forward-cold-target-refused", "max-forward-warm-target-refused")
+             warm + value_cost + cold, False, {})):
         read_note = (". The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012), with no later "
                      "access to the target" if observe_reads else "")
         refusing(code, left, name, f"REFUSING holds {fmt(left)} of regular gas at a call asking to forward 2^256 - 1, "

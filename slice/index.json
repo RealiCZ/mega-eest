@@ -17249,7 +17249,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/cold-target-refused",
       "file": "cases/satin/access-control/delegate-refusal/cold-target-refused.json",
-      "fileDigest": "sha256:9f77dfa995f245eabe47ca6d63b517b98d6933b2ae1673cb12da45e8367ee275",
+      "fileDigest": "sha256:000c3894fbd2acfa8464a66247d393a5cf6811be3db28d949bfb7447e4576022",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17257,8 +17257,7 @@
         "SATIN-MAC-004",
         "SATIN-MAC-005",
         "SATIN-MAC-007",
-        "SATIN-SCHED-003",
-        "SATIN-WIT-012"
+        "SATIN-SCHED-003"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -17394,7 +17393,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/value-call-refused",
       "file": "cases/satin/access-control/delegate-refusal/value-call-refused.json",
-      "fileDigest": "sha256:ae67631cef610123f1ddf86eb9a17ccde07473ed1e4ad2aab244014d0a7db0b2",
+      "fileDigest": "sha256:56a35f12145753b321e26ac34a93635aa3927955a1c213cd8264ecf22c0ecb06",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17415,7 +17414,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/value-callcode-refused",
       "file": "cases/satin/access-control/delegate-refusal/value-callcode-refused.json",
-      "fileDigest": "sha256:d05a1fffb4a75f5d1f3068c9bda94bab89393609ade18ddd461532cf8f0711f2",
+      "fileDigest": "sha256:a4ac2553b06f8f5220f7c11cfed5fffcc7aee4e859639e347192c82a44872a9b",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17454,7 +17453,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/call-cold-target-refusal-reads",
       "file": "cases/satin/access-control/delegate-refusal/call-cold-target-refusal-reads.json",
-      "fileDigest": "sha256:c06556a3e7ee406ab50716910b94029c5e6e232b8f34c70e65e7f9a227e17b67",
+      "fileDigest": "sha256:492e6f4e583401e9a94a52c161c7471fcfa72b447e6131477f4084c7acce67c2",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17475,7 +17474,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads",
       "file": "cases/satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads.json",
-      "fileDigest": "sha256:61acf5259ec5faf8181a6176cd5cbd2e5adb9ca65b4d6c4be78fc39ca6374d38",
+      "fileDigest": "sha256:42d1757ffcc8865346d3cda1600630c8bbbb30ba7da905926d6a699d614d4284",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17496,7 +17495,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads",
       "file": "cases/satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads.json",
-      "fileDigest": "sha256:bdc827e232cffc3115a62c4f2a437275ccca39b53ec800ae994c8c1ab72429f4",
+      "fileDigest": "sha256:465df602e118f35b7a9d8ffb908e0e19dd7fb056f193d291c06ae0c8c6ba1b99",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",

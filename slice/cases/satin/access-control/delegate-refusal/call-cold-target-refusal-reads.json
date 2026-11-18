@@ -220,7 +220,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "REFUSING holds 3,100 of regular gas at a CALL without value to a cold account with an EIP-7702 delegation to the block beneficiary: it reverts with VolatileDataAccessDisabled(10) and hands back 100 after paying 3,000 for the target (SATIN-SCHED-003). The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012), with no later access to the target"
+      "intent": "REFUSING holds 3,100 of regular gas at a CALL without value to a cold account with an EIP-7702 delegation to the block beneficiary: it reverts with VolatileDataAccessDisabled(10) and hands back 100 after paying 3,000 in static cost and cold surcharge (SATIN-SCHED-003). The target's completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012), with no later access to the target"
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
