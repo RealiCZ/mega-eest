@@ -289,8 +289,11 @@ specification's text and constants:
   address. A marked account's undetained frame can `SLOAD` the slot its store warmed and return
   the word. A live account created in the transaction can also read an unwarmed slot in an
   undetained child frame. A prior leaf's cleared storage reads as zero, and the caller can return
-  the actual value before destroying the account (D-184). A value start without a frame can
-  restore the caller's balance to what was loaded. Its budget
+  the actual value before destroying the account (D-184). The model rejects `group:reads` when
+  such a slot first loads from the reset storage of a pre-existing leaf. Both adapters skip the
+  database slot lookup in that path, so their reads cannot supply the slot's pre-block value.
+  The logical load still belongs to `returnedState`. A value start without a frame can restore
+  the caller's balance to what was loaded. Its budget
   and the transaction's counts use the net records, and a successful start gives back the
   restored account's record history after the child share is returned. The transaction's own
   zero-value call to an absent recipient accounts for no recipient record or rise.

@@ -3169,3 +3169,9 @@ while it consumes its forwarded regular gas. Keep each ending's pool and ledger 
 as well as the surviving code and any slot. A funded repeated destruction of a marked target
 instead creates a new beneficiary and keeps only that leaf charge and rise (`SATIN-SD-010`,
 `SATIN-SD-011`, `SATIN-POOL-014`, `SATIN-STATE-001`).
+
+**D-187. Observe the constructor's full log word below the execution cap.** The pure-log
+constructor stores a word of 0xab bytes in memory, emits it from the deploy address and
+deposits code without writing storage. The receipt checks the emitter and the full word
+below the cap. The above-cap constructor with a slot supplies the other tier's log
+assertion (`SATIN-KEY-011`, `SATIN-LOG-002`).

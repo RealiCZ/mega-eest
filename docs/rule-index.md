@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1159** (1159 gating, 0 quarantined).
+Cases: **1160** (1160 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -3551,6 +3551,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -3773,6 +3774,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -3965,6 +3967,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -4144,6 +4147,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -4294,6 +4298,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -4486,6 +4491,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -4697,6 +4703,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -4928,6 +4935,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -5075,6 +5083,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -5212,6 +5221,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -5359,6 +5369,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -5507,6 +5518,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/empty-code] | gating | unqualified | [satin-c130558] |
@@ -5992,6 +6004,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/logs/log-after-value-transfer] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-empty] | gating | unqualified | [satin-d34e626] |
 | [satin/logs/log0-one-word] | gating | unqualified | [satin-d34e626] |
@@ -10332,6 +10345,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/bare-revert/above-cap] | gating | unqualified | [satin-83c0d26] |
@@ -10509,6 +10523,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/bare-revert/above-cap] | gating | unqualified | [satin-83c0d26] |
@@ -11316,6 +11331,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/keyless/deploy/carried-value]: ../slice/cases/satin/keyless/deploy/carried-value.json
 [satin/keyless/deploy/collision]: ../slice/cases/satin/keyless/deploy/collision.json
 [satin/keyless/deploy/constructor-log]: ../slice/cases/satin/keyless/deploy/constructor-log.json
+[satin/keyless/deploy/constructor-word-log-below-cap]: ../slice/cases/satin/keyless/deploy/constructor-word-log-below-cap.json
 [satin/keyless/deploy/delegated-signer]: ../slice/cases/satin/keyless/deploy/delegated-signer.json
 [satin/keyless/deploy/destroyed-in-constructor]: ../slice/cases/satin/keyless/deploy/destroyed-in-constructor.json
 [satin/keyless/deploy/empty-code]: ../slice/cases/satin/keyless/deploy/empty-code.json

@@ -13846,6 +13846,33 @@
       }
     },
     {
+      "area": "keyless",
+      "caseId": "satin/keyless/deploy/constructor-word-log-below-cap",
+      "file": "cases/satin/keyless/deploy/constructor-word-log-below-cap.json",
+      "fileDigest": "sha256:0c1b5b70990ec1842bb944104d14a1e83e0e79c2cafaf24fc46624a560355a49",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-LOG-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
       "area": "gas-forwarding",
       "caseId": "satin/gas-forwarding/call/request-below-cap",
       "file": "cases/satin/gas-forwarding/call/request-below-cap.json",

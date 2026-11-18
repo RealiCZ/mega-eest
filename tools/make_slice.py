@@ -5226,11 +5226,12 @@ def keyless_pool_cases() -> list[Case]:
 
 
 def keyless_creation_budget_cases() -> list[Case]:
-    """A successful constructor and a constructor stop, both carried from signer nonce zero."""
+    """Constructor logs and a caught constructor stop, carried from signer nonce zero."""
     page = dict(spec=CURRENT_SPEC, system=True, to=model.KEYLESS_DEPLOY, code=None, pools=True, returned_state=True)
     large_override = 10_000_000_000
     log_data = bytes([0xab]) * 32
-    writes_and_logs = sstore(1, 1) + bytes_to_memory(log_data) + log(0, 0, len(log_data), []) + init_returning(STOP)
+    logs_and_deploys = bytes_to_memory(log_data) + log(0, 0, len(log_data), []) + init_returning(STOP)
+    writes_and_logs = sstore(1, 1) + logs_and_deploys
     succeeds = Case("satin/keyless/budget/constructor-keeps-slot-and-log", "The signer starts absent. The constructor "
                     "writes a fresh slot and emits a nonempty word of log data from the deploy address before it "
                     "deposits code. The state and receipt retain both effects and the ABI uses both pools "
@@ -5246,7 +5247,12 @@ def keyless_creation_budget_cases() -> list[Case]:
                  "keeps the nonce-zero signer's bump and record. The parent catches the stop in its ABI and "
                  "the give-back returns to the reservoir (SATIN-KEY-015, SATIN-KEY-016, SATIN-POOL-008, "
                  "SATIN-POOL-014, SATIN-POOL-015).", data=stop_data, gas=model.EXECUTION_CAP + headroom, **page)
-    return [succeeds, stops]
+    logs_below_cap = Case("satin/keyless/deploy/constructor-word-log-below-cap", "Without an initial reservoir, the "
+                          "constructor emits a LOG0 with a full word of 0xab bytes from the deployed address and "
+                          "then deposits code (SATIN-KEY-011, SATIN-LOG-002).",
+                          data=keyless_data(carried(logs_and_deploys, gas=1_000_000), large_override),
+                          gas=model.EXECUTION_CAP // 4, **page)
+    return [succeeds, stops, logs_below_cap]
 
 
 # --- The deposits page, the Oracle and the small system contracts (D-109) ---------------------------
