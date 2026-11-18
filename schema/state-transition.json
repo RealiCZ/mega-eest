@@ -28,6 +28,16 @@
         "faults": {"$ref": "common.json#/$defs/Faults"}
       }
     },
+    "ReturnedAccount": {
+      "description": "The address must be present. Any supplied account fields are compared.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "nonce": {"$ref": "common.json#/$defs/U64"},
+        "balance": {"$ref": "common.json#/$defs/U256"},
+        "codeHash": {"$ref": "common.json#/$defs/B256"}
+      }
+    },
     "ReturnedState": {
       "type": "object",
       "additionalProperties": false,
@@ -38,7 +48,7 @@
           "propertyNames": {"$ref": "common.json#/$defs/Address"},
           "additionalProperties": {
             "description": "A null expectation requires the address to be absent.",
-            "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/AccountRead"}]
+            "oneOf": [{"type": "null"}, {"$ref": "#/$defs/ReturnedAccount"}]
           }
         },
         "storage": {
@@ -49,8 +59,10 @@
             "minProperties": 1,
             "propertyNames": {"$ref": "common.json#/$defs/B256"},
             "additionalProperties": {
-              "description": "A null expectation requires the slot key to be absent.",
-              "oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/U256"}]
+              "description": "A null expectation forbids the slot key. An empty object requires presence. A quantity also compares the value.",
+              "if": {"type": "object"},
+              "then": {"additionalProperties": false},
+              "else": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/U256"}]}
             }
           }
         }

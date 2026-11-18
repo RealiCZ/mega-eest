@@ -110,19 +110,24 @@ class ReadsMixin:
                 "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": [], "hints": hints}
 
     def returned_state_observation(self, forbidden_accounts: tuple[bytes, ...]) -> dict:
-        """The journal's loaded keys and the model's settled values at those keys."""
-        accounts = {h(a): account_values(self.state.get(a, Account())) for a in sorted(self.journal_accounts)}
+        """The journal's loaded keys and the values fixed by the model's settled state."""
+        accounts = {h(a): {} if a in self.destroyed else account_values(self.state.get(a, Account()))
+                    for a in sorted(self.journal_accounts)}
         storage: dict = {}
         for a, k in sorted(self.journal_slots):
-            storage.setdefault(h(a), {})[word(k)] = q(self.state.get(a, Account()).storage.get(k, 0))
+            storage.setdefault(h(a), {})[word(k)] = (
+                {} if a in self.destroyed else q(self.state.get(a, Account()).storage.get(k, 0)))
         for a in forbidden_accounts:
             if a in self.journal_accounts:
                 raise Unmodelled(f"forbidden returned account {h(a)} was loaded")
             accounts[h(a)] = None
         self.d.add("returnedState", "the execution result names the journal's completed account and slot loads, "
-                   "including loads from reverted or halted frames, with the final value at each key. Entries "
-                   "whose state the transaction leaves unchanged carry their pre-state values",
-                   "SATIN-WIT-005", "SATIN-WIT-008")
+                   "including loads from reverted or halted frames. Entries whose state the transaction leaves "
+                   "unchanged carry their pre-state values", "SATIN-WIT-005", "SATIN-WIT-008")
+        if self.destroyed & self.journal_accounts:
+            self.d.add("returnedState", "accounts removed at settlement keep their completed load keys. "
+                       "Their temporary account fields and slot values are unspecified",
+                       "SATIN-SD-015", "SATIN-WIT-005", "SATIN-WIT-008")
         if self.tx.kind != "deposit" and not self.promoted:
             self.d.add("returnedState", "the L1 fee and footprint reads are outside the journal",
                        "SATIN-WIT-011")

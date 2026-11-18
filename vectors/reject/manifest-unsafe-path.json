@@ -11,7 +11,7 @@
   "schema/common.json": "sha256:e0dc9d6c3429171d0d6ee8b9ad6a4769e6f9aaaef9774595df98785a910efbcd",
   "schema/fixture.json": "sha256:565f32cef174473af890b09cc2c92796d595bfdf0f244e5bf74fe9b6a2abfa19",
   "schema/manifest.json": "sha256:deb06dd8c48b5b641479ffcaaa1497e23905e3f50a7910549ba11bae01292e0f",
-  "schema/state-transition.json": "sha256:7fc3d59b8330a16bdabd0064cafdd09e311d34a013fd1103e635cf702193a01c",
+  "schema/state-transition.json": "sha256:b90128c4a8ecddde7ecf8c749c28a9ad6b306a2433e6c100666d98c0687fbbeb",
   "schema/stateless-block.json": "sha256:5b4e64205e469652b9c7c23890409f321ce2431348d3b5e437920d0ad0833630",
   "schema/transaction-validation.json": "sha256:5055afe735744e750e58b87bcfae537768a0eccc35a2b3d46816f69edaf13378"
  },

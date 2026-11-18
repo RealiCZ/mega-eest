@@ -75,6 +75,8 @@ fn diff(profile: Profile, expected: &Value, actual: &Value, path: &str) -> Optio
                             return Some((at, Some(ev.clone()), Some(av.clone())));
                         }
                     }
+                    (Some(Value::Object(fields)), Some(Value::String(_)))
+                        if returned_slots(profile, path) && fields.is_empty() => {}
                     (Some(ev), Some(av)) => {
                         if let Some(d) = diff(profile, ev, av, &at) {
                             return Some(d);
@@ -85,7 +87,9 @@ fn diff(profile: Profile, expected: &Value, actual: &Value, path: &str) -> Optio
                     (Some(Value::Object(slots)), None)
                         if profile == Profile::StateTransition && path == "/expected/returnedState/storage"
                             && slots.values().all(|v| matches!(v, Value::Null)) => {}
-                    (None, Some(_)) if skippable.contains(&key.as_str()) => {}
+                    (None, Some(_))
+                        if skippable.contains(&key.as_str())
+                            || (profile == Profile::StateTransition && path.starts_with("/expected/returnedState/accounts/")) => {}
                     (ev, av) => return Some((at, ev.cloned(), av.cloned())),
                 }
             }
@@ -111,8 +115,11 @@ fn diff(profile: Profile, expected: &Value, actual: &Value, path: &str) -> Optio
 }
 
 fn returned_keys(profile: Profile, path: &str) -> bool {
-    profile == Profile::StateTransition
-        && (path == "/expected/returnedState/accounts" || path.starts_with("/expected/returnedState/storage/"))
+    (profile == Profile::StateTransition && path == "/expected/returnedState/accounts") || returned_slots(profile, path)
+}
+
+fn returned_slots(profile: Profile, path: &str) -> bool {
+    profile == Profile::StateTransition && path.starts_with("/expected/returnedState/storage/")
 }
 
 /// An expected `reasons` list is the set of acceptable reasons: the implementation reports

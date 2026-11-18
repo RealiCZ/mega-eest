@@ -2965,7 +2965,9 @@ result (`SATIN-WIT-005`, `SATIN-WIT-008`). Each adapter is compared independentl
 model. A null expectation names a forbidden key, and the comparator rejects all additional
 keys. Account metadata and current slot values are read before touch or change filtering.
 The model's settled state supplies the expected values, including the pre-state value of
-any entry the transaction leaves unchanged.
+any entry the transaction leaves unchanged. A required key can carry a partial account
+expectation or express presence alone. The model asserts the keys of an account deleted
+at settlement and leaves its temporary values unspecified (`SATIN-SD-015`).
 
 **D-151. Track the source of a load.** The model records journal keys at the logical load
 site and retains them across frame rollback. L1 fee and footprint reads are outside the

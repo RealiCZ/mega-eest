@@ -103,12 +103,14 @@ system contracts a call can reach (D-55).
 The gating cases pin 325 rules in 31 areas of the specification. `index.json` lists each case with
 its area, the rules it pins, its file and its file digest.
 
-Of the existing cases, 23 require `group:returned-state` (D-150 to D-152). They cover
+Of the existing cases, 25 require `group:returned-state` (D-150 to D-152). They cover
 delegate refusals without a later probe, gas detention crossings before and after the
 target's load, paid and unpaid cold balance reads, the Oracle slot loaded before its charge,
 early keyless refusals and the unintercepted inner call, a round-trip transfer, an unfunded
 creation, and a pass-through transfer to an absent recipient. The value-bearing LimitControl
 refusal and the unfunded Oracle hint also check their recipients' untouched zero balances.
+The marked destruction case requires the loaded account and slot keys and checks the written
+value through the existing return data assertion.
 
 ## Quarantine and the wrong expectation
 

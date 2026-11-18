@@ -4709,7 +4709,7 @@
       "area": "selfdestruct",
       "caseId": "satin/selfdestruct/marked/fresh-slot-on-little-gas",
       "file": "cases/satin/selfdestruct/marked/fresh-slot-on-little-gas.json",
-      "fileDigest": "sha256:0b5f949ed0273d49d01d5c388ed205c166efb0a90806098c6d82d4d012a3c250",
+      "fileDigest": "sha256:c20a939ef8940b4e9e25150923dfa89cd5490801f6beeac80a191745c331068a",
       "rules": [
         "SATIN-SD-001",
         "SATIN-SD-002",
@@ -4721,10 +4721,13 @@
         "SATIN-SD-009",
         "SATIN-SD-010",
         "SATIN-SD-013",
+        "SATIN-SD-015",
         "SATIN-SD-019",
         "SATIN-STATE-001",
         "SATIN-STATE-003",
-        "SATIN-STATE-012"
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
@@ -17636,7 +17639,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/value-call-at-the-guard",
       "file": "cases/satin/access-control/delegate-refusal/value-call-at-the-guard.json",
-      "fileDigest": "sha256:1ad606b059fe11be823f883b5b64dcc6278664c9a9e86888507bbd2d129c0e59",
+      "fileDigest": "sha256:c8f1ea24f2a06ab91f59d81dd0cd956f976ce6dc2d32a67c02671fc1839d6fc8",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17646,6 +17649,8 @@
         "SATIN-MAC-007",
         "SATIN-SCHED-003",
         "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
         "SATIN-WIT-012"
       ],
       "spec": {

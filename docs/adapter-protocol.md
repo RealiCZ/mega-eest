@@ -182,6 +182,10 @@ including each storage entry's `present_value`. The evm2 adapter reads
 `ExecutedTx::account_changes()` including each storage entry's current value, before
 `ExecutedTx::commit()`. Both read the account metadata and slots before the state diff filters
 for touches and changes. The projection keeps absent-account keys and explicit zero slots.
+Adapters export all metadata fields and slot values they observe, even when the fixture
+asserts only presence. Lifecycle finalization can clear the temporary values of an account
+created and destroyed by the same transaction. The account and slot keys still identify
+completed loads.
 
 The expected keys come from the model's transaction journal loads. The recording layer for
 `reads` also observes L1 fee and footprint reads made outside the journal

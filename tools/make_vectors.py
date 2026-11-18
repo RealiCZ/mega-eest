@@ -69,23 +69,9 @@ def dump(value) -> bytes:
     return (json.dumps(value, indent=1, ensure_ascii=True) + "\n").encode()
 
 
-def returned_state_example() -> dict:
-    case = load_example("state-transition-sstore-fresh-slot.json")
-    case["caseId"] = "satin/state-gas/sstore-fresh-slot/returned-state"
-    case["requires"] = sorted(case["requires"] + ["group:returned-state"])
-    expected = case["expected"]
-    accounts = {
-        address: {"nonce": entry["nonce"], "balance": entry["balance"],
-                  "codeHash": expected["reads"]["accounts"][address]["codeHash"]}
-        for address, entry in expected["state"]["accounts"].items()
-    }
-    accounts["0x" + "ff" * 20] = None
-    expected["returnedState"] = {
-        "accounts": accounts,
-        "storage": {address: entry["storage"] for address, entry in expected["state"]["accounts"].items()
-                    if entry["storage"]},
-    }
-    return case
+def load_slice_case(case_id: str) -> dict:
+    with open(os.path.join(ROOT, "slice", "cases", case_id + ".json"), encoding="utf-8") as f:
+        return json.load(f)
 
 
 def case_rejects() -> dict[str, tuple[bytes, str, str]]:
@@ -156,10 +142,12 @@ def case_rejects() -> dict[str, tuple[bytes, str, str]]:
            lambda c: c["input"]["transaction"].__setitem__("kind", "deposit"))
     mutate("case-assertions-member", "unknown-field", "/assertions",
            lambda c: c.__setitem__("assertions", [{"path": "/expected/gasLedgers", "rules": c["rules"][:1]}]))
-    returned = returned_state_example()
-    del returned["expected"]["returnedState"]["accounts"][contract]
+    returned = load_slice_case("satin/keyless/contract-call/no-value")
+    returned_state = returned["expected"]["returnedState"]
+    owner, = returned_state["storage"]
+    del returned_state["accounts"][owner]
     out["case-returned-slot-without-account"] = (
-        dump(returned), "invalid-reference", f"/expected/returnedState/storage/{contract}")
+        dump(returned), "invalid-reference", f"/expected/returnedState/storage/{owner}")
     build = load_example("block-build-policy-skip.json")
     c = copy.deepcopy(build)
     c["input"]["actions"].insert(2, {"op": "commit", "candidate": "0x0"})
@@ -261,7 +249,9 @@ def main(argv: list[str]) -> int:
     for name in MANIFEST_EXAMPLES:
         with open(os.path.join(ROOT, "examples", name), "rb") as f:
             accept("case-" + name[:-5], "case", f.read())
-    accept("case-returned-state", "case", dump(returned_state_example()))
+    accept("case-returned-state", "case", dump(load_slice_case("satin/keyless/contract-call/no-value")))
+    accept("case-returned-state-destroyed", "case",
+           dump(load_slice_case("satin/selfdestruct/marked/fresh-slot-on-little-gas")))
     renamed = load_example("state-transition-sstore-fresh-slot.json")
     renamed["caseId"] = "satin/state-gas/sstore-fresh-slot/renamed-alias"
     renamed["provenance"] = {"status": "candidate", "note": "Same semantics as the example under another logical name."}

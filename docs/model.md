@@ -15,8 +15,10 @@ are marked at their source and stay in the witness reads. A separate journal loa
 counts even when an external read named the same key. Block and service exports have their own
 observations. The returned slot set follows journal loads, while `SATIN-WIT-006` excludes
 slots of accounts absent before the block from the witness. The model reads the settled values
-at the journal keys, so a rolled-back write or a transfer exactly undone leaves the pre-state
-value in the expectation.
+at surviving journal entries, so a rolled-back write or a transfer exactly undone leaves the
+pre-state value in the expectation. For accounts destroyed at settlement, it asserts the loaded
+account and slot keys alone. This accommodates engine lifecycle finalization while preserving
+which keys were returned.
 
 ## Scope
 

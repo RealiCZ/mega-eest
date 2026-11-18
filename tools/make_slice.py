@@ -2324,7 +2324,7 @@ def selfdestruct_cases() -> list[Case]:
          "regular gas and a word of calldata, which C writes to a slot that was never written: the write, charged no "
          "state gas while the mark stands, completes on what pays its regular gas. The parent returns success and "
          "the child's SLOAD of the written value 7 (SATIN-SD-013)", accounts=heir, gas=3_000_000,
-         code=made_with_read + again + small_store)
+         code=made_with_read + again + small_store, returned_state=True)
     case("created/fresh-slot-on-little-gas", f"the control: the same call of C with {fmt(little)} of regular gas, C not "
          "destroyed: the write needs the fresh slot's state gas, which a transaction without a reservoir pays from "
          "regular gas, and C runs out of gas in it. The slot stays zero and the parent returns the failure flag with "
@@ -6806,7 +6806,7 @@ def delegate_refusal_cases() -> list[Case]:
              f"cost and its target's cold surcharge, {fmt(cold)}, the frame reverting with {refusal}. The target's "
              "completed read stays in the witness (SATIN-WIT-002, SATIN-WIT-012)",
              boundary=f"the regular gas at the call at the static cost, the value transfer and the guard, {fmt(left)}",
-             reads=True)
+             reads=True, returned_state=True)
     refusing(call_op(0xF1, BENEFICIARY_DELEGATOR, value=1), left - 1, "value-call-one-short-of-the-guard",
              f"REFUSING, which holds no balance, holds {fmt(left - 1)} of regular gas at a CALL with value 1 of an "
              "account that is not warm and holds an EIP-7702 delegation to the block beneficiary: the static cost and "

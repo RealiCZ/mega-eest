@@ -1293,7 +1293,7 @@ fn detention(v: &Value, p: &str) -> Result<Detention> {
     Ok(Detention { reads, limit: nullable(l, &lp, u64q)?, withheld: u64q(w, &wp)?, released: u64q(re, &rep)?, burned: u64q(b, &bp)? })
 }
 
-/// Account metadata in a transaction read or returned state entry.
+/// An account as read.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AccountRead {
     pub nonce: u64,
@@ -1310,34 +1310,87 @@ fn account_metadata(v: &Value, p: &str) -> Result<AccountRead> {
     Ok(AccountRead { nonce: u64q(n, &np)?, balance: u256(b, &bp)?, code_hash: b256(c, &cp)? })
 }
 
+/// Account fields to compare at a required returned address.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ReturnedAccount {
+    /// Nonce, when the expectation specifies it.
+    pub nonce: Option<u64>,
+    /// Balance, when the expectation specifies it.
+    pub balance: Option<U256>,
+    /// Code hash, when the expectation specifies it.
+    pub code_hash: Option<B256>,
+}
+
+/// A returned slot's key requirement and any value assertion.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum ReturnedSlot {
+    /// The slot key must be absent.
+    Forbidden,
+    /// The slot key must be present.
+    Present,
+    /// The slot key must be present with this current value.
+    Value(U256),
+}
+
 /// The account and slot entries of a transaction's unfiltered return value.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ReturnedState {
     /// Returned account metadata. A null expectation requires the key to be absent.
-    pub accounts: BTreeMap<Address, Option<AccountRead>>,
-    /// Returned current slot values. A null expectation requires the slot key to be absent.
-    pub storage: BTreeMap<Address, BTreeMap<B256, Option<U256>>>,
+    pub accounts: BTreeMap<Address, Option<ReturnedAccount>>,
+    /// Returned slot keys and their optional value assertions.
+    pub storage: BTreeMap<Address, BTreeMap<B256, ReturnedSlot>>,
 }
 
-fn returned_state(v: &Value, p: &str, allow_forbidden: bool) -> Result<ReturnedState> {
+fn returned_account(v: &Value, p: &str, expectation: bool) -> Result<ReturnedAccount> {
+    let mut o = Obj::new(v, p)?;
+    let fields = &["nonce", "balance", "codeHash"];
+    if expectation {
+        o.shape(&[], fields)?;
+    } else {
+        o.shape(fields, &[])?;
+    }
+    Ok(ReturnedAccount {
+        nonce: o.opt("nonce").map(|(v, p)| u64q(v, &p)).transpose()?,
+        balance: o.opt("balance").map(|(v, p)| u256(v, &p)).transpose()?,
+        code_hash: o.opt("codeHash").map(|(v, p)| b256(v, &p)).transpose()?,
+    })
+}
+
+fn returned_slot(v: &Value, p: &str, expectation: bool) -> Result<ReturnedSlot> {
+    if expectation {
+        match v {
+            Value::Null => return Ok(ReturnedSlot::Forbidden),
+            Value::Object(_) => {
+                Obj::new(v, p)?.closed(&[])?;
+                return Ok(ReturnedSlot::Present);
+            }
+            _ => {}
+        }
+    }
+    u256(v, p).map(ReturnedSlot::Value)
+}
+
+fn returned_state(v: &Value, p: &str, expectation: bool) -> Result<ReturnedState> {
     let mut o = Obj::new(v, p)?;
     o.shape(&["accounts", "storage"], &[])?;
     let (a, ap) = o.req("accounts");
     let accounts = map(a, &ap, address, |v, p| {
-        if allow_forbidden { nullable(v, p, account_metadata) } else { account_metadata(v, p).map(Some) }
+        if expectation && matches!(v, Value::Null) {
+            Ok(None)
+        } else {
+            returned_account(v, p, expectation).map(Some)
+        }
     })?;
     let (s, sp) = o.req("storage");
     let storage = map(s, &sp, address, |v, p| {
-        let slots = map(v, p, b256, |v, p| {
-            if allow_forbidden { nullable(v, p, u256) } else { u256(v, p).map(Some) }
-        })?;
+        let slots = map(v, p, b256, |v, p| returned_slot(v, p, expectation))?;
         if slots.is_empty() {
             return Err(Error::new(ErrorCode::InvalidValue, p, "a returned storage map lists at least one slot"));
         }
         Ok(slots)
     })?;
     for (address, slots) in &storage {
-        if slots.values().any(Option::is_some) && !matches!(accounts.get(address), Some(Some(_))) {
+        if slots.values().any(|slot| *slot != ReturnedSlot::Forbidden) && !matches!(accounts.get(address), Some(Some(_))) {
             return Err(Error::new(ErrorCode::InvalidReference, child(&sp, &address.to_string()),
                 "a returned slot requires its account entry"));
         }
@@ -1663,7 +1716,7 @@ fn st_input(v: &Value, p: &str) -> Result<StateTransitionInput> {
     })
 }
 
-fn st_expected(v: &Value, p: &str, allow_forbidden: bool) -> Result<StateTransitionExpected> {
+fn st_expected(v: &Value, p: &str, expectation: bool) -> Result<StateTransitionExpected> {
     let mut o = Obj::new(v, p)?;
     o.shape(&["outcome", "state", "receipt", "gasLedgers", "resources", "limit"], &["gasPools", "detention", "reads", "returnedState", "checkpoints"])?;
     let (oc, ocp) = o.req("outcome");
@@ -1682,7 +1735,7 @@ fn st_expected(v: &Value, p: &str, allow_forbidden: bool) -> Result<StateTransit
         gas_pools: o.opt("gasPools").map(|(v, p)| nullable(v, &p, gas_pools)).transpose()?,
         detention: o.opt("detention").map(|(v, p)| nullable(v, &p, detention)).transpose()?,
         reads: o.opt("reads").map(|(v, p)| reads(v, &p)).transpose()?,
-        returned_state: o.opt("returnedState").map(|(v, p)| returned_state(v, &p, allow_forbidden)).transpose()?,
+        returned_state: o.opt("returnedState").map(|(v, p)| returned_state(v, &p, expectation)).transpose()?,
         checkpoints: o.opt("checkpoints").map(|(v, p)| array(v, &p, 0, None, checkpoint)).transpose()?,
     })
 }

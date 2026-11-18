@@ -195,3 +195,66 @@ fn diagnostics_the_case_does_not_carry_are_not_compared() {
         other => panic!("{other:?}"),
     }
 }
+
+const ORACLE_ACCOUNT: &str = "/returnedState/accounts/0x6342000000000000000000000000000000000001";
+const ORACLE_STORAGE: &str = "/returnedState/storage/0x6342000000000000000000000000000000000001";
+const SLOT_ZERO: &str = "0x0000000000000000000000000000000000000000000000000000000000000000";
+
+fn oracle_read_case() -> Case {
+    Case::from_bytes(
+        &common::read("slice/cases/satin/reads/oracle-slot-before-charge.json"),
+        &common::store(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn omitted_returned_account_fields_are_ignored() {
+    let case = oracle_read_case();
+    let actual = expected_of(&case);
+    let partial = json::parse(br#"{"balance":"0x0"}"#).unwrap();
+    let case = with_value(&case, &format!("/expected{ORACLE_ACCOUNT}"), partial).unwrap();
+
+    let verdict = compare(&case, &actual, &all());
+
+    assert_eq!(verdict, Verdict::Pass);
+}
+
+#[test]
+fn a_specified_field_of_a_partial_returned_account_must_match() {
+    let case = oracle_read_case();
+    let actual = expected_of(&case);
+    let partial = json::parse(br#"{"balance":"0x1"}"#).unwrap();
+    let case = with_value(&case, &format!("/expected{ORACLE_ACCOUNT}"), partial).unwrap();
+
+    let verdict = compare(&case, &actual, &all());
+
+    assert_eq!(
+        verdict,
+        Verdict::Fail {
+            path: format!("/expected{ORACLE_ACCOUNT}/balance"),
+            expected: Some(Value::String("0x1".into())),
+            actual: Some(Value::String("0x0".into())),
+        }
+    );
+}
+
+#[test]
+fn a_presence_only_slot_fails_when_its_key_is_missing() {
+    let case = oracle_read_case();
+    let empty = json::parse(b"{}").unwrap();
+    let case = with_value(&case, &format!("/expected{ORACLE_STORAGE}/{SLOT_ZERO}"), empty.clone()).unwrap();
+    let mut actual = expected_of(&case);
+    common::set(&mut actual, "/returnedState/storage", empty);
+
+    let verdict = compare(&case, &actual, &all());
+
+    assert_eq!(
+        verdict,
+        Verdict::Fail {
+            path: format!("/expected{ORACLE_STORAGE}"),
+            expected: Some(json::parse(format!(r#"{{"{SLOT_ZERO}":{{}}}}"#).as_bytes()).unwrap()),
+            actual: None,
+        }
+    );
+}

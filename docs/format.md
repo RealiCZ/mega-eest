@@ -193,21 +193,28 @@ are never observations. A refused or faulted transaction has no receipt, ledgers
 An admitted transaction or a failed deposit can carry it, including after a revert or halt.
 A refusal or fault that produced no returned state omits the group.
 
-- `accounts` maps each returned address to its `nonce`, `balance` and `codeHash`.
-  A key for an absent account with no current metadata is represented by nonce and balance zero
-  and the Keccak-256 hash of empty code.
-- `storage` maps each returned address with slots to a nonempty object of 32-byte slot keys and
-  their current values. A returned slot has a corresponding account entry. Zero is explicit.
-- In an expectation, `null` at an account or slot key requires the key to be absent. Actual results
-  carry values at all their keys.
+- `accounts` maps each returned address to an object with `nonce`, `balance` and `codeHash`.
+  An expected object requires the address and compares only the fields it supplies. An empty
+  object requires presence alone. Actual objects contain all three fields. A returned address
+  without current account metadata carries nonce and balance zero and the Keccak-256 hash of
+  empty code.
+- `storage` maps each address with slots to a nonempty object of 32-byte slot keys. An expected
+  quantity asserts the current value, including explicit zero. An expected empty object requires
+  the slot key. Actual slots carry quantities. A required slot also requires its account entry.
+- An expected `null` at an account or slot key requires absence. An additional returned key fails
+  even if the expectation does not name it explicitly.
 
-The comparator requires exactly the non-null keys in the expectation, with their stated values.
-An additional key fails even if the expectation does not name it explicitly. A key whose value
-the transaction leaves unchanged carries the pre-state value. The model derives the keys from
-the transaction's logical loads and the values from its settled state. This covers
-`SATIN-WIT-005` and `SATIN-WIT-008` before block-level witness collection. See the
-[adapter mapping](adapter-protocol.md#returned-transaction-state) and the
-[Oracle slot case](../slice/cases/satin/reads/oracle-slot-before-charge.json).
+The model derives the key set from completed journal loads and values from the settled state.
+It compares the pre-state values of surviving entries the transaction leaves unchanged or
+restores. When an account is created and destroyed in the same transaction, portable expectations
+require its loaded account and slot keys. They compare temporary fields only when the
+specification fixes their values. This is the engine's returned key set under `SATIN-WIT-005`
+and `SATIN-WIT-008`. `SATIN-WIT-006` excludes slots of an account absent before the block from the
+block witness.
+
+See the [adapter mapping](adapter-protocol.md#returned-transaction-state), the
+[Oracle slot case](../slice/cases/satin/reads/oracle-slot-before-charge.json), and the
+[created-and-destroyed account case](../slice/cases/satin/selfdestruct/marked/fresh-slot-on-little-gas.json).
 
 ## Semantic checks
 
