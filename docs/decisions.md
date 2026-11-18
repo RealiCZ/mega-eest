@@ -2881,3 +2881,32 @@ gates on both implementations, plain and instrumented.
   - **A detention cap other than the protocol's.** Both implementations' tests build stacks of tens
     of levels under a cap they configure. The cases use the protocol's cap (D-67), and one level's
     crossing stands for the tail.
+
+**D-118. Warmth after rollback and the reads of a refused call.** In
+`satin/access-control/delegate-refusal/warmth-a-revert-took-back`, the parent probes the target with
+`BALANCE` after both child frames have reverted. The original refusal data still returns, and the
+parent's probe pays the cold access (`SATIN-MAC-007`, `SATIN-SCHED-003`). Separate cases observe the
+read at the refusal. The cold and access-list-warm `max-forward-*-target-refused` cases observe
+`STATICCALL`, and the cold `*-cold-target-refusal-reads` cases observe `CALL`, `CALLCODE` and
+`DELEGATECALL`. Each gets its only read of the target from the refused call, so a missing entry in
+`reads.accounts` fails the case (`SATIN-WIT-002`, `SATIN-WIT-012`). The earlier price probes still
+cover the parent's `BALANCE`.
+
+**D-119. A refused call's value-transfer charge and target read.** The value `CALL` at its
+delegation guard and the value `CALL` and `CALLCODE` with the same larger budget observe the target
+read. They pay the value-transfer charge before the target load and get it back once the delegate
+is refused. The regular gas ledger measures the retained static and cold-access charges and the
+return data identifies the refusal. Together with the witness entries, these observations pin
+`SATIN-MAC-007`, `SATIN-SCHED-003`, `SATIN-WIT-002` and `SATIN-WIT-012`.
+
+**D-120. Pool settlement on successful keyless deployment.** `satin/keyless/deploy/with-reservoir`
+observes the first frame's two pools at entry and exit. The creation gives back its unused regular
+gas and reservoir to the corresponding pools (`SATIN-POOL-012`). Its ABI `gasUsed` nets what the
+creation received and returned across both pools (`SATIN-KEY-015`). The failure settlement of
+`SATIN-POOL-014` has its own frame rollback cases.
+
+**D-121. Reads of a contract's unintercepted keyless call.** In
+`satin/keyless/contract-call/no-value`, the parent's storage still records the length and hash of
+`NotIntercepted()` (`SATIN-KEY-003`). The reads group observes the KeylessDeploy account and code,
+and the absence of reads of the signer and potential deploy address. Each would be an extra
+`reads.accounts` entry, even if the call returned the same error (`SATIN-WIT-002`).

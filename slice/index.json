@@ -8710,7 +8710,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/deploy/with-reservoir",
       "file": "cases/satin/keyless/deploy/with-reservoir.json",
-      "fileDigest": "sha256:5966664234ae59a2056566eb09c3e4e197b2f21ef2007a4989f2cf3d9f7a5fdb",
+      "fileDigest": "sha256:de407e22c781fc569531991e3aee21b95d2f24031158b9acb8ea831eeb094d11",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -8723,7 +8723,8 @@
         "SATIN-KEY-012",
         "SATIN-KEY-013",
         "SATIN-KEY-014",
-        "SATIN-KEY-015"
+        "SATIN-KEY-015",
+        "SATIN-POOL-012"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -9011,11 +9012,12 @@
       "area": "keyless",
       "caseId": "satin/keyless/contract-call/no-value",
       "file": "cases/satin/keyless/contract-call/no-value.json",
-      "fileDigest": "sha256:45f23119cbabb8fded837c8355e92aa15b9206a25304f4f7226c2616121b9655",
+      "fileDigest": "sha256:1c6efe83ffeedbd6a9f180b673e4e30fe825fb4a92531d77dab67190329c1c29",
       "rules": [
         "SATIN-ICPT-004",
         "SATIN-ICPT-006",
-        "SATIN-KEY-003"
+        "SATIN-KEY-003",
+        "SATIN-WIT-002"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -17355,7 +17357,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/value-call-at-the-guard",
       "file": "cases/satin/access-control/delegate-refusal/value-call-at-the-guard.json",
-      "fileDigest": "sha256:e76c7e26d92acc2c7eceb5a53a326d8e95ad28f727b348e1f7a675933d7bde15",
+      "fileDigest": "sha256:1ad606b059fe11be823f883b5b64dcc6278664c9a9e86888507bbd2d129c0e59",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -17363,7 +17365,9 @@
         "SATIN-MAC-004",
         "SATIN-MAC-005",
         "SATIN-MAC-007",
-        "SATIN-SCHED-003"
+        "SATIN-SCHED-003",
+        "SATIN-WIT-002",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -17388,16 +17392,40 @@
     },
     {
       "area": "access-control",
-      "caseId": "satin/access-control/delegate-refusal/value-callcode-refused",
-      "file": "cases/satin/access-control/delegate-refusal/value-callcode-refused.json",
-      "fileDigest": "sha256:1075801ff27e9759a6701486c804a929fd98671c7c3ec156c57944dd990a5037",
+      "caseId": "satin/access-control/delegate-refusal/value-call-refused",
+      "file": "cases/satin/access-control/delegate-refusal/value-call-refused.json",
+      "fileDigest": "sha256:ae67631cef610123f1ddf86eb9a17ccde07473ed1e4ad2aab244014d0a7db0b2",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
         "SATIN-MAC-003",
         "SATIN-MAC-004",
         "SATIN-MAC-005",
-        "SATIN-MAC-007"
+        "SATIN-MAC-007",
+        "SATIN-SCHED-003",
+        "SATIN-WIT-002",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "access-control",
+      "caseId": "satin/access-control/delegate-refusal/value-callcode-refused",
+      "file": "cases/satin/access-control/delegate-refusal/value-callcode-refused.json",
+      "fileDigest": "sha256:d05a1fffb4a75f5d1f3068c9bda94bab89393609ade18ddd461532cf8f0711f2",
+      "rules": [
+        "SATIN-MAC-001",
+        "SATIN-MAC-002",
+        "SATIN-MAC-003",
+        "SATIN-MAC-004",
+        "SATIN-MAC-005",
+        "SATIN-MAC-007",
+        "SATIN-SCHED-003",
+        "SATIN-WIT-002",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -17416,6 +17444,69 @@
         "SATIN-MAC-004",
         "SATIN-MAC-005",
         "SATIN-MAC-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "access-control",
+      "caseId": "satin/access-control/delegate-refusal/call-cold-target-refusal-reads",
+      "file": "cases/satin/access-control/delegate-refusal/call-cold-target-refusal-reads.json",
+      "fileDigest": "sha256:c06556a3e7ee406ab50716910b94029c5e6e232b8f34c70e65e7f9a227e17b67",
+      "rules": [
+        "SATIN-MAC-001",
+        "SATIN-MAC-002",
+        "SATIN-MAC-003",
+        "SATIN-MAC-004",
+        "SATIN-MAC-005",
+        "SATIN-MAC-007",
+        "SATIN-SCHED-003",
+        "SATIN-WIT-002",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "access-control",
+      "caseId": "satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads",
+      "file": "cases/satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads.json",
+      "fileDigest": "sha256:61acf5259ec5faf8181a6176cd5cbd2e5adb9ca65b4d6c4be78fc39ca6374d38",
+      "rules": [
+        "SATIN-MAC-001",
+        "SATIN-MAC-002",
+        "SATIN-MAC-003",
+        "SATIN-MAC-004",
+        "SATIN-MAC-005",
+        "SATIN-MAC-007",
+        "SATIN-SCHED-003",
+        "SATIN-WIT-002",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "access-control",
+      "caseId": "satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads",
+      "file": "cases/satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads.json",
+      "fileDigest": "sha256:bdc827e232cffc3115a62c4f2a437275ccca39b53ec800ae994c8c1ab72429f4",
+      "rules": [
+        "SATIN-MAC-001",
+        "SATIN-MAC-002",
+        "SATIN-MAC-003",
+        "SATIN-MAC-004",
+        "SATIN-MAC-005",
+        "SATIN-MAC-007",
+        "SATIN-SCHED-003",
+        "SATIN-WIT-002",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -17570,14 +17661,15 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/warmth-a-revert-took-back",
       "file": "cases/satin/access-control/delegate-refusal/warmth-a-revert-took-back.json",
-      "fileDigest": "sha256:9b0ce9007702dd83c84aa03a6be27aa2e3587827310165684e3b693dff8151bc",
+      "fileDigest": "sha256:a1fe3bc8159f3138e9da8e8c21575f822697817996557cd91eaefe37a74a95b3",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
         "SATIN-MAC-003",
         "SATIN-MAC-004",
         "SATIN-MAC-005",
-        "SATIN-MAC-007"
+        "SATIN-MAC-007",
+        "SATIN-SCHED-003"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -17970,14 +18062,16 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/max-forward-cold-target-refused",
       "file": "cases/satin/access-control/delegate-refusal/max-forward-cold-target-refused.json",
-      "fileDigest": "sha256:2bef7ac0425f19b3c4073484f9e6a43b52826b5e051e0a90ff710f2252118c1b",
+      "fileDigest": "sha256:3d4735d778d66c8e73d7970565ac30d9dc33d896e0bb74bca18df10e8bc8f5a8",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
         "SATIN-MAC-003",
         "SATIN-MAC-004",
         "SATIN-MAC-005",
-        "SATIN-MAC-007"
+        "SATIN-MAC-007",
+        "SATIN-WIT-002",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -17988,14 +18082,16 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/max-forward-warm-target-refused",
       "file": "cases/satin/access-control/delegate-refusal/max-forward-warm-target-refused.json",
-      "fileDigest": "sha256:89aa7bf49bdd3f4b67c4768d4ad2c2c1b439cf9e64c1e82b7237809498be3b91",
+      "fileDigest": "sha256:7876ef7cab37437df9f498116bab87ba0b5aa50b19e5e694acd488fd519f2444",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
         "SATIN-MAC-003",
         "SATIN-MAC-004",
         "SATIN-MAC-005",
-        "SATIN-MAC-007"
+        "SATIN-MAC-007",
+        "SATIN-WIT-002",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",

@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **997** (997 gating, 0 quarantined).
+Cases: **1001** (1001 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -4830,7 +4830,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe] | gating | unqualified | [satin-83c0d26] |
@@ -4838,6 +4840,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
@@ -4860,6 +4863,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -4877,7 +4881,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe] | gating | unqualified | [satin-83c0d26] |
@@ -4885,6 +4891,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
@@ -4907,6 +4914,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -4923,9 +4931,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
@@ -4944,6 +4955,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warmth-a-revert-took-back] | gating | unqualified | [satin-83c0d26] |
@@ -4961,9 +4973,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
@@ -4980,6 +4995,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warmth-a-revert-took-back] | gating | unqualified | [satin-83c0d26] |
@@ -5003,9 +5019,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
@@ -5022,6 +5041,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warmth-a-revert-took-back] | gating | unqualified | [satin-83c0d26] |
@@ -5042,7 +5062,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe] | gating | unqualified | [satin-83c0d26] |
@@ -5050,6 +5072,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
@@ -5069,6 +5092,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6145,6 +6169,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-pools/legacy-share/child-exact] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/legacy-share/child-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/new-account-give-back/unfunded-value-call] | gating | unqualified | [satin-bcf260d] |
+| [satin/keyless/deploy/with-reservoir] | gating | unqualified | [satin-c130558] |
 
 ### SATIN-POOL-014
 
@@ -6487,10 +6512,16 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/one-hop-delegate-runs-access-on] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/warmth-a-revert-took-back] | gating | unqualified | [satin-83c0d26] |
 | [satin/schedule/code-deposit/history-per-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/forward/one-thousand-forwards-980] | gating | unqualified | [satin-bcf260d] |
 | [satin/schedule/static-gas/extcodecopy-cold-copies-code] | gating | unqualified | [satin-bcf260d] |
@@ -8317,9 +8348,17 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/cold-load-crossing/balance-crossing-keeps-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/cold-load-crossing/balance-loaded-at-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/cold-load-crossing/call-crossing-keeps-the-load] | gating | unqualified | [satin-83c0d26] |
@@ -8329,6 +8368,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/delegate-refusal/whole-gas-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-at-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
 | [satin/reads/balance-cold-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/delegate-loaded] | gating | unqualified | [satin-5fb2688] |
@@ -8404,10 +8444,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/memory-halts-before-the-target] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-value-call-halts] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/cold-load-crossing/balance-crossing-keeps-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/cold-load-crossing/balance-load-skipped] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/cold-load-crossing/balance-loaded-at-the-load] | gating | unqualified | [satin-83c0d26] |
@@ -8535,7 +8583,9 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold]: ../slice/cases/satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold.json
 [satin/access-control/delegate-refusal/authority-warm-from-application]: ../slice/cases/satin/access-control/delegate-refusal/authority-warm-from-application.json
 [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry]: ../slice/cases/satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry.json
+[satin/access-control/delegate-refusal/call-cold-target-refusal-reads]: ../slice/cases/satin/access-control/delegate-refusal/call-cold-target-refusal-reads.json
 [satin/access-control/delegate-refusal/call-cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/call-cold-target-refused.json
+[satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads]: ../slice/cases/satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads.json
 [satin/access-control/delegate-refusal/callcode-cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/callcode-cold-target-refused.json
 [satin/access-control/delegate-refusal/cold-target-load-skipped]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-load-skipped.json
 [satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe.json
@@ -8543,6 +8593,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe.json
 [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard.json
 [satin/access-control/delegate-refusal/cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-refused.json
+[satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads]: ../slice/cases/satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads.json
 [satin/access-control/delegate-refusal/delegatecall-cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/delegatecall-cold-target-refused.json
 [satin/access-control/delegate-refusal/direct-call-under-static-gas]: ../slice/cases/satin/access-control/delegate-refusal/direct-call-under-static-gas.json
 [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas]: ../slice/cases/satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas.json
@@ -8566,6 +8617,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard.json
 [satin/access-control/delegate-refusal/value-call-at-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/value-call-at-the-guard.json
 [satin/access-control/delegate-refusal/value-call-one-short-of-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/value-call-one-short-of-the-guard.json
+[satin/access-control/delegate-refusal/value-call-refused]: ../slice/cases/satin/access-control/delegate-refusal/value-call-refused.json
 [satin/access-control/delegate-refusal/value-callcode-refused]: ../slice/cases/satin/access-control/delegate-refusal/value-callcode-refused.json
 [satin/access-control/delegate-refusal/warm-target-one-short-of-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/warm-target-one-short-of-the-guard.json
 [satin/access-control/delegate-refusal/warm-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/warm-target-refused.json
