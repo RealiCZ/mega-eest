@@ -2959,6 +2959,53 @@ successful start takes back its record and its record history. The first sender'
 recipient's records and both logs stand, with the new recipient the only rise (`SATIN-ACCT-004`,
 `SATIN-ACCT-014`, `SATIN-HIST-009`).
 
+**D-129. Keyless bytecode and the first signer nonce.** The four call opcodes reach the real
+KeylessDeploy bytecode below the first frame. Each parent returns the child's failure flag and
+`NotIntercepted()` bytes, and the gas ledger checks that the deployment overhead was never charged
+(`SATIN-KEY-003`, `SATIN-ICPT-006`). Calls of replacement bytecode remain separate controls. The
+nonce-zero signer with ordinary code and insufficient funds still receives `SignerHasCode()`
+(`SATIN-KEY-005`, `SATIN-KEY-006`).
+
+**D-130. Entry checks and charges.** A two-entry authorization list walks both absent authorities
+in simulation even if applying the first would exhaust regular gas before the first frame
+(`SATIN-AUTH-005`). The six top-level MegaAccessControl query calls isolate the selector boundary
+at depth zero (`SATIN-ICPT-001`). Two promoted `setSlots` transactions share one slot write. Only
+the one from an absent system address adds a caller charge and a unit of state growth, and it adds
+no write record for the caller (`SATIN-DEP-003`, `SATIN-ACCT-008`).
+
+**D-131. History at its allowance and deposit boundaries.** A word `LOG3` consumes the entire
+history allowance with either a stipend alone or an additional regular forward. In the two-log
+case the child can pay both regular charges from the stipend and the forward. The second log's
+history exhausts its gas, so both logs and the failed start are taken back (`SATIN-HIST-018` to
+`SATIN-HIST-020`, `SATIN-HIST-022`). A user's deposit independently prices seven calldata bytes,
+four write records, one word `LOG0` and one word of deposited code with the transaction body. The
+transfer and the creator's nonce write share an account record (`SATIN-HIST-002`, `SATIN-HIST-016`).
+
+**D-132. Records across account changes and child failures.** Separate recipients add separate
+records and growth. Repeated calls to the same new recipient add only one record for either
+endpoint. A value creation followed by a transfer shares its creator record. A value call to
+`INVALID` discards its start's writes and logs, leaving a zero-request value call to record the
+sender and a different recipient (`SATIN-ACCT-004`, `SATIN-ACCT-006`, `SATIN-ACCT-011`). Code
+delegated by the transaction's sender can fund an absent account without recording the sender.
+An absent authorization authority and a distinct value recipient each count their own state
+growth. The parent's fresh-slot write stands when a delegate restores the slot and then halts.
+
+**D-133. Execution writes at fee addresses.** Independent calls and destructions isolate
+execution's writes to each fee address. A write to a fee address other than the sender is an
+ordinary record. A write to the sender is part of the transaction body even when the sender is
+also the beneficiary (`SATIN-ACCT-008`, `SATIN-ACCT-010`).
+
+**D-134. Admitted hints through transaction settlement.** Compare the service input and data
+size after both a non-value hint with a regular forward and a value hint on a stipend, followed
+by a first-frame revert. A successful caller sends two distinct hints and the observation compares
+them in the order the service received them (`SATIN-ORCL-006`, `SATIN-ORCL-009`).
+
+**D-135. Exact return and empty-initcode refusal.** A contract initially at zero balance returns
+the value it received to its sender. Both records and their history are taken back and both
+transfer logs stand (`SATIN-ACCT-006`, `SATIN-HIST-009`). A nonce-zero creation caller attempts
+an unfunded endowment with empty initcode. Its return word is zero and its nonce and records stay
+as they were (`SATIN-ACCT-005`, `SATIN-SIZE-005`).
+
 **D-150. Observe the transaction state returned for commitment.** The optional
 `group:returned-state` checks completed account and slot loads in the unfiltered execution
 result (`SATIN-WIT-005`, `SATIN-WIT-008`). Each adapter is compared independently to the

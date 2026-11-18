@@ -9,11 +9,11 @@ from .constants import (
     AUTHORIZATION_SIZE, CALLDATA_NONZERO, CALLDATA_ZERO, COLD_ACCOUNT_ACCESS, COLD_ACCOUNT_SURCHARGE,
     COST_PER_HISTORY_BYTE, CREATE_ACCESS, delegate_of, DETENTION_STOP, ex, EXECUTION_CAP, FLOOR_PER_BYTE,
     INITCODE_WORD_COST, KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, KEYLESS_DEPLOY_CODE_HASH, limit_exceeded, MAX_CONTRACT_SIZE,
-    MAX_INITCODE_SIZE, MAX_U64, MEGA_LIMIT_CONTROL, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, ORACLE, PER_AUTH_BASE_COST,
+    MAX_INITCODE_SIZE, MAX_U64, MEGA_ACCESS_CONTROL, MEGA_LIMIT_CONTROL, MEGA_SYSTEM_TRANSACTION_SOURCE_HASH, MEGA_SYSTEM_TX_WHITELIST, ORACLE, PER_AUTH_BASE_COST,
     PRECOMPILE_SET, INTERCEPTED, NON_ZERO_TRANSFER, SEND_HINT,
     STOP_DIMENSIONS, SYSTEM_CALLER, SYSTEM_CONTRACT_ADDRESSES, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC,
     TX_BASE_COST, TX_BODY_SIZE, TX_DATA_LIMIT, TX_MAX_TOTAL_GAS_LIMIT, TX_VALUE_COST, WARM_READ, WRITE_RECORD_SIZE,
-    COST_PER_STATE_BYTE,
+    COST_PER_STATE_BYTE, selector,
 )
 from .records import (
     Account, created_address, fmt, h, Halt, InvalidPrestate, LimitStop, OutOfGasBeforeFrame, pad_address, refused,
@@ -558,9 +558,19 @@ class TransactionMixin:
                       "SATIN-ICPT-003", "SATIN-ICPT-007", *(("SATIN-MLC-001",) if recipient == MEGA_LIMIT_CONTROL else ()))
             elif limit_control:
                 status, output = self.own_limit_control(frame)
+            elif (self.system_pages and not create and recipient == MEGA_ACCESS_CONTROL
+                  and data[:4] in INTERCEPTED[MEGA_ACCESS_CONTROL]):
+                if data[:4] != selector("isVolatileDataAccessDisabled()"):
+                    raise Unmodelled("a top-level access-control call other than the state query")
+                output = bytes(32)
+                d.add("outcome", "the transaction's own CALL matches the access-control query's four-byte selector. "
+                      "Access starts enabled, so the interceptor answers false", "SATIN-ICPT-001", "SATIN-MAC-001")
             elif keyless:
                 status, output = self.keyless_call(frame)
             else:
+                if self.system_pages and not create and recipient == MEGA_ACCESS_CONTROL:
+                    d.add("outcome", "the transaction's own CALL matches no intercepted selector, so it runs the "
+                          "account's bytecode", "SATIN-ICPT-001")
                 if not create and recipient == KEYLESS_DEPLOY and data[:4] == KEYLESS_DEPLOY_CALL:
                     held = ("KeylessDeploy's bytecode runs, whose decoder refuses the same arguments"
                             if ex.keccak256(code) == KEYLESS_DEPLOY_CODE_HASH else

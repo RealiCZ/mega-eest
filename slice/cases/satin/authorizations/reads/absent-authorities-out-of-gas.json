@@ -1,0 +1,201 @@
+{
+  "caseId": "satin/authorizations/reads/absent-authorities-out-of-gas",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0x344d7",
+      "floor": "0x3a98",
+      "gasUsed": "0x3f4d7",
+      "history": "0xb000",
+      "historyBytes": "0x200",
+      "refund": "0x0",
+      "regular": "0x344d7",
+      "state": "0x0",
+      "total": "0x3f4d7"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "halt"
+      }
+    },
+    "reads": {
+      "accounts": {
+        "0x125940c60de364f680a70be9c6896c520e724770": null,
+        "0x4200000000000000000000000000000000000011": null,
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "codeHash": "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": null,
+        "0x420000000000000000000000000000000000001a": null,
+        "0x420000000000000000000000000000000000001b": null,
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0xe9e98d74b441fae0bbf7d8e3dcd9804268356244": null
+      },
+      "blockHashes": {},
+      "buckets": {
+        "0x6c3290": "0x100"
+      },
+      "codes": [
+        "0xbcc90f2d6dada5b18e155c17a1c0a55920aae94f39857d39d0d8ed07ae8f228b"
+      ],
+      "hints": [],
+      "oracle": [],
+      "storage": {
+        "0x4200000000000000000000000000000000000015": {
+          "0x0000000000000000000000000000000000000000000000000000000000000001": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000003": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000005": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000007": "0x0",
+          "0x0000000000000000000000000000000000000000000000000000000000000008": "0x0"
+        }
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x3f4d7",
+      "logs": [],
+      "status": "0x0",
+      "type": "0x4"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "512",
+        "reported": "0x200"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "0",
+        "reported": "0x0"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "0",
+        "reported": "0x0"
+      }
+    },
+    "state": {
+      "accounts": {
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x000000000000000000000000000000000000beef": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0x04f9011d018080808303f4d794000000000000000000000000000000000000beef8080c0f8b8f85a019400000000000000000000000000000000000de1e98001a027c49554829e447d599a8f9a87400296ab844f330635446cd59157f9ac85b861a051bd1d7e0cf78236cc1ef2e997baa18311431821790a6848491f6ad5018165f6f85a019400000000000000000000000000000000000de1e98080a031dda26fed110d81c65cae7a040796a3ee828c9eca3f38bf301226ae6f2db38aa05d18879cdac76cb19566f3b03482c147fb6ba4572f6a302a93b8a6e6711c178d01a09fe0b7cd3014f0b7e9abac89fd45a768335b318bd8dfcbdc643a17ef1482f0d8a01e235d2e7dfc155cdbe0042dbf34cdf555c5b98a460d344793e3baca20a56ae0"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "intent": "two absent authorities with valid entries. The regular gas cannot pay the first authority's new account by one. Neither entry is applied and the recipient is not read, but the simulation loads both authorities (SATIN-AUTH-005, SATIN-AUTH-008, SATIN-STATE-011)"
+    },
+    "definition": "tools/make_slice.py::authorization_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:limit",
+    "group:outcome",
+    "group:reads",
+    "group:receipts",
+    "group:resources",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-AUTH-001",
+    "SATIN-AUTH-003",
+    "SATIN-AUTH-004",
+    "SATIN-AUTH-005",
+    "SATIN-AUTH-007",
+    "SATIN-AUTH-008",
+    "SATIN-AUTH-010",
+    "SATIN-AUTH-015",
+    "SATIN-SCHED-007",
+    "SATIN-STATE-011"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+    "name": "megaeth/Satin"
+  }
+}

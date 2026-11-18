@@ -2032,6 +2032,11 @@ def take_back_cases() -> list[Case]:
                  code=call(MAX_GAS, WRITER, 0, 0) + b"\x50" + b_tail,
                  accounts={WRITER: model.Account(nonce=1, code=p_code, storage={0: 7}),
                            DESCENDANT: model.Account(nonce=1, code=c_code)}))
+    add(Case("satin/take-backs/descendant/fresh-slot-restore-halted", "a parent writes a fresh slot and delegates to "
+             "code that restores it to zero and then halts. The parent catches the halt and keeps its original write, "
+             "record and state-growth unit (SATIN-ACCT-004, SATIN-ACCT-011, SATIN-POOL-014)", spec=CURRENT_SPEC,
+             code=sstore(1, 1) + delegatecall(50_000, DESCENDANT) + b"\x50" + STOP,
+             accounts={DESCENDANT: model.Account(nonce=1, code=sstore(1, 0) + INVALID)}))
 
     # SATIN-TAKE-006, sent-back: P (the first frame) calls Q with 1 wei, and Q calls P back with 1 wei.
     back = call(MAX_GAS, CONTRACT, 1, 0) + b"\x50" + STOP
@@ -2049,6 +2054,13 @@ def take_back_cases() -> list[Case]:
                  f"too, with 1 wei, and Q calls P back with 1 wei: {tail}", spec=spec, pools=True, contract_balance=10,
                  code=p_code, accounts={RETURNER: model.Account(nonce=1, balance=10, code=back)},
                  returned_state=name == "round-trip"))
+    exact = 5
+    add(Case("satin/take-backs/sent-back/round-trip-from-zero", "an existing contract starts at zero balance, receives "
+             "value and returns it in full to the contract that sent it. Both account records and their history are "
+             "taken back, while both transfer logs remain (SATIN-ACCT-004, SATIN-ACCT-006, SATIN-HIST-009)",
+             spec=CURRENT_SPEC, contract_balance=10,
+             code=jump_if(b"\x34", STOP, call(MAX_GAS, RETURNER, exact, 0) + b"\x50" + STOP),
+             accounts={RETURNER: model.Account(nonce=1, code=call(MAX_GAS, CONTRACT, exact, 0) + b"\x50" + STOP)}))
     # The signs turned: Q first sends P 1 wei, then P's call to Q takes both records back, and Q's call back would make
     # them again, which Q, left 5,000 of regular gas after its forward and no reservoir, cannot pay.
     left = 5_000
@@ -3081,6 +3093,11 @@ def authorization_cases() -> list[Case]:
         "read, which is not in the reads, and neither is the recipient", reads=True, to=EOA, code=b"", gas=500_000,
         authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0), (SECOND_AUTH_KEY, 2, DELEGATE, 0),
                         (THIRD_AUTH_KEY, CHAIN_ID, DELEGATE, 0)], accounts=three, tune=("list", model.ACCOUNT_WRITE - 1))
+    add("reads/absent-authorities-out-of-gas", "two absent authorities with valid entries. The regular gas cannot pay "
+        "the first authority's new account by one. Neither entry is applied and the recipient is not read, but the "
+        "simulation loads both authorities (SATIN-AUTH-005, SATIN-AUTH-008, SATIN-STATE-011)", spec=CURRENT_SPEC,
+        reads=True, to=EOA, code=b"", gas=500_000, tune=("list", model.ACCOUNT_STATE - 1),
+        authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0), (SECOND_AUTH_KEY, CHAIN_ID, DELEGATE, 0)])
 
     # The caller a deposit creates is no authorization (SATIN-AUTH-017): it is new by EIP-161 emptiness, not existence.
     add("deposit-caller/empty-leaf", "a deposit whose caller's leaf the state holds, empty under EIP-161: the caller a "
@@ -4349,6 +4366,16 @@ def system_tx_cases() -> list[Case]:
                  source_hash=SYSTEM_TX_SOURCE if system else None,
                  accounts={WRITE_LOG_REVERTER: model.Account(nonce=1, code=sstore(1, 1) + log(0, 0, 0, []) + revert(0, 0))},
                  code=call(MAX_GAS, WRITE_LOG_REVERTER, 0, 0) + b"\x50" + STOP, **deposit))
+    calldata, deployed = b"history", bytes(32)
+    history_bytes = model.TX_BODY_SIZE + len(calldata) + 4 * model.WRITE_RECORD_SIZE + model.LOG_BASE_SIZE + 32 + len(deployed)
+    state = model.SLOT_STATE + 2 * model.ACCOUNT_STATE + len(deployed) * model.COST_PER_STATE_BYTE
+    add(Case("satin/system-tx/origin/user-deposit-history-sites", "a user deposit writes a slot, emits a word LOG0, "
+             "funds a new account and creates a contract with one word of code. The transfer and the creator nonce "
+             "share its record (SATIN-ACCT-004, SATIN-HIST-002, SATIN-HIST-016, SATIN-HIST-022)",
+             spec=CURRENT_SPEC, system_tx=True, deposit=(0, 50_000_000), sender_nonce=3, data=calldata,
+             contract_balance=10, code=sstore(1, 1) + log(0, 0, 32, []) + call(1_000_000, ABSENT, 1, 0) + b"\x50"
+             + create(0, init_returning(deployed)) + STOP,
+             check={"historyBytes": history_bytes, "history": history_bytes * model.COST_PER_HISTORY_BYTE, "state": state}))
 
     # SATIN-MST-003, SATIN-VAL-005: a deposit from the live system address fails whatever its destination.
     for name, what, to in (("creating", "a creation, its recipient empty", None),
@@ -4422,6 +4449,9 @@ def keyless_cases() -> list[Case]:
     case("refusal/signer-has-code", "a signer that holds code other than a delegation indicator and cannot fund the "
          "carried value: step 9 answers SignerHasCode() before step 13", carried(code, value=1),
          accounts=signer(nonce=1, code=b"\x60\x00"))
+    case("refusal/nonce-zero-signer-has-code", "a nonce-zero signer holds STOP code and cannot fund the carried value. "
+         "Step 9 answers SignerHasCode before step 13 and no deployment changes the state (SATIN-KEY-005, SATIN-KEY-006)",
+         carried(code, value=1), spec=CURRENT_SPEC, accounts=signer(code=STOP))
     taken = {DEPLOY: model.Account(nonce=1, code=STOP)}
     case("refusal/override-before-taken", "an override one below the signed gas limit and an occupied deploy address: "
          "step 6 answers GasLimitTooLow before step 12", carried(code), spec=CURRENT_SPEC, override=signed - 1,
@@ -5250,6 +5280,18 @@ def system_pages_gap_cases() -> list[Case]:
                  "SATIN-ORCL-007)", reads=True, contract_balance=balance,
                  code=laid + call(gas_op, model.ORACLE, value, len(hint)) + record_result() + STOP,
                  returned_state=name == "stipend-unfunded", **sys_pages))
+    for name, forward, value, what in (("no-value", 200_000, 0, "a nonzero forward without value"),
+                                      ("stipend", 0, 1, "the stipend of a value call requesting zero gas")):
+        add(Case(f"satin/oracle/send-hint/caller-reverts-{name}", f"an ordinary caller admits a hint on {what} and "
+                 "then reverts. The service input and its data size remain (SATIN-ORCL-006, SATIN-ORCL-009)",
+                 spec=CURRENT_SPEC, system=True, system_pages=True, reads=True,
+                 code=laid + call(forward, model.ORACLE, value, len(hint)) + b"\x50" + revert(0, 0)))
+    second_hint = send_hint(8, b"\xbb\xcc")
+    add(Case("satin/oracle/send-hint/two-in-order", "an ordinary caller sends two distinct hints in sequence and "
+             "succeeds. Both entries in reads.hints preserve the service order (SATIN-ORCL-006)",
+             spec=CURRENT_SPEC, system=True, system_pages=True, reads=True,
+             code=laid + call(200_000, model.ORACLE, 0, len(hint)) + b"\x50" + bytes_to_memory(second_hint)
+             + call(200_000, model.ORACLE, 0, len(second_hint)) + b"\x50" + STOP))
 
     # 4. Malformed and noncanonical input (SATIN-ORCL-009).
     unpadded = model.SEND_HINT + word(7) + word(0x40) + word(1) + b"\xaa"
@@ -5364,6 +5406,17 @@ def system_pages_gap_cases() -> list[Case]:
              "selector, never the code, so the call is answered (SATIN-MLC-001)",
              code=ask + call(MAX_GAS, model.MEGA_LIMIT_CONTROL, 0, 4) + b"\x50" + RETURN_RETURNDATA,
              accounts={model.MEGA_LIMIT_CONTROL: model.Account(code=STOP)}, **sys_pages))
+    access_query = sel("isVolatileDataAccessDisabled()")
+    for name, data, intent in (("exact", access_query, "the exact access-control selector"),
+                               ("suffix-byte", access_query + b"\xff", "a selector followed by one byte"),
+                               ("suffix-word", access_query + bytes(32), "a selector followed by one word"),
+                               ("empty", b"", "an empty input"),
+                               ("three-bytes", access_query[:3], "the first three bytes of the selector"),
+                               ("other-selector", bytes.fromhex("deadbeef"), "a different selector")):
+        add(Case(f"satin/system-contracts/access-control/own-query-{name}", f"a transaction calls MegaAccessControl "
+                 f"with {intent}. A matching selector answers false, while any other input runs the contract's code "
+                 "(SATIN-ICPT-001)", spec=CURRENT_SPEC, to=model.MEGA_ACCESS_CONTROL, code=None, data=data,
+                 system=True, system_pages=True))
 
     # 13. The transaction's own value call of an intercepted method (SATIN-ICPT-003).
     add(Case("satin/system-contracts/limit-control/own-call-with-value", "the transaction's own call of "
@@ -5445,6 +5498,14 @@ def system_pages_gap_cases() -> list[Case]:
              data=sel("setSlots(uint256[],bytes32[])") + abi_words(0x40, 0xA0, 2, 3, 3, 2, 7, 8), gas=1_000_000,
              sender_balance=0, nonce=1, sender_nonce=1, system_tx=True,
              accounts={**oracle_plain, **registry_naming(SENDER)}, **sys_pages))
+    for name, absent in (("absent-caller", True), ("funded-caller", False)):
+        caller = "an absent caller" if absent else "a funded caller"
+        add(Case(f"satin/system-tx/promoted/set-slots-{name}", f"a promoted setSlots transaction from {caller} "
+                 "writes one fresh slot. The new caller, if any, is charged and counted once and makes no extra write "
+                 "record (SATIN-DEP-003, SATIN-ACCT-008, SATIN-ACCT-014, SATIN-STATE-011)",
+                 spec=CURRENT_SPEC, to=model.ORACLE, code=None, system=True, system_pages=True, system_tx=True,
+                 data=sel("setSlots(uint256[],bytes32[])") + abi_words(0x40, 0x80, 1, 3, 1, 0x77), gas=1_000_000,
+                 absent_sender=absent, sender_balance=1, accounts={**oracle_plain, **registry_naming(SENDER)}))
 
     # 19. An existing sender empty under EIP-161 (SATIN-DEP-003, -005, -012).
     least = call_plain + body + 2 * model.ACCOUNT_STATE
@@ -5505,6 +5566,15 @@ def system_pages_gap_cases() -> list[Case]:
                  "address, which holds a code that only stops, with keylessDeploy's selector and arguments that decode: "
                  "recognition needs a CALL at depth 0, so the held code runs and succeeds (SATIN-ICPT-006)",
                  code=bytes_to_memory(keyless_input) + op + record_result() + STOP, accounts=dict(held), **sys_pages))
+    keyless_input = keyless_data(carried(init_returning(STOP)), 1_000_000)
+    parent_result = push(0) + b"\x52" + returndata_to(32) + b"\x3d" + push(32) + b"\x01\x5f\xf3"
+    for name, opcode in (("call", 0xF1), ("staticcall", 0xFA), ("callcode", 0xF2), ("delegatecall", 0xF4)):
+        add(Case(f"satin/interception/keyless/{name}-runs-keyless-code", f"a contract's {name.upper()} with a valid "
+                 "keylessDeploy argument runs the system contract's bytecode, without the deployment overhead. The "
+                 "parent returns the child's failure flag and NotIntercepted() bytes (SATIN-KEY-003, SATIN-ICPT-006)",
+                 spec=CURRENT_SPEC, system=True, system_pages=True,
+                 code=bytes_to_memory(keyless_input) + call_op(opcode, model.KEYLESS_DEPLOY,
+                                                              inp=(0, len(keyless_input)), gas=300_000) + parent_result))
     return out
 
 
@@ -5550,7 +5620,19 @@ def history_cases() -> list[Case]:
     log0_ops = 2 * model.G_BASE + model.LOG_COST  # PUSH0, PUSH0, LOG0
 
     def case(name: str, intent: str, **kw) -> None:
-        add(Case(f"satin/history/{name}", intent, spec=spec, **kw))
+        kw.setdefault("spec", spec)
+        add(Case(f"satin/history/{name}", intent, **kw))
+
+    log_word = mstore(0, 7) + log(3, 0, 32, [1, 2, 3])
+    for name, request, copies in (("stipend-only", 0, 1), ("stipend-and-forward", model.CALL_STIPEND, 1),
+                                  ("second-log-exhausts", model.CALL_STIPEND, 2)):
+        case(f"allowance/full-log3-{name}", f"a value call requests {fmt(request)} regular gas and receives its "
+             f"stipend. The child attempts {copies} LOG3 with a word of data. The first uses the whole allowance "
+             "(SATIN-HIST-002, SATIN-HIST-018, SATIN-HIST-019, SATIN-HIST-020, SATIN-HIST-022). "
+             + ("The second can pay its regular charges but not its history, so the call fails and no log stands."
+                if copies == 2 else "The transfer log precedes the LOG3 and the caller returns the success flag."),
+             spec=CURRENT_SPEC, contract_balance=1, code=call(request, ALLOWANCE_CHILD, 1, 0)
+             + push(0) + b"\x52" + ret(0, 32), accounts={ALLOWANCE_CHILD: model.Account(nonce=1, code=log_word * copies + STOP)})
 
     # SATIN-HIST-001: history is COST_PER_HISTORY_BYTE a byte, whatever bucket the state charges land in.
     init = sstore(0, 1) + log(0, 0, 0, []) + init_returning(b"\x01")
@@ -5951,6 +6033,23 @@ def accounting_cases() -> list[Case]:
     case("records/two-recipients", "a contract holding 10 wei sends 1 wei to each of two contracts that stop: its own "
          "account recorded once, each recipient once", contract_balance=10, accounts={**stop_q, **stop_r},
          code=send(PAYEE_Q) + send(PAYEE_R) + STOP)
+    case("records/two-absent-recipients", "a contract sends value to two absent recipients. Its balance changes "
+         "twice but has one record, and each new recipient adds a record and state-growth unit "
+         "(SATIN-ACCT-004, SATIN-ACCT-005, SATIN-ACCT-014)", spec=CURRENT_SPEC,
+         contract_balance=10, code=send(PAYEE_Q) + send(PAYEE_R) + STOP)
+    case("records/three-transfers-one-absent-recipient", "three value calls fund the same initially absent recipient. "
+         "Only the first creates the leaf. One record for each endpoint stands alongside three transfer logs "
+         "(SATIN-ACCT-004, SATIN-ACCT-005, SATIN-ACCT-006)", spec=CURRENT_SPEC,
+         contract_balance=10, code=send(PAYEE_Q) * 3 + STOP)
+    case("records/creation-then-transfer", "a frame does CREATE with value and then funds a different absent account "
+         "by CALL. The nonce and balance changes share the frame account's record, alongside the two new account "
+         "records and two transfer logs (SATIN-ACCT-005, SATIN-ACCT-014, SATIN-LIM-008)", spec=CURRENT_SPEC,
+         contract_balance=10, code=create(1, STOP) + send(PAYEE_R) + STOP)
+    case("records/halted-transfer-then-absent-recipient", "a value call starts a child that executes INVALID. The "
+         "parent catches the halt and then sends value to an absent recipient on the stipend alone. Only the second "
+         "start's records and log stand (SATIN-ACCT-005, SATIN-ACCT-011, SATIN-POOL-014)", spec=CURRENT_SPEC,
+         contract_balance=10, accounts={PAYEE_Q: model.Account(nonce=1, code=INVALID)},
+         code=call(20_000, PAYEE_Q, 1, 0) + b"\x50" + call(0, PAYEE_R, 1, 0) + b"\x50" + STOP)
     back = lambda value: {PAYEE_Q: model.Account(nonce=1, code=call(0, CONTRACT, value, 0) + b"\x50" + STOP)}
     case("records/partial-return", "a contract holding 10 wei sends 2 wei to a contract, which sends 1 back: both "
          "balances differ from what the transaction loaded, so both records stand and nothing is taken back",
@@ -6014,6 +6113,11 @@ def accounting_cases() -> list[Case]:
          "refuses the creation before it charges anything for the start and before it reads the created address, so "
          "nothing is created, the creator's nonce is not bumped and nothing is recorded", code=create(1, STOP) + STOP,
          returned_state=True)
+    unfunded = push(0) + push(0) + push(1_000_000_000_000) + b"\xf0" + push(0) + b"\x52" + ret(0, 32)
+    case("merge/empty-initcode-endowment-unfunded", "a nonce-zero creator with no balance attempts CREATE with empty "
+         "initcode and positive endowment. CREATE returns zero, its caller succeeds, and the creator's nonce and "
+         "records remain as they were (SATIN-ACCT-004, SATIN-ACCT-005, SATIN-SIZE-005)", spec=CURRENT_SPEC,
+         accounts={CONTRACT: model.Account(code=unfunded)})
     # SATIN-ACCT-010: the fee accounts and the other roles an account can take.
     vault1 = {model.BASE_FEE_VAULT: model.Account(balance=1)}
     case("fee-account/destruction-to-base-fee-vault", "a contract the transaction did not create, holding 1 wei, destroys "
@@ -6031,6 +6135,20 @@ def accounting_cases() -> list[Case]:
          "contract holding 10 wei, sends it 1 wei: the sender's account is the body's, fee account or not, so the "
          "transfer records the contract's account alone; detained from its start by the sender", contract_balance=10,
          coinbase=SENDER, code=call(0, SENDER, 1, 0) + b"\x50" + STOP)
+    for name, target in (("beneficiary", COINBASE), ("l1-fee-vault", model.L1_FEE_VAULT),
+                         ("operator-fee-vault", model.OPERATOR_FEE_VAULT)):
+        case(f"fee-account/value-call-to-{name}", f"a non-sender {name} receives value from a CALL. The value writes "
+             "the two account records independently of settlement's fee credits (SATIN-ACCT-010, SATIN-DET-001)",
+             spec=CURRENT_SPEC, contract_balance=1, accounts={target: model.Account(balance=1)},
+             code=call(0, target, 1, 0) + b"\x50" + STOP)
+        case(f"fee-account/destruction-to-{name}", f"a non-sender {name} receives value from SELFDESTRUCT. The balance "
+             "move makes two account records independently of settlement's fee credits (SATIN-ACCT-010, SATIN-DET-001)",
+             spec=CURRENT_SPEC, destruction=True, contract_balance=1, accounts={target: model.Account(balance=1)},
+             code=selfdestruct_to(target))
+    case("fee-account/destruction-to-beneficiary-as-sender", "the block beneficiary and sender are the same account. "
+         "An existing contract destroys itself to that address. The clearing is recorded and the sender's account "
+         "is already the body's record (SATIN-ACCT-008, SATIN-DET-001)", spec=CURRENT_SPEC, destruction=True,
+         contract_balance=1, coinbase=SENDER, code=selfdestruct_to(SENDER))
     # SATIN-ACCT-001, -002, -012, -013: an access list's entries are body bytes, counted entry by entry, and no record.
     for name, entries in (("body/access-list-one-entry", 1), ("body/access-list-duplicate-entries", 2)):
         case(name, f"a type-1 transaction to a contract that stops, with {entries} access-list "
@@ -6048,6 +6166,14 @@ def accounting_cases() -> list[Case]:
              "sender's account is the body's and is not recorded, and " + tail, to=SENDER, code=None,
              sender_code=delegation, accounts={**stop_r, DELEGATE: model.Account(nonce=1, code=store + send(PAYEE_R) + STOP),
                                                SENDER: model.Account(balance=ETH, code=delegation, storage={1: 5})})
+    case("sender/delegated-sender-funds-absent-recipient", "a zero-value transaction calls its own delegated sender. "
+         "The delegated frame transfers value from the sender to an absent account. Only the recipient adds a "
+         "record and growth (SATIN-ACCT-008, SATIN-ACCT-014)", spec=CURRENT_SPEC, to=SENDER, code=None,
+         sender_code=delegation, accounts={DELEGATE: model.Account(nonce=1, code=send(PAYEE_R) + STOP)})
+    case("authority/value-to-distinct-absent-recipient", "a transaction applies an authorization to an absent authority "
+         "and carries value to a different absent address. Both accounts are charged, recorded and counted for growth "
+         "(SATIN-AUTH-008, SATIN-ACCT-014, SATIN-STATE-011)", spec=CURRENT_SPEC,
+         ty=4, lists=True, to=ABSENT, code=None, value=1, authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0)])
     # SATIN-ACCT-020: a failed deposit's caller, empty under EIP-161, counts one unit of state growth, uncharged.
     intrinsic = model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE
     for name, held, tail in (("failed-deposit/empty-leaf-caller", model.Account(), "an empty leaf, empty under EIP-161: "
@@ -7279,7 +7405,7 @@ def build(c: Case, *, observe_returned: bool = False):
         L1_BLOCK: model.Account(code=b"\xfe"),
         REGISTRY: model.Account(code=b"\xfe"),
     }
-    if not (c.deposit and c.absent_sender):
+    if not c.absent_sender:
         pre[sender] = model.Account(nonce=c.sender_nonce, balance=c.sender_balance, code=c.sender_code)
     if c.to == CONTRACT:
         pre[CONTRACT] = model.Account(nonce=1, balance=c.contract_balance, code=c.code, storage=dict(c.storage))

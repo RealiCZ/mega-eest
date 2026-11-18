@@ -14,7 +14,9 @@ The old figures of a constant are:
 - the figures it feeds directly, from the table `MUTATIONS` below: the constant itself and its
   products with the byte counts and counts the slice uses;
 - every figure of a case's expected gas ledgers, receipt gas and resources that changes when the
-  constant changes: the sums and products the derivations reach.
+  constant changes: the sums and products the derivations reach. These figures are checked in that
+  case's text and in the slice's shared README. A value computed in a different case can coincide
+  with an old ledger figure without depending on it.
 
 A figure equal to one of the case's own inputs — its transaction's gas limit or value, or a number
 its contract code pushes (the system contracts' code aside) — is that input, which no constant
@@ -36,6 +38,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections import defaultdict
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 TOOLS = ("make_slice.py", "make_examples.py", "salt_mapping.py")
@@ -154,28 +157,28 @@ def inputs(doc: dict, explanation: dict | None) -> set[int]:
 
 
 def texts(files: dict[str, str], explained: dict):
-    """(where, text, the case's input figures) for every human-readable string of the slice and of the
+    """(file, where, text, the case's input figures) for every human-readable string of the slice and of the
     explanations of its cases."""
     for rel, raw in sorted(files.items()):
         doc = json.loads(raw)
         if rel == "index.json":
             for q in doc.get("quarantine", []):
-                yield f"{rel} {q['caseId']} knownFail.verdict", q["knownFail"]["verdict"], set()
+                yield q["file"], f"{rel} {q['caseId']} knownFail.verdict", q["knownFail"]["verdict"], set()
             continue
         explanation = explained.get(doc["caseId"])
         own = inputs(doc, explanation)
         prov = doc.get("provenance", {})
         for key, value in sorted(prov.get("authoring", {}).items()):
-            yield f"{rel} authoring.{key}", value, own
+            yield rel, f"{rel} authoring.{key}", value, own
         for d in (explanation or {}).get("derivation", []):
             for i, step in enumerate(d["steps"]):
-                yield f"{rel} --explain derivation {d['path']} step {i}", step, own
+                yield rel, f"{rel} --explain derivation {d['path']} step {i}", step, own
         if "quarantine" in prov:
-            yield f"{rel} quarantine.verdict", prov["quarantine"]["verdict"], own
+            yield rel, f"{rel} quarantine.verdict", prov["quarantine"]["verdict"], own
         if "note" in prov:
-            yield f"{rel} note", prov["note"], own
+            yield rel, f"{rel} note", prov["note"], own
     with open(os.path.join(ROOT, "slice", "README.md"), encoding="utf-8") as f:
-        yield "slice/README.md", f.read(), set()
+        yield None, "slice/README.md", f.read(), set()
 
 
 def figures(files: dict[str, str]) -> dict[tuple, int]:
@@ -211,23 +214,28 @@ def main() -> int:
                     raise SystemExit(f"check_derived_text: {other} is not of {constant}'s value")
             mutated, explained = generate(os.path.join(tmp, constant.lower()), {constant: value, **companions})
             now = figures(mutated)
-            moved = {v for k, v in base_figures.items() if k in now and now[k] != v}
-            stale = set(fed(model)) | moved | {f for other in companions for f in (getattr(model, other),
-                                                                                  getattr(model, other) - 1)}
+            moved = defaultdict(set)
+            for key, figure in base_figures.items():
+                if key in now and now[key] != figure:
+                    moved[key[0]].add(figure)
+            shared = set(fed(model)) | {f for other in companions for f in (getattr(model, other),
+                                                                          getattr(model, other) - 1)}
+            all_stale = shared.union(*moved.values())
             found = []
             scanned = 0
-            for where, text, own in texts(mutated, explained):
+            for rel, where, text, own in texts(mutated, explained):
                 scanned += 1
+                local = all_stale if rel is None else moved.get(rel, ())
                 for m in NUMBER.finditer(text):
                     figure = int(m.group(1).replace(",", ""))
-                    if figure not in stale or figure in own:
+                    if (figure not in shared and figure not in local) or figure in own:
                         continue
                     context = text[max(0, m.start() - 40):m.end() + 40]
                     found.append((where, m.group(1), context.replace("\n", " ")))
             changed = sum(1 for k in now if k in base_figures and now[k] != base_figures[k])
             also = "".join(f" (with {other} -> {fmt(v)})" for other, v in companions.items())
             print(f"check_derived_text: {constant} {fmt(old)} -> {fmt(value)}{also}: {len(mutated)} files regenerated, "
-                  f"{scanned} texts scanned, {len(stale)} old figures sought ({changed} expected figures moved): "
+                  f"{scanned} texts scanned, {len(all_stale)} old figures sought ({changed} expected figures moved): "
                   f"{'ok' if not found else f'{len(found)} stale'}")
             for where, figure, context in found:
                 print(f"  stale {figure} in {where}: ...{context}...")

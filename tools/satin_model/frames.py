@@ -7,7 +7,7 @@ from __future__ import annotations
 from .constants import (
     BLOCK_ENV_ACCESS_COMPUTE_GAS, COST_PER_HISTORY_BYTE, DATA_SIZE_STOP, delegate_of, DETENTION_STOP, FRAME_SHARE_DENOMINATOR, FRAME_SHARE_NUMERATOR,
     GAS_RETAINED_DENOMINATOR, GAS_RETAINED_NUMERATOR, HISTORY_ALLOWANCE_BYTES, INTERCEPTED, KV_UPDATE_STOP,
-    KEYLESS_DEPLOY, limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, MAX_CONTRACT_SIZE, MEGA_LIMIT_CONTROL, ORACLE, PRECOMPILE_SET, SEND_HINT,
+    KEYLESS_DEPLOY, KEYLESS_DEPLOY_CALL, limit_exceeded, LOG_BASE_SIZE, LOG_TOPIC_SIZE, MAX_CONTRACT_SIZE, MEGA_LIMIT_CONTROL, ORACLE, PRECOMPILE_SET, SEND_HINT,
     STATE_GROWTH_STOP, STOP_DIMENSIONS,
     SYSTEM_CONTRACTS, TRANSFER_LOG_ADDRESS, TRANSFER_LOG_SIZE, TRANSFER_TOPIC, TX_DATA_LIMIT, TX_KV_UPDATE_LIMIT, TX_STATE_GROWTH_LIMIT, WRITE_RECORD_SIZE,
 )
@@ -384,6 +384,9 @@ class FramesMixin:
         d.add("resources", f"the value CALL to {h(target)}, an account without code, is answered with a success without a "
               f"frame: its start keeps {records_net} net records, a transfer log and {rises[2]} of state growth, within "
               "the started frame's budget and the transaction's limits", "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-LOG-006")
+        if new_account and caller == self.tx.sender:
+            d.add("resources", "the transaction's sender is already a body record, so the new recipient makes the "
+                  "only write record", "SATIN-ACCT-008", "SATIN-HIST-003")
         if takes:
             takeback = self.give_back_transfer_records(frame, len(takes))
             d.add("resources", f"the value takes back {len(takes)} account records by restoring their accounts to what "
@@ -448,13 +451,18 @@ class FramesMixin:
                 and data[:4] in INTERCEPTED[target] and target == MEGA_LIMIT_CONTROL):
             return self.limit_control_answer(frame, child_gas, share, "STATICCALL")
         static_system = self.system_pages and name == "STATICCALL" and target == ORACLE
+        static_keyless = (self.system_pages and name == "STATICCALL" and target == KEYLESS_DEPLOY
+                          and data[:4] == KEYLESS_DEPLOY_CALL)
         callcode_system = (self.system_pages and name == "CALLCODE" and target in (ORACLE, MEGA_LIMIT_CONTROL, KEYLESS_DEPLOY)
                            and not value)
-        system_code = static_system or callcode_system
+        system_code = static_system or static_keyless or callcode_system
         if static_system and data[:4] == SEND_HINT:
             self.admit_static_hint(frame, address, data, child_gas)
         if callcode_system:
             self.system_code_call("CALLCODE", address, target, data)
+        if static_keyless:
+            d.add("outcome", "the keyless selector in a STATICCALL does not match the transaction's own CALL. "
+                  "The bytecode runs in a static frame", "SATIN-ICPT-006", "SATIN-KEY-003")
         if (((target in INTERCEPTED or target in SYSTEM_CONTRACTS) and not system_code) or target in PRECOMPILE_SET
                 or callee is None or not callee.code or delegate_of(callee.code) is not None):
             raise Unmodelled(f"a {name} of a system contract, a precompile, an account without code or a delegated "

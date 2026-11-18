@@ -278,6 +278,12 @@ specification's text and constants:
   restored account's record history after the child share is returned. The transaction's own
   zero-value call to an absent recipient accounts for no recipient record or rise.
 
+- **System entry checks and a static KeylessDeploy call** (D-129, D-130). A transaction's own
+  `isVolatileDataAccessDisabled()` query answers false at its four-byte selector. Nonmatching
+  inputs run the held code. A child `STATICCALL` with KeylessDeploy's selector runs its bytecode
+  in the static frame and returns its result. A promoted signed transaction can start with its
+  sender absent, so the existing deposit account charge applies to a missing leaf.
+
 Every price is a constant in `constants.py`, every figure in a case's text is written from those
 constants (D-57), and anything outside the class of transactions the package's docstring lists
 raises `Unmodelled` rather than guessing. A pre-state the specification excludes raises
