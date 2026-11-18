@@ -1503,11 +1503,24 @@ def limit_cases() -> list[Case]:
     # State growth: fresh slots past the frame's budget, which is the transaction's whole limit (SATIN-LIM-002).
     # Its first slots reach the budget without a stop; the case's own figures show them kept until the last.
     limit = model.TX_STATE_GROWTH_LIMIT
+    stores = b"".join(sstore(k, 1) for k in range(1, limit + 2)) + STOP
     add(Case("satin/limit-stops/state-growth-one-over", f"{fmt(limit + 1)} fresh slots: the first {fmt(limit)} reach the "
              f"frame's state-growth budget, {fmt(limit)}, and the last takes it past, so the frame is stopped with "
              "MegaLimitExceeded(3, limit) after that SSTORE's regular and state charges and before its record is charged, "
              "and the transaction settles as a revert", spec=spec, gas=150_000_000,
-             code=b"".join(sstore(k, 1) for k in range(1, limit + 2)) + STOP))
+             code=stores))
+    slot_share = min(model.SLOT_STATE, model.LEGACY_SSTORE_SHARE)
+    slot_reservoir = model.SLOT_STATE - slot_share
+    history = (model.TX_BODY_SIZE + limit * model.WRITE_RECORD_SIZE) * model.COST_PER_HISTORY_BYTE
+    headroom = 1_000_000
+    gas = model.EXECUTION_CAP + (limit + 1) * slot_reservoir + history + headroom
+    add(Case("satin/limit-stops/state-growth-one-over-with-reservoir", f"{fmt(limit + 1)} fresh slots in the first frame "
+             "above the execution cap. Every slot's legacy share comes from regular gas and its remaining state gas "
+             f"from the reservoir (SATIN-STATE-012, SATIN-POOL-008). The last SSTORE crosses the {fmt(limit)} growth "
+             "limit after its state charge and before its record (SATIN-LIM-001). The stop keeps the unspent regular "
+             "gas and returns every state and record charge into the reservoir (SATIN-POOL-014, SATIN-STOP-009).",
+             boundary=f"the reservoir still holds {fmt(headroom)} at the crossing, before rollback",
+             spec=CURRENT_SPEC, gas=gas, code=stores, pools=True, returned_state=True))
     # Data size: hints use what the transaction has left, and a log of the frame's crosses the transaction's limit
     # while the frame's budget holds it (SATIN-LIM-012).
     big = 1 << 20
@@ -4479,6 +4492,20 @@ def keyless_cases() -> list[Case]:
          accounts={**signer(nonce=1), DEPLOY: model.Account(nonce=1, code=b"\x00")}, reads=True, returned_state=True)
     case("refusal/insufficient-balance", "a carried value the empty signer cannot fund: step 10 charges the signer's "
          "account, then step 13 refuses, and that state gas comes back", carried(code, value=1))
+    high_gas = model.EXECUTION_CAP + 1_000_000
+    case("refusal/occupied-after-signer-charge-with-reservoir", "an empty signer is charged for a new account at step "
+         "10, then step 12 reads the occupied deploy address and returns ContractAlreadyExists(). The signer's nonce "
+         "stays zero and the occupied address is in the returned state (SATIN-KEY-005, SATIN-KEY-007, SATIN-WIT-002). "
+         "Regular gas pays the signer charge's legacy share and the reservoir pays its remainder. The revert gives "
+         "the whole charge back to the reservoir (SATIN-STATE-012, SATIN-POOL-008, SATIN-KEY-004, SATIN-POOL-014).",
+         carried(code), spec=CURRENT_SPEC, gas=high_gas, accounts={DEPLOY: model.Account(code=b"\x60\x00")},
+         reads=True, pools=True, returned_state=True)
+    case("refusal/insufficient-balance-with-reservoir", "an empty signer is charged for a new account at step 10, "
+         "then step 13 refuses its unfunded value with InsufficientBalance() (SATIN-KEY-005). The revert gives the "
+         "signer's full state charge, including the legacy share paid from regular gas, back to the reservoir. The "
+         "interception overhead stays on the regular ledger and there are no writes by the deployment "
+         "(SATIN-STATE-012, SATIN-POOL-008, SATIN-KEY-004, SATIN-POOL-014).",
+         carried(code, value=1), spec=CURRENT_SPEC, gas=high_gas, reads=True, pools=True, returned_state=True)
     # The forward's checks, steps 11 and 15, at their edges: the call's regular gas one short of the signed gas limit.
     case("refusal/step-11-one-short", "the call holds one gas less than the signed gas limit after step 10: step 11 "
          "refuses with GasLimitTooLow", carried(code, gas=signed), tune=("keyless-11", signed - 1))
@@ -7674,9 +7701,27 @@ def build(c: Case, *, observe_returned: bool = False):
 # that the other implementation passes it. A record names the case's adapter, its first differing
 # path with both values, and a verdict that cites the rule and the revision it was recorded at.
 #
-# None is held: at the revm-based pin, 1a981f4b, every case passes on both implementations, among them
-# the seventy-one held at the previous pin, 7110d87b (D-94).
-QUARANTINE: dict[str, dict] = {}
+QUARANTINE: dict[str, dict] = {
+    f"satin/keyless/refusal/{case}": {
+        "adapter": "mega-eest-adapter-revm",
+        "path": "/expected/gasPools/reservoir/final",
+        "expected": "0xeeaf8",
+        "actual": "0xc1dc8",
+        "verdict": "At 1a981f4b the first-frame observation reports the reservoir before the signer charge is "
+                   "returned. SATIN-KEY-004 and SATIN-POOL-014 give back the entire step-10 state charge to the "
+                   "reverting frame's reservoir, including the share it paid from regular gas.",
+    }
+    for case in ("occupied-after-signer-charge-with-reservoir", "insufficient-balance-with-reservoir")
+}
+QUARANTINE["satin/limit-stops/state-growth-one-over-with-reservoir"] = {
+    "adapter": "mega-eest-adapter-revm",
+    "path": "/expected/gasPools/reservoir/final",
+    "expected": "0x61c9ac0",
+    "actual": "0xf4240",
+    "verdict": "At 1a981f4b the first-frame observation reports the reservoir at the crossing. SATIN-STOP-009 "
+               "settles the transaction's own stop like a revert. SATIN-POOL-014 adds all of the frame's net state "
+               "and history charges to its reservoir, including the legacy shares paid from regular gas.",
+}
 
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",

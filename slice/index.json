@@ -21842,7 +21842,105 @@
     }
   ],
   "profile": "state-transition",
-  "quarantine": [],
+  "quarantine": [
+    {
+      "area": "limit-stops",
+      "caseId": "satin/limit-stops/state-growth-one-over-with-reservoir",
+      "file": "quarantine/satin/limit-stops/state-growth-one-over-with-reservoir.json",
+      "fileDigest": "sha256:d89e7ab4305cb87f416393cce6f27d5dfc4cd3e002bf581b7b0fba242bc481ec",
+      "knownFail": {
+        "actual": "0xf4240",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0x61c9ac0",
+        "path": "/expected/gasPools/reservoir/final",
+        "verdict": "At 1a981f4b the first-frame observation reports the reservoir at the crossing. SATIN-STOP-009 settles the transaction's own stop like a revert. SATIN-POOL-014 adds all of the frame's net state and history charges to its reservoir, including the legacy shares paid from regular gas."
+      },
+      "rules": [
+        "SATIN-LIM-001",
+        "SATIN-LIM-002",
+        "SATIN-LIM-004",
+        "SATIN-LIM-007",
+        "SATIN-LIM-010",
+        "SATIN-LIM-011",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-STATE-012",
+        "SATIN-STOP-001",
+        "SATIN-STOP-004",
+        "SATIN-STOP-009",
+        "SATIN-STOP-011",
+        "SATIN-STOP-018",
+        "SATIN-STOP-021",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/occupied-after-signer-charge-with-reservoir",
+      "file": "quarantine/satin/keyless/refusal/occupied-after-signer-charge-with-reservoir.json",
+      "fileDigest": "sha256:6e0f4b7bfcc2011169003445ea194c1a1197af3c1709b573bed304d247f4219d",
+      "knownFail": {
+        "actual": "0xc1dc8",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0xeeaf8",
+        "path": "/expected/gasPools/reservoir/final",
+        "verdict": "At 1a981f4b the first-frame observation reports the reservoir before the signer charge is returned. SATIN-KEY-004 and SATIN-POOL-014 give back the entire step-10 state charge to the reverting frame's reservoir, including the share it paid from regular gas."
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-STATE-012",
+        "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/insufficient-balance-with-reservoir",
+      "file": "quarantine/satin/keyless/refusal/insufficient-balance-with-reservoir.json",
+      "fileDigest": "sha256:e50f4c0f5090c25fd4f694cd584dcf5cb1245a03248b5549b51b325f2198c7af",
+      "knownFail": {
+        "actual": "0xc1dc8",
+        "adapter": "mega-eest-adapter-revm",
+        "expected": "0xeeaf8",
+        "path": "/expected/gasPools/reservoir/final",
+        "verdict": "At 1a981f4b the first-frame observation reports the reservoir before the signer charge is returned. SATIN-KEY-004 and SATIN-POOL-014 give back the entire step-10 state charge to the reverting frame's reservoir, including the share it paid from regular gas."
+      },
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    }
+  ],
   "spec": {
     "descriptor": "sha256:bf97cc6429597c157dc18040ac45cdfb62a4c9646a1b1a715573a61ea6f884b2",
     "name": "megaeth/Satin"

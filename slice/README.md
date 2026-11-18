@@ -1,6 +1,6 @@
 # The vertical slice
 
-1,131 `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
+1,131 gating `state-transition` cases of Satin, run on both Satin implementations by `tools/run-slice.sh`:
 66 at specification commit `d34e626` (`specs/satin-d34e626`), 15 for interception, the
 keylessDeploy decoder and EIP-7702 existence at `d334ef8` (`specs/satin-d334ef8`), 27 for the
 edges of the charge-order principles, 5 for gas detention, 3 for the Oracle's reads, 2 for the
@@ -30,7 +30,7 @@ forward refused after the CREATE charge.
 Each case names its own spec
 (decisions D-54, D-59, D-60, D-61, D-62, D-64, D-65, D-66, D-67, D-70, D-73, D-74, D-77, D-78, D-79,
 D-80, D-82, D-83, D-84, D-85, D-88, D-91, D-93, D-94, D-96, D-100, D-103, D-104, D-106, D-109,
-D-112, D-114, D-115, D-117, D-118 to D-136, D-153 to D-160). Every
+D-112, D-114, D-115, D-117, D-118 to D-136, D-153 to D-160, D-170 to D-171). Every
 case is schema 2.0 (D-76). They are reviewed candidates: `provenance.status` is `candidate` until
 the owner approves them.
 
@@ -108,7 +108,7 @@ system contracts a call can reach (D-55).
 The gating cases pin 325 rules in 31 areas of the specification. `index.json` lists each case with
 its area, the rules it pins, its file and its file digest.
 
-The slice has 141 cases that require `group:returned-state` (D-136, D-150 to D-159). They cover
+The gating slice has 141 cases that require `group:returned-state` (D-136, D-150 to D-159). They cover
 delegate refusals without a later probe, gas detention crossings before and after the
 target's load, paid and unpaid cold balance reads, the Oracle slot loaded before its charge,
 early keyless refusals and the unintercepted inner call, a round-trip transfer, an unfunded
@@ -122,16 +122,12 @@ restored signer nonces, settled balances and the keys loaded before a creation f
 
 ## Quarantine and the wrong expectation
 
-- `quarantine/`: none. A case an implementation fails against a decided rule it has not made yet
-  is held here, its expectation the rule's, with a record in `index.json` of the implementation,
-  the first differing path, both values and the specification's verdict; it stays out of the
-  gating slice until that implementation is fixed, and `tools/run-slice.sh` checks that it still
-  fails exactly as recorded and passes on the other implementation. At the revm-based pin,
-  `1a981f4b`, every case passes on both implementations: the seventy-one held at `7110d87b`, for
-  the history gas of a deposit and of a system-originated transaction (`SATIN-HIST-016`,
-  `SATIN-MST-008`), a give-back credited to regular gas and a legacy share left to the reservoir
-  (`SATIN-HIST-012`, `SATIN-STATE-012`), and the registry read in every transaction
-  (`SATIN-REG-002`), gate (D-94).
+- `quarantine/`: three above-cap cases at `83c0d26` observe a failed first frame's pools
+  and returned state (D-170, D-171). Two refuse a keyless call after paying the empty signer's
+  charge. The third stops at the first fresh slot above the state-growth limit, with gas left
+  in its reservoir. The revm-based pin `1a981f4b` reports the reservoir before rollback
+  replenishes it under `SATIN-POOL-014`. The index records each first difference and
+  `tools/run-slice.sh` checks it on revm and checks that the case passes on evm2.
 - `negative/`: a fresh-slot case with its state ledger one above the derivation. Every consumer
   must fail it at `/expected/gasLedgers/state`, and consuming it rewrites nothing.
 

@@ -3087,3 +3087,25 @@ returned-to-sender formula belongs to the current case's ledger. Confirm the tra
 limit and the returned amount and check their subtraction before allowing either output to
 coincide with a stale value from another case. Include moved returned amounts in the global
 scan, so an old return fails even if no ledger or receipt held that number.
+
+**D-170. Derive gas pools at the end of a failed first frame.**
+The `gasPools` endpoints are the pools given to the first frame after pre-frame charging and the
+pools it returns after its own rollback (D-64, `SATIN-POOL-010`, `-014`, `-024`). A revert or
+limit stop leaves the frame's unspent regular gas and adds its net state and history charges to
+its reservoir. An exceptional halt consumes its regular gas and restores its received
+reservoir. The regular gas paid for state and history, including the legacy shares, stays in
+`spilled` (`SATIN-POOL-008`). The transaction's `returned` uses gas limit less receipt gas used.
+That return includes any give-back of pre-frame start charges (`SATIN-POOL-015`,
+`SATIN-HIST-005`). Apply D-64's no-frame convention when a transaction settles before any
+frame runs.
+
+**D-171. Observe a failed first frame with a funded reservoir.**
+Two keyless refusals pay the empty signer's state charge before refusing an occupied deploy
+address or insufficient funds. The reads and returned state verify both derived addresses,
+and the pools show that the legacy share returns to the reservoir (`SATIN-KEY-004`,
+`-005`, `-007`, `SATIN-STATE-012`). A third case adds a reservoir to the state-growth stop at
+the first excess fresh slot. It checks the pools through rollback and the loaded
+slots return with their pre-state values (`SATIN-LIM-001`, `SATIN-POOL-014`,
+`SATIN-WIT-005`, `SATIN-WIT-008`). At the revm-based pin `1a981f4b`, each pool observation
+reports the reservoir before frame rollback. These cases record that difference in
+quarantine.
