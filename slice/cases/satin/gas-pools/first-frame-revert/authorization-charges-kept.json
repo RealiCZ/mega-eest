@@ -4,13 +4,13 @@
     "gasLedgers": {
       "blockGas": "0x7c4c",
       "floor": "0x3a98",
-      "gasUsed": "0x46dfa",
+      "gasUsed": "0x7c4a0",
       "history": "0x9b08",
       "historyBytes": "0x1c3",
       "refund": "0x0",
       "regular": "0x7c4c",
-      "state": "0x356a6",
-      "total": "0x46dfa"
+      "state": "0x6ad4c",
+      "total": "0x7c4a0"
     },
     "limit": null,
     "outcome": {
@@ -29,7 +29,7 @@
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
-      "gasUsed": "0x46dfa",
+      "gasUsed": "0x7c4a0",
       "logs": [],
       "status": "0x0",
       "type": "0x4"
@@ -120,7 +120,9 @@
       "completeness": "complete"
     },
     "salt": {
-      "buckets": {},
+      "buckets": {
+        "0x6c3290": "0x200"
+      },
       "complete": true,
       "mapping": "salt-v1"
     },
@@ -132,7 +134,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "an EIP-7702 list whose one entry, for an authority the state holds no account for, is applied from the reservoir, then a first frame that reverts: the list's state and history charges are kept, and the frame's failure returns none of the reservoir they drew (SATIN-POOL-002)"
+      "intent": "an EIP-7702 list whose one entry, for an authority the state holds no account for, is applied from the reservoir at m = 2 (SATIN-STATE-001). The first frame reverts and the scaled state charge, the record and its history stay (SATIN-AUTH-016, SATIN-POOL-002)"
     },
     "definition": "tools/make_slice.py::pricing_cases",
     "generator": "tools/make_slice.py",
@@ -149,6 +151,7 @@
     "group:state"
   ],
   "rules": [
+    "SATIN-AUTH-016",
     "SATIN-POOL-001",
     "SATIN-POOL-002",
     "SATIN-POOL-005",

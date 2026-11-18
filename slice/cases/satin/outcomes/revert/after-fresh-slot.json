@@ -114,7 +114,9 @@
       "completeness": "complete"
     },
     "salt": {
-      "buckets": {},
+      "buckets": {
+        "0x60186c": "0x200"
+      },
       "complete": true,
       "mapping": "salt-v1"
     },
@@ -126,7 +128,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "a REVERT after a fresh slot: the slot's state and history gas come back and return to the sender"
+      "intent": "a REVERT after a fresh slot priced at m = 2: the full state charge and the record's history gas come back (SATIN-STATE-001, SATIN-POOL-014)"
     },
     "definition": "tools/make_slice.py::cases",
     "generator": "tools/make_slice.py",
@@ -145,7 +147,8 @@
   "rules": [
     "SATIN-OUT-001",
     "SATIN-POOL-014",
-    "SATIN-POOL-017"
+    "SATIN-POOL-017",
+    "SATIN-STATE-001"
   ],
   "schemaVersion": "2.0",
   "specRef": {

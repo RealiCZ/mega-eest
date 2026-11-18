@@ -129,6 +129,16 @@
     },
     {
       "area": "value-transfer",
+      "caseId": "satin/value-transfer/absent-recipient/no-value",
+      "file": "cases/satin/value-transfer/absent-recipient/no-value.json",
+      "fileDigest": "sha256:003f7758728c2a6789f3bcab3ae3bd01489a88580b677b03d9b4e9684728df16",
+      "rules": [
+        "SATIN-ACCT-005",
+        "SATIN-ACCT-014"
+      ]
+    },
+    {
+      "area": "value-transfer",
       "caseId": "satin/value-transfer/existing-eoa",
       "file": "cases/satin/value-transfer/existing-eoa.json",
       "fileDigest": "sha256:6873df137be41eaf678ec8ed600dee987d4fade90b6d9d179734f41527a43a19",
@@ -586,11 +596,12 @@
       "area": "outcomes",
       "caseId": "satin/outcomes/revert/after-fresh-slot",
       "file": "cases/satin/outcomes/revert/after-fresh-slot.json",
-      "fileDigest": "sha256:34348151d29e47a7fde0ace617c0c6cc69189bcdcdd97d32624c29baaec19019",
+      "fileDigest": "sha256:374d00b9f02a8907cdd0eb5745a917ea27b3c5dfe22f4a59ef837a9417164387",
       "rules": [
         "SATIN-OUT-001",
         "SATIN-POOL-014",
-        "SATIN-POOL-017"
+        "SATIN-POOL-017",
+        "SATIN-STATE-001"
       ]
     },
     {
@@ -1120,13 +1131,41 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/absent-authority",
       "file": "cases/satin/authorizations/absent-authority.json",
-      "fileDigest": "sha256:86ca2823b8a48fd3e9d0c10a41c4605d73e8be1a3a3dd60fcd5ba42bb132dbb4",
+      "fileDigest": "sha256:c594906a72e3b937c50c0245809f73eaf627824ac88e8977ab1bc43a8c4931df",
       "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
         "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
         "SATIN-AUTH-008",
         "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-014",
         "SATIN-AUTH-015",
-        "SATIN-AUTH-016",
+        "SATIN-SCHED-007",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:6fa989a0bb4e83353b71c6c30f75a5e77c27a07f73b97f786514b975429aeea2",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/absent-authority-sequential-nonces",
+      "file": "cases/satin/authorizations/absent-authority-sequential-nonces.json",
+      "fileDigest": "sha256:24314b1d0d86a46ae654df8f4d7cc35ee704f3046bc21bae8c7fa4cbad3894d7",
+      "rules": [
+        "SATIN-AUTH-001",
+        "SATIN-AUTH-003",
+        "SATIN-AUTH-004",
+        "SATIN-AUTH-005",
+        "SATIN-AUTH-007",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-009",
+        "SATIN-AUTH-010",
+        "SATIN-AUTH-015",
         "SATIN-SCHED-007",
         "SATIN-STATE-011"
       ],
@@ -1365,13 +1404,15 @@
       "area": "call-order",
       "caseId": "satin/call-order/unfunded/empty-account",
       "file": "cases/satin/call-order/unfunded/empty-account.json",
-      "fileDigest": "sha256:fa1efa42ed5459db7351c3458def56e01ddd14b53f63fa90e0e60e5e5f495444",
+      "fileDigest": "sha256:a699fd287123c05d3afeba0a302b78f15d03d2640afd7d1cf125422b2051aa54",
       "rules": [
         "SATIN-HIST-015",
         "SATIN-HIST-023",
         "SATIN-ICPT-007",
         "SATIN-POOL-009",
-        "SATIN-POOL-012"
+        "SATIN-POOL-012",
+        "SATIN-POOL-015",
+        "SATIN-STATE-001"
       ],
       "spec": {
         "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
@@ -4280,6 +4321,22 @@
     },
     {
       "area": "selfdestruct",
+      "caseId": "satin/selfdestruct/not-created/no-balance-absent-beneficiary",
+      "file": "cases/satin/selfdestruct/not-created/no-balance-absent-beneficiary.json",
+      "fileDigest": "sha256:5e7c4b8ce7de4b4f4072d0f7f32f6136aaf2dc8cf47983c6b97695583f1f8a5b",
+      "rules": [
+        "SATIN-SD-001",
+        "SATIN-SD-012",
+        "SATIN-SD-018",
+        "SATIN-SD-019"
+      ],
+      "spec": {
+        "descriptor": "sha256:b0dad919e6da8e9357c15505bcda41cb16e7ef68dacfbde58e9a334c63439658",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "selfdestruct",
       "caseId": "satin/selfdestruct/not-created/new-beneficiary",
       "file": "cases/satin/selfdestruct/not-created/new-beneficiary.json",
       "fileDigest": "sha256:c0a546f03c7fc17c5020279926de719cfeb767ccf81e149d40348df565569be2",
@@ -4316,8 +4373,9 @@
       "area": "selfdestruct",
       "caseId": "satin/selfdestruct/not-created/new-beneficiary-caller-reverts",
       "file": "cases/satin/selfdestruct/not-created/new-beneficiary-caller-reverts.json",
-      "fileDigest": "sha256:6069cd3566e8da3e16345de28bed81ff117659c92bb56d1843dbc0fa6aee23a4",
+      "fileDigest": "sha256:31f74d17a96de12c5419dfdf1727b6ee51f20a4ef3fb4be21795bddc04548a95",
       "rules": [
+        "SATIN-POOL-014",
         "SATIN-SD-001",
         "SATIN-SD-012",
         "SATIN-SD-018",
@@ -4644,7 +4702,7 @@
       "area": "selfdestruct",
       "caseId": "satin/selfdestruct/marked/fresh-slot-on-little-gas",
       "file": "cases/satin/selfdestruct/marked/fresh-slot-on-little-gas.json",
-      "fileDigest": "sha256:fdd6498a7c3f28a7b3bcd43947cfd02420bf4a8448dc35f58954864ef59d691c",
+      "fileDigest": "sha256:18c580c4c70dfe72e560c1ef9df7ee495e9d013a289a5e4b19f3b044e27a9d22",
       "rules": [
         "SATIN-SD-001",
         "SATIN-SD-002",
@@ -4670,7 +4728,7 @@
       "area": "selfdestruct",
       "caseId": "satin/selfdestruct/created/fresh-slot-on-little-gas",
       "file": "cases/satin/selfdestruct/created/fresh-slot-on-little-gas.json",
-      "fileDigest": "sha256:fdd79cd66cacb33c0303961ca6887dcec905b83f60593805899d9feba7b617ac",
+      "fileDigest": "sha256:2346e2dcbfbce08ee86758b4c3bf56f2dfd75b04d1ce3c4046662e328c25cd27",
       "rules": [
         "SATIN-STATE-001",
         "SATIN-STATE-003",
@@ -5828,6 +5886,25 @@
     },
     {
       "area": "limit-stops",
+      "caseId": "satin/limit-stops/child-budget/depth-three-fits",
+      "file": "cases/satin/limit-stops/child-budget/depth-three-fits.json",
+      "fileDigest": "sha256:da8ebb49b8af2cffa03c5671e0dae3b589c2875f5f2df05463688188f1759885",
+      "rules": [
+        "SATIN-LIM-001",
+        "SATIN-LIM-002",
+        "SATIN-LIM-003",
+        "SATIN-LIM-004",
+        "SATIN-LIM-005",
+        "SATIN-LIM-006",
+        "SATIN-LIM-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "limit-stops",
       "caseId": "satin/limit-stops/authorization-list/one-authority-over",
       "file": "cases/satin/limit-stops/authorization-list/one-authority-over.json",
       "fileDigest": "sha256:14fb94ba22d72f442fe0a2c95882568f54cc98ceed88bf04bdc37a4e5ef5a143",
@@ -6607,6 +6684,23 @@
       "rules": [
         "SATIN-ACCT-015",
         "SATIN-AUTH-017",
+        "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "authorizations",
+      "caseId": "satin/authorizations/deposit-caller/empty-leaf-zero-mint",
+      "file": "cases/satin/authorizations/deposit-caller/empty-leaf-zero-mint.json",
+      "fileDigest": "sha256:b5b3fd216a8a4cb0a372edfaf7fb5145d93bdac883095eced7b68fdaaa0116db",
+      "rules": [
+        "SATIN-ACCT-014",
+        "SATIN-ACCT-015",
+        "SATIN-AUTH-017",
+        "SATIN-DEP-003",
         "SATIN-STATE-011"
       ],
       "spec": {
@@ -8312,13 +8406,89 @@
       "area": "keyless",
       "caseId": "satin/keyless/refusal/signer-has-code",
       "file": "cases/satin/keyless/refusal/signer-has-code.json",
-      "fileDigest": "sha256:b7b2ce17fd912259c8bbbc6757c8ced1255da6127df9d358096bb659bc7ae27c",
+      "fileDigest": "sha256:ddac56c58b0d18477bbf3331673ce173e20be9b85ba4e126a32af891fe671fcb",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
         "SATIN-KEY-001",
         "SATIN-KEY-004",
         "SATIN-KEY-005",
+        "SATIN-KEY-006",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/override-before-taken",
+      "file": "cases/satin/keyless/refusal/override-before-taken.json",
+      "fileDigest": "sha256:3996b38e0079172ed4a19171f6d94538a35787bdc614ebb2f5f8738d22ee6e8d",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/signer-nonce-before-taken",
+      "file": "cases/satin/keyless/refusal/signer-nonce-before-taken.json",
+      "fileDigest": "sha256:c2ea7d778652196b62691677ded98d64257651134ec5bdef342e536e048d25d5",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/signer-nonce-before-balance",
+      "file": "cases/satin/keyless/refusal/signer-nonce-before-balance.json",
+      "fileDigest": "sha256:e854a49bd815ad6bf79cde7aeb27e3c735664b2899cefb98a50abc296cac3e5b",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/signer-code-before-taken",
+      "file": "cases/satin/keyless/refusal/signer-code-before-taken.json",
+      "fileDigest": "sha256:a7990a48b5ab8354f0e2a3eb0680972cd950e95dffcef0ff5c829d4bcd1e2bef",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-006",
         "SATIN-KEY-007"
       ],
       "spec": {
@@ -8403,6 +8573,24 @@
       "caseId": "satin/keyless/refusal/step-15-one-short",
       "file": "cases/satin/keyless/refusal/step-15-one-short.json",
       "fileDigest": "sha256:c8f4af30b8dd1e0fe7fa50386a0bb65a6cc85c09692d449c4bfb564f9daea789",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/funded-step-15-one-short",
+      "file": "cases/satin/keyless/refusal/funded-step-15-one-short.json",
+      "fileDigest": "sha256:a331ae9c018a5a34d3d56be909394efd11891d9e2539d4527c255dbd2cbe1db2",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -8934,6 +9122,24 @@
         "SATIN-KEY-004",
         "SATIN-KEY-005",
         "SATIN-KEY-007"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/halt/step-10-before-taken",
+      "file": "cases/satin/keyless/halt/step-10-before-taken.json",
+      "fileDigest": "sha256:625823ce5dedb10de23c9115db695e8b7a2d30be459def94525fbbfa00e2e83a",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -9800,6 +10006,19 @@
     },
     {
       "area": "keyless",
+      "caseId": "satin/keyless/abi/selector-alone",
+      "file": "cases/satin/keyless/abi/selector-alone.json",
+      "fileDigest": "sha256:0549348e2b06657685d57517232c87bef6afca80f4a996a3ca553acc6d98ed42",
+      "rules": [
+        "SATIN-ICPT-006"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
       "caseId": "satin/keyless/rlp/trailing-byte",
       "file": "cases/satin/keyless/rlp/trailing-byte.json",
       "fileDigest": "sha256:c6fff55d64c4e4eba324b2c1ca6d734920b3a1dc320efc5e6f7659d809d3350e",
@@ -9824,6 +10043,22 @@
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
         "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005"
+      ],
+      "spec": {
+        "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/rlp/truncated-signed-list",
+      "file": "cases/satin/keyless/rlp/truncated-signed-list.json",
+      "fileDigest": "sha256:526781e15ad83ce02ba4dff47215d18b4cd1b45bda77c09f3168e8b5d505f2e6",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
         "SATIN-KEY-004",
         "SATIN-KEY-005"
       ],
@@ -14501,6 +14736,25 @@
     },
     {
       "area": "accounting",
+      "caseId": "satin/accounting/records/pass-on-exact-to-absent",
+      "file": "cases/satin/accounting/records/pass-on-exact-to-absent.json",
+      "fileDigest": "sha256:1c73defb7f3bee1866086d9614c593c3a23a3f78c6569afc0e0979e001fb2334",
+      "rules": [
+        "SATIN-ACCT-002",
+        "SATIN-ACCT-004",
+        "SATIN-ACCT-005",
+        "SATIN-ACCT-006",
+        "SATIN-ACCT-011",
+        "SATIN-ACCT-012",
+        "SATIN-ACCT-014"
+      ],
+      "spec": {
+        "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "accounting",
       "caseId": "satin/accounting/records/destruction-returns-both",
       "file": "cases/satin/accounting/records/destruction-returns-both.json",
       "fileDigest": "sha256:ffa9385c809307f851df8be911f3bc1675df73b4da91c2ccc753778c7cbed9d8",
@@ -16160,8 +16414,9 @@
       "area": "gas-pools",
       "caseId": "satin/gas-pools/first-frame-revert/authorization-charges-kept",
       "file": "cases/satin/gas-pools/first-frame-revert/authorization-charges-kept.json",
-      "fileDigest": "sha256:e03662ff5c8656ad1b62ae44015fb5e42b4dffa9b80bad970dbeafecd303ff1d",
+      "fileDigest": "sha256:80d690b68d807ecff0e474f59407250c0d5f1c11ce9090e233d44d2017bab184",
       "rules": [
+        "SATIN-AUTH-016",
         "SATIN-POOL-001",
         "SATIN-POOL-002",
         "SATIN-POOL-005",

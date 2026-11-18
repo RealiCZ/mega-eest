@@ -212,6 +212,9 @@ class KeylessMixin:
         except Halt as e:
             self.d.add("outcome", f"step {step} cannot pay its charge ({e}): the call halts out of gas, consuming its "
                        "regular gas, and no step after it is made", "SATIN-KEY-004", "SATIN-KEY-005")
+            if step == 10 and self.reads:
+                self.d.add("reads", "the halt precedes step 12, so the deploy address's account is not loaded",
+                           "SATIN-KEY-007", "SATIN-WIT-012")
             raise
 
     def keyless_deploy(self, frame, argument: bytes, override: int) -> tuple[str, bytes]:

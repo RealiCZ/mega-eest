@@ -302,7 +302,7 @@ class FramesMixin:
     def codeless_start(self, frame, caller: bytes, target: bytes, value: int, child_gas: int, records: list,
                        history: int, new_account: int, share: int):
         """A value `CALL` to an account without code: the start is decided once the value would move, and what it
-        would keep — its records, its transfer log and a new account's leaf — is held to the started frame's own
+        would keep — its net records, its transfer log and a new account's leaf — is held to the started frame's own
         budget and then to the transaction's limit (SATIN-LIM-013, SATIN-LIM-010, -011). A crossing replaces the
         answer, a success, by the stop on the child's untouched regular gas (SATIN-STOP-014), and the caller is
         given the start's charges back (SATIN-HIST-014, SATIN-POOL-015). Returns (success, return data, the
@@ -319,20 +319,22 @@ class FramesMixin:
             raise Unmodelled("a call without value to an account without code")
         moved = {caller: self.state.get(caller, Account()).balance - value,
                  target: self.state.get(target, Account()).balance + value}
-        for a in (caller, target):
+        takes = []
+        for a, balance in moved.items():
             now, was = self.state.get(a, Account()), self.pre.get(a)
-            if ("a", a) in self.kv and was is not None and (now.nonce, moved[a], now.code) == (was.nonce, was.balance,
-                                                                                               was.code):
-                raise Unmodelled("a value start without a frame that returns an account to what the transaction loaded")
+            if (a != self.tx.sender and ("a", a) in self.kv and was is not None
+                    and (now.nonce, balance, now.code) == (was.nonce, was.balance, was.code)):
+                takes.append(a)
         budget = self.child_budget(frame)
         remaining = self.frame_remaining(frame)
-        rises = (WRITE_RECORD_SIZE * len(records) + TRANSFER_LOG_SIZE, len(records), 1 if new_account else 0)
+        records_net = len(records) - len(takes)
+        rises = (WRITE_RECORD_SIZE * records_net + TRANSFER_LOG_SIZE, records_net, 1 if new_account else 0)
         frame["reservoir"] += share  # a start answered without a frame returns its share (SATIN-POOL-012)
         # The transaction's counts hold its admitted hints, which are on no frame's budget and on the transaction
         # (SATIN-LIM-012): the start is held to the transaction's limit with them.
         for kind, rise, b, rem, used, limit in zip(KINDS, rises, budget, remaining,
                                                    (self.data_size, len(self.kv), self.growth), LIMITS):
-            if not rise or (rise <= b and used + rise <= limit):
+            if rise <= 0 or (rise <= b and used + rise <= limit):
                 continue
             name = STOP_DIMENSIONS[kind]
             crossed, which = (b, "the started frame's budget") if rise > b else (limit, "the transaction's limit")
@@ -364,6 +366,8 @@ class FramesMixin:
         self.state.setdefault(target, Account()).balance += value
         for a in records:
             self.kv.add(("a", a))
+        for a in takes:
+            self.kv.remove(("a", a))
         self.data_size += rises[0]
         self.growth += rises[2]
         self.logs.append((TRANSFER_LOG_ADDRESS, [TRANSFER_TOPIC, pad_address(caller), pad_address(target)],
@@ -371,6 +375,20 @@ class FramesMixin:
         d.add("resources", f"the value CALL to {h(target)}, an account without code, is answered with a success without a "
               f"frame: its start keeps {len(records)} records, a transfer log and {rises[2]} of state growth, within "
               "the started frame's budget and the transaction's limits", "SATIN-LIM-013", "SATIN-ACCT-005", "SATIN-LOG-006")
+        if takes:
+            taken_bytes = WRITE_RECORD_SIZE * len(takes)
+            takeback = taken_bytes * COST_PER_HISTORY_BYTE
+            self.give_back(frame, takeback)
+            self.history_gas -= takeback
+            self.history_bytes -= taken_bytes
+            d.add("resources", f"the value takes back {len(takes)} account records by restoring their accounts to what "
+                  f"the transaction loaded, reducing the start's net records to {records_net}",
+                  "SATIN-ACCT-004", "SATIN-ACCT-006")
+            if new_account:
+                d.add("resources", "the recipient was empty under EIP-161, so the start adds one unit of state growth",
+                      "SATIN-ACCT-014")
+            d.add("gasLedgers", f"the successful start gives {fmt(takeback)} of record history back into the caller's "
+                  "reservoir after the returned share joined it", "SATIN-HIST-009", "SATIN-HIST-012", "SATIN-POOL-012")
         return True, b"", child_gas
 
     # --- DELEGATECALL -------------------------------------------------------------------------------

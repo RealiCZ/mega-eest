@@ -371,6 +371,9 @@ def cases() -> list[Case]:
     add(Case("satin/intrinsic/access-list/warm-slot-write", "a fresh slot the access list made warm: the SSTORE pays the warm "
              "access", ty=1, access_list=[(CONTRACT, [1])], code=sstore(1, 1) + STOP))
     # Value transfers.
+    add(Case("satin/value-transfer/absent-recipient/no-value", "a top-level zero-value transaction to an absent "
+             "recipient succeeds without creating its account, making a write record or emitting a transfer log "
+             "(SATIN-ACCT-005, SATIN-ACCT-014)", to=ABSENT, code=None))
     add(Case("satin/value-transfer/existing-eoa", "value to an existing account: its record before the frame, a transfer "
              "log, one KV update", to=EOA, code=b"", value=1))
     add(Case("satin/value-transfer/absent-recipient/minimum-bucket", "value to an absent account: new-account state gas at "
@@ -438,8 +441,9 @@ def cases() -> list[Case]:
     # Outcomes.
     add(Case("satin/outcomes/revert/empty", "an empty REVERT: the frame's regular charges stay spent", code=revert(0, 0)))
     add(Case("satin/outcomes/revert/with-data", "a REVERT with one word of data", code=mstore(0, 0xBAD) + revert(0, 32)))
-    add(Case("satin/outcomes/revert/after-fresh-slot", "a REVERT after a fresh slot: the slot's state and history gas come "
-             "back and return to the sender", code=sstore(1, 1) + revert(0, 0)))
+    add(Case("satin/outcomes/revert/after-fresh-slot", "a REVERT after a fresh slot priced at m = 2: the full state "
+             "charge and the record's history gas come back (SATIN-STATE-001, SATIN-POOL-014)",
+             code=sstore(1, 1) + revert(0, 0), salt={(CONTRACT, 1): 2}))
     add(Case("satin/outcomes/revert/after-log", "a REVERT after a LOG: the log and its history are taken back",
              code=log(0, 0, 0, []) + revert(0, 0)))
     add(Case("satin/outcomes/return/one-word", "a RETURN of one word", code=mstore(0, 0x1234) + ret(0, 32)))
@@ -596,9 +600,15 @@ def interception_cases() -> list[Case]:
              "state gas alone, no new-account charge, no state growth, one write record", system=True, spec=spec, ty=4,
              to=EOA, code=b"", gas=300_000, authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 0)],
              accounts={AUTHORITY: model.Account()}))
-    add(Case("satin/authorizations/absent-authority", "an authority the state holds no account for is new: the new-account "
-             "state gas and one unit of state growth, besides the indicator", system=True, spec=spec, ty=4, to=EOA, code=b"",
-             gas=500_000, authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 0)]))
+    for second in (0, 1):
+        name = "absent-authority" if second == 0 else "absent-authority-sequential-nonces"
+        result = ("the second is skipped and the final nonce is 1" if second == 0
+                  else "both apply and the final nonce is 2")
+        add(Case(f"satin/authorizations/{name}", f"two entries for the same absent authority, signed at nonces 0 and "
+                 f"{second}: {result} (SATIN-AUTH-004). The authority is charged its account and indicator once, "
+                 "with one unit of state growth and one record (SATIN-AUTH-008)", system=True, spec=spec, ty=4,
+                 to=EOA, code=b"", gas=500_000, lists=True,
+                 authorizations=[(AUTH_KEY, CHAIN_ID, CONTRACT, 0), (AUTH_KEY, CHAIN_ID, CONTRACT, second)]))
     add(Case("satin/value-transfer/empty-leaf-recipient", "value to an account present as an empty leaf: as a recipient it "
              "is new under EIP-161, with the new-account charge and one unit of state growth", system=True, spec=spec,
              to=EMPTY_LEAF, code=None, value=10**9, accounts={EMPTY_LEAF: model.Account()}))
@@ -706,11 +716,13 @@ def ordering_cases() -> list[Case]:
              "answered NonZeroTransfer() and the child's whole regular gas returns to GAS", system=True, spec=spec,
              code=value_call(model.MEGA_LIMIT_CONTROL, limit_control, MAX_GAS, store_gas(3), record_result()),
              tune=("forward", short)))
-    new_account = model.ACCOUNT_STATE
+    multiplier = 2
+    new_account = model.ACCOUNT_STATE * multiplier
     add(Case("satin/call-order/unfunded/empty-account", "a value call its caller cannot fund to an account empty under "
-             f"EIP-161: the new account's {fmt(new_account)} state gas, its legacy share first, is charged before the "
-             f"forward and given back into the caller's reservoir when the start is refused; no record is charged, the "
-             f"caller holding {fmt(short)} at the forward", spec=spec,
+             f"EIP-161: the new account's {fmt(new_account)} state gas at m = {multiplier}, its legacy share first, is "
+             "charged before the forward (SATIN-STATE-001) and given back in full into the caller's reservoir when the "
+             f"start is refused (SATIN-POOL-015). No record is charged, with {fmt(short)} at the forward", spec=spec,
+             salt={(ABSENT, None): multiplier},
              code=value_call(ABSENT, b"", MAX_GAS, store_gas(3), record_result()), tune=("forward", short)))
     add(Case("satin/call-order/unfunded/contract-refused", "a value call its caller cannot fund to a contract, with the "
              "sendHint input of the interception case: no interception, the start refused, the child's whole regular gas "
@@ -1648,9 +1660,10 @@ def pricing_cases() -> list[Case]:
     # SATIN-POOL-002, -024: a first frame's revert returns nothing of the reservoir the list's charges drew.
     auth_body = (model.TX_BODY_SIZE + model.AUTHORIZATION_SIZE) * model.COST_PER_HISTORY_BYTE
     add(Case("satin/gas-pools/first-frame-revert/authorization-charges-kept", "an EIP-7702 list whose one entry, for an "
-             "authority the state holds no account for, is applied from the reservoir, then a first frame that reverts: "
-             "the list's state and history charges are kept, and the frame's failure returns none of the reservoir they "
-             "drew (SATIN-POOL-002)", ty=4, code=revert(0, 0), lists=True,
+             "authority the state holds no account for, is applied from the reservoir at m = 2 (SATIN-STATE-001). "
+             "The first frame reverts and the scaled state charge, the record and its history stay "
+             "(SATIN-AUTH-016, SATIN-POOL-002)", ty=4, code=revert(0, 0), lists=True,
+             salt={(AUTHORITY, None): 2},
              gas=cap + auth_body + 1_000_000, authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0)], **kw))
 
     # SATIN-POOL-015: a creation from a frame whose initcode fails, and a value call its caller cannot fund to an
@@ -2199,6 +2212,9 @@ def selfdestruct_cases() -> list[Case]:
          "transfer log", contract_balance=10, code=selfdestruct_to(HEIR), accounts=heir)
     case("not-created/no-balance", "the same destruction of a contract holding no balance: nothing moves, so no account "
          "is written and no transfer log is emitted, and the account stays", code=selfdestruct_to(HEIR), accounts=heir)
+    case("not-created/no-balance-absent-beneficiary", "an existing contract with zero balance destroys itself to an "
+         "absent beneficiary whose bucket is crowded. No beneficiary leaf, state charge, growth or record is added "
+         "(SATIN-SD-018)", code=selfdestruct_to(ABSENT), gas=30_000_000, salt={(ABSENT, None): 8})
     case("not-created/new-beneficiary", "a child frame, a contract the transaction did not create holding 10 wei, "
          "destroys itself to an address the state holds no account for: the beneficiary is created and charged as a new "
          "account, one unit of state growth, and the contract keeps its code with no balance",
@@ -2208,9 +2224,11 @@ def selfdestruct_cases() -> list[Case]:
          "capacity: its new-account state gas is priced at m = 2, its legacy share the same",
          code=call(MAX_GAS, PLAIN, 0, 0) + b"\x50" + STOP, salt={(ABSENT, None): 2},
          accounts={PLAIN: model.Account(nonce=1, balance=10, code=selfdestruct_to(ABSENT))})
-    case("not-created/new-beneficiary-caller-reverts", "the same destruction, and the transaction's own frame then "
-         "reverts: the beneficiary is never created, its state gas, legacy share included, comes back with the revert, "
-         "and nothing of the move is kept", code=call(MAX_GAS, PLAIN, 0, 0) + b"\x50" + revert(0, 0),
+    case("not-created/new-beneficiary-caller-reverts", "the destruction to a new beneficiary priced at m = 2, followed "
+         "by the parent's revert. The contract predates the transaction, so no destruction-table mark is made "
+         "(SATIN-SD-012). The ordinary rollback returns the scaled state charge and its legacy share in full "
+         "(SATIN-POOL-014, SATIN-STATE-001) and takes back the move",
+         code=call(MAX_GAS, PLAIN, 0, 0) + b"\x50" + revert(0, 0), salt={(ABSENT, None): 2},
          accounts={PLAIN: model.Account(nonce=1, balance=10, code=selfdestruct_to(ABSENT))})
     case("not-created/to-itself", "the transaction's own frame, a contract the transaction did not create holding 10 "
          "wei, destroys itself to itself: EIP-6780 moves nothing and deletes nothing, so no account is written, no "
@@ -2256,13 +2274,13 @@ def selfdestruct_cases() -> list[Case]:
 
     # The marked account (SATIN-SD-011, -013, -015): C's runtime stores its calldata word in slot 1, accepts value, or
     # destroys C to a beneficiary.
-    def runtime(beneficiary: bytes) -> bytes:
-        """With calldata, SSTORE(1, CALLDATALOAD(0)); with value, STOP; else SELFDESTRUCT(beneficiary)."""
+    def runtime(beneficiary: bytes, store_tail: bytes = STOP) -> bytes:
+        """With calldata, store its first word and run the tail. With value, stop. Otherwise self-destruct."""
         destroy = selfdestruct_to(beneficiary)
         accept = 8 + len(destroy)  # CALLDATASIZE, PUSH1, JUMPI, CALLVALUE, PUSH1, JUMPI, then `destroy`
         store = accept + 2  # JUMPDEST, STOP
         return (b"\x36" + bytes([0x60, store]) + b"\x57" + b"\x34" + bytes([0x60, accept]) + b"\x57" + destroy
-                + b"\x5b" + STOP + b"\x5b" + push(0) + b"\x35" + push(1) + b"\x55" + STOP)
+                + b"\x5b" + STOP + b"\x5b" + push(0) + b"\x35" + push(1) + b"\x55" + store_tail)
 
     made = create(0, returning(runtime(HEIR)))
     again = call(MAX_GAS, created, 0, 0) + b"\x50"
@@ -2290,14 +2308,21 @@ def selfdestruct_cases() -> list[Case]:
          "that was never written, C not destroyed: the write is charged a fresh slot's state gas, its legacy share "
          "first, and adds a unit of state growth and a record", accounts=heir, gas=3_000_000, code=made + store + STOP)
     little = 60_000  # pays a fresh slot's regular gas and not its state gas, in a transaction without a reservoir
-    small_store = mstore(0, 7) + call(little, created, 0, 32) + b"\x50"
+    # The child returns its slot word. The parent returns a status word followed by exactly the child's bytes.
+    return_slot = push(1) + b"\x54\x5f\x52" + ret(0, 32)
+    made_with_read = create(0, returning(runtime(HEIR, return_slot)))
+    small_store = (mstore(0, 7) + call(little, created, 0, 32) + b"\x5f\x52"
+                   + b"\x3d\x5f" + push(32) + b"\x3e"  # RETURNDATACOPY(32, 0, RETURNDATASIZE)
+                   + b"\x3d" + push(32) + b"\x01\x5f\xf3")
     case("marked/fresh-slot-on-little-gas", f"P creates C, which destroys itself; P then calls C with {fmt(little)} of "
          "regular gas and a word of calldata, which C writes to a slot that was never written: the write, charged no "
-         "state gas while the mark stands, completes on what pays its regular gas", accounts=heir, gas=3_000_000,
-         code=made + again + small_store + STOP)
+         "state gas while the mark stands, completes on what pays its regular gas. The parent returns success and "
+         "the child's SLOAD of the written value 7 (SATIN-SD-013)", accounts=heir, gas=3_000_000,
+         code=made_with_read + again + small_store)
     case("created/fresh-slot-on-little-gas", f"the control: the same call of C with {fmt(little)} of regular gas, C not "
          "destroyed: the write needs the fresh slot's state gas, which a transaction without a reservoir pays from "
-         "regular gas, and C runs out of gas in it", accounts=heir, gas=3_000_000, code=made + small_store + STOP)
+         "regular gas, and C runs out of gas in it. The slot stays zero and the parent returns the failure flag with "
+         "no child bytes", accounts=heir, gas=3_000_000, code=made_with_read + small_store)
     case("marked/logs-stay", "P creates C with 1 wei; called without value, C's code emits a LOG0 and destroys C to an "
          "existing account, moving the 1 wei; P then sends C 1 wei more, which C accepts: the LOG0 and the three "
          "transfer logs stay counted, and the LOG0's history stays charged, while the leaf's and the code's charges and "
@@ -2717,13 +2742,18 @@ def limit_stop_cases() -> list[Case]:
     for _ in range(3):
         deep = deep * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
     relay = lambda to: call(MAX_GAS, to, 0, 0) + b"\x50" + RETURN_RETURNDATA
+    relays = {RELAY_B: model.Account(nonce=1, code=relay(RELAY_C)), RELAY_C: model.Account(nonce=1, code=relay(DEEP))}
+    writes = lambda count: model.Account(nonce=1, code=b"".join(sstore(k, 1) for k in range(1, count + 1)) + STOP)
     add(Case("satin/limit-stops/child-budget/depth-three", f"the first frame relays to a frame three calls below it, "
              f"each relay writing nothing: that frame's state-growth budget is {fmt(deep)}, the share of the share of the "
              f"share of {fmt(growth)}, and its {fmt(deep + 1)}th fresh slot crosses it: it is stopped with "
              f"MegaLimitExceeded(3, {fmt(deep)}), its slots discarded, and every relay returns the stop's bytes, the "
              "transaction succeeding with them", spec=spec, stops=True, gas=150_000_000, code=relay(RELAY_B),
-             accounts={RELAY_B: model.Account(nonce=1, code=relay(RELAY_C)), RELAY_C: model.Account(nonce=1, code=relay(DEEP)),
-                       DEEP: model.Account(nonce=1, code=b"".join(sstore(k, 1) for k in range(1, deep + 2)) + STOP)}))
+             accounts={**relays, DEEP: writes(deep + 1)}))
+    add(Case("satin/limit-stops/child-budget/depth-three-fits", "three relays write nothing. The deepest frame writes "
+             f"exactly {fmt(deep)} fresh slots, the budget after three shares rounded down (SATIN-LIM-003). The "
+             "transaction keeps all the writes and returns no stop bytes", spec=CURRENT_SPEC, stops=True,
+             gas=150_000_000, code=relay(RELAY_B), accounts={**relays, DEEP: writes(deep)}))
 
     # State growth can cross before the first frame only on an authorization list, which is then skipped and the own
     # frame stopped before it runs, naming the transaction limit (SATIN-STOP-017, SATIN-AUTH-010): one absent authority
@@ -3050,6 +3080,10 @@ def authorization_cases() -> list[Case]:
         "deposit creates is no authorization, so it is decided by emptiness, not by an authority's existence, and is "
         "new: its new-account state gas and one unit of state growth, and no ACCOUNT_WRITE, write record or list rule",
         ty=0, deposit=(ETH, 1_000_000), absent_sender=True, accounts={OTHER: model.Account()})
+    add("deposit-caller/empty-leaf-zero-mint", "a zero-mint, zero-value deposit from an EIP-161 empty leaf runs a STOP "
+        "recipient and succeeds. It keeps exactly one new-account state charge and one unit of state growth "
+        "(SATIN-DEP-003, SATIN-STATE-011, SATIN-ACCT-014)",
+        ty=0, deposit=(0, 1_000_000), absent_sender=True, accounts={OTHER: model.Account()})
     out += authorization_gap_cases()
     return out
 
@@ -4377,8 +4411,18 @@ def keyless_cases() -> list[Case]:
          "deploy address not", carried(code), accounts=signer(nonce=2), reads=True)
     case("refusal/signer-nonce-and-code", "a signer at nonce 2 that holds code: step 8 answers before step 9",
          carried(code), accounts=signer(nonce=2, code=b"\x60\x00"))
-    case("refusal/signer-has-code", "a signer that holds code other than a delegation indicator: SignerHasCode()",
-         carried(code), accounts=signer(nonce=1, code=b"\x60\x00"))
+    case("refusal/signer-has-code", "a signer that holds code other than a delegation indicator and cannot fund the "
+         "carried value: step 9 answers SignerHasCode() before step 13", carried(code, value=1),
+         accounts=signer(nonce=1, code=b"\x60\x00"))
+    taken = {DEPLOY: model.Account(nonce=1, code=STOP)}
+    case("refusal/override-before-taken", "an override one below the signed gas limit and an occupied deploy address: "
+         "step 6 answers GasLimitTooLow before step 12", carried(code), override=signed - 1, accounts=taken)
+    case("refusal/signer-nonce-before-taken", "a signer at nonce 2 with an occupied deploy address: step 8 answers "
+         "SignerNonceTooHigh before step 12", carried(code), accounts={**signer(nonce=2), **taken})
+    case("refusal/signer-nonce-before-balance", "a signer at nonce 2 that cannot fund the carried value: step 8 answers "
+         "SignerNonceTooHigh before step 13", carried(code, value=1), accounts=signer(nonce=2))
+    case("refusal/signer-code-before-taken", "a signer with ordinary code and an occupied deploy address: step 9 "
+         "answers SignerHasCode before step 12", carried(code), accounts={**signer(nonce=1, code=b"\x60\x00"), **taken})
     case("refusal/invalid-signature", "a carried signature whose r is the x of no curve point: no signer is recovered, "
          "InvalidSignature()", carried(pad + code, r=NO_POINT_R))
     case("refusal/taken-and-unfunded", "a deploy address that holds code and a carried value the signer cannot fund: "
@@ -4392,6 +4436,11 @@ def keyless_cases() -> list[Case]:
     case("refusal/step-15-one-short", "the call holds one gas less than the signed gas limit after step 14's charges: "
          "step 15 refuses with GasLimitTooLow, and the state and history gas of steps 10 and 14 come back",
          carried(code, gas=signed), tune=("keyless-15", signed - 1))
+    funded_signed = 500_000
+    case("refusal/funded-step-15-one-short", f"a signer with one wei owes no step 10 charge. The call passes step 11 "
+         f"and holds {fmt(funded_signed - 1)} after step 14, one below the signed {fmt(funded_signed)}. Step 15 answers "
+         "GasLimitTooLow, and step 14's regular CREATE charge stays on the ledger (SATIN-KEY-005)",
+         carried(code, gas=funded_signed), accounts=signer(balance=1), tune=("keyless-15", funded_signed - 1))
     case("deploy/forward-at-signed-gas", "the call holds exactly the signed gas limit after step 14: the creation is "
          "forwarded all of it and deploys", carried(code, gas=signed), tune=("keyless-15", signed))
     # Deployments: the creation as a child of the call, the signer's nonce, the records, gasUsed and the answer.
@@ -4454,6 +4503,9 @@ def keyless_cases() -> list[Case]:
     case("halt/step-10-one-short", "the call cannot pay the signer's new account at step 10 by one gas: it halts out of "
          "gas, and nothing of the deployment happens", carried(code),
          tune=("keyless-10", model.ACCOUNT_STATE - 1))
+    case("halt/step-10-before-taken", "an absent signer and an occupied deploy address with the same one-gas shortfall "
+         "at step 10: the call halts and never reads the deploy address (SATIN-KEY-007, SATIN-WIT-012)",
+         carried(code), accounts=taken, reads=True, tune=("keyless-10", model.ACCOUNT_STATE - 1))
     step14 = (model.CREATE_GAS + model.INITCODE_WORD_COST * ((len(code) + 31) // 32) + model.ACCOUNT_STATE
               + 2 * model.WRITE_RECORD_SIZE * model.COST_PER_HISTORY_BYTE)
     case("halt/step-14-one-short", "the call cannot pay step 14's charges by one gas, the last of them its records' "
@@ -4678,6 +4730,9 @@ def keyless_gap_cases() -> list[Case]:
                  "pays no overhead, and the bytecode reverts with empty data", system=True, spec=spec,
                  to=model.KEYLESS_DEPLOY, code=None, data=data, gas=300_000,
                  **({"ty": 1, "access_list": [(model.KEYLESS_DEPLOY, [])]} if short else {})))
+    add(Case("satin/keyless/abi/selector-alone", "only the keylessDeploy selector, with no argument head: the call is "
+             "not recognized, pays no overhead and reverts with empty data in the held bytecode (SATIN-ICPT-006)",
+             system=True, spec=spec, to=model.KEYLESS_DEPLOY, code=None, data=model.KEYLESS_DEPLOY_CALL, gas=300_000))
     case("rlp/trailing-byte", "one byte after a carried list that has to set, a chain id and nonce 1: the bytes are no "
          "encoding, and MalformedEncoding() answers before the list's own refusals",
          carried(code, to=EOA, chain_id=CHAIN_ID, nonce=1) + b"\x00")
@@ -4685,6 +4740,9 @@ def keyless_gap_cases() -> list[Case]:
     recid, r, s_ = ex.sign(SIGNER_KEY, ex.keccak256(ex.rlp(fields)))
     case("rlp/eight-fields", "a carried list of eight fields, its s left out: MalformedEncoding()",
          ex.rlp(fields + [27 + recid, r]))
+    case("rlp/truncated-signed-list", "a valid outer bytes argument with an inner signed RLP list truncated by one byte "
+         "inside its final field and its original length header intact: step 3 answers MalformedEncoding()",
+         raw[:-1])
     case("rlp/nested-list", "a carried list whose data field is a list: MalformedEncoding()",
          ex.rlp([0, CARRIED_GAS_PRICE, signed, b"", 0, [code], 27 + recid, r, s_]))
     items = [ex.rlp(f) for f in fields + [27 + recid, r, s_]]
@@ -5889,6 +5947,11 @@ def accounting_cases() -> list[Case]:
          "in the frame that made the second start, and the sender's and the last recipient's stand",
          contract_balance=10, accounts={PAYEE_Q: model.Account(nonce=1, code=call(0, PAYEE_R, 1, 0) + b"\x50" + STOP),
                                         **stop_r}, code=send(PAYEE_Q) + STOP)
+    case("records/pass-on-exact-to-absent", "a contract passes all the value it received to an absent recipient. Its "
+         "own balance and record return to their pre-transfer state (SATIN-ACCT-004). The first sender's and last "
+         "recipient's records stand, with two transfer logs and one unit of state growth (SATIN-ACCT-005, SATIN-ACCT-014)",
+         contract_balance=10, accounts={PAYEE_Q: model.Account(nonce=1, code=call(0, PAYEE_R, 1, 0) + b"\x50" + STOP)},
+         code=send(PAYEE_Q) + STOP)
     # SATIN-ACCT-004, -006, -011, SATIN-HIST-006, -007: a SELFDESTRUCT of an account the transaction did not create that
     # returns accounts to what the transaction loaded takes their records back.
     def refund_to(beneficiary: bytes) -> bytes:

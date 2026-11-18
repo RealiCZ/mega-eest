@@ -2,15 +2,15 @@
   "caseId": "satin/selfdestruct/created/fresh-slot-on-little-gas",
   "expected": {
     "gasLedgers": {
-      "blockGas": "0x15491",
+      "blockGas": "0x154a8",
       "floor": "0x3a98",
-      "gasUsed": "0x52639",
-      "history": "0x8cf0",
-      "historyBytes": "0x19a",
+      "gasUsed": "0x558e0",
+      "history": "0x8fb0",
+      "historyBytes": "0x1a2",
       "refund": "0x0",
-      "regular": "0x15491",
-      "state": "0x344b8",
-      "total": "0x52639"
+      "regular": "0x154a8",
+      "state": "0x37488",
+      "total": "0x558e0"
     },
     "limit": null,
     "outcome": {
@@ -22,14 +22,14 @@
       },
       "execution": {
         "createdAddress": null,
-        "output": "0x",
+        "output": "0x0000000000000000000000000000000000000000000000000000000000000000",
         "status": "success"
       }
     },
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
-      "gasUsed": "0x52639",
+      "gasUsed": "0x558e0",
       "logs": [],
       "status": "0x1",
       "type": "0x0"
@@ -37,8 +37,8 @@
     "resources": {
       "dataSize": {
         "limit": "0xc80000",
-        "net": "410",
-        "reported": "0x19a"
+        "net": "418",
+        "reported": "0x1a2"
       },
       "kvUpdates": {
         "limit": "0x7a120",
@@ -55,13 +55,13 @@
       "accounts": {
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "code": "0x7f7f36600d5734600b5760e1ff5b005b5f356001550000000000000000000000005f527e5f5260145ff30000000000000000000000000000000000000000000000000060205260275f5ff05060075f525f5f60205f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93461ea60f15000",
+          "code": "0x7f7f36600d5734600b5760e1ff5b005b5f356001556001545f5260205ff30000005f527e5f52601c5ff30000000000000000000000000000000000000000000000000060205260275f5ff05060075f525f5f60205f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93461ea60f15f523d5f60203e3d6020015ff3",
           "nonce": "0x2",
           "storage": {}
         },
         "0x93da612d2a72aa99d5ba73757f2e644fb4d6a934": {
           "balance": "0x0",
-          "code": "0x36600d5734600b5760e1ff5b005b5f3560015500",
+          "code": "0x36600d5734600b5760e1ff5b005b5f356001556001545f5260205ff3",
           "nonce": "0x1",
           "storage": {}
         },
@@ -106,7 +106,7 @@
         },
         "0x00000000000000000000000000000000000c0de1": {
           "balance": "0x0",
-          "code": "0x7f7f36600d5734600b5760e1ff5b005b5f356001550000000000000000000000005f527e5f5260145ff30000000000000000000000000000000000000000000000000060205260275f5ff05060075f525f5f60205f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93461ea60f15000",
+          "code": "0x7f7f36600d5734600b5760e1ff5b005b5f356001556001545f5260205ff30000005f527e5f52601c5ff30000000000000000000000000000000000000000000000000060205260275f5ff05060075f525f5f60205f5f7393da612d2a72aa99d5ba73757f2e644fb4d6a93461ea60f15f523d5f60203e3d6020015ff3",
           "nonce": "0x1",
           "storage": {}
         },
@@ -144,7 +144,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "the control: the same call of C with 60,000 of regular gas, C not destroyed: the write needs the fresh slot's state gas, which a transaction without a reservoir pays from regular gas, and C runs out of gas in it"
+      "intent": "the control: the same call of C with 60,000 of regular gas, C not destroyed: the write needs the fresh slot's state gas, which a transaction without a reservoir pays from regular gas, and C runs out of gas in it. The slot stays zero and the parent returns the failure flag with no child bytes"
     },
     "definition": "tools/make_slice.py::selfdestruct_cases",
     "generator": "tools/make_slice.py",

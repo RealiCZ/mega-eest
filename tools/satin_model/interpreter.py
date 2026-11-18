@@ -453,12 +453,12 @@ class InterpreterMixin:
                     self.split(frame)
                     steps.append(f"SLOAD of the Oracle's storage {fmt(COLD_SLOAD)}")
                     continue
-                if ctx and not self.system_pages:
-                    raise Unmodelled("an SLOAD in a child frame")
                 if frame.get("spendable") is not None:
                     raise Unmodelled("an SLOAD in a detained frame")
                 key = pop()
                 cold = (address, key) not in self.warm_slots
+                if ctx and not self.system_pages and not (self.destruction and not cold):
+                    raise Unmodelled("an SLOAD in a child frame")
                 cost = COLD_SLOAD if cold else WARM_READ
                 self.charge_regular(frame, cost, "SLOAD")
                 self.warm_slots.add((address, key))
