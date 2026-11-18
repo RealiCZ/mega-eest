@@ -12,6 +12,18 @@
       "state": "0x0",
       "total": "0x3a33f"
     },
+    "gasPools": {
+      "regular": {
+        "final": "0x0",
+        "initial": "0x0"
+      },
+      "reservoir": {
+        "final": "0x0",
+        "initial": "0x0"
+      },
+      "returned": "0x0",
+      "spilled": "0x0"
+    },
     "limit": null,
     "outcome": {
       "admission": {
@@ -131,6 +143,7 @@
   "requires": [
     "feature:salt",
     "group:gas-ledgers",
+    "group:gas-pools",
     "group:limit",
     "group:outcome",
     "group:receipts",

@@ -3886,6 +3886,35 @@
     },
     {
       "area": "limit-stops",
+      "caseId": "satin/limit-stops/state-growth-one-over-with-reservoir",
+      "file": "cases/satin/limit-stops/state-growth-one-over-with-reservoir.json",
+      "fileDigest": "sha256:43989669ceee63f435b8ec45683ec501fbacd720200de94bb9f3e0f5b5cbcdc7",
+      "rules": [
+        "SATIN-LIM-001",
+        "SATIN-LIM-002",
+        "SATIN-LIM-004",
+        "SATIN-LIM-007",
+        "SATIN-LIM-010",
+        "SATIN-LIM-011",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-STATE-012",
+        "SATIN-STOP-001",
+        "SATIN-STOP-004",
+        "SATIN-STOP-009",
+        "SATIN-STOP-011",
+        "SATIN-STOP-018",
+        "SATIN-STOP-021",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "limit-stops",
       "caseId": "satin/limit-stops/data-size-at-limit",
       "file": "cases/satin/limit-stops/data-size-at-limit.json",
       "fileDigest": "sha256:e0787af033b84f1430c8457b1ff63756bb482e898b00381bb188d3a2bdb197d8",
@@ -3986,6 +4015,30 @@
       ],
       "spec": {
         "descriptor": "sha256:22ab05bff4fadbe600e2ff73d675b70d91d24ac3bc5b83e95c9afb2a27f71da6",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "gas-pools",
+      "caseId": "satin/gas-pools/halt/fresh-slot-with-reservoir",
+      "file": "cases/satin/gas-pools/halt/fresh-slot-with-reservoir.json",
+      "fileDigest": "sha256:57d01c91f4158885d90caba05e249f195fd51c4768d8926e63c03929b2467fa6",
+      "rules": [
+        "SATIN-OUT-007",
+        "SATIN-POOL-005",
+        "SATIN-POOL-006",
+        "SATIN-POOL-008",
+        "SATIN-POOL-010",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-POOL-017",
+        "SATIN-POOL-018",
+        "SATIN-POOL-019",
+        "SATIN-POOL-020",
+        "SATIN-POOL-024"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
         "name": "megaeth/Satin"
       }
     },
@@ -5978,7 +6031,7 @@
       "area": "limit-stops",
       "caseId": "satin/limit-stops/authorization-list/one-authority-over",
       "file": "cases/satin/limit-stops/authorization-list/one-authority-over.json",
-      "fileDigest": "sha256:14fb94ba22d72f442fe0a2c95882568f54cc98ceed88bf04bdc37a4e5ef5a143",
+      "fileDigest": "sha256:6254f571f7f8eeb761c0450ec4ddbfbefc7458d401d594223568309d4cf59d45",
       "rules": [
         "SATIN-LIM-001",
         "SATIN-LIM-007",
@@ -6701,7 +6754,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/limit/one-over-all-or-nothing",
       "file": "cases/satin/authorizations/limit/one-over-all-or-nothing.json",
-      "fileDigest": "sha256:67bc6aca8b808ce372c8f802f8c22678e707e4759ed8b472e8d82b29066f6a1c",
+      "fileDigest": "sha256:2d69558737e7735194d45ecc2a633529fe7772caab8a9ff5e2cb56dea0b86aca",
       "rules": [
         "SATIN-ACCT-015",
         "SATIN-AUTH-001",
@@ -7093,7 +7146,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/reads/simulation-past-crossing",
       "file": "cases/satin/authorizations/reads/simulation-past-crossing.json",
-      "fileDigest": "sha256:80c0382e4d6b98d5e754b5683c4f0b8e3adedfb4b78b1c35416a1171fbd490a7",
+      "fileDigest": "sha256:cc905dbc5158a17725fcdcf9446af8fdfb1481d1f49527d93fc1be25ca697463",
       "rules": [
         "SATIN-AUTH-001",
         "SATIN-AUTH-003",
@@ -7382,7 +7435,7 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/limit/one-over-with-fees",
       "file": "cases/satin/authorizations/limit/one-over-with-fees.json",
-      "fileDigest": "sha256:d267ff8c26ef075db5930263564909423905d5a423e620d53bcf3f70bc47f7cf",
+      "fileDigest": "sha256:960ab16dfab19c7ba8411915ddd00cd442af18ebe80c8438319d5b6266bcba6e",
       "rules": [
         "SATIN-ACCT-015",
         "SATIN-AUTH-001",
@@ -8103,7 +8156,7 @@
       "area": "outcomes",
       "caseId": "satin/outcomes/pre-frame/created-account-one-short",
       "file": "cases/satin/outcomes/pre-frame/created-account-one-short.json",
-      "fileDigest": "sha256:a1cec83623b231845045e2c15e4488789065dde0184b4f686a320a9f99720a10",
+      "fileDigest": "sha256:3f7810cac41dd891e8385ca02061b331ef172796c0c9ac91f1bc7d16901f6593",
       "rules": [
         "SATIN-OUT-006",
         "SATIN-POOL-017",
@@ -8118,10 +8171,12 @@
       "area": "outcomes",
       "caseId": "satin/outcomes/pre-frame/created-account-paid",
       "file": "cases/satin/outcomes/pre-frame/created-account-paid.json",
-      "fileDigest": "sha256:64c27a704249ed8966910f78567c70c58c767e632d6e1fc2884726f55716de83",
+      "fileDigest": "sha256:1b1e918f6019b00a7e35214b6d3a0d97a4cb6e501ead365f8ab373cba9ee915a",
       "rules": [
+        "SATIN-HIST-012",
         "SATIN-OUT-006",
-        "SATIN-OUT-007"
+        "SATIN-OUT-007",
+        "SATIN-POOL-017"
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
@@ -8669,6 +8724,53 @@
       ],
       "spec": {
         "descriptor": "sha256:a0510f1fa0dc8f173a8a2a2dfe27ed3caaaa56a03e667ba70e579c0706b467da",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/occupied-after-signer-charge-with-reservoir",
+      "file": "cases/satin/keyless/refusal/occupied-after-signer-charge-with-reservoir.json",
+      "fileDigest": "sha256:8480e7f36ab58b8c7b7f2c087390c92fcc769d7f81b114c060a07463e764899b",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-STATE-012",
+        "SATIN-WIT-002",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/insufficient-balance-with-reservoir",
+      "file": "cases/satin/keyless/refusal/insufficient-balance-with-reservoir.json",
+      "fileDigest": "sha256:0efa252afb763113cd1eb87355ee86fd57c65e5e280f4cdeceb294ac9b0ea1fa",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
         "name": "megaeth/Satin"
       }
     },
@@ -10514,7 +10616,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/authorizations/1001-new-authorities",
       "file": "cases/satin/keyless/authorizations/1001-new-authorities.json",
-      "fileDigest": "sha256:4ed7bb95367e488daa4799dc03c1e38e4fff5a6ccbc9043ae3af0630d4fbc3c1",
+      "fileDigest": "sha256:01b5dafffa4320d1c3c8a64a3cafd380178187fc8236cbdfa7d2642e603e380b",
       "rules": [
         "SATIN-ICPT-007"
       ],

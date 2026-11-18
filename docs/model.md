@@ -44,6 +44,20 @@ specification's text and constants:
   in the transaction, with the destruction table; a value start without a frame held to the started
   frame's budget; an EIP-7702 list whose second entry for one authority clears the delegation; a
   deposit whose own frame halts.
+- **Failed first-frame gas pools** (D-170): a non-deposit transaction's own frame starts
+  after the pre-frame charges (`SATIN-POOL-010`, `-024`). On revert or limit stop, the pools
+  observation keeps its unspent regular gas and adds the frame's net state and history
+  charges to its remaining reservoir (`SATIN-POOL-014`, `SATIN-STOP-009`). On exceptional halt,
+  the regular balance becomes zero and the reservoir returns to the amount the frame received
+  (`SATIN-OUT-007`). The observation records regular gas paid for state and history as
+  `spilled`. A give-back of a charge made before the frame is reflected in the transaction's
+  gas return (`SATIN-POOL-015`, `SATIN-HIST-005`). A charge that runs out of gas before the first
+  frame selects D-64's no-frame convention (`SATIN-SCHED-010`). It reports the gas returned
+  at both reservoir endpoints and zero regular gas and spill. An authorization list skipped
+  for crossing a limit stops the transaction's own frame. It receives and returns the
+  two balances left after intrinsic and body charges (`SATIN-SCHED-009`, `SATIN-AUTH-010`,
+  `-011`, `SATIN-STOP-009`). The existing restriction in D-89 on a skipped list with an undefined
+  start-charge order still applies.
 - **The destruction page's shapes** (D-70): a `SELFDESTRUCT` of an account the transaction did not
   create, to another account, to the sender or to itself; a repeated one while the mark stands; the
   marked account, kept until the transaction ends, its stores, a code deposit after its constructor
@@ -318,7 +332,7 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `transaction.py` | Validation's refusals in the order of `SATIN-VAL-003` and the base layer's after them, a creation's initcode over `MAX_INITCODE_SIZE` among them, the system shape, a Mega System Transaction's own checks and a caller the registry does not name, the transaction's origin (`SATIN-MST-007`), intrinsic gas and the two pools, the charges before the first frame, the first frame and how it ends, a creation's code over `MAX_CONTRACT_SIZE`, the out-of-gas path before it |
 | `settlement.py` | Refund, floor, gas used, fees, ledgers, resources, receipt, the state diff and the limit group; the snapshot a failed first frame returns to; the live system address; a deposit's run, its validation (from the live system address whatever its destination; a creating deposit's initcode over `MAX_INITCODE_SIZE` is not checked, from `83c0d26` on), its value and its start record, its charges at steps 3 to 5 and its first frame (`deposit_frame`), a creation from `MAX_NONCE`, a reverted deposit, a stopped deposit, and a failed deposit, its hints and its reads; a promoted Mega System Transaction's run and a system-originated transaction's history and usage |
 | `precompiles.py` | A call to a precompile, by any call opcode the model has or as the transaction's own: the funds check, the price read before it runs, and under gas detention the decision from it (`SATIN-DET-021` to `-024`); the identity's, RIPEMD-160's and ModExp's outputs; and the precompile page's own call (D-103): the OP size limits, KZG point evaluation, `P256VERIFY` and the BLS12-381 precompiles |
-| `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, the give-back into the reservoir |
+| `pools.py` | Regular charges and the spendable part they are held to, state and history charges with their legacy share, reservoir and spill, rollback of either pool and the first frame's pool observation |
 | `detention.py` | The limit a volatile read sets, the caps it is set from, a frame's spendable and withheld parts, and a transaction detained from its start |
 | `interpreter.py` | One frame's bytecode: the opcodes the cases and the system contracts' dispatchers use (`ORIGIN` and `GASPRICE` among them since D-88), the volatile reads and their refusal, a call of the block beneficiary refused and a call refused at its target's beneficiary delegate with its settlement (D-116), the opcode charges of a call, a `CALLCODE`, a `DELEGATECALL`, a `STATICCALL`, a `CREATE` or `CREATE2` and a `SELFDESTRUCT`, a creation's checks in the order of `SATIN-SIZE-005` and one in a static frame; under gas detention's cases, the readers of the whole regular gas |
 | `calls.py` | A call decided in the order of `SATIN-ICPT-007`: interception, the frame start, the records a value start makes and takes back, the child and what it returns; MegaLimitControl's answer, the hints handed to the service, and what the Oracle's, MegaLimitControl's and the High-Precision Timestamp's own code did |

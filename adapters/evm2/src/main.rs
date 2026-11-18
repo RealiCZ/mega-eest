@@ -592,12 +592,12 @@ impl Inspector<MegaTypes> for Messages {
     }
 }
 
-/// The `gasPools` group of the transaction's first message (decision D-64). A transaction that ran
-/// no message has no frame pools: what the charges before its first frame left is its reservoir,
-/// which returns to the sender, and its regular gas is consumed.
-fn pools(m: &Messages, gas_limit: u64, gas_used: u64) -> Result<Value, Stop> {
+/// The `gasPools` group of the transaction's first frame (decision D-64).
+fn pools(m: &Messages, top_started: bool, gas_limit: u64, gas_used: u64) -> Result<Value, Stop> {
     let Some(returned) = gas_limit.checked_sub(gas_used) else { return error("gas used above the gas limit") };
-    let ((regular, reservoir), (regular_end, reservoir_end, spilled)) = match (m.start, m.end) {
+    // Runtime out-of-gas can emit a synthetic root message for tracers without starting a frame.
+    let endpoints = if top_started { (m.start, m.end) } else { (None, None) };
+    let ((regular, reservoir), (regular_end, reservoir_end, spilled)) = match endpoints {
         (Some(s), Some(e)) => (s, e),
         (None, None) => ((0, returned), (0, returned, 0)),
         _ => return error("instrumentation: a first message without its end"),
@@ -800,14 +800,14 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
         None
     };
     let diagnostics = match (&recorded, instrumented) {
-        (Some(m), true) => object([("messages", q(m.seen))]),
+        (Some(m), true) => object([("inspectorMessageStarts", q(m.seen))]),
         _ => object([]),
     };
+    let ext = evm.ext();
     let gas_pools = match (&recorded, wants_pools) {
-        (Some(m), true) => Some(pools(m, sent.tx.gas_limit(), r.tx_gas_used())?),
+        (Some(m), true) => Some(pools(m, ext.top_started, sent.tx.gas_limit(), r.tx_gas_used())?),
         _ => None,
     };
-    let ext = evm.ext();
     if oracle.is_none() && ext.oracle_reads > 0 {
         return error("missing input: the transaction asked the oracle service and the case states no oracle input");
     }

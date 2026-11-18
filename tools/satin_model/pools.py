@@ -4,7 +4,7 @@ into the reservoir (`SATIN-HIST-012`)."""
 
 from __future__ import annotations
 
-from .records import fmt, Halt, q, Stopped, Unmodelled
+from .records import fmt, Halt, q, Stopped
 
 
 class PoolsMixin:
@@ -71,28 +71,54 @@ class PoolsMixin:
         frame["net_charged"] = frame.get("net_charged", 0) + amount
         frame["drawn"] = frame.get("drawn", 0) + legacy + rest - r
 
-    def pools_observation(self, status: str, gas_used: int) -> dict:
-        """The `gasPools` group (decision D-64): the first frame's regular gas and reservoir at its start, after
-        the charges before it, and at its end; the regular gas it paid for state and history charges, which no
-        give-back credits back (SATIN-POOL-008, SATIN-HIST-012); and the gas returned to the sender."""
+    def failed_frame_pools(self, frame, status: str) -> tuple[int, int]:
+        """The regular gas and reservoir after the frame's own rollback (SATIN-POOL-014)."""
+        if status == "halt":
+            return 0, frame["reservoir_at_start"]
+        return frame["regular"], frame["reservoir"] + frame.get("net_charged", 0)
+
+    def pools_observation(self, status: str, gas_used: int, *, no_first_frame: bool) -> dict:
+        """The first frame's pools at entry and after its own settlement (D-64), and the transaction's gas return."""
         frame, tx = self.first_frame, self.tx
-        if frame is None or status != "success":
-            raise Unmodelled("the pools of a transaction whose first frame does not succeed")
         returned = tx.gas_limit - gas_used
+        if no_first_frame:
+            self.d.add("gasPools", "out of gas before the first frame, so the observation reports zero regular gas and the "
+                       f"{fmt(returned)} gas returned to the sender as reservoir at both ends (D-64)",
+                       "SATIN-SCHED-010", "SATIN-POOL-017")
+            return {"regular": {"initial": q(0), "final": q(0)},
+                    "reservoir": {"initial": q(returned), "final": q(returned)},
+                    "spilled": q(0), "returned": q(returned)}
+
+        assert frame is not None, "a settled first frame must have pool endpoints"
+        regular_end, reservoir_end = frame["regular"], frame["reservoir"]
+        if status != "success":
+            regular_end, reservoir_end = self.failed_frame_pools(frame, status)
+            if status == "halt":
+                self.d.add("gasPools", f"the halt consumes the frame's regular gas and restores the "
+                           f"{fmt(reservoir_end)} reservoir it received", "SATIN-POOL-014", "SATIN-OUT-007")
+            else:
+                ending = "stop" if self.stop else "revert"
+                self.d.add("gasPools", f"the {ending} leaves {fmt(regular_end)} regular gas and gives back the "
+                           f"frame's net charges {fmt(frame.get('net_charged', 0))} into the reservoir, which becomes "
+                           f"{fmt(frame['reservoir'])} + {fmt(frame.get('net_charged', 0))} = {fmt(reservoir_end)}",
+                           "SATIN-POOL-014", *(("SATIN-STOP-009",) if self.stop else ()))
         self.d.add("gasPools", f"the first frame starts with {fmt(frame['regular_at_start'])} of regular gas and "
                    f"{fmt(frame['reservoir_at_start'])} of reservoir, what the charges before it left, and ends with "
-                   f"{fmt(frame['regular'])} and {fmt(frame['reservoir'])}", "SATIN-POOL-005", "SATIN-POOL-010",
+                   f"{fmt(regular_end)} and {fmt(reservoir_end)}", "SATIN-POOL-005", "SATIN-POOL-010",
                    "SATIN-POOL-024")
         self.d.add("gasPools", f"regular gas paid {fmt(self.spilled)} of the frame's state and history charges, legacy "
                    "shares and spills, which no give-back credits back to it", "SATIN-POOL-008", "SATIN-HIST-012")
-        if self.pricing and frame["regular"] == 0:
+        if status == "success" and self.pricing and frame["regular"] == 0:
             self.d.add("gasPools", f"the first frame spent the whole of its regular gas and ends with none, its "
                        f"{fmt(frame['reservoir'])} of reservoir untouched by its computation: no compute limit or ledger of "
                        "its own holds computation, which regular gas pays", "SATIN-POOL-021", "SATIN-POOL-007")
         self.d.add("gasPools", f"returned to the sender: gas limit {fmt(tx.gas_limit)} - receipt gas used {fmt(gas_used)} = "
                    f"{fmt(returned)}", "SATIN-POOL-017")
-        return {"regular": {"initial": q(frame["regular_at_start"]), "final": q(frame["regular"])},
-                "reservoir": {"initial": q(frame["reservoir_at_start"]), "final": q(frame["reservoir"])},
+        if status != "success":
+            self.d.add("gasPools", "any give-back of the first frame's start charges belongs to transaction settlement",
+                       "SATIN-POOL-015", "SATIN-HIST-005")
+        return {"regular": {"initial": q(frame["regular_at_start"]), "final": q(regular_end)},
+                "reservoir": {"initial": q(frame["reservoir_at_start"]), "final": q(reservoir_end)},
                 "spilled": q(self.spilled), "returned": q(returned)}
 
     def give_back(self, frame, amount: int) -> None:

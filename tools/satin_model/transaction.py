@@ -330,7 +330,7 @@ class TransactionMixin:
             self.load_authorities()
             skipped = self.list_crossing()
             if skipped:
-                return self.list_skipped(skipped, intrinsic, floor, price)
+                return self.list_skipped(skipped, intrinsic, floor, price, regular, reservoir)
             try:
                 regular, reservoir = self.apply_authorizations(regular, reservoir)
             except OutOfGasBeforeFrame as e:
@@ -785,7 +785,7 @@ class TransactionMixin:
 
         return self.settle(total, floor, price, status, execution, create, recipient)
 
-    def list_skipped(self, crossed, intrinsic: int, floor: int, price: int) -> Result:
+    def list_skipped(self, crossed, intrinsic: int, floor: int, price: int, regular: int, reservoir: int) -> Result:
         """SATIN-AUTH-010: a list whose KV or state-growth total crosses the transaction's limit is skipped and the
         transaction's own frame is stopped before it runs, naming the transaction limit, no frame budget existing yet;
         the transaction settles as a stop of its own frame (SATIN-STOP-009), keeping its body (SATIN-AUTH-011)."""
@@ -794,6 +794,12 @@ class TransactionMixin:
             raise Unmodelled("a skipped list on a transaction whose first frame starts with a charge")
         kind, value = crossed
         self.stop = (kind, value)
+        self.first_frame = {"regular": regular, "reservoir": reservoir,
+                            "regular_at_start": regular, "reservoir_at_start": reservoir}
+        if self.pools:
+            d.add("gasPools", "the skipped list charges nothing and the stop executes no instruction. The first "
+                  f"frame receives and returns {fmt(regular)} regular gas and {fmt(reservoir)} reservoir after "
+                  "the intrinsic and body charges", "SATIN-SCHED-009", "SATIN-AUTH-010", "SATIN-AUTH-011", "SATIN-STOP-009")
         if tx.to == KEYLESS_DEPLOY and tx.data[:4] == KEYLESS_DEPLOY_CALL:
             d.add("outcome", "the transaction's own frame is a keylessDeploy call, which the list's stop reaches before "
                   "anything is decided about the call: no keyless recognition, no overhead, no signer read",
@@ -861,7 +867,7 @@ class TransactionMixin:
                   "first frame, which the transaction does not reach", "SATIN-SCHED-008")
         self.refund = 0
         return self.settle(total, floor, price, "halt", {"status": "halt", "output": "0x", "createdAddress": None}, False,
-                           None)
+                           None, no_first_frame=True)
 
     def effective_price(self) -> int:
         tx = self.tx

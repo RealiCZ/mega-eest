@@ -3087,3 +3087,41 @@ returned-to-sender formula belongs to the current case's ledger. Confirm the tra
 limit and the returned amount and check their subtraction before allowing either output to
 coincide with a stale value from another case. Include moved returned amounts in the global
 scan, so an old return fails even if no ledger or receipt held that number.
+
+**D-170. Derive gas pools at the end of a failed first frame.**
+The `gasPools` endpoints are the pools given to the first frame after pre-frame charging and the
+pools it returns after its own rollback (D-64, `SATIN-POOL-010`, `-014`, `-024`). A revert or
+limit stop leaves the frame's unspent regular gas and adds its net state and history charges to
+its reservoir. An exceptional halt consumes its regular gas and restores its received
+reservoir. The regular gas paid for state and history, including the legacy shares, stays in
+`spilled` (`SATIN-POOL-008`). The transaction's `returned` uses gas limit less receipt gas used.
+That return includes any give-back of pre-frame start charges (`SATIN-POOL-015`,
+`SATIN-HIST-005`). Apply D-64's no-frame convention when a charge runs out of gas before the first
+frame (`SATIN-SCHED-010`).
+
+**D-171. Observe a failed first frame with a funded reservoir.**
+Two keyless refusals pay the empty signer's state charge before refusing an occupied deploy
+address or insufficient funds. The reads and returned state verify both derived addresses,
+and the pools show that the legacy share returns to the reservoir (`SATIN-KEY-004`,
+`-005`, `-007`, `SATIN-STATE-012`). A third case adds a reservoir to the state-growth stop at
+the first excess fresh slot. It checks the pools through rollback and the loaded
+slots return with their pre-state values (`SATIN-LIM-001`, `SATIN-POOL-014`,
+`SATIN-WIT-005`, `SATIN-WIT-008`). A fresh-slot write followed by INVALID observes the
+exceptional-halt rule with a paid legacy share and a nonzero reservoir. All four cases
+gate on both adapters.
+
+**D-172. Sample settled endpoints and distinguish a pre-frame halt from a stopped frame.**
+The revm adapter's outermost end hook precedes the frame's rollback settlement. Settle a copy
+of the child tracker with the engine's own helper and read the two final balances from the copy.
+Keep the original accumulator for `spilled`, which includes legacy shares at the current pin.
+This updates the implementation note in D-64.
+In evm2 the end callback observes already settled gas. The adapter uses `top_started` after
+execution to distinguish a real first frame from the synthetic tracer root of a pre-frame
+out-of-gas. Its diagnostic counts inspector message starts.
+
+An authorization list that crosses the limit is skipped and stops the transaction's own frame
+(`SATIN-SCHED-009`, `SATIN-AUTH-010`, `-011`, `SATIN-STOP-009`). For the supported inputs of
+D-89, the stopped frame receives and returns the pools left after intrinsic and body charges.
+A creation transaction short of the account charge reports the no-frame pools under
+D-64 and `SATIN-SCHED-010`. The exact-charge creation and a frame that enters and then halts
+exercise the other paths.

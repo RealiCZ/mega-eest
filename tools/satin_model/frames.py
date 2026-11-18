@@ -240,8 +240,8 @@ class FramesMixin:
             d.add("resources", f"{name}'s failure discards the {len(dropped)} log{'s' if len(dropped) > 1 else ''} it and "
                   f"its children emitted, {size} bytes of data size, whose history its rollback undoes with its other "
                   "charges", "SATIN-TAKE-009", "SATIN-POOL-014", "SATIN-TAKE-004")
+        left, returned = self.failed_frame_pools(child, status)
         if status == "halt":
-            returned, left = child["received"], 0
             # A test-construction aid, not a rule: the regular gas halted frames drew for state and history.
             self.probe["halted-drawn"] = self.probe.get("halted-drawn", 0) + child["drawn"]
             if shown:
@@ -252,7 +252,6 @@ class FramesMixin:
                       "SATIN-POOL-014", "SATIN-POOL-012",
                       "SATIN-TAKE-004", "SATIN-TAKE-011")
         else:
-            returned, left = child["reservoir"] + child["net_charged"], child["regular"]
             frame["drawn"] = frame.get("drawn", 0) + child["drawn"]
             self.regular_charges -= child["drawn"]
             if shown:
