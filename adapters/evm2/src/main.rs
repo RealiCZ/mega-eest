@@ -19,7 +19,7 @@
 //! runs alike (docs/adapter-protocol.md, "Gas pools").
 
 use std::cell::{Cell, RefCell};
-use std::collections::{BTreeMap, BTreeSet, HashMap};
+use std::collections::{BTreeMap, BTreeSet, HashMap, VecDeque};
 use std::rc::Rc;
 use std::io::{Read, Write};
 use std::process::ExitCode;
@@ -45,7 +45,7 @@ use evm2::{
 use mega_evm2::{
     chain::{BootstrapInput, ChainConfig},
     factory::SatinFactory,
-    oracle::{OracleAnswers, OracleServices, RecordingOracle},
+    oracle::{OracleCall, OracleService, OracleServices, RecordingOracle},
     BucketId, MegaTypes, SaltReadError, SaltSnapshot, SnapshotId, MIN_BUCKET_SIZE,
 };
 use mega_fixture_format::json::{self, Value};
@@ -55,11 +55,10 @@ const SPEC: &str = "megaeth/Satin";
 const IMPLEMENTATION_REPOSITORY: &str = "https://github.com/RealiCZ/mega-evm";
 const FORK_REPOSITORY: &str = "https://github.com/RealiCZ/evm2";
 
-/// What this adapter can run: state-transition's mandatory groups and the features below. The
-/// oracle transcript is not among them: this adapter's service records hints but supplies no
-/// answers, so Oracle reads use the slot's value.
+/// What this adapter can run: state-transition's mandatory groups and the features below.
 const CAPABILITIES: &[&str] = &[
     "feature:deposit",
+    "feature:oracle-transcript",
     "feature:salt",
     "feature:synthetic-transaction",
     "group:gas-ledgers",
@@ -669,6 +668,76 @@ fn refusal(phase: &str, reason: &str) -> Value {
     ])
 }
 
+#[derive(Debug)]
+enum OracleTranscript {
+    Absent,
+    Disabled,
+    Recorded(RefCell<VecDeque<(U256, Option<U256>)>>),
+}
+
+#[derive(Debug)]
+struct FixtureOracle {
+    transcript: OracleTranscript,
+    error: RefCell<Option<String>>,
+}
+
+impl FixtureOracle {
+    fn read(input: Option<Reader<'_>>) -> Result<Self, Stop> {
+        let transcript = match input {
+            None => OracleTranscript::Absent,
+            Some(input) => match input.at("mode")?.str()? {
+                "disabled" => OracleTranscript::Disabled,
+                "recorded" => {
+                    let entries = input
+                        .at("entries")?
+                        .list()?
+                        .iter()
+                        .map(|entry| {
+                            let entry = Reader(entry, "oracle transcript entry");
+                            let slot = U256::from_be_bytes(entry.at("slot")?.hash()?.0);
+                            let answer = entry.at("answer")?;
+                            let answer = if answer.is_null() { None } else { Some(answer.word()?) };
+                            Ok((slot, answer))
+                        })
+                        .collect::<Result<_, Stop>>()?;
+                    OracleTranscript::Recorded(RefCell::new(entries))
+                }
+                mode => return error(format!("unknown oracle mode {mode:?}")),
+            },
+        };
+        Ok(Self { transcript, error: RefCell::new(None) })
+    }
+
+    fn check(&self) -> Result<(), Stop> {
+        if let Some(message) = self.error.borrow().as_ref() {
+            return error(message.clone());
+        }
+        if let OracleTranscript::Recorded(entries) = &self.transcript {
+            let left = entries.borrow().len();
+            if left > 0 {
+                return error(format!("{left} oracle transcript entries were not requested"));
+            }
+        }
+        Ok(())
+    }
+}
+
+impl OracleService for FixtureOracle {
+    fn answer(&self, slot: U256) -> Option<U256> {
+        let message = match &self.transcript {
+            OracleTranscript::Absent => format!("missing input: an oracle request for slot {slot:#x}"),
+            OracleTranscript::Disabled => return None,
+            OracleTranscript::Recorded(entries) => match entries.borrow_mut().pop_front() {
+                Some((expected, answer)) if expected == slot => return answer,
+                Some((expected, _)) => format!("oracle request for slot {slot:#x}, transcript has {expected:#x}"),
+                None => format!("unexpected oracle request for slot {slot:#x}"),
+            },
+        };
+        self.error.borrow_mut().get_or_insert(message);
+        None
+    }
+}
+
 fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     let req = Reader(request, "request");
     let profile = req.at("profile")?.str()?;
@@ -683,12 +752,6 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     if input.opt("faults").is_some() {
         return Err(Stop::Unsupported("injected faults".into()));
     }
-    let oracle = input.opt("oracle");
-    if let Some(o) = &oracle {
-        if o.at("mode")?.str()? != "disabled" {
-            return Err(Stop::Unsupported("a recorded oracle transcript".into()));
-        }
-    }
     let (mut db, listed) = load_pre(&input.at("pre")?)?;
     for (n, h) in input.at("blockHashes")?.map()? {
         db.block_hashes.insert(word(n)?.try_into().or_else(|_| error("block number"))?, Reader(h, "blockHash").hash()?);
@@ -697,9 +760,14 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     if block.at("depositOnly")?.boolean()? || block.at("activation")?.boolean()? {
         return Err(Stop::Unsupported("engine isolation of a deposit-only or activation block".into()));
     }
+    #[allow(clippy::arc_with_non_send_sync)]
+    let oracle_service = Arc::new(RecordingOracle::new(FixtureOracle::read(input.opt("oracle"))?));
     let sent = match transaction(&input.at("transaction")?)? {
         Ok(s) => s,
-        Err(Undecodable(reason)) => return Ok((refusal("decode", reason), object([]))),
+        Err(Undecodable(reason)) => {
+            oracle_service.inner().check()?;
+            return Ok((refusal("decode", reason), object([])));
+        }
     };
 
     let factory = SatinFactory::new(chain(input.at("chain")?.at("chainId")?.u64()?)?);
@@ -724,8 +792,6 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     let wants = |group| matches!(requires.0, Value::Array(r) if r.iter().any(|x| x.as_str() == Some(group)));
     #[allow(clippy::arc_with_non_send_sync)]
     let salt = Arc::new(salt);
-    // Record forwarded hints without supplying answers: Oracle reads still use the slot's value.
-    let oracle_service = Arc::new(RecordingOracle::new(OracleAnswers::default()));
     // The factory installs Satin's version, limits, registry and precompiles, has storage of an
     // account the database lacks read, and resolves the live system address from the pre-state's
     // SequencerRegistry, as a block resolves it once (SATIN-REG-002).
@@ -751,6 +817,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
             // A gas limit above what the block has left is a skip at inclusion (SATIN-BLK-013).
             Some(reason) => {
                 let phase = if reason == "gas-limit-exceeds-block" { "inclusion" } else { "validation" };
+                oracle_service.inner().check()?;
                 return Ok((refusal(phase, reason), object([])));
             }
             None => return error(format!("unmapped refusal or failure: {e:?}")),
@@ -808,9 +875,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
         (Some(m), true) => Some(pools(m, ext.top_started, sent.tx.gas_limit(), r.tx_gas_used())?),
         _ => None,
     };
-    if oracle.is_none() && ext.oracle_reads > 0 {
-        return error("missing input: the transaction asked the oracle service and the case states no oracle input");
-    }
+    oracle_service.inner().check()?;
     if let Some(missing) = missing_bucket(&salt) {
         return error(missing);
     }
@@ -844,7 +909,7 @@ fn run(request: &Value, instrumented: bool) -> Result<(Value, Value), Stop> {
     }
     if wants("group:reads") {
         if let Value::Object(m) = &mut observations {
-            m.insert("reads".into(), reads(&loaded.borrow(), &listed, &oracle_service.hints()));
+            m.insert("reads".into(), reads(&loaded.borrow(), &listed, &oracle_service));
         }
     }
     Ok((observations, diagnostics))
@@ -882,10 +947,9 @@ fn returned_state<'a>(changes: impl Iterator<Item = evm2::evm::AccountChanges<'a
 /// The `reads` group: what the transaction loaded, each item as the case's inputs served it. The
 /// code hashes are those of every account read whose code is not empty, with any code loaded by
 /// hash: the code the witness holds for every account it names, whether or not the load that named
-/// the account brought the code (SATIN-WIT-001). The implementation answers no oracle read from a
-/// service in the cases this adapter runs (no transcript), so `oracle` is empty; `hints` are the
-/// hints the implementation forwarded, in order.
-fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, hints: &[(Address, B256, Bytes)]) -> Value {
+/// the account brought the code (SATIN-WIT-001). Oracle requests and forwarded hints are
+/// recorded at the engine's service boundary.
+fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, service: &RecordingOracle<FixtureOracle>) -> Value {
     let mut codes = l.codes.clone();
     let accounts = l
         .accounts
@@ -909,22 +973,35 @@ fn reads(l: &Loaded, listed: &BTreeMap<Address, Listed>, hints: &[(Address, B256
             slots.insert(format!("{:#066x}", k), q(*v));
         }
     }
+    let mut oracle = Vec::new();
+    let mut hints = Vec::new();
+    let recorded = matches!(service.inner().transcript, OracleTranscript::Recorded(_));
+    for call in service.calls() {
+        match call {
+            OracleCall::Answer { slot, answer } if recorded => {
+                oracle.push(object([
+                    ("slot", Value::String(format!("{slot:#066x}"))),
+                    ("value", answer.map_or(Value::Null, q)),
+                ]));
+            }
+            OracleCall::Answer { .. } => {}
+            OracleCall::Hint { from, topic, data } => {
+                hints.push(object([
+                    ("from", hexs(from.as_slice())),
+                    ("topic", hexs(topic.as_slice())),
+                    ("data", hexs(&data)),
+                ]));
+            }
+        }
+    }
     object([
         ("accounts", Value::Object(accounts)),
         ("storage", Value::Object(storage)),
         ("codes", Value::Array(codes.iter().map(|c| hexs(c.as_slice())).collect())),
         ("blockHashes", Value::Object(l.block_hashes.iter().map(|(n, h)| (format!("{n:#x}"), hexs(h.as_slice()))).collect())),
         ("buckets", Value::Object(l.buckets.iter().map(|(b, c)| (format!("{b:#x}"), q(*c))).collect())),
-        ("oracle", Value::Array(Vec::new())),
-        (
-            "hints",
-            Value::Array(
-                hints
-                    .iter()
-                    .map(|(f, t, d)| object([("from", hexs(f.as_slice())), ("topic", hexs(t.as_slice())), ("data", hexs(d))]))
-                    .collect(),
-            ),
-        ),
+        ("oracle", Value::Array(oracle)),
+        ("hints", Value::Array(hints)),
     ])
 }
 

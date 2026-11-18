@@ -3,7 +3,9 @@ of the rules over it (docs/model.md)."""
 
 from __future__ import annotations
 
-from .records import Account, Derivation, Env, Tx
+from collections import deque
+
+from .records import Account, Derivation, Env, Result, Tx, Unmodelled
 from .authorizations import AuthorizationsMixin
 from .calls import CallsMixin
 from .creation import CreationMixin
@@ -29,8 +31,11 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
                  reads: bool = False, pools: bool = False, destruction: bool = False, detention: bool = False,
                  stops: bool = False, lists: bool = False, outcomes: bool = False, system_tx: bool = False,
                  current: bool = False, system_pages: bool = False, precompile_page: bool = False,
-                 size_page: bool = False, pricing: bool = False, returned_state: bool = False):
+                 size_page: bool = False, pricing: bool = False, returned_state: bool = False,
+                 oracle_entries: list[tuple[int, int | None]] | None = None):
         self.env, self.pre, self.tx = env, pre, tx
+        self.oracle_entries = None if oracle_entries is None else deque(oracle_entries)
+        self.oracle_answers: list[tuple[int, int | None]] = []
         # A case of the precompile page's own rules (decision D-103): a call to a precompile where no limit is set is
         # decided by SATIN-PCMP-001 to -007, and the model runs KZG point evaluation, P256VERIFY and the BLS12-381
         # precompiles for it.
@@ -132,3 +137,9 @@ class Run(TransactionMixin, SettlementMixin, PoolsMixin, DetentionMixin, Interpr
         self.keyless_active: bytes | None = None
         # Its signer while it runs: its account differs already, its record counted on the call (SATIN-KEY-012).
         self.keyless_signer: bytes | None = None
+
+    def run(self) -> Result:
+        result = super().run()
+        if self.oracle_entries:
+            raise Unmodelled(f"{len(self.oracle_entries)} Oracle transcript entries were not requested")
+        return result

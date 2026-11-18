@@ -9197,6 +9197,27 @@
     },
     {
       "area": "keyless",
+      "caseId": "satin/keyless/refusal/nonzero-carried-nonce",
+      "file": "cases/satin/keyless/refusal/nonzero-carried-nonce.json",
+      "fileDigest": "sha256:94b64ee585cb0092f5c32c7c3260fb0811004852536d932c372f70e7c557d7b1",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
       "caseId": "satin/keyless/refusal/override-and-signer-nonce",
       "file": "cases/satin/keyless/refusal/override-and-signer-nonce.json",
       "fileDigest": "sha256:b75e9015c829998b73fdb3cba5f77384dca3fd48a9999d14ea3b44f677f74f24",
@@ -9277,7 +9298,7 @@
       "area": "keyless",
       "caseId": "satin/keyless/refusal/nonce-zero-signer-has-code",
       "file": "cases/satin/keyless/refusal/nonce-zero-signer-has-code.json",
-      "fileDigest": "sha256:5d97c04fbe4f6cceb8d5c5bf26bcae1df19435b5de0a695dbccb4cf38f38a58a",
+      "fileDigest": "sha256:a4c1fe2e173bf7d21d5ab4328320875cbcc88e68902ce9d2af2b6ff5fda53212",
       "rules": [
         "SATIN-ICPT-006",
         "SATIN-ICPT-007",
@@ -9286,8 +9307,10 @@
         "SATIN-KEY-005",
         "SATIN-KEY-006",
         "SATIN-KEY-007",
+        "SATIN-WIT-004",
         "SATIN-WIT-005",
-        "SATIN-WIT-008"
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
@@ -15466,6 +15489,25 @@
       ],
       "spec": {
         "descriptor": "sha256:53537c588b0b6491fbb4806085c967b3e6ed777f24c82928647cea4f1e48d3a3",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "oracle",
+      "caseId": "satin/oracle/get-slots/recorded-answer-then-fallback",
+      "file": "cases/satin/oracle/get-slots/recorded-answer-then-fallback.json",
+      "fileDigest": "sha256:ad8384503c3f39d11be391f63429db48a9c0dbc6a7023272707bd44c105620de",
+      "rules": [
+        "SATIN-ORCL-001",
+        "SATIN-ORCL-002",
+        "SATIN-ORCL-003",
+        "SATIN-ORCL-004",
+        "SATIN-ORCL-005",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
         "name": "megaeth/Satin"
       }
     },

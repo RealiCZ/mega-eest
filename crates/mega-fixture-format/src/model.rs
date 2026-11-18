@@ -1406,7 +1406,8 @@ pub struct Reads {
     pub codes: Vec<B256>,
     pub block_hashes: BTreeMap<u64, B256>,
     pub buckets: BTreeMap<u64, u64>,
-    pub oracle: Vec<(B256, U256)>,
+    /// Ordered service requests with their answers. `None` records a request with no answer.
+    pub oracle: Vec<(B256, Option<U256>)>,
     pub hints: Vec<(Address, B256, Vec<u8>)>,
 }
 
@@ -1427,7 +1428,7 @@ fn reads(v: &Value, p: &str) -> Result<Reads> {
         o.shape(&["slot", "value"], &[])?;
         let (s, sp) = o.req("slot");
         let (x, xp) = o.req("value");
-        Ok((b256(s, &sp)?, u256(x, &xp)?))
+        Ok((b256(s, &sp)?, nullable(x, &xp, u256)?))
     })?;
     let (h, hp) = o.req("hints");
     let hints = array(h, &hp, 0, None, |v, p| {

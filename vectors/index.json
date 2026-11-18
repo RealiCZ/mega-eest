@@ -115,6 +115,14 @@
       "semanticDigest": "sha256:ad1d22d99b1f755bd3fb1b1e8723e427c78058d0a212fccbf03907d12903cc93"
     },
     {
+      "id": "case-oracle-transcript",
+      "kind": "case",
+      "input": "accept/case-oracle-transcript.in.json",
+      "canonical": "accept/case-oracle-transcript.canonical.json",
+      "fileDigest": "sha256:ad8384503c3f39d11be391f63429db48a9c0dbc6a7023272707bd44c105620de",
+      "semanticDigest": "sha256:ce24da5e848c309b4e92407a6393658617d4f45b9dac371cca0426285d83b0f7"
+    },
+    {
       "id": "case-returned-state",
       "kind": "case",
       "input": "accept/case-returned-state.in.json",
@@ -557,7 +565,7 @@
       "kind": "manifest",
       "input": "accept/manifest-examples.in.json",
       "canonical": "accept/manifest-examples.canonical.json",
-      "digest": "sha256:841e8be94aa7db40d217a6f3059772f5f8c57e9628fb86f0c193502e913b9c66"
+      "digest": "sha256:a89c69fd778a12196b54d3f0ebb11400ab4bfd083f0da1350201116cb82bc9f5"
     },
     {
       "id": "manifest-unsorted-cases",

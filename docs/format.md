@@ -118,11 +118,11 @@ a sparse or witness pre-state (`root-over-sparse-state`): a root over a partial 
   input (decision D-38).
 - **Oracle transcript** (`oracle`, engine-isolation profiles only: state-transition and
   block-build): `{mode: "recorded", entries: [{slot, answer}]}` in request order, `answer: null`
-  being the service answering none; or `{mode: "disabled"}`, no service. In recorded mode an
-  unexpected request or an unused entry fails the case. A case without `oracle` states no service:
-  any oracle request is a missing input (decision D-38). Validators run no oracle service: Satin's
-  front-running model persists answers on chain before the reading transaction, so block-import and
-  stateless-block take the oracle's values from state and carry no transcript.
+  being the service answering none. Use `{mode: "disabled"}` for chain-only reads. In recorded
+  mode the adapter consumes one entry per request and checks the slot in order. Unexpected
+  requests and unused entries are errors. Without `oracle`, a request is a missing input (D-38).
+  The sequencer persists the service values a transaction pushed for block replay under
+  `SATIN-ORCL-012`. Replay profiles read from state and carry no transcript.
 - **Injected faults** (`faults`): provider reads made to fail, each
   `{source: account|storage|code|block-hash|bucket, ...key}`. The expected outcome records the
   fault in `commit` (`status: fault`, its stage, the read and how the node reports it).
@@ -174,7 +174,7 @@ states it.
 | `resources` | data size, KV updates and state growth: the transaction limit, the signed net and the reported count |
 | `limit` | the stop that ended the transaction's own frame, `null` when none. Every stop carries its `dimension` (`data-size`, `kv-updates`, `compute`, `state-growth`), its `limit` and its `returnData`, `MegaLimitExceeded(kind, limit)` of the two, which is the execution's revert output; these are what an implementation's result exposes. Its diagnostics, the transaction or frame `scope`, the `callPath`, `operation` and `phase` and whether the operation and the enclosing writes committed, are optional from schema 1.1 on, carried behind `group:limit-diagnostics` and compared only where the case carries them; a 1.0 stop carries all of them (D-62) |
 | `detention` | each volatile read (category, admitted or failed, call path, compute at the read, cap), the final compute limit (`null` if none), gas withheld, released and burned |
-| `reads` | logical reads the spec requires a node to load and export: accounts (`null`: read and absent), slots with the value read (explicit zero), code hashes, block hashes, SALT capacities served, oracle reads in order with their values, admitted hints in order. For a transaction these are its loads in the stateless witness's sense (`SATIN-WIT-001`, `-008`): values as the state held them before it, the code hash of every account read that has code, compared as an exact set ([adapter-protocol.md](adapter-protocol.md#reads), D-61) |
+| `reads` | logical reads the spec requires a node to load and export: accounts (`null`: read and absent), slots with the value read (explicit zero), code hashes, block hashes, SALT capacities served, Oracle service requests in order with their answers (`null` for a request with no answer), admitted hints in order. For a transaction these are its loads in the stateless witness's sense (`SATIN-WIT-001`, `-008`): values as the state held them before it, the code hash of every account read that has code, compared as an exact set ([adapter-protocol.md](adapter-protocol.md#reads), D-61) |
 | `returnedState` | the account and slot keys and their values in the unfiltered transaction result (D-150) |
 | `checkpoints` | ledger checkpoints at rule-defined boundaries, keyed by call path (child ordinal under each parent), phase and ordinal |
 
@@ -203,6 +203,10 @@ A refusal or fault that produced no returned state omits the group.
   the slot key. Actual slots carry quantities. A required slot also requires its account entry.
 - An expected `null` at an account or slot key requires absence. An additional returned key fails
   even if the expectation does not name it explicitly.
+
+For a keyless refusal before the deploy-address load, an expected `null` at that address
+requires absence. This rejects a fabricated entry carrying any code hash on that path
+(`SATIN-KEY-005`, `SATIN-WIT-005`, `SATIN-WIT-008`, D-191).
 
 The model derives the key set from completed journal loads and values from the settled state.
 It compares the pre-state values of surviving entries the transaction leaves unchanged or

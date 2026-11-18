@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1160** (1160 gating, 0 quarantined).
+Cases: **1162** (1162 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -3687,6 +3687,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
@@ -3905,6 +3906,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
@@ -4090,6 +4092,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
@@ -4429,6 +4432,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
@@ -4622,6 +4626,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-and-override] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/override-and-invalid-signature] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/override-and-signer-nonce] | gating | unqualified | [satin-c130558] |
@@ -6610,6 +6615,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/emit-log/live-system-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/emit-log/not-system-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/multicall/empty-revert] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/multicall/first-payload-fails] | gating | unqualified | [satin-bcf260d] |
@@ -6639,6 +6645,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/oracle/get-slot/delegatecall-own-storage] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/read-at-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | gating | unqualified | [satin-5fb2688] |
@@ -6651,6 +6658,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/oracle/get-slot/delegatecall-own-storage] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/read-at-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | gating | unqualified | [satin-5fb2688] |
@@ -6663,6 +6671,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/oracle/read-charge-at-whole-gas] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/oracle/read-charge-one-short] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/read-at-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | gating | unqualified | [satin-5fb2688] |
@@ -6673,6 +6682,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/oracle/get-slots/in-order] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/get-slots/repeated-slot] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/read-at-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/oracle/read-short-of-cold-access] | gating | unqualified | [satin-5fb2688] |
@@ -10294,6 +10304,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/pools/nonce-only-collision-log-override-forward/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/nonce-only-collision-log-signed-forward/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/list-simulated-applied] | gating | unqualified | [satin-5fb2688] |
@@ -10425,10 +10437,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/empty-signer-after-create-charge] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/insufficient-balance-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/taken-and-unfunded] | gating | unqualified | [satin-c130558] |
 | [satin/limit-stops/state-growth-one-over-with-reservoir] | gating | unqualified | [satin-83c0d26] |
+| [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
@@ -10603,10 +10617,12 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/refusal/empty-signer-after-create-charge] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/insufficient-balance-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/refusal/taken-and-unfunded] | gating | unqualified | [satin-c130558] |
 | [satin/limit-stops/state-growth-one-over-with-reservoir] | gating | unqualified | [satin-83c0d26] |
+| [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
@@ -10703,6 +10719,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/pools/nonce-only-collision-log-override-forward/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/nonce-only-collision-log-signed-forward/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonce-zero-signer-has-code] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/refusal/nonzero-carried-nonce] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/refusal/signer-nonce-two] | gating | unqualified | [satin-c130558] |
 | [satin/reads/balance-cold-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
@@ -11467,6 +11485,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/keyless/refusal/invalid-signature]: ../slice/cases/satin/keyless/refusal/invalid-signature.json
 [satin/keyless/refusal/nonce-and-override]: ../slice/cases/satin/keyless/refusal/nonce-and-override.json
 [satin/keyless/refusal/nonce-zero-signer-has-code]: ../slice/cases/satin/keyless/refusal/nonce-zero-signer-has-code.json
+[satin/keyless/refusal/nonzero-carried-nonce]: ../slice/cases/satin/keyless/refusal/nonzero-carried-nonce.json
 [satin/keyless/refusal/occupied-after-signer-charge-with-reservoir]: ../slice/cases/satin/keyless/refusal/occupied-after-signer-charge-with-reservoir.json
 [satin/keyless/refusal/override-and-invalid-signature]: ../slice/cases/satin/keyless/refusal/override-and-invalid-signature.json
 [satin/keyless/refusal/override-and-signer-nonce]: ../slice/cases/satin/keyless/refusal/override-and-signer-nonce.json
@@ -11558,6 +11577,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/oracle/emit-log/not-system-address]: ../slice/cases/satin/oracle/emit-log/not-system-address.json
 [satin/oracle/get-slot/delegatecall-own-storage]: ../slice/cases/satin/oracle/get-slot/delegatecall-own-storage.json
 [satin/oracle/get-slots/in-order]: ../slice/cases/satin/oracle/get-slots/in-order.json
+[satin/oracle/get-slots/recorded-answer-then-fallback]: ../slice/cases/satin/oracle/get-slots/recorded-answer-then-fallback.json
 [satin/oracle/get-slots/repeated-slot]: ../slice/cases/satin/oracle/get-slots/repeated-slot.json
 [satin/oracle/multicall/empty-revert]: ../slice/cases/satin/oracle/multicall/empty-revert.json
 [satin/oracle/multicall/first-payload-fails]: ../slice/cases/satin/oracle/multicall/first-payload-fails.json

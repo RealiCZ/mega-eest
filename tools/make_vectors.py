@@ -249,6 +249,8 @@ def main(argv: list[str]) -> int:
     for name in MANIFEST_EXAMPLES:
         with open(os.path.join(ROOT, "examples", name), "rb") as f:
             accept("case-" + name[:-5], "case", f.read())
+    accept("case-oracle-transcript", "case",
+           dump(load_slice_case("satin/oracle/get-slots/recorded-answer-then-fallback")))
     accept("case-returned-state", "case", dump(load_slice_case("satin/keyless/contract-call/no-value")))
     accept("case-returned-state-destroyed", "case",
            dump(load_slice_case("satin/selfdestruct/marked/fresh-slot-on-little-gas")))

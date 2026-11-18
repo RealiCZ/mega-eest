@@ -293,7 +293,7 @@ class Case:
                  detention=False, block_hashes=None, stops=False, lists=False, outcomes=False, chain=CHAIN_ID,
                  system_flag=False, gas_used_check=None, system_tx=False, source_hash=None, synthetic=False,
                  sender=None, block_number=BLOCK_NUMBER, system_pages=False, precompile_page=False,
-                 size_page=False, pricing=False, returned_state=False, forbidden_accounts=()):
+                 size_page=False, pricing=False, returned_state=False, forbidden_accounts=(), oracle_entries=None):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -324,6 +324,7 @@ class Case:
         # into the burn (`settle_burn`).
         self.make, self.params, self.retune = make, dict(params or {}), list(retune or [])
         self.reads = reads  # the case carries the reads group (D-61)
+        self.oracle_entries = oracle_entries
         self.returned_state = returned_state or bool(forbidden_accounts)
         self.forbidden_accounts = forbidden_accounts
         self.pools = pools  # the case carries the gasPools group (D-64)
@@ -4609,6 +4610,10 @@ def keyless_cases() -> list[Case]:
     signed = 90_000
     case("refusal/nonce-and-override", "a carried nonce of 1 and a gasLimitOverride below the signed gas limit: step 4 "
          "answers before step 6", carried(code, nonce=1), override=signed - 1)
+    case("refusal/nonzero-carried-nonce", "a carried nonce of 1 with an override that covers the signed gas limit. "
+         "Step 4 returns NonZeroTxNonce before either the signer or deploy address is loaded (SATIN-KEY-005).",
+         carried(code, nonce=1), override=signed, spec=CURRENT_SPEC, reads=True,
+         forbidden_accounts=(SIGNER, DEPLOY))
     case("refusal/override-and-signer-nonce", "a gasLimitOverride one below the signed gas limit and a signer at nonce "
          "2: step 6 answers before step 8", carried(code), override=signed - 1, accounts=signer(nonce=2))
     case("refusal/signer-nonce-two", "a signer at nonce 2: step 8 refuses it, the signer's account read and the "
@@ -4620,7 +4625,7 @@ def keyless_cases() -> list[Case]:
          accounts=signer(nonce=1, code=b"\x60\x00"))
     case("refusal/nonce-zero-signer-has-code", "a nonce-zero signer holds STOP code and cannot fund the carried value. "
          "Step 9 answers SignerHasCode before step 13 and no deployment changes the state (SATIN-KEY-005, SATIN-KEY-006)",
-         carried(code, value=1), spec=CURRENT_SPEC, returned_state=True, accounts=signer(code=STOP))
+         carried(code, value=1), spec=CURRENT_SPEC, reads=True, forbidden_accounts=(DEPLOY,), accounts=signer(code=STOP))
     taken = {DEPLOY: model.Account(nonce=1, code=STOP)}
     case("refusal/override-before-taken", "an override one below the signed gas limit and an occupied deploy address: "
          "step 6 answers GasLimitTooLow before step 12", carried(code), spec=CURRENT_SPEC, override=signed - 1,
@@ -5421,6 +5426,15 @@ def oracle_page_cases() -> list[Case]:
              "in the order asked, each read by SLOAD in the Oracle's own frame, charged as a cold access and asking no "
              "service (SATIN-ORCL-001)", deposit=(0, 1_000_000), sender_nonce=3, to=model.ORACLE, code=None,
              data=sel("getSlots(uint256[])") + abi_words(0x20, 2, 2, 1), accounts=dict(oracle), **pages))
+    slot, held, served = 3, 42, 91
+    add(Case("satin/oracle/get-slots/recorded-answer-then-fallback", "an ordinary transaction runs the Oracle's "
+             "getSlots bytecode on the same slot twice. The first service answer differs from the journal value "
+             "and is pushed. The second request receives no answer, so that read pushes the journal value "
+             "(SATIN-ORCL-002, SATIN-ORCL-005).",
+             spec=CURRENT_SPEC, system_pages=True, system=True, to=model.ORACLE, code=None, gas=300_000,
+             data=sel("getSlots(uint256[])") + abi_words(0x20, 2, slot, slot), reads=True, returned_state=True,
+             accounts={model.ORACLE: model.Account(code=system_contracts()[model.ORACLE], storage={slot: held})},
+             oracle_entries=[(slot, served), (slot, None)]))
     set_slot = sel("setSlot(uint256,bytes32)") + abi_words(3, 7)
     add(Case("satin/oracle/set-slot/user-not-system-address", "a user's transaction calls the Oracle's setSlot(3, 7), its "
              "sender not the address the registry names: the body writes the fresh slot and is charged for it, then the "
@@ -7848,7 +7862,7 @@ def build(c: Case, *, observe_returned: bool = False):
                     destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists,
                     outcomes=c.outcomes, system_tx=c.system_tx, current=c.spec in CURRENT_SPECS,
                     system_pages=c.system_pages, precompile_page=c.precompile_page, size_page=c.size_page,
-                    pricing=c.pricing, returned_state=observe_returned)
+                    pricing=c.pricing, returned_state=observe_returned, oracle_entries=c.oracle_entries)
     result = run.run()
     if observe_returned:
         if result.observations["outcome"]["commit"]["status"] != "committed":
@@ -7870,6 +7884,10 @@ def build(c: Case, *, observe_returned: bool = False):
         "transaction": source,
         "salt": {"mapping": "salt-v1", "complete": c.salt_complete, "buckets": {q(b): q(cap) for b, cap in sorted(buckets.items())}},
     }
+    if c.oracle_entries is not None:
+        inp["oracle"] = {"mode": "recorded",
+                         "entries": [{"slot": h(word(slot)), "answer": None if answer is None else q(answer)}
+                                     for slot, answer in c.oracle_entries]}
     decoded = {"type": q(tx.ty), "sender": h(sender), "to": h(c.to) if c.to else None, "nonce": q(tx.nonce),
                "gasLimit": q(tx.gas_limit), "value": q(tx.value), "data": h(tx.data)}
     if c.deposit:
@@ -8052,7 +8070,8 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, retired: set, spe
                 "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else []) \
         + (["group:limit-stop"] if result.observations["limit"] else []) + (["group:gas-pools"] if c.pools else []) \
         + (["feature:synthetic-transaction"] if c.synthetic else []) \
-        + (["group:returned-state"] if c.returned_state else [])
+        + (["group:returned-state"] if c.returned_state else []) \
+        + (["feature:oracle-transcript"] if c.oracle_entries is not None else [])
     authoring = {"intent": c.intent, **({"boundary": c.boundary} if c.boundary else {})}
     fx = {
         "format": "mega-execution-fixture",

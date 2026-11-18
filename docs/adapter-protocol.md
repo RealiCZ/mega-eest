@@ -162,9 +162,11 @@ a case that does not require them (decision D-61).
 - `blockHashes`: every hash `BLOCKHASH` was served (`SATIN-WIT-014`).
 - `buckets`: every SALT capacity the environment served with a valid capacity
   (`SATIN-WIT-013`).
-- `oracle`: the oracle service's answers in order, for a recorded transcript; a read the service
-  does not answer pushes the slot's value, which `storage` holds. The evm2-based adapter runs no
-  transcript, and a deposit's read asks no service (`SATIN-ORCL-005`), so its list is empty.
+- `oracle` records each request in recorded mode as `{slot, value}`, in order. A request that
+  receives no answer has `value: null`. An unasked slot contributes no event. A completed read
+  without an answer pushes the slot's current journal value (`SATIN-ORCL-002`), which a
+  case can check through the bytecode's output. Reads in deposits and Mega System
+  Transactions ask no service (`SATIN-ORCL-005`).
 - `hints`: the hints the implementation handed the service, in order, with the address of the
   frame that sent each, its topic and its data.
 - **The transaction, not the block.** The evm2-based implementation's factory resolves the live
@@ -176,6 +178,14 @@ a case that does not require them (decision D-61).
   to the implementation's context (`MegaContext::new_with_system_address`), which then reads
   nothing for it; the adapter records every load the run makes, never hiding one (D-94).
 - The consumer compares `reads` exactly. A missing required load or an extra load is a difference.
+
+### Oracle transcript
+
+Both adapters supply the recorded replies through the engine's Oracle service interface
+(D-190). Each request consumes one entry, including repeated requests for the same slot.
+A slot mismatch, a request past the end or an unused entry makes the run an error.
+A disabled transcript supplies no values and has no request observations. The adapters
+keep admitted hints in all modes.
 
 ### Returned transaction state
 
@@ -234,10 +244,8 @@ case that does not require it.
 | `adapters/evm2` (`adapter-evm2`) | evm2-based Satin: `RealiCZ/mega-evm` `next/` at `62f2964a` with `RealiCZ/evm2` at `c0a91cbb`, through the single-transaction EVM of its factory (`SatinFactory::evm`) and `Evm::transact` | `tools/fetch-implementations.sh` checks both out under `vendor/` (git-ignored), so the implementation's relative `../../evm2` path resolves | `bash tools/fetch-implementations.sh && cd adapters/evm2 && cargo build --locked` |
 
 Both declare `state-transition` with its mandatory groups, `group:gas-pools`, `group:limit-stop`,
-`group:reads`, `group:returned-state` and the features `deposit`, `salt` and `synthetic-transaction`. The revm-based adapter
-also runs a recorded `oracle-transcript`; the evm2-based adapter does not consume transcripts
-(D-45). Its connected service records hints and supplies no answers, so Oracle reads use the
-slot's value. Neither runs sparse pre-states, injected faults, or engine isolation of a deposit-only
+`group:reads`, `group:returned-state` and the features `deposit`, `oracle-transcript`, `salt` and
+`synthetic-transaction`. Neither runs sparse pre-states, injected faults, or engine isolation of a deposit-only
 or activation block. Both use the production SALT mapping and the implementation's own toolchain,
 and each reports its build identity from what its build resolved (the lockfile's commit, the `vendor/` checkouts' heads).
 Each hands its implementation the case's SALT input as the format defines it (a listed bucket at

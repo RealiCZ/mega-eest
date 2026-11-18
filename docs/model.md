@@ -298,6 +298,16 @@ specification's text and constants:
   restored account's record history after the child share is returned. The transaction's own
   zero-value call to an absent recipient accounts for no recipient record or rise.
 
+- **Recorded Oracle requests** (D-190). An ordinary transaction's SLOAD in the Oracle's own
+  frame loads the journal slot, consumes the next service reply, marks the access and pays
+  the cold charge. A reply wins over the held value. A null reply selects the current
+  journal value, including any standing write (`SATIN-ORCL-002`, `-004`, `-005`).
+  The model retains the request even if the read's charge fails. It rejects an unexpected
+  request or unused transcript entry. It records service replies in `reads.oracle` and
+  derives the bytecode result independently. The returned Oracle slot reflects
+  journal state. On-chain persistence and block inclusion are governed by
+  `SATIN-ORCL-012` and `SATIN-ORCL-013`.
+
 - **System entry checks and a static KeylessDeploy call** (D-129, D-130). A transaction's own
   `isVolatileDataAccessDisabled()` query answers false at its four-byte selector. Nonmatching
   inputs run the held code. A child `STATICCALL` with KeylessDeploy's selector runs its bytecode
@@ -318,7 +328,7 @@ without code (`SATIN-SYSC-005`, D-97).
 | Wide combinations of frames, calls and limits, and their many orders | The differential gates of the evm2-based implementation's repository (`next/diff`), which compare two independent engines over thousands of shared scenarios |
 | Blocks, block building and the stateless witness as profiles | Later phases of the suite, and the same differential gates |
 | A pre-state outside the specification: storage at a system contract's address in an account without code (`SATIN-SYSC-005`); and the pre-block deployment of the system contracts that would run on it (`SATIN-SYSC-003`, `SATIN-REG-008`), which no single transaction runs | Nothing: no execution from such a state is specified, so no case holds one (D-97). The deployment from a valid state belongs to the block profiles |
-| A creating deposit with an endowment other than from `MAX_NONCE`, a failed deposit from a sender at `MAX_NONCE`, an Oracle read the service answers, a transaction's own hint stopped at the data-size limit, and MegaAccessControl's answers other than `disableVolatileDataAccess()` and the transaction's own state query (D-109, D-110, D-130) | Each implementation; the evm2-based implementation's own tests and differential gates |
+| A creating deposit with an endowment other than from `MAX_NONCE`, a failed deposit from a sender at `MAX_NONCE`, a transaction's own hint stopped at the data-size limit, and MegaAccessControl's answers other than `disableVolatileDataAccess()` and the transaction's own state query (D-109, D-110, D-130) | Each implementation; the evm2-based implementation's own tests and differential gates |
 | An expectation two engines agree on but the model does not derive | Nothing, today. Such a case would be a different kind of expectation, an agreement rather than a derivation from the specification, and would have to be labelled apart from the spec-derived cases (its own provenance status and evidence) if it were ever added |
 
 The model is not the executable specification of Satin. A specification that runs is a direction the
@@ -348,7 +358,7 @@ model could grow towards; it is not a decision, and nothing in the suite assumes
 | `keyless.py` | A keyless deployment past step 3's encoding check: the carried transaction and its signer, steps 3 to 15, the creation, its collision, the signer's nonce and records, `gasUsed` and the answer (D-79) |
 | `authorizations.py` | An EIP-7702 list before the first frame: its simulation, each entry's gates and the checks of its authority's code and nonce, a list that does not fit and is skipped, each entry's charges and records, the sender's own entry, a further entry for one authority |
 | `storage.py` | `SSTORE` at Satin's prices, with its state gas, refund, record and limits, a store of a marked account, in a detained frame its static cost apart and its state and history drawn from the withheld part first, and a creation's deposited code |
-| `reads.py` | The witness reads and hints, the keys and values of the returned transaction state, and the capacity served for each state charge |
+| `reads.py` | The witness reads, Oracle requests and hints, the keys and values of the returned transaction state, and the capacity served for each state charge |
 | `limits.py` | A write held to its frame's budget, the transaction's own or a child's, and then the transaction's limit, and the rules a case that pins the limit-stop page cites (D-73); a system-originated transaction's write, held to neither |
 
 A case's explanation, which `tools/make_slice.py --explain <caseId>` prints, names the model by its
