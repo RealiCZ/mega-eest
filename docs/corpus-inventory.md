@@ -6,7 +6,8 @@ materialized into candidate fixtures and re-filled), **evidence** (kept as prove
 evidence, never as an expected value), **separate lane** (stays where it is, as its own gate), or
 **excluded** (with the reason). No asset is imported in bulk in phases 0 and 1; conversions happen
 from phase 2 on, into a candidate namespace, each candidate keeping its original identity as an
-alias.
+alias. Whether an implementation's own test duplicates a case, and so can be deleted, is decided
+by [duplicate-tests.md](duplicate-tests.md).
 
 ## 1. The differential scenario crate (mega-evm `next/diff`)
 

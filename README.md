@@ -44,6 +44,7 @@ reviewed `state-transition` cases whose expectations are derived from the specif
 | [spec-identity.md](docs/spec-identity.md) | The pinned specification and the registry snapshot |
 | [spec-decisions.md](docs/spec-decisions.md) | The specification's own decision log, as fixtures depend on it |
 | [corpus-inventory.md](docs/corpus-inventory.md) | Existing test assets and what happens to each |
+| [duplicate-tests.md](docs/duplicate-tests.md) | When an implementation's own test duplicates a case, and what happens to each test |
 | [case-identity.md](docs/case-identity.md) | `caseId` rules and the semantic digest |
 | [format.md](docs/format.md) | The envelope, requirements, state, external inputs, observations and semantic checks |
 | [canonical-json.md](docs/canonical-json.md) | Canonical JSON, error codes and digests |
