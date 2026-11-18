@@ -1186,13 +1186,6 @@
     },
     "definition": "tools/make_slice.py::limit_cases",
     "generator": "tools/make_slice.py",
-    "quarantine": {
-      "actual": "0xf4240",
-      "adapter": "mega-eest-adapter-revm",
-      "expected": "0x61c9ac0",
-      "path": "/expected/gasPools/reservoir/final",
-      "verdict": "At 1a981f4b the first-frame observation reports the reservoir at the crossing. SATIN-STOP-009 settles the transaction's own stop like a revert. SATIN-POOL-014 adds all of the frame's net state and history charges to its reservoir, including the legacy shares paid from regular gas."
-    },
     "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
     "status": "candidate"
   },

@@ -208,16 +208,22 @@ case that does not require it.
   account's state gas, a delegate's access); the revm-based implementation's depth-0 call or create
   inputs (`gas_limit`, `reservoir`), the evm2-based implementation's first message (`gas_limit`,
   `reservoir`).
-- `regular.final` and `reservoir.final`: what the first frame's gas holds when it ends, its
-  outcome's `remaining()` and `reservoir()` in either implementation.
-- `spilled`: the regular gas the first frame, and the children that returned to it, paid for state
-  and history charges, legacy shares included, never credited back by a give-back; the outcome's
-  `state_gas_spilled()`. The evm2-based implementation's counter is this; the revm-based
-  implementation's lowers the counter when it credits a give-back to regular gas and counts no legacy
-  share, which is a difference of rule, not of mapping.
-- `returned`: the gas limit less the receipt's gas used.
-- A transaction that ran no frame (out of gas before it) has regular gas zero at both ends and, at
-  both ends, the reservoir it returns.
+- `regular.final` and `reservoir.final` are the first frame's balances after its own rollback
+  settlement and before transaction settlement (D-170, D-172). The revm adapter settles a
+  copy of the outer frame's end tracker with the engine's settlement helper. The evm2 end
+  callback supplies the settled balances.
+- `spilled` counts regular gas the first frame and its children paid for state and history,
+  including legacy shares. Both current pins expose this accumulator as
+  `state_gas_spilled()`. The revm adapter takes it from the original tracker before settling
+  the copy.
+- `returned` is the gas limit less the receipt's gas used. It also reflects any give-back of a
+  pre-frame charge at transaction settlement.
+- An out-of-gas before the first frame has zero regular gas and spill. Both reservoir
+  endpoints equal the gas returned to the sender. The evm2 adapter uses `top_started` to
+  distinguish this path from a frame that enters with a zero budget. The instrumented
+  `inspectorMessageStarts` diagnostic still counts the tracer's synthetic root message.
+- An authorization list that exceeds a limit ends the transaction's own frame with a stop.
+  Both endpoints are the regular gas and reservoir left after the intrinsic and body charges.
 
 ## The adapters of this repository
 

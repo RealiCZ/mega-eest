@@ -260,13 +260,6 @@
     },
     "definition": "tools/make_slice.py::keyless_cases",
     "generator": "tools/make_slice.py",
-    "quarantine": {
-      "actual": "0xc1dc8",
-      "adapter": "mega-eest-adapter-revm",
-      "expected": "0xeeaf8",
-      "path": "/expected/gasPools/reservoir/final",
-      "verdict": "At 1a981f4b the first-frame observation reports the reservoir before the signer charge is returned. SATIN-KEY-004 and SATIN-POOL-014 give back the entire step-10 state charge to the reverting frame's reservoir, including the share it paid from regular gas."
-    },
     "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
     "status": "candidate"
   },

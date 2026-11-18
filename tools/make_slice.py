@@ -1566,6 +1566,10 @@ def gas_pools_cases() -> list[Case]:
              f"frame's start: regular gas still pays the legacy share, {fmt(model.LEGACY_SSTORE_SHARE)}, and the reservoir "
              "the rest and the record", spec=spec, gas=model.EXECUTION_CAP + body + slot * 4, code=sstore(1, 1) + STOP,
              pools=True))
+    add(Case("satin/gas-pools/halt/fresh-slot-with-reservoir", "the first frame pays for and writes a fresh slot, "
+             "then INVALID halts it. The frame consumes its regular gas and restores the reservoir it received, "
+             "with its regular payment for the state charge recorded as spill (SATIN-POOL-014, SATIN-OUT-007).",
+             spec=CURRENT_SPEC, gas=model.EXECUTION_CAP + 1_000_000, code=sstore(1, 1) + INVALID, pools=True))
     # Give-backs land in the reservoir, never regular gas (SATIN-HIST-012).
     add(Case("satin/gas-pools/fresh-slot-restored", "0 -> 1 -> 0 with no reservoir: regular gas pays the slot's state gas "
              f"and record, {fmt(slot + record)}, and the give-back lands in the reservoir, which the first frame ends "
@@ -2802,7 +2806,7 @@ def limit_stop_cases() -> list[Case]:
              f"authority, crosses the transaction's limit of {fmt(growth)}, so the list is skipped, none of it applied or "
              "charged beyond the intrinsic gas and the body's history, and the transaction's own frame is stopped before "
              f"it runs with MegaLimitExceeded(3, {fmt(growth)})", spec=spec, stops=True, ty=4, to=EOA, code=b"",
-             gas=20_000_000, authorizations=entries))
+             gas=20_000_000, authorizations=entries, pools=True))
 
     # A deposit whose own frame is stopped settles as a revert, not a failed deposit (SATIN-STOP-010); the same
     # deposit one gas short of the crossing charge runs out of gas and is a failed deposit.
@@ -3101,7 +3105,7 @@ def authorization_cases() -> list[Case]:
         boundary=f"the list's state-growth total one past the limit, {fmt(growth + 1)}", stops=True,
         authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0), (KEY, CHAIN_ID, DELEGATE, 1)]
         + [(LIST_KEY + i, CHAIN_ID, bytes(20), 0) for i in range(growth + 1)],
-        accounts=funded, to=EOA, code=b"", gas=20_000_000)
+        accounts=funded, to=EOA, code=b"", gas=20_000_000, pools=True)
 
     # The simulation of a short list, its loads in the reads (SATIN-AUTH-001, -002, -005).
     three = {AUTHORITY: model.Account(balance=1), SECOND_AUTHORITY: model.Account(balance=1),
@@ -3228,7 +3232,7 @@ def authorization_gap_cases() -> list[Case]:
         "the list is skipped and the frame stopped, and the simulation, walking the whole list, still loads the last "
         "authority with its code, which the reads hold; the transaction is sent to its own sender, which validation loads, "
         "so the reads do not turn on whether a skipped list's transaction makes the recipient's load of step 4 (D-89)",
-        reads=True, stops=True, to=SENDER, code=None, gas=20_000_000,
+        reads=True, stops=True, pools=True, to=SENDER, code=None, gas=20_000_000,
         accounts=third_code, authorizations=[(LIST_KEY + i, CHAIN_ID, zero, 0) for i in range(growth + 1)]
         + [(THIRD_AUTH_KEY, CHAIN_ID, zero, 1)])
 
@@ -3307,7 +3311,7 @@ def authorization_gap_cases() -> list[Case]:
         boundary=f"the list's state-growth total one past the limit, {fmt(growth + 1)}",
         authorizations=[(AUTH_KEY, CHAIN_ID, D, 0), (KEY, CHAIN_ID, D, 1)]
         + [(LIST_KEY + i, CHAIN_ID, zero, 0) for i in range(growth + 1)],
-        accounts=funded, to=EOA, code=b"", gas=20_000_000)
+        accounts=funded, to=EOA, code=b"", gas=20_000_000, pools=True)
 
     # 14. Signatures that recover no authority beyond the all-zero one (SATIN-AUTH-002).
     for name, mode, why in (("y-parity-two", Y_PARITY_TWO, "a y_parity of 2, outside 0 and 1"),
@@ -3759,12 +3763,12 @@ def outcome_edge_cases() -> list[Case]:
              f"short of the created account's state gas, {fmt(state)}: the transaction runs out of gas before its first "
              "frame and is included out of gas, its fee charged, and its sender keeps the nonce bump the creation would "
              "have made, with no account created (SATIN-OUT-006, SATIN-SCHED-010)", boundary="the gas limit one below the "
-             "created account's state gas", spec=spec, outcomes=True, to=None, data=b"", gas=create_least - 1))
+             "created account's state gas", spec=spec, outcomes=True, to=None, data=b"", gas=create_least - 1, pools=True))
     add(Case("satin/outcomes/pre-frame/created-account-paid", f"a creation transaction with no initcode and a gas limit of "
              f"{fmt(create_least)}: the intrinsic gas, the body's history and the start record leave exactly the created "
              f"account's state gas, {fmt(state)}, so the charges before the first frame are paid; the frame runs nothing "
              "and creates an account without code (SATIN-OUT-006)", boundary="the gas limit at the created account's "
-             "state gas", spec=spec, outcomes=True, to=None, data=b"", gas=create_least))
+             "state gas", spec=spec, outcomes=True, to=None, data=b"", gas=create_least, pools=True))
 
     # SATIN-OUT-005, -013: a failed deposit uses its whole gas limit, its reservoir included.
     add(Case("satin/outcomes/deposit/halted-with-reservoir", f"a deposit with a gas limit one above the execution cap, "
@@ -4878,7 +4882,7 @@ def keyless_gap_cases() -> list[Case]:
         add(Case(f"satin/keyless/authorizations/{n}-new-authorities", f"an EIP-7702 list of {fmt(n)} new authorities "
                  f"before a deployment from an absent signer: {what}", system=True, spec=spec, ty=4,
                  to=model.KEYLESS_DEPLOY, code=None, data=keyless_input(carried(one), every), gas=1_000_000_000,
-                 authorizations=[(LIST_KEY + i, CHAIN_ID, DELEGATE, 0) for i in range(n)], stops=n > limit))
+                 authorizations=[(LIST_KEY + i, CHAIN_ID, DELEGATE, 0) for i in range(n)], stops=n > limit, pools=n > limit))
     # Gap 4: a delegated signer whose own code spends nonces while its creation runs: the constructor calls the signer,
     # whose delegate creates; bumps that survive the creation are all kept, ones its failure discards are not.
     lib = bytes.fromhex("00000000000000000000000000000000000c0e07")  # the signer's delegate
@@ -7701,27 +7705,7 @@ def build(c: Case, *, observe_returned: bool = False):
 # that the other implementation passes it. A record names the case's adapter, its first differing
 # path with both values, and a verdict that cites the rule and the revision it was recorded at.
 #
-QUARANTINE: dict[str, dict] = {
-    f"satin/keyless/refusal/{case}": {
-        "adapter": "mega-eest-adapter-revm",
-        "path": "/expected/gasPools/reservoir/final",
-        "expected": "0xeeaf8",
-        "actual": "0xc1dc8",
-        "verdict": "At 1a981f4b the first-frame observation reports the reservoir before the signer charge is "
-                   "returned. SATIN-KEY-004 and SATIN-POOL-014 give back the entire step-10 state charge to the "
-                   "reverting frame's reservoir, including the share it paid from regular gas.",
-    }
-    for case in ("occupied-after-signer-charge-with-reservoir", "insufficient-balance-with-reservoir")
-}
-QUARANTINE["satin/limit-stops/state-growth-one-over-with-reservoir"] = {
-    "adapter": "mega-eest-adapter-revm",
-    "path": "/expected/gasPools/reservoir/final",
-    "expected": "0x61c9ac0",
-    "actual": "0xf4240",
-    "verdict": "At 1a981f4b the first-frame observation reports the reservoir at the crossing. SATIN-STOP-009 "
-               "settles the transaction's own stop like a revert. SATIN-POOL-014 adds all of the frame's net state "
-               "and history charges to its reservoir, including the legacy shares paid from regular gas.",
-}
+QUARANTINE: dict[str, dict] = {}
 
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",

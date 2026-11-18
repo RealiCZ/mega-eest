@@ -51,9 +51,13 @@ specification's text and constants:
   the regular balance becomes zero and the reservoir returns to the amount the frame received
   (`SATIN-OUT-007`). The observation records regular gas paid for state and history as
   `spilled`. A give-back of a charge made before the frame is reflected in the transaction's
-  gas return (`SATIN-POOL-015`, `SATIN-HIST-005`). If the transaction settles without a first
-  frame, D-64's convention records the gas returned at both reservoir endpoints and zero
-  regular gas and spill.
+  gas return (`SATIN-POOL-015`, `SATIN-HIST-005`). A charge that runs out of gas before the first
+  frame selects D-64's no-frame convention (`SATIN-SCHED-010`). It reports the gas returned
+  at both reservoir endpoints and zero regular gas and spill. An authorization list skipped
+  for crossing a limit stops the transaction's own frame. It receives and returns the
+  two balances left after intrinsic and body charges (`SATIN-SCHED-009`, `SATIN-AUTH-010`,
+  `-011`, `SATIN-STOP-009`). The existing restriction in D-89 on a skipped list with an undefined
+  start-charge order still applies.
 - **The destruction page's shapes** (D-70): a `SELFDESTRUCT` of an account the transaction did not
   create, to another account, to the sender or to itself; a repeated one while the mark stands; the
   marked account, kept until the transaction ends, its stores, a code deposit after its constructor

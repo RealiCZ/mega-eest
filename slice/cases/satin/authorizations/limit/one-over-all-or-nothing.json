@@ -12,6 +12,18 @@
       "state": "0x0",
       "total": "0x1004ae8"
     },
+    "gasPools": {
+      "regular": {
+        "final": "0x30e218",
+        "initial": "0x30e218"
+      },
+      "reservoir": {
+        "final": "0x0",
+        "initial": "0x0"
+      },
+      "returned": "0x30e218",
+      "spilled": "0x0"
+    },
     "limit": {
       "dimension": "state-growth",
       "limit": "0x3e8",
@@ -147,6 +159,7 @@
   "requires": [
     "feature:salt",
     "group:gas-ledgers",
+    "group:gas-pools",
     "group:limit",
     "group:limit-stop",
     "group:outcome",

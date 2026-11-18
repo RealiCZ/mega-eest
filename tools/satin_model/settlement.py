@@ -21,7 +21,7 @@ class SettlementMixin:
     """Settlement and the observations: refund, floor, gas used, fees, ledgers, resources, receipt, the state"""
 
     def settle(self, total: int, floor: int, price: int, status: str, execution: dict, create: bool,
-               recipient: bytes | None) -> Result:
+               recipient: bytes | None, *, no_first_frame: bool = False) -> Result:
         """The settlement of an admitted transaction that is not a deposit: its refund, floor, gas used,
         fees, ledgers, resources and receipt."""
         tx, env, d = self.tx, self.env, self.d
@@ -107,7 +107,7 @@ class SettlementMixin:
         if self.reads:
             observations["reads"] = self.reads_observation()
         if self.pools:
-            observations["gasPools"] = self.pools_observation(status, gas_used)
+            observations["gasPools"] = self.pools_observation(status, gas_used, no_first_frame=no_first_frame)
         return Result(observations, d)
 
     def fee_accounts(self) -> set:

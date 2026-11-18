@@ -77,18 +77,19 @@ class PoolsMixin:
             return 0, frame["reservoir_at_start"]
         return frame["regular"], frame["reservoir"] + frame.get("net_charged", 0)
 
-    def pools_observation(self, status: str, gas_used: int) -> dict:
+    def pools_observation(self, status: str, gas_used: int, *, no_first_frame: bool) -> dict:
         """The first frame's pools at entry and after its own settlement (D-64), and the transaction's gas return."""
         frame, tx = self.first_frame, self.tx
         returned = tx.gas_limit - gas_used
-        if frame is None:
-            self.d.add("gasPools", "no first frame was built, so the observation reports zero regular gas and the "
+        if no_first_frame:
+            self.d.add("gasPools", "out of gas before the first frame, so the observation reports zero regular gas and the "
                        f"{fmt(returned)} gas returned to the sender as reservoir at both ends (D-64)",
-                       "SATIN-POOL-017")
+                       "SATIN-SCHED-010", "SATIN-POOL-017")
             return {"regular": {"initial": q(0), "final": q(0)},
                     "reservoir": {"initial": q(returned), "final": q(returned)},
                     "spilled": q(0), "returned": q(returned)}
 
+        assert frame is not None, "a settled first frame must have pool endpoints"
         regular_end, reservoir_end = frame["regular"], frame["reservoir"]
         if status != "success":
             regular_end, reservoir_end = self.failed_frame_pools(frame, status)

@@ -44,7 +44,10 @@ use revm::{
         block::BlobExcessGasAndPrice,
         result::{EVMError, ExecutionResult, Output},
     },
-    interpreter::{interpreter::EthInterpreter, CallInputs, CallOutcome, CreateInputs, CreateOutcome},
+    interpreter::{
+        interpreter::EthInterpreter, CallInputs, CallOutcome, CreateInputs, CreateOutcome, Gas,
+        InterpreterResult,
+    },
     state::{AccountInfo, Bytecode},
     Database, Inspector,
 };
@@ -573,10 +576,14 @@ struct FrameRecorder {
 }
 
 impl FrameRecorder {
-    fn ended(&mut self, gas: &revm::interpreter::Gas) {
+    fn ended(&mut self, result: &InterpreterResult) {
         self.open -= 1;
         if self.open == 0 {
-            self.end = Some((gas.remaining(), gas.reservoir(), gas.state_gas_spilled()));
+            // The end hook precedes rollback settlement. Reuse it without changing execution gas.
+            let mut parent = Gas::new(0);
+            let mut child = *result.gas.tracker();
+            revm::handler::handle_reservoir_remaining_gas(result.result, parent.tracker_mut(), &mut child);
+            self.end = Some((child.remaining(), child.reservoir(), result.gas.state_gas_spilled()));
         }
     }
 }
@@ -591,7 +598,7 @@ impl<CTX> Inspector<CTX, EthInterpreter> for FrameRecorder {
         None
     }
     fn call_end(&mut self, _: &mut CTX, _: &CallInputs, outcome: &mut CallOutcome) {
-        self.ended(&outcome.result.gas);
+        self.ended(&outcome.result);
     }
     fn create(&mut self, _: &mut CTX, inputs: &mut CreateInputs) -> Option<CreateOutcome> {
         if self.open == 0 {
@@ -602,7 +609,7 @@ impl<CTX> Inspector<CTX, EthInterpreter> for FrameRecorder {
         None
     }
     fn create_end(&mut self, _: &mut CTX, _: &CreateInputs, outcome: &mut CreateOutcome) {
-        self.ended(&outcome.result.gas);
+        self.ended(&outcome.result);
     }
 }
 
