@@ -92,6 +92,18 @@ A case that looks like the test does not take over an obligation when:
   not take over a test of a path that only block execution takes (category 2), or of another entry
   point's own contract (category 3).
 
+### Loads and returned state
+
+A completed account or slot load has two observable obligations. The transaction performs the
+logical load, and its returned state names the key before commitment, including when a cache
+serves the load, a frame rolls back or stops, or a deposit fails (`SATIN-WIT-005`, `SATIN-WIT-008`).
+A database-read observation covers the load itself. To retire a returned-key assertion, use a gate
+that inspects the unfiltered execution result and fails when the key is missing. For a skipped
+load, distinguish an unexpected database read from an unexpected returned key. Use a transaction
+where no later probe supplies the key. Record any separate assertion on an entry's value or hash.
+An untouched returned entry must carry its pre-state value, so a gate that takes over that
+assertion must compare the returned value with the pre-state.
+
 ### The order of evidence
 
 Weigh evidence in this order:
@@ -113,7 +125,7 @@ Every obligation falls into one of four categories:
 
 | Category | Disposition | Notes |
 | --- | --- | --- |
-| 1. A single transaction's protocol behaviour | Delete the test once a gating case pins it. Where there is a gap, add the case to this suite first, then delete | Prefer strengthening an existing case to adding one; do not add a file for each old loop value, error variant or child-frame record. Test a child frame's forwarding and settlement through what its parent sees: the return value, success or failure, a balance, or whether a later charge can be paid. The ABI selectors and return arguments a contract can read, the precedence of conditions, the different treatment of the gas left at a halt and at a revert, and a stop the parent frame catches all belong here. A witness read is an obligation of its own: a refused path can leave the same state and receipt and still differ in its reads |
+| 1. A single transaction's protocol behaviour | Delete the test once a gating case pins it. Where there is a gap, add the case to this suite first, then delete | Prefer strengthening an existing case to adding one; do not add a file for each old loop value, error variant or child-frame record. Test a child frame's forwarding and settlement through what its parent sees: the return value, success or failure, a balance, or whether a later charge can be paid. The ABI selectors and return arguments a contract can read, the precedence of conditions, the different treatment of the gas left at a halt and at a revert, and a stop the parent frame catches all belong here. A refused path can leave the same state changes and receipt and still differ in its [loads and returned state](#loads-and-returned-state) |
 | 2. Protocol behaviour that needs block execution | Keep the test. Move it only after a replay of the `mega-evme` corpus runs the behaviour through the real entry point and its results are checked | The block budgets, the pre-block calls, effects across transactions, the block's receipt builder (`depositNonce`, for example), the merge of the block witness across transactions, and old rules replayed at historical heights |
 | 3. Implementation, product and tool contracts | Keep, as the smallest targeted unit test | Interfaces, assembly, entry points, serialization and decoders; the inspector and tracer interfaces; internal invariants; product settings (overrides, how a default propagates, which entry points take a setting); fault handling; the factory's routing of historical forks; performance, `no_std` and ZK |
 | 4. Differences a duplicate check can ignore | Delete the test; the suite does not change | The test differs only in a label of the same effect, or only in an internal trace or scaffolding, and its other obligations are covered. A halt's sub-reason is such a label (`SATIN-OUT-018`). So is the name of a refusal merged into one class, provided each input that could be wrongly accepted has its case: `chain-id-mismatch` refuses both a transaction signed for another chain (`satin/validation/chain-id-mismatch`) and a type-2 transaction carrying chain id 0 (`satin/validation/chain-id/fee-market-chain-zero`, `SATIN-VAL-006`) |
