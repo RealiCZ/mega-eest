@@ -10820,6 +10820,2174 @@
       }
     },
     {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/five-byte-runtime/below-cap",
+      "file": "cases/satin/keyless/pools/five-byte-runtime/below-cap.json",
+      "fileDigest": "sha256:9c2e399377b07b40a6374743d0b1b4f8d31c6c3525ea135fcefe8d0bc566a91f",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/five-byte-runtime/above-cap",
+      "file": "cases/satin/keyless/pools/five-byte-runtime/above-cap.json",
+      "fileDigest": "sha256:dc6a63c60f3a21eea91c0c966eb9f3f95b9a9ff0e32f9631f7d2fefa50f39b51",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/balance-only-address/below-cap",
+      "file": "cases/satin/keyless/pools/balance-only-address/below-cap.json",
+      "fileDigest": "sha256:53358c3369ec388b4b19d320396dfd1835c29ecaa4c2c1e900d79d0d83004dec",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-011",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/balance-only-address/above-cap",
+      "file": "cases/satin/keyless/pools/balance-only-address/above-cap.json",
+      "fileDigest": "sha256:134b2a1f3a6110332a094da6241275d6dfc7a3933bb12ace05cab880bda51091",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-011",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/refund-before-receipt/below-cap",
+      "file": "cases/satin/keyless/pools/refund-before-receipt/below-cap.json",
+      "fileDigest": "sha256:00f5ef78c552cd3a1dba43f7660aebce348bc6dc4a3ba17cc7c25baba78ecce5",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/refund-before-receipt/above-cap",
+      "file": "cases/satin/keyless/pools/refund-before-receipt/above-cap.json",
+      "fileDigest": "sha256:796aaca9c3ce6196f1dd127f3ba58cff94f9712243568cb3e9662394842b02b0",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-one-slot-stop/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-one-slot-stop/below-cap.json",
+      "fileDigest": "sha256:7d5f337706bb17be45958d0685a8408c6aa693b2bdc3210977aabc5f20207d31",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016",
+        "SATIN-KEY-017",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-one-slot-stop/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-one-slot-stop/above-cap.json",
+      "fileDigest": "sha256:4007410a21d3e76a34a9a6a9e124f85fe4fcce11d261deab7717bf084be42925",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-KEY-016",
+        "SATIN-KEY-017",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/delegated-signer-in-prestate/below-cap",
+      "file": "cases/satin/keyless/pools/delegated-signer-in-prestate/below-cap.json",
+      "fileDigest": "sha256:7df61a86930c2da290d5b82986dc9dced7a7ba5fdf7fbbdfecccab108db24f7e",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/delegated-signer-in-prestate/above-cap",
+      "file": "cases/satin/keyless/pools/delegated-signer-in-prestate/above-cap.json",
+      "fileDigest": "sha256:1cebaea22841909cfa7e02e661b081791e5fae54e57a3333c7d89880aa4bc9a6",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/delegated-signer-by-authorization/below-cap",
+      "file": "cases/satin/keyless/pools/delegated-signer-by-authorization/below-cap.json",
+      "fileDigest": "sha256:044245d5ac983e8b7ae09a0a01ef9d92ca98c2f6dee2e30f70770ccf827b4b0a",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/delegated-signer-by-authorization/above-cap",
+      "file": "cases/satin/keyless/pools/delegated-signer-by-authorization/above-cap.json",
+      "fileDigest": "sha256:97ff903589d761f10f65a5af53fb9fff9f4c6d4f7ef8a86e0010826445bd10cd",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/revert-from-nonce-0/below-cap",
+      "file": "cases/satin/keyless/pools/revert-from-nonce-0/below-cap.json",
+      "fileDigest": "sha256:ca77a9df1315d6fabd46b28fe4f492ee737ae2bc563f34b85e339ef609257122",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/revert-from-nonce-0/above-cap",
+      "file": "cases/satin/keyless/pools/revert-from-nonce-0/above-cap.json",
+      "fileDigest": "sha256:3e39f1f4e203d4546b28587f97f4100cd3ed2392722515269d8da4fdfd56f881",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-0-without-value/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-0-without-value/below-cap.json",
+      "fileDigest": "sha256:a195ea56ba5a7fe59a88c3d9b5d4903403d47c7666e72a0fc4cedb610d9a9f17",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-0-without-value/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-0-without-value/above-cap.json",
+      "fileDigest": "sha256:27f92f0da453487a598ae6f2b9279e094c087b60d295d612750772873fa47760",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-0-with-value/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-0-with-value/below-cap.json",
+      "fileDigest": "sha256:7386c3a3a06c9f0fa6a4d9c76fba7050ba112a0f25c99ed8c576c9205ff6e119",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-0-with-value/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-0-with-value/above-cap.json",
+      "fileDigest": "sha256:d8d311e8722ebdb7965aa39a8df3844912bb20f55d31a8d16b80df8618648de2",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/revert-from-nonce-1/below-cap",
+      "file": "cases/satin/keyless/pools/revert-from-nonce-1/below-cap.json",
+      "fileDigest": "sha256:95ffe245d182514067b6cbbe31e180bfc245bcc50f35a7e6e7fd5ec84fc881ad",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/revert-from-nonce-1/above-cap",
+      "file": "cases/satin/keyless/pools/revert-from-nonce-1/above-cap.json",
+      "fileDigest": "sha256:9fc96a621fcfed3a3314f147268862c30f7eb398664f912fcabcce940cee9f4d",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-1-without-value/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-1-without-value/below-cap.json",
+      "fileDigest": "sha256:d3ef16f91389f79684ac0bbb303884bf23a7822e6cf37aa3faf674f589d13543",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-1-without-value/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-1-without-value/above-cap.json",
+      "fileDigest": "sha256:d5c1944c4a286685886223e556c4a3c766f65ca774f5a3c423e49930105aea04",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-1-with-value/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-1-with-value/below-cap.json",
+      "fileDigest": "sha256:950ac68b2e0d45472ffb9d7933e794e0cfc4373d616476095f96d06a19bac7b2",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-1-with-value/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-1-with-value/above-cap.json",
+      "fileDigest": "sha256:a05e5ea223f966bc2723acd4bb732a8a1190248693382a6d3dd8da0e30958aea",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/carried-value-exact-balance/below-cap",
+      "file": "cases/satin/keyless/pools/carried-value-exact-balance/below-cap.json",
+      "fileDigest": "sha256:fbc1db341ee08a02398d9f0ab928166614264c10f460e850040198e377432ba1",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/carried-value-exact-balance/above-cap",
+      "file": "cases/satin/keyless/pools/carried-value-exact-balance/above-cap.json",
+      "fileDigest": "sha256:8ba8e8242c775c14c9606979f7786e5c83a4e8b8537ec69d76d6b9c94b5fbc22",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/carried-value-surplus-balance/below-cap",
+      "file": "cases/satin/keyless/pools/carried-value-surplus-balance/below-cap.json",
+      "fileDigest": "sha256:8ce6bd7ae8acf80199db142b8ac32c693ae8b36ae56be1daf98d0d0a8b6a236e",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/carried-value-surplus-balance/above-cap",
+      "file": "cases/satin/keyless/pools/carried-value-surplus-balance/above-cap.json",
+      "fileDigest": "sha256:dcb4258cb506fbe5f9c5420576ab82f9f541fdb96858fa86f01137531c032c23",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/three-byte-revert/below-cap",
+      "file": "cases/satin/keyless/pools/three-byte-revert/below-cap.json",
+      "fileDigest": "sha256:ca2008ec9ff46edec58485c9715cbca6e90e082962d9c6d7a8bc605fca31d1a5",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/three-byte-revert/above-cap",
+      "file": "cases/satin/keyless/pools/three-byte-revert/above-cap.json",
+      "fileDigest": "sha256:ac4cb1c87f5177cf4a3df4e96636ae64338856636f416c840c2074312d08244a",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/refusal/empty-signer-after-create-charge",
+      "file": "cases/satin/keyless/refusal/empty-signer-after-create-charge.json",
+      "fileDigest": "sha256:dfc412ae109a63dbbdcd5510f79a7f0142200bbe68d595ca730b4214f2f1ee99",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/inner-empty-creation/below-cap",
+      "file": "cases/satin/keyless/pools/inner-empty-creation/below-cap.json",
+      "fileDigest": "sha256:b10293d633cc01872bf1baa8c1ef60ee0ba6e613494147b8fd344737004b5ce4",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/inner-empty-creation/above-cap",
+      "file": "cases/satin/keyless/pools/inner-empty-creation/above-cap.json",
+      "fileDigest": "sha256:045aaabd02bfa235d8d55b2fa693b16a2d4bf5ceb0ef418be25a2f1d4ed7ef4b",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-runtime-signed-forward/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-runtime-signed-forward/below-cap.json",
+      "fileDigest": "sha256:b9bdf6a6fbdf3e09ec5d9eef48d9ed5b2a8c679201f31c6170e755564887cae3",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-runtime-signed-forward/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-runtime-signed-forward/above-cap.json",
+      "fileDigest": "sha256:4ebcb90a24f20478dd12ac421d7fbc12de07349181f1d702d79a0785f709d6f2",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-runtime-override-forward/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-runtime-override-forward/below-cap.json",
+      "fileDigest": "sha256:bcef9ffbf7ed334bfbd0e3aa1752d0807d552bc06a8e6d4e5fe9bc097ee4006c",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-runtime-override-forward/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-runtime-override-forward/above-cap.json",
+      "fileDigest": "sha256:c07541597c5d9fd729eab9abaeee195cece400e32679ef6bcf7a2e6b1041a593",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-empty-initcode-signed-forward/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-empty-initcode-signed-forward/below-cap.json",
+      "fileDigest": "sha256:9401240f1b58a39396c266e88d6a372a7a292eb43d3fcc6dee007388f6433a85",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-empty-initcode-signed-forward/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-empty-initcode-signed-forward/above-cap.json",
+      "fileDigest": "sha256:60c4f059200746a46bb466c237ea52f399828e75c84e96608eb70a3d44f9cd85",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-empty-initcode-override-forward/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-empty-initcode-override-forward/below-cap.json",
+      "fileDigest": "sha256:f2f0f70f5e8fde9d073ca2145e5b43b70cb997317cb58b29ea0812c79705e1de",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-empty-initcode-override-forward/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-empty-initcode-override-forward/above-cap.json",
+      "fileDigest": "sha256:db6deba0da76b86d63057d0acefd805d273b3be5e8c491b35c66b76dc9ede120",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-invalid-signed-forward/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-invalid-signed-forward/below-cap.json",
+      "fileDigest": "sha256:a980cf5aa681b4560ae744eabd98e20e80cb691694cee2adb467f87265b54e18",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-invalid-signed-forward/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-invalid-signed-forward/above-cap.json",
+      "fileDigest": "sha256:7797eee2ac4f4cac8adc07d2a06501cc02d1cdfd58f83d18c7b804240055cd2f",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-invalid-override-forward/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-invalid-override-forward/below-cap.json",
+      "fileDigest": "sha256:f15501e6cd8e860acfb75a3eb39a3cb1fdc255fe24837aec4938f95a709ffc82",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-invalid-override-forward/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-invalid-override-forward/above-cap.json",
+      "fileDigest": "sha256:3dcad926e57c79612f2974d443870d0cd5abe9b2e8de8b773d34add9d78f2d79",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-log-signed-forward/below-cap.json",
+      "fileDigest": "sha256:915d7fa665b61a0881c73dc671b1c09f243ce1c9ee20e75adbdddb4e7d053428",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-log-signed-forward/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-log-signed-forward/above-cap.json",
+      "fileDigest": "sha256:795109a33ea5f7187942371b7d8f5cc25e665c5967ed4c298bda5a881b0001dc",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-log-override-forward/below-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-log-override-forward/below-cap.json",
+      "fileDigest": "sha256:836eed8ad8f185019b9f3b177642b1e034783996f0d6ad30bf7ffd59e5a1e942",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nonce-only-collision-log-override-forward/above-cap",
+      "file": "cases/satin/keyless/pools/nonce-only-collision-log-override-forward/above-cap.json",
+      "fileDigest": "sha256:0aaf0a09d4a8b7585d4a5635c9d793196f25947936ea6b00829cb03bbb0128eb",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-008",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/buckets-1-3/below-cap",
+      "file": "cases/satin/keyless/pools/buckets-1-3/below-cap.json",
+      "fileDigest": "sha256:1a954b25f45168ed499f43659235ad97746a4e575d710ac654ed8872c2ee1bc7",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/buckets-1-3/above-cap",
+      "file": "cases/satin/keyless/pools/buckets-1-3/above-cap.json",
+      "fileDigest": "sha256:c2e440a518a96b3247d6196a0c80137e85b74b2c1d482e8ea74d6278ddd18054",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/buckets-2-1/below-cap",
+      "file": "cases/satin/keyless/pools/buckets-2-1/below-cap.json",
+      "fileDigest": "sha256:ed5f34550b83b25e986495ba8089c235ef327191741d116e816339701eab78e1",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/buckets-2-1/above-cap",
+      "file": "cases/satin/keyless/pools/buckets-2-1/above-cap.json",
+      "fileDigest": "sha256:4378a1f53041346faee151b48dac187fb6aa3125d2d0f4a073eea026bbeb3df9",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/buckets-1-2/below-cap",
+      "file": "cases/satin/keyless/pools/buckets-1-2/below-cap.json",
+      "fileDigest": "sha256:2449fd68d62a5b84f5edf313b4ac6d23f81deff694b74b9517d6a401e0710a66",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/buckets-1-2/above-cap",
+      "file": "cases/satin/keyless/pools/buckets-1-2/above-cap.json",
+      "fileDigest": "sha256:01bf528ad63bfcf8a1e0b3fb70aa438127b4dae408dd66e8e3ac93f00b8f8a51",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/buckets-3-2/below-cap",
+      "file": "cases/satin/keyless/pools/buckets-3-2/below-cap.json",
+      "fileDigest": "sha256:6ff3b521f8357929d1aac01630bbc54f4c7eb49d600230cacce2df092fd19b65",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/buckets-3-2/above-cap",
+      "file": "cases/satin/keyless/pools/buckets-3-2/above-cap.json",
+      "fileDigest": "sha256:f7afb3f5bb6ef5906a1ef6c6843de5a768e36ea565de861a9ccfd75836268df6",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-STATE-001",
+        "SATIN-STATE-012",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/invalid-opcode-signed-forward/below-cap",
+      "file": "cases/satin/keyless/pools/invalid-opcode-signed-forward/below-cap.json",
+      "fileDigest": "sha256:b34d72038d0748a5fb7f2319c7030cca03599ce9624bf86ff19395029faa9537",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-OUT-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/invalid-opcode-signed-forward/above-cap",
+      "file": "cases/satin/keyless/pools/invalid-opcode-signed-forward/above-cap.json",
+      "fileDigest": "sha256:8c3e8872dad5223cb4a140e741ac1f49d721d9b2b7bc87745a92b36a07fe1817",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-OUT-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/invalid-opcode-override-forward/below-cap",
+      "file": "cases/satin/keyless/pools/invalid-opcode-override-forward/below-cap.json",
+      "fileDigest": "sha256:f676039bec86b15b4f4a6be952ff7da86cb13806c0a7c7e3774d2c625a2fdb97",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-OUT-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/invalid-opcode-override-forward/above-cap",
+      "file": "cases/satin/keyless/pools/invalid-opcode-override-forward/above-cap.json",
+      "fileDigest": "sha256:2eb99de285b942c51b7538d2edb2cd3d44d9759054842daa44c200193e8274d6",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-OUT-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/empty-initcode/below-cap",
+      "file": "cases/satin/keyless/pools/empty-initcode/below-cap.json",
+      "fileDigest": "sha256:4eb92ffb91f20781d4e4c30bb74feb519b78e97955dcc4312ff2605882cfc411",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/empty-initcode/above-cap",
+      "file": "cases/satin/keyless/pools/empty-initcode/above-cap.json",
+      "fileDigest": "sha256:99f9d60b8d493d146f74eb25f9043c71278ad0cd763fe8153f6134e204619b5d",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/return-empty/below-cap",
+      "file": "cases/satin/keyless/pools/return-empty/below-cap.json",
+      "fileDigest": "sha256:9904286528bfcb69a0b7e7e97042ec4fa4c96bc881ceab140d03a2db8b518d9b",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/return-empty/above-cap",
+      "file": "cases/satin/keyless/pools/return-empty/above-cap.json",
+      "fileDigest": "sha256:8c228d8c1ac34e41a19e806c1e743565b93ed14d55be5627890ca9e72c57fb92",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/empty-code-after-effects/below-cap",
+      "file": "cases/satin/keyless/pools/empty-code-after-effects/below-cap.json",
+      "fileDigest": "sha256:ff0c1fe5c080de5e7cc5bf277010374edca55ae415090d501db8b05cc6cd7968",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/empty-code-after-effects/above-cap",
+      "file": "cases/satin/keyless/pools/empty-code-after-effects/above-cap.json",
+      "fileDigest": "sha256:c1459a23aec0630e98996fa7eb35b81854d90cd869a16053041d6cea1910f0bc",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-009",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/ef-code-deposit/below-cap",
+      "file": "cases/satin/keyless/pools/ef-code-deposit/below-cap.json",
+      "fileDigest": "sha256:780a6d9bedded2fe635b3694e88db4d1550957ec2f11ce59238cc417afa62f61",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-OUT-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/ef-code-deposit/above-cap",
+      "file": "cases/satin/keyless/pools/ef-code-deposit/above-cap.json",
+      "fileDigest": "sha256:baa92a4f7408a083bc87202f3c8892ae1298c12f032747247fc77512a8cce16f",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-OUT-007",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/reverts-after-fresh-slot/below-cap",
+      "file": "cases/satin/keyless/pools/reverts-after-fresh-slot/below-cap.json",
+      "fileDigest": "sha256:1caca0bbb7b1bbbdba2c1b066c45375656927f2141acfb57d06e31a6fe382aa6",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/reverts-after-fresh-slot/above-cap",
+      "file": "cases/satin/keyless/pools/reverts-after-fresh-slot/above-cap.json",
+      "fileDigest": "sha256:217031108bd22a7c85b0af7db151a034b4dcb7caaa8cad3a4ab78adedc567b5a",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/bare-revert/below-cap",
+      "file": "cases/satin/keyless/pools/bare-revert/below-cap.json",
+      "fileDigest": "sha256:407b2ec18425304a42b85034c2e2cd4e9a545a5234b996be8846aaca4b8dbfd5",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/bare-revert/above-cap",
+      "file": "cases/satin/keyless/pools/bare-revert/above-cap.json",
+      "fileDigest": "sha256:f7d2a7fe1a9eea62a8b40b44b61203d54ae34f8fdf8fc8f89ac16b0a57bfba5a",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-POOL-014",
+        "SATIN-POOL-015",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nested-contract-call/below-cap",
+      "file": "cases/satin/keyless/pools/nested-contract-call/below-cap.json",
+      "fileDigest": "sha256:6f9e42bc53f2b3812a0b68c86f03af8ab0f97f5cc313e29a06a09e46ab768eaa",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-003",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/nested-contract-call/above-cap",
+      "file": "cases/satin/keyless/pools/nested-contract-call/above-cap.json",
+      "fileDigest": "sha256:e6cc07c46c96c3bc1ae957a4b17079005982ca5975166d18af3eba4b37f6d9b6",
+      "rules": [
+        "SATIN-ICPT-004",
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-003",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-004",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008",
+        "SATIN-WIT-012"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/constructor-environment/below-cap",
+      "file": "cases/satin/keyless/pools/constructor-environment/below-cap.json",
+      "fileDigest": "sha256:15e7b5a1d506af22c5b05e0761c5145b667cde3f735a407dae1207558ebbe475",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "keyless",
+      "caseId": "satin/keyless/pools/constructor-environment/above-cap",
+      "file": "cases/satin/keyless/pools/constructor-environment/above-cap.json",
+      "fileDigest": "sha256:e0183a89adcce6087b018f8741f2fdc1809eb85739c07b6d0d868bf07c6cb2ea",
+      "rules": [
+        "SATIN-ICPT-006",
+        "SATIN-ICPT-007",
+        "SATIN-KEY-001",
+        "SATIN-KEY-002",
+        "SATIN-KEY-004",
+        "SATIN-KEY-005",
+        "SATIN-KEY-007",
+        "SATIN-KEY-011",
+        "SATIN-KEY-012",
+        "SATIN-KEY-013",
+        "SATIN-KEY-014",
+        "SATIN-KEY-015",
+        "SATIN-POOL-008",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
       "area": "gas-forwarding",
       "caseId": "satin/gas-forwarding/call/request-below-cap",
       "file": "cases/satin/gas-forwarding/call/request-below-cap.json",

@@ -3037,3 +3037,53 @@ test skipped loads. The keyless inner call forbids both derived keys. The value-
 LimitControl refusal and unfunded Oracle hint check the zero balances in the returned state.
 Existing cases keep their schema envelope and gain the capability requirement with the new
 observation.
+
+**D-153. Observe both pools around keyless creations.** Keep the earlier inputs and run the
+new deployment shapes below and above the execution cap. A successful first frame can report
+its pools after an inner revert, halt or stop. The low-tier step 15 refusal checks its error,
+spent regular gas and returned signer without requesting the failed frame's pools
+(`SATIN-KEY-004`, `SATIN-KEY-005`, `SATIN-POOL-008`, `SATIN-POOL-014`).
+
+**D-154. Separate the two leaf charges and the code deposit.** A balance-only deploy address
+keeps its balance without a created-leaf charge. Compare it with an empty address for the same
+runtime. Vary the signer and deploy-address buckets independently. Both leaf charges use their
+own multiplier, but the ABI gasUsed sees only the creation's deposit. The legacy shares are
+fixed (`SATIN-KEY-008`, `SATIN-KEY-015`, `SATIN-STATE-001`, `SATIN-STATE-012`).
+
+**D-155. Observe the whole signer after settlement.** Compare a pre-existing delegation with
+one installed by the transaction's authorization. In each tier a nonce-one signer restores its
+bump, including after a creation that reverts or stops. Funded nonce-zero comparisons keep
+their nonce records. With carried value the balance change keeps the record even when the bump
+is restored. Use both exact and surplus balances to observe the retained signer amount and the
+endowment (`SATIN-KEY-005`, `SATIN-KEY-013`, `SATIN-STATE-011`).
+
+**D-156. Distinguish constructor spending and refund.** A write followed by a clear earns a
+transaction refund. The keyless ABI reports the constructor's spend before that refund and the
+receipt deducts it. A three-byte revert, a revert after a storage write, and a bare empty revert
+remain separate. Each rollback returns the created account's charge, while leaving the nonce-zero
+signer's leaf and one record (`SATIN-KEY-014`, `SATIN-KEY-015`, `SATIN-POOL-015`).
+
+**D-157. Observe three reasons a creation halts.** A nonce-only target passes step 12 and then
+collides before initcode. An undefined opcode halts in initcode. A constructor that returns
+0xef-prefixed code halts at deposit under EIP-3541. For the collision and undefined opcode,
+check both an override equal to the signed limit and a larger override. The ABI and regular
+ledger show the actual forward was spent (`SATIN-KEY-008`, `SATIN-KEY-011`, `SATIN-KEY-014`,
+`SATIN-OUT-007`).
+
+**D-158. Distinguish an empty deposit from empty initcode.** Zero-byte initcode and an explicit
+empty RETURN have different constructor gas. Both refuse the empty deposit and restore the
+create effects. A separate constructor emits a nonempty log and writes a slot before the refusal.
+An empty creation made by the constructor itself succeeds and leaves a nonce-one account with
+empty code (`SATIN-KEY-009`, `SATIN-POOL-015`).
+
+**D-159. Observe nested dispatch and the constructor environment.** The nested contract call
+stores its success bit, return length and error selector. The inner signer and deploy address
+are forbidden returned keys. A separate constructor stores its initial GAS, ORIGIN, GASPRICE
+and CALLER to distinguish the whole forward, the outer transaction's environment and the signer
+(`SATIN-KEY-003`, `SATIN-KEY-011`, `SATIN-WIT-008`).
+
+**D-160. Check the typed operands of the pool return formula.** The gas used in the full
+returned-to-sender formula belongs to the current case's ledger. Confirm the transaction gas
+limit and the returned amount and check their subtraction before allowing either output to
+coincide with a stale value from another case. Include moved returned amounts in the global
+scan, so an old return fails even if no ledger or receipt held that number.

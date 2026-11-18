@@ -89,8 +89,8 @@ class PoolsMixin:
             self.d.add("gasPools", f"the first frame spent the whole of its regular gas and ends with none, its "
                        f"{fmt(frame['reservoir'])} of reservoir untouched by its computation: no compute limit or ledger of "
                        "its own holds computation, which regular gas pays", "SATIN-POOL-021", "SATIN-POOL-007")
-        self.d.add("gasPools", f"returned to the sender: gas limit {fmt(tx.gas_limit)} - gas used {fmt(gas_used)} = "
-                   f"{fmt(returned)}, the unspent regular gas and the reservoir left", "SATIN-POOL-017")
+        self.d.add("gasPools", f"returned to the sender: gas limit {fmt(tx.gas_limit)} - receipt gas used {fmt(gas_used)} = "
+                   f"{fmt(returned)}", "SATIN-POOL-017")
         return {"regular": {"initial": q(frame["regular_at_start"]), "final": q(frame["regular"])},
                 "reservoir": {"initial": q(frame["reservoir_at_start"]), "final": q(frame["reservoir"])},
                 "spilled": q(self.spilled), "returned": q(returned)}
