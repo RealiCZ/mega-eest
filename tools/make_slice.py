@@ -504,7 +504,7 @@ def cases() -> list[Case]:
                   limit_stop_gap_cases,
                   authorization_cases,
                   outcome_cases, outcome_edge_cases, keyless_cases,
-                  keyless_gap_cases, forwarding_cases, system_tx_cases, deposit_page_cases, oracle_page_cases,
+                  keyless_gap_cases, keyless_pool_cases, forwarding_cases, system_tx_cases, deposit_page_cases, oracle_page_cases,
                   system_contract_cases, system_pages_gap_cases, history_cases, accounting_cases, precompile_cases,
                   size_cases, precompile_gap_cases, size_gap_cases, pricing_cases, delegate_refusal_cases):
         made = group()
@@ -4889,6 +4889,152 @@ def keyless_gap_cases() -> list[Case]:
              f"byte{'s' if length > 1 else ''}: ExecutionReverted carries them, padded to a word, and the answer's length "
              "follows", carried(pad + mstore(0, int.from_bytes(bytes(range(0xA0, 0xC0)), "big"))
                                 + mstore(32, int.from_bytes(bytes(range(0xC0, 0xE0)), "big")) + revert(0, length)))
+    return out
+
+
+def keyless_pool_cases() -> list[Case]:
+    """The same keyless creation boundaries without and with an initial reservoir."""
+    out = []
+    below, above = model.EXECUTION_CAP // 4, model.EXECUTION_CAP * 2
+    signed_limit, large_override = 1_000_000, 10_000_000_000
+    page = dict(spec=CURRENT_SPEC, system=True, to=model.KEYLESS_DEPLOY, code=None, returned_state=True)
+
+    def case(name: str, intent: str, data: bytes, **kw) -> None:
+        out.append(Case(f"satin/keyless/{name}", intent, data=data, **page, **kw))
+
+    def pair(name: str, intent: str, init: bytes, *, signed: int = signed_limit, override: int = large_override,
+             value: int = 0, low: int = below, high: int = above, **kw) -> None:
+        data = keyless_data(carried(init, gas=signed, value=value), override)
+        for label, gas, tier in (("below-cap", low, "No initial reservoir."),
+                                 ("above-cap", high, "The transaction starts with a reservoir.")):
+            case(f"{name}/{label}", intent, data, gas=gas, pools=True,
+                 boundary=f"{tier} The final pools and spill record its charges (SATIN-POOL-008).", **kw)
+
+    def signer(**fields) -> dict:
+        return {SIGNER: model.Account(**fields)}
+
+    one, five = init_returning(bytes(1)), init_returning(bytes(5))
+    bare_revert = revert(0, 0)
+    rollback = "(SATIN-POOL-014, SATIN-POOL-015)"
+
+    # Reuse the minimum-bucket, five-byte creation across the leaf and SALT comparisons.
+    pair("pools/five-byte-runtime", "An absent signer and deploy address at minimum bucket capacity. The retained "
+         "leaf charges and their regular legacy shares are distinct from the creation's five-byte code deposit "
+         "(SATIN-STATE-001, SATIN-STATE-012)", five)
+    pair("pools/balance-only-address", "The same deployment onto an address holding only a balance preserves it. "
+         "The signer still pays for its leaf, but the deploy address adds no leaf charge or unit of growth "
+         "(SATIN-KEY-008, SATIN-STATE-011, SATIN-STATE-012)", five, accounts={DEPLOY: model.Account(balance=7_777)})
+    pair("pools/refund-before-receipt", "The constructor writes and clears slot zero before depositing a byte. "
+         "Its ABI gasUsed nets the pools before the refund, and the receipt gasUsed deducts the refund (SATIN-KEY-015)",
+         sstore(0, 1) + sstore(0, 0) + one)
+
+    # Each iteration writes a different high slot so its key cannot coincide with a gas figure.
+    # The created leaf uses one unit before the first store.
+    slots = model.TX_STATE_GROWTH_LIMIT * model.FRAME_SHARE_NUMERATOR // model.FRAME_SHARE_DENOMINATOR
+    counter = push(slots)
+    loop = push(1) + b"\x81" + push(1 << 64) + b"\x01\x55"  # SSTORE(base + counter, 1)
+    loop += push(1) + b"\x90\x03" + push(len(counter)) + b"\x56"  # decrement and jump back
+    exit_pc = len(counter) + 6 + len(loop)
+    fill_slots = counter + b"\x5b\x80\x15" + push(exit_pc) + b"\x57" + loop + b"\x5b\x50" + STOP
+    slot_signed = 150_000_000
+    slot_data = keyless_data(carried(fill_slots, gas=slot_signed), large_override)
+    slot_reservoir = (model.TX_BODY_SIZE + len(slot_data)) * model.COST_PER_HISTORY_BYTE
+    slot_reservoir += slots * model.SLOT_STATE + model.ACCOUNT_STATE + 5_000_000
+    pair("pools/nonce-one-slot-stop", "The constructor tries one fresh slot per unit of its budget, which the created "
+         f"leaf already uses one unit of. Its stop returns the nonce-one signer's bump and its record {rollback}",
+         fill_slots, signed=slot_signed, low=slot_signed + 5_000_000, high=model.EXECUTION_CAP + slot_reservoir,
+         accounts=signer(nonce=1, balance=1))
+
+    pair("pools/delegated-signer-in-prestate", "A nonce-one signer with an existing delegation indicator and no "
+         "balance passes step 9 without an authorization list. Its nonce record and history are returned", one,
+         accounts=signer(nonce=1, code=model.DELEGATION_PREFIX + DELEGATE))
+    pair("pools/delegated-signer-by-authorization", "This transaction's authorization delegates the signer. "
+         "The deployed code stands, the signer's bump is returned, and the list's record stays", one, ty=4,
+         authorizations=[(SIGNER_KEY, CHAIN_ID, DELEGATE, 0)])
+
+    for nonce in (0, 1):
+        pair(f"pools/revert-from-nonce-{nonce}", "An empty revert from a nonempty signer. A bump from zero and its "
+             f"record stand, while a bump from one and its record are returned {rollback}", bare_revert,
+             accounts=signer(nonce=nonce, balance=1 - nonce))
+        for value, label in ((0, "without-value"), (1, "with-value")):
+            pair(f"pools/nonce-{nonce}-{label}", "A funded signer deploys one byte. A bump from nonce one is taken "
+                 "back, but a carried wei changes the balance, so its record still stands (SATIN-KEY-013)", one,
+                 value=value, accounts=signer(nonce=nonce, balance=1_000))
+
+    for balance, value, label in ((10, 10, "exact-balance"), (10_000, 7_777, "surplus-balance")):
+        pair(f"pools/carried-value-{label}", "The signer funds the carried value from an existing balance. "
+             "Step 10 has no signer leaf charge, and both accounts record the transfer (SATIN-STATE-011)", one,
+             value=value, accounts=signer(balance=balance))
+
+    error_data = bytes.fromhex("c0ffee")
+    pair("pools/three-byte-revert", "The creation's three-byte revert is captured in the successful outer call. "
+         f"The inner and outer gasUsed agree, the body of the error is unaligned, and the signer spends its nonce {rollback}",
+         bytes_to_memory(error_data) + revert(0, len(error_data)))
+    refusal_signed = 500_000 + model.ACCOUNT_STATE
+    refusal_forward = refusal_signed - model.ACCOUNT_STATE
+    case("refusal/empty-signer-after-create-charge", "The signer's step 10 charge leaves enough to pass step 11. "
+         "Payment of step 14's CREATE and records lowers the forward below the signed limit at step 15. "
+         "GasLimitTooLow retains the spent regular gas and the signer keeps nonce zero (SATIN-KEY-004, SATIN-KEY-005)",
+         keyless_data(carried(bare_revert, gas=refusal_signed), large_override), gas=2_000_000,
+         tune=("keyless-15", refusal_forward))
+
+    pair("pools/inner-empty-creation", "The constructor's own CREATE may return empty code. The inner account "
+         "has empty code and nonce one, while its creator deposits nonempty code (SATIN-KEY-009, SATIN-STATE-012)",
+         create(0, b"") + one)
+
+    for name, init in (("runtime", one), ("empty-initcode", b""), ("invalid", INVALID),
+                       ("log", log(0, 0, 32, []) + one)):
+        for forward, label in ((signed_limit, "signed-forward"), (2_000_000, "override-forward")):
+            pair(f"pools/nonce-only-collision-{name}-{label}", "A nonce-only deploy address passes the code check. "
+                 "The subsequent collision burns the whole forward before initcode, emits no log and preserves "
+                 f"the target's empty code and nonce (SATIN-KEY-008) {rollback}", init, override=forward,
+                 accounts={DEPLOY: model.Account(nonce=1)})
+
+    for signer_bucket, created_bucket in ((1, 3), (2, 1), (1, 2), (3, 2)):
+        pair(f"pools/buckets-{signer_bucket}-{created_bucket}", "SALT prices the signer and created leaves separately. "
+             "Only the created address's bucket prices the code deposit in ABI gasUsed. The two legacy shares and "
+             "regular ledger are unscaled (SATIN-STATE-001, SATIN-STATE-012)", five,
+             salt={(SIGNER, None): signer_bucket, (DEPLOY, None): created_bucket})
+
+    for forward, label in ((signed_limit, "signed-forward"), (2_000_000, "override-forward")):
+        pair(f"pools/invalid-opcode-{label}", "An invalid opcode halts the constructor, spending the actual forward. "
+             f"The parent answers ExecutionHalted and keeps the signer's nonce and leaf charge (SATIN-OUT-007) {rollback}",
+             INVALID, override=forward)
+
+    for name, init in (("empty-initcode", b""), ("return-empty", ret(0, 0))):
+        pair(f"pools/{name}", "The deploy address receives no code. EmptyCodeDeployed reports the same gasUsed "
+             f"inside and outside the error, keeps the signer's bump, and emits no log (SATIN-KEY-009) {rollback}", init)
+    log_data = bytes.fromhex("deadbeef")
+    topic = int.from_bytes(bytes([0x11]) * 32, "big")
+    pair("pools/empty-code-after-effects", "The constructor stores a fresh slot and emits a LOG1, then explicitly "
+         f"returns empty code. The empty deposit refusal discards the account, storage and log {rollback}",
+         sstore(1, 1) + bytes_to_memory(log_data) + log(1, 0, len(log_data), [topic]) + ret(0, 0))
+    pair("pools/ef-code-deposit", "The constructor returns code beginning with 0xef. EIP-3541 rejects its deposit "
+         f"as an exceptional halt, and the outer call answers ExecutionHalted (SATIN-OUT-007) {rollback}",
+         init_returning(b"\xef\x00"))
+
+    pair("pools/reverts-after-fresh-slot", "A fresh slot written by the constructor is rolled back with the created "
+         f"account on revert. The spent signer nonce and its leaf remain {rollback}", sstore(1, 7) + bare_revert)
+    pair("pools/bare-revert", "A bare empty revert with no slot or log keeps only the signer's leaf and its one "
+         f"record. CREATE regular and the constructor's two PUSH0s stay spent {rollback}", bare_revert)
+
+    inner = keyless_data(carried(init_returning(bytes(2)), gas=signed_limit, key=OTHER_KEY), large_override)
+    inner_signer = ex.address_of(OTHER_KEY)
+    # CALL all available gas. Keep the inner success bit, return length and selector in storage.
+    operands = push(0) * 2 + push(len(inner)) + push(0) * 2 + push(int.from_bytes(model.KEYLESS_DEPLOY, "big"))
+    nested = bytes_to_memory(inner) + operands + b"\x5a\xf1"
+    nested += push(0) + b"\x55\x3d" + push(2) + b"\x55"  # success, then RETURNDATASIZE
+    nested += b"\x3d\x5f\x5f\x3e\x5f\x51" + push(224) + b"\x1c" + push(1) + b"\x55"  # selector
+    pair("pools/nested-contract-call", "A keyless constructor makes its own no-value call to KeylessDeploy. "
+         "It stores the nested failure flag, four-byte length and NotIntercepted selector. The inner signer "
+         "and deploy address are untouched (SATIN-KEY-003)", nested + one,
+         forbidden_accounts=(inner_signer, model.created_address(inner_signer, 0)))
+
+    env_words = b"".join(bytes([opcode]) + push(slot) + b"\x55" for slot, opcode in
+                         ((4, 0x5A), (5, 0x32), (6, 0x3A), (7, 0x33)))
+    pair("pools/constructor-environment", "The constructor stores GAS, ORIGIN, GASPRICE and CALLER in slots four "
+         "through seven. It sees the uncapped forward, the relayer's address and price, and the signer as caller "
+         "(SATIN-KEY-011)", env_words + one, gas_price=7)
     return out
 
 
