@@ -30,10 +30,14 @@ For every case of the selected manifest subset:
 2. If any `requires` entry is outside the declared capabilities, report `unsupported` with the
    missing entries and do not run it.
 3. Run the executor on the input. A panic, timeout, harness failure or missing input is `error`.
-4. Compare the actual document with `expected` (`mega_fixture_format::compare`). Equality is
-   exact on canonical values, with two rules: an optional group the case does not require is
-   ignored, and a `reasons` set matches when the implementation reports exactly one of its
-   entries (or none when it is empty).
+4. Compare the actual document with `expected` (`mega_fixture_format::compare`). Canonical
+   values compare exactly by default. Ignore optional groups the case does not require.
+   A `reasons` set matches when the implementation reports exactly one of its entries, or
+   none when the set is empty. For `returnedState`, the actual account and slot keys must
+   exactly match the non-null expected keys. An expected `null` requires the key to be
+   absent. Compare only the account fields the expectation lists. A slot expectation of
+   `{}` requires the key to be present, and a quantity also checks its value. See the
+   [returned-state comparison rules](format.md#returned-transaction-state).
 5. Map the verdict: `pass`; `fail` with the first differing semantic path and both values;
    `known-fail` when the consumer's own waiver list names this case and exactly this difference;
    `unsupported`; `error`.
@@ -171,8 +175,7 @@ a case that does not require them (decision D-61).
   off the case's pre-state outside its recording, as a node reads it for its block, and hands it
   to the implementation's context (`MegaContext::new_with_system_address`), which then reads
   nothing for it; the adapter records every load the run makes, never hiding one (D-94).
-- `reads` is compared as every other group: exactly, so a load the specification does not require,
-  and a load it requires that is missing, are each a difference.
+- The consumer compares `reads` exactly. A missing required load or an extra load is a difference.
 
 ### Returned transaction state
 
