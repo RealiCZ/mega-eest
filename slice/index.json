@@ -4178,7 +4178,7 @@
       "area": "take-backs",
       "caseId": "satin/take-backs/sent-back/round-trip-from-zero",
       "file": "cases/satin/take-backs/sent-back/round-trip-from-zero.json",
-      "fileDigest": "sha256:ef9576aa7f11dcb2b8ede3a0d0cbb97623bb91af3db36052cfee8bb533e42636",
+      "fileDigest": "sha256:8bd50a00b871ba640cd18cc91ef5f65c26009286af8ff022cce3ae63055b41d6",
       "rules": [
         "SATIN-ACCT-004",
         "SATIN-ACCT-006",
@@ -15702,6 +15702,25 @@
         "SATIN-ACCT-014",
         "SATIN-AUTH-008",
         "SATIN-STATE-011"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "accounting",
+      "caseId": "satin/accounting/authority/value-to-delegated-absent-authority",
+      "file": "cases/satin/accounting/authority/value-to-delegated-absent-authority.json",
+      "fileDigest": "sha256:e00cd326fc7e2ca80aab23250bda7630988f33a343a79764feabd5676fb51eaf",
+      "rules": [
+        "SATIN-ACCT-002",
+        "SATIN-ACCT-005",
+        "SATIN-ACCT-009",
+        "SATIN-ACCT-012",
+        "SATIN-ACCT-014",
+        "SATIN-AUTH-008",
+        "SATIN-AUTH-015"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",

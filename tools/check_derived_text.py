@@ -14,14 +14,18 @@ The old figures of a constant are:
 - the figures it feeds directly, from the table `MUTATIONS` below: the constant itself and its
   products with the byte counts and counts the slice uses;
 - every figure of a case's expected gas ledgers, receipt gas and resources that changes when the
-  constant changes: the sums and products the derivations reach. These figures are checked in that
-  case's text and in the slice's shared README. A value computed in a different case can coincide
-  with an old ledger figure without depending on it.
+  constant changes: the sums and products the derivations reach. Check these across the slice,
+  since one case can explain an old figure from another.
 
 A figure equal to one of the case's own inputs — its transaction's gas limit or value, or a number
 its contract code pushes (the system contracts' code aside) — is that input, which no constant
 sets, and is not taken for a stale figure: a call requesting 100,000 gas, or a gas limit of
 100,000, does not follow `KEYLESS_DEPLOY_OVERHEAD_GAS`.
+
+Within a derivation step, a numeric occurrence can also show that it follows the mutation by
+changing at the same position in the same sentence. The floor has explicit positions in the
+gas-ledger formulas that can be checked against the regenerated floor field. Those positions
+can hold a correct number that equals an old figure from another case.
 
 Usage:
     tools/check_derived_text.py
@@ -38,7 +42,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-from collections import defaultdict
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 TOOLS = ("make_slice.py", "make_examples.py", "salt_mapping.py")
@@ -83,6 +86,11 @@ MUTATIONS = {
 }
 
 NUMBER = re.compile(r"(?<![\w.\-])(\d{1,3}(?:,\d{3})+|\d+)(?![\w])")
+FLOOR_FORMULAS = (
+    re.compile(r"^floor = base [\d,]+ \+ \d+ x \d+ calldata and access-list bytes = (?P<floor>[\d,]+)$"),
+    re.compile(r"(?<=, floor )(?P<floor>[\d,]+)(?=\))"),
+    re.compile(r"block gas max\([\d,]+, (?P<floor>[\d,]+)\)$"),
+)
 
 
 def generate(out: str, changes: dict[str, int] | None = None) -> tuple[dict[str, str], dict]:
@@ -156,29 +164,50 @@ def inputs(doc: dict, explanation: dict | None) -> set[int]:
     return out
 
 
-def texts(files: dict[str, str], explained: dict):
-    """(file, where, text, the case's input figures) for every human-readable string of the slice and of the
-    explanations of its cases."""
+def derived_spans(step: str, baseline: str, floor: int | None) -> set[tuple[int, int]]:
+    """Numeric positions known to hold regenerated values in this derivation step."""
+    proven = set()
+    if NUMBER.split(step)[::2] == NUMBER.split(baseline)[::2]:
+        for earlier, current in zip(NUMBER.finditer(baseline), NUMBER.finditer(step), strict=True):
+            if earlier[1].replace(",", "") != current[1].replace(",", ""):
+                proven.add(current.span(1))
+    if floor is not None and step.startswith(("floor = base ", "gas used ")):
+        for formula in FLOOR_FORMULAS:
+            for match in formula.finditer(step):
+                if int(match["floor"].replace(",", "")) == floor:
+                    proven.add(match.span("floor"))
+    return proven
+
+
+def texts(files: dict[str, str], explained: dict, baseline: dict):
+    """(where, text, input figures, proven spans) for the slice and the cases' derivations."""
     for rel, raw in sorted(files.items()):
         doc = json.loads(raw)
         if rel == "index.json":
             for q in doc.get("quarantine", []):
-                yield q["file"], f"{rel} {q['caseId']} knownFail.verdict", q["knownFail"]["verdict"], set()
+                yield f"{rel} {q['caseId']} knownFail.verdict", q["knownFail"]["verdict"], set(), set()
             continue
-        explanation = explained.get(doc["caseId"])
+        case_id = doc["caseId"]
+        explanation = explained.get(case_id)
         own = inputs(doc, explanation)
         prov = doc.get("provenance", {})
         for key, value in sorted(prov.get("authoring", {}).items()):
-            yield rel, f"{rel} authoring.{key}", value, own
+            yield f"{rel} authoring.{key}", value, own, set()
+        earlier = {d["path"]: d["steps"] for d in baseline.get(case_id, {}).get("derivation", [])}
+        ledgers = (doc.get("expected") or {}).get("gasLedgers") or {}
         for d in (explanation or {}).get("derivation", []):
+            path = d["path"]
+            old_steps = earlier.get(path, [])
+            floor = int(ledgers["floor"], 16) if path == "/expected/gasLedgers" and "floor" in ledgers else None
             for i, step in enumerate(d["steps"]):
-                yield rel, f"{rel} --explain derivation {d['path']} step {i}", step, own
+                proven = derived_spans(step, old_steps[i] if i < len(old_steps) else "", floor)
+                yield f"{rel} --explain derivation {path} step {i}", step, own, proven
         if "quarantine" in prov:
-            yield rel, f"{rel} quarantine.verdict", prov["quarantine"]["verdict"], own
+            yield f"{rel} quarantine.verdict", prov["quarantine"]["verdict"], own, set()
         if "note" in prov:
-            yield rel, f"{rel} note", prov["note"], own
+            yield f"{rel} note", prov["note"], own, set()
     with open(os.path.join(ROOT, "slice", "README.md"), encoding="utf-8") as f:
-        yield None, "slice/README.md", f.read(), set()
+        yield "slice/README.md", f.read(), set(), set()
 
 
 def figures(files: dict[str, str]) -> dict[tuple, int]:
@@ -204,7 +233,7 @@ def main() -> int:
 
     failures = 0
     with tempfile.TemporaryDirectory(prefix="check-derived-text-") as tmp:
-        baseline, _ = generate(os.path.join(tmp, "baseline"))
+        baseline, baseline_explained = generate(os.path.join(tmp, "baseline"))
         base_figures = figures(baseline)
         for constant, (value, fed, *rest) in MUTATIONS.items():
             old = getattr(model, constant)
@@ -214,28 +243,23 @@ def main() -> int:
                     raise SystemExit(f"check_derived_text: {other} is not of {constant}'s value")
             mutated, explained = generate(os.path.join(tmp, constant.lower()), {constant: value, **companions})
             now = figures(mutated)
-            moved = defaultdict(set)
-            for key, figure in base_figures.items():
-                if key in now and now[key] != figure:
-                    moved[key[0]].add(figure)
-            shared = set(fed(model)) | {f for other in companions for f in (getattr(model, other),
-                                                                          getattr(model, other) - 1)}
-            all_stale = shared.union(*moved.values())
+            moved = {v for k, v in base_figures.items() if k in now and now[k] != v}
+            stale = set(fed(model)) | moved | {f for other in companions for f in (getattr(model, other),
+                                                                                  getattr(model, other) - 1)}
             found = []
             scanned = 0
-            for rel, where, text, own in texts(mutated, explained):
+            for where, text, own, proven in texts(mutated, explained, baseline_explained):
                 scanned += 1
-                local = all_stale if rel is None else moved.get(rel, ())
                 for m in NUMBER.finditer(text):
                     figure = int(m.group(1).replace(",", ""))
-                    if (figure not in shared and figure not in local) or figure in own:
+                    if figure not in stale or figure in own or m.span(1) in proven:
                         continue
                     context = text[max(0, m.start() - 40):m.end() + 40]
                     found.append((where, m.group(1), context.replace("\n", " ")))
             changed = sum(1 for k in now if k in base_figures and now[k] != base_figures[k])
             also = "".join(f" (with {other} -> {fmt(v)})" for other, v in companions.items())
             print(f"check_derived_text: {constant} {fmt(old)} -> {fmt(value)}{also}: {len(mutated)} files regenerated, "
-                  f"{scanned} texts scanned, {len(all_stale)} old figures sought ({changed} expected figures moved): "
+                  f"{scanned} texts scanned, {len(stale)} old figures sought ({changed} expected figures moved): "
                   f"{'ok' if not found else f'{len(found)} stale'}")
             for where, figure, context in found:
                 print(f"  stale {figure} in {where}: ...{context}...")

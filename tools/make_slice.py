@@ -2062,8 +2062,8 @@ def take_back_cases() -> list[Case]:
     exact = 5
     add(Case("satin/take-backs/sent-back/round-trip-from-zero", "an existing contract starts at zero balance, receives "
              "value and returns it in full to the contract that sent it. Both account records and their history are "
-             "taken back, while both transfer logs remain (SATIN-ACCT-004, SATIN-ACCT-006, SATIN-HIST-009)",
-             spec=CURRENT_SPEC, contract_balance=10,
+             "taken back. The two transfer logs and the transaction's calldata remain counted "
+             "(SATIN-ACCT-004, SATIN-ACCT-006, SATIN-HIST-009)", spec=CURRENT_SPEC, contract_balance=10, data=b"\x01",
              code=jump_if(b"\x34", STOP, call(MAX_GAS, RETURNER, exact, 0) + b"\x50" + STOP),
              accounts={RETURNER: model.Account(nonce=1, code=call(MAX_GAS, CONTRACT, exact, 0) + b"\x50" + STOP)}))
     # The signs turned: Q first sends P 1 wei, then P's call to Q takes both records back, and Q's call back would make
@@ -6175,10 +6175,15 @@ def accounting_cases() -> list[Case]:
          "The delegated frame transfers value from the sender to an absent account. Only the recipient adds a "
          "record and growth (SATIN-ACCT-008, SATIN-ACCT-014)", spec=CURRENT_SPEC, to=SENDER, code=None,
          sender_code=delegation, accounts={DELEGATE: model.Account(nonce=1, code=send(PAYEE_R) + STOP)})
+    authorizing_transfer = dict(spec=CURRENT_SPEC, ty=4, lists=True, code=None, value=1,
+                                authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0)])
     case("authority/value-to-distinct-absent-recipient", "a transaction applies an authorization to an absent authority "
          "and carries value to a different absent address. Both accounts are charged, recorded and counted for growth "
-         "(SATIN-AUTH-008, SATIN-ACCT-014, SATIN-STATE-011)", spec=CURRENT_SPEC,
-         ty=4, lists=True, to=ABSENT, code=None, value=1, authorizations=[(AUTH_KEY, CHAIN_ID, DELEGATE, 0)])
+         "(SATIN-AUTH-008, SATIN-ACCT-014, SATIN-STATE-011)", to=ABSENT, **authorizing_transfer)
+    case("authority/value-to-delegated-absent-authority", "a transaction applies a nonzero delegation to its own "
+         "absent value recipient. The account and its indicator are charged once, and the value start keeps the same "
+         "one record and rise (SATIN-ACCT-009, SATIN-AUTH-008, SATIN-AUTH-015)",
+         to=AUTHORITY, **authorizing_transfer)
     # SATIN-ACCT-020: a failed deposit's caller, empty under EIP-161, counts one unit of state growth, uncharged.
     intrinsic = model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE
     for name, held, tail in (("failed-deposit/empty-leaf-caller", model.Account(), "an empty leaf, empty under EIP-161: "

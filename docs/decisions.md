@@ -2988,8 +2988,9 @@ endpoint. A value creation followed by a transfer shares its creator record. A v
 sender and a different recipient (`SATIN-ACCT-004`, `SATIN-ACCT-006`, `SATIN-ACCT-011`). Code
 delegated by the transaction's sender can fund an absent account without recording the sender.
 An absent authorization authority and a distinct value recipient each count their own state
-growth. A successful delegate can take back its parent's fresh-slot write. The same write stands
-when the delegate restores the slot and then halts.
+growth. If the authority installs a delegation at the value recipient, its account has one
+record and one rise. A successful delegate can take back its parent's fresh-slot write. The same
+write stands when the delegate restores the slot and then halts.
 
 **D-133. Execution writes at fee addresses.** Independent calls and destructions isolate
 execution's writes to each fee address. A write to a fee address other than the sender is an
@@ -3002,10 +3003,10 @@ by a first-frame revert. A successful caller sends two distinct hints and the ob
 them in the order the service received them (`SATIN-ORCL-006`, `SATIN-ORCL-009`).
 
 **D-135. Exact return and empty-initcode refusal.** A contract initially at zero balance returns
-the value it received to its sender. Both records and their history are taken back and both
-transfer logs stand (`SATIN-ACCT-006`, `SATIN-HIST-009`). A nonce-zero creation caller attempts
-an unfunded endowment with empty initcode. Its return word is zero and its nonce and records stay
-as they were (`SATIN-ACCT-005`, `SATIN-SIZE-005`).
+the value it received to its sender. Both records and their history are taken back. The
+transaction's calldata and both transfer logs still count (`SATIN-ACCT-006`, `SATIN-HIST-009`).
+A nonce-zero creation caller attempts an unfunded endowment with empty initcode. Its return word
+is zero and its nonce and records stay as they were (`SATIN-ACCT-005`, `SATIN-SIZE-005`).
 
 **D-150. Observe the transaction state returned for commitment.** The optional
 `group:returned-state` checks completed account and slot loads in the unfiltered execution

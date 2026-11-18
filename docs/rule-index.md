@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1053** (1053 gating, 0 quarantined).
+Cases: **1054** (1054 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -35,6 +35,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/body/access-list-duplicate-entries] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/body/access-list-one-entry] | gating | unqualified | [satin-bcf260d] |
@@ -186,6 +187,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/beneficiary-is-applied-authority] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/beneficiary-is-sender] | gating | unqualified | [satin-bcf260d] |
@@ -277,6 +279,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/beneficiary-is-applied-authority] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-ACCT-010
@@ -334,6 +337,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/body/access-list-duplicate-entries] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/body/access-list-one-entry] | gating | unqualified | [satin-bcf260d] |
@@ -403,6 +407,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/merge/creation-endowment-unfunded] | gating | unqualified | [satin-bcf260d] |
@@ -793,6 +798,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/absent-authority-sequential-nonces] | gating | unqualified | [satin-83c0d26] |
@@ -981,6 +987,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/absent-authority-sequential-nonces] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
@@ -8980,6 +8987,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/access-control/refused-read]: ../slice/cases/satin/access-control/refused-read.json
 [satin/access-control/refused-read-under-static-gas]: ../slice/cases/satin/access-control/refused-read-under-static-gas.json
 [satin/accounting/authority/value-call-after-list]: ../slice/cases/satin/accounting/authority/value-call-after-list.json
+[satin/accounting/authority/value-to-delegated-absent-authority]: ../slice/cases/satin/accounting/authority/value-to-delegated-absent-authority.json
 [satin/accounting/authority/value-to-distinct-absent-recipient]: ../slice/cases/satin/accounting/authority/value-to-distinct-absent-recipient.json
 [satin/accounting/body/access-list-duplicate-entries]: ../slice/cases/satin/accounting/body/access-list-duplicate-entries.json
 [satin/accounting/body/access-list-one-entry]: ../slice/cases/satin/accounting/body/access-list-one-entry.json

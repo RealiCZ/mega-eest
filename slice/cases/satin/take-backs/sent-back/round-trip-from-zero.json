@@ -2,15 +2,15 @@
   "caseId": "satin/take-backs/sent-back/round-trip-from-zero",
   "expected": {
     "gasLedgers": {
-      "blockGas": "0x8d49",
-      "floor": "0x3a98",
-      "gasUsed": "0xf7d9",
-      "history": "0x6a90",
-      "historyBytes": "0x136",
+      "blockGas": "0x8d59",
+      "floor": "0x3ad8",
+      "gasUsed": "0xf841",
+      "history": "0x6ae8",
+      "historyBytes": "0x137",
       "refund": "0x0",
-      "regular": "0x8d49",
+      "regular": "0x8d59",
       "state": "0x0",
-      "total": "0xf7d9"
+      "total": "0xf841"
     },
     "limit": null,
     "outcome": {
@@ -29,7 +29,7 @@
     "receipt": {
       "depositNonce": null,
       "depositReceiptVersion": null,
-      "gasUsed": "0xf7d9",
+      "gasUsed": "0xf841",
       "logs": [
         {
           "address": "0xfffffffffffffffffffffffffffffffffffffffe",
@@ -56,8 +56,8 @@
     "resources": {
       "dataSize": {
         "limit": "0xc80000",
-        "net": "630",
-        "reported": "0x276"
+        "net": "631",
+        "reported": "0x277"
       },
       "kvUpdates": {
         "limit": "0x7a120",
@@ -145,13 +145,13 @@
     },
     "transaction": {
       "kind": "signed",
-      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1808026a037abd59b2ae917db9ae6528f8e6a7e588b445bd1372ea295b330cecfdb76351da00af281f0a2f8216a03102560bc82b936a2cb1e51b7b5052600045195e427b885"
+      "raw": "0xf8608080830f42409400000000000000000000000000000000000c0de1800126a0f0f9e41cd946bcd040bf1caa759fe2ff63722ee0af26507b886be09b698a1daea06c76c508be96e2ee87c75535eb50a410e09e06d073bb202d95636405bc2f99b2"
     }
   },
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "an existing contract starts at zero balance, receives value and returns it in full to the contract that sent it. Both account records and their history are taken back, while both transfer logs remain (SATIN-ACCT-004, SATIN-ACCT-006, SATIN-HIST-009)"
+      "intent": "an existing contract starts at zero balance, receives value and returns it in full to the contract that sent it. Both account records and their history are taken back. The two transfer logs and the transaction's calldata remain counted (SATIN-ACCT-004, SATIN-ACCT-006, SATIN-HIST-009)"
     },
     "definition": "tools/make_slice.py::take_back_cases",
     "generator": "tools/make_slice.py",
