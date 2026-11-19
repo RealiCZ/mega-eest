@@ -19585,6 +19585,23 @@
     },
     {
       "area": "contract-limits",
+      "caseId": "satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset",
+      "file": "cases/satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset.json",
+      "fileDigest": "sha256:63e2a371702436731ea46ccd39a72fa113db6804220ae05ae40582c6e906015a",
+      "rules": [
+        "SATIN-DET-018",
+        "SATIN-SIZE-005",
+        "SATIN-SIZE-006",
+        "SATIN-WIT-005",
+        "SATIN-WIT-008"
+      ],
+      "spec": {
+        "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+        "name": "megaeth/Satin"
+      }
+    },
+    {
+      "area": "contract-limits",
       "caseId": "satin/contract-limits/static-frame/create-detained",
       "file": "cases/satin/contract-limits/static-frame/create-detained.json",
       "fileDigest": "sha256:d9ea162ac078a6073ba4e9d400182efac6d0e818996dc9d31acfbe536a3d61a5",

@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1182** (1182 gating, 0 quarantined).
+Cases: **1183** (1183 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -2361,6 +2361,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/balance-static-crossing] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-one-short] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/balance-static-paid] | gating | unqualified | [satin-5fb2688] |
@@ -9125,6 +9126,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/contract-limits/create2/initcode-at-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/create2/initcode-over-limit-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/create2/one-byte-initcode-offset-out-of-range-detained] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/create2/short-of-salt-memory-crossing] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/create2/short-of-salt-offset-out-of-range] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/static-frame/create-detained] | gating | unqualified | [satin-bcf260d] |
@@ -9155,6 +9157,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/create2/short-of-salt-memory-crossing] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/static-frame/create-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/static-frame/create2-detained] | gating | unqualified | [satin-bcf260d] |
@@ -10476,6 +10479,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/nonce-one-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/reads/absent-authorities-out-of-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/create2/short-of-salt-offset-out-of-range] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
@@ -10673,6 +10677,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/nonce-one-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/reads/absent-authorities-out-of-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/create2/short-of-salt-offset-out-of-range] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
@@ -11193,6 +11198,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/contract-limits/create2/initcode-at-limit]: ../slice/cases/satin/contract-limits/create2/initcode-at-limit.json
 [satin/contract-limits/create2/initcode-over-limit-detained]: ../slice/cases/satin/contract-limits/create2/initcode-over-limit-detained.json
 [satin/contract-limits/create2/one-byte-initcode-offset-out-of-range-detained]: ../slice/cases/satin/contract-limits/create2/one-byte-initcode-offset-out-of-range-detained.json
+[satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset]: ../slice/cases/satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset.json
 [satin/contract-limits/create2/short-of-salt-memory-crossing]: ../slice/cases/satin/contract-limits/create2/short-of-salt-memory-crossing.json
 [satin/contract-limits/create2/short-of-salt-offset-out-of-range]: ../slice/cases/satin/contract-limits/create2/short-of-salt-offset-out-of-range.json
 [satin/contract-limits/creation-tx/deployed-code-at-limit]: ../slice/cases/satin/contract-limits/creation-tx/deployed-code-at-limit.json

@@ -3239,5 +3239,7 @@ charge and rise. The nonce-one caller is nonempty and takes neither
 **D-204. Check a missing-salt CREATE2 at a nonempty out-of-range offset under detention.**
 The child can pay the single initcode word, then halts when checking the offset. A memory
 charge at offset zero would cross its spendable allowance and return the unspent gas to
-the parent. The receipt distinguishes those paths (`SATIN-DET-001`, `SATIN-DET-018`,
-`SATIN-SIZE-005`).
+the parent. A companion case leaves the same child one gas short of the initcode fee.
+The fee crosses before the offset check and returns the child's unspent gas. An early
+offset check would halt. The receipts distinguish both orders (`SATIN-DET-001`,
+`SATIN-DET-018`, `SATIN-SIZE-005`).

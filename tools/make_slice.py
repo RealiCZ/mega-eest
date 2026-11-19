@@ -7124,14 +7124,21 @@ def size_cases() -> list[Case]:
              accounts={DETAINED: model.Account(nonce=1, code=salt_short)}, make=detained_call, params=dict(start),
              retune=[("child-room", spendable + model.G_VERYLOW + 2 * model.G_BASE, "pad", -1)], **page))
     short_bad_offset = push(1) + push(top) + push(0) + b"\xf5" + STOP
+    short_offset_case = {**page, "spec": CURRENT_SPEC, "gas": 21_000_000, "returned_state": True,
+                         "accounts": {DETAINED: model.Account(nonce=1, code=short_bad_offset)},
+                         "make": detained_call, "params": start}
+    short_offset_pushes = 2 * model.G_VERYLOW + model.G_BASE
     add(Case("satin/contract-limits/create2/short-of-salt-offset-out-of-range", "The detained child runs CREATE2 with "
              "one byte of initcode at offset 2^256 - 1 and no salt. It can pay for the initcode word, then "
              "halts on the offset before making a memory charge or reading the salt. Treating the offset as zero "
              "would cross detention at the memory charge and return gas to the parent (SATIN-SIZE-005, "
-             "SATIN-DET-001, SATIN-DET-018).", gas=21_000_000,
-             accounts={DETAINED: model.Account(nonce=1, code=short_bad_offset)}, make=detained_call, params=dict(start),
-             retune=[("child-room", spendable + 2 * model.G_VERYLOW + model.G_BASE, "pad", -1)],
-             **dict(page, spec=CURRENT_SPEC), returned_state=True))
+             "SATIN-DET-001, SATIN-DET-018).",
+             retune=[("child-room", spendable + short_offset_pushes, "pad", -1)], **short_offset_case))
+    add(Case("satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset", "The detained child runs "
+             "the same salt-short CREATE2 with one byte of initcode at offset 2^256 - 1 and a spendable allowance one "
+             "below the initcode fee. The fee crosses detention before the offset is checked, so the child returns "
+             "its unspent gas to the parent. Checking the offset first would halt it (SATIN-SIZE-005, SATIN-DET-018).",
+             retune=[("child-room", initcode - 1 + short_offset_pushes, "pad", -1)], **short_offset_case))
     static_create = push(32) + push(0) + push(0) + b"\xf0" + STOP
     add(Case("satin/contract-limits/static-frame/create-detained", "a detained child that a STATICCALL started, with 1 of "
              "spendable gas at a CREATE of 32 bytes of initcode: the static context is checked before the operands and "
