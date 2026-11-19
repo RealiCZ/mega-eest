@@ -84,7 +84,7 @@
           "nonce": "0x0"
         },
         "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
-          "balance": "0xde0b6b3a7640000",
+          "balance": "0x0",
           "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
           "nonce": "0x1"
         }
@@ -98,7 +98,7 @@
     "state": {
       "accounts": {
         "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
-          "balance": "0xde0b6b3a7640000",
+          "balance": "0x0",
           "code": "0x",
           "nonce": "0x1",
           "storage": {}
@@ -153,12 +153,6 @@
           "code": "0xfe",
           "nonce": "0x0",
           "storage": {}
-        },
-        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
-          "balance": "0xde0b6b3a7640000",
-          "code": "0x",
-          "nonce": "0x0",
-          "storage": {}
         }
       },
       "completeness": "complete"
@@ -176,7 +170,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "A parent writes one to fresh slot zero and requests GAS for the DELEGATECALL that clears it. The child succeeds and takes back the slot's record, state charge and growth. The parent succeeds (SATIN-FWD-003, SATIN-ACCT-004, SATIN-ACCT-011)."
+      "intent": "A parent writes one to fresh slot zero and requests GAS for the DELEGATECALL that clears it. The child succeeds and takes back the slot's record, state charge and growth. The parent succeeds. The absent transaction sender's nonce update adds no growth (SATIN-FWD-003, SATIN-ACCT-004, SATIN-ACCT-011, SATIN-ACCT-014)."
     },
     "definition": "tools/make_slice.py::take_back_cases",
     "generator": "tools/make_slice.py",
@@ -196,6 +190,7 @@
   "rules": [
     "SATIN-ACCT-004",
     "SATIN-ACCT-011",
+    "SATIN-ACCT-014",
     "SATIN-FWD-003",
     "SATIN-TAKE-002",
     "SATIN-TAKE-003",

@@ -474,6 +474,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/creation/one-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/thirty-two-byte-code] | gating | unqualified | [satin-d34e626] |
 | [satin/system-tx/promoted/set-slots-absent-caller] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/value-transfer/absent-recipient/bucket-x4] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/absent-recipient/minimum-bucket] | gating | unqualified | [satin-d34e626] |
 | [satin/value-transfer/absent-recipient/no-value] | gating | unqualified | [satin-83c0d26] |

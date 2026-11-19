@@ -532,9 +532,10 @@ def cases() -> list[Case]:
 # --- Interception before the frame start, the keyless decoder, EIP-7702 existence ------------------
 
 
-def bytes_to_memory(b: bytes) -> bytes:
-    """MSTOREs that lay `b` out in memory from offset 0, one word at a time."""
-    return b"".join(mstore(i, int.from_bytes(b[i:i + 32].ljust(32, b"\x00"), "big")) for i in range(0, len(b), 32))
+def bytes_to_memory(b: bytes, offset: int = 0) -> bytes:
+    """MSTOREs that lay `b` out in memory from `offset`, one word at a time."""
+    return b"".join(mstore(offset + i, int.from_bytes(b[i:i + 32].ljust(32, b"\x00"), "big"))
+                    for i in range(0, len(b), 32))
 
 
 def call(gas: int | bytes, target: bytes, value: int, in_size: int) -> bytes:
@@ -2083,8 +2084,9 @@ def take_back_cases() -> list[Case]:
              "slot, record and growth.")):
         add(Case(f"satin/take-backs/descendant/fresh-slot-restore-{name}-gas", "A parent writes one to fresh slot zero "
                  "and requests GAS for the DELEGATECALL that clears it. " + result
-                 + " The parent succeeds (SATIN-FWD-003, SATIN-ACCT-004, SATIN-ACCT-011).",
-                 spec=CURRENT_SPEC, gas=50_000_000, returned_state=True,
+                 + " The parent succeeds. The absent transaction sender's nonce update adds no growth "
+                 "(SATIN-FWD-003, SATIN-ACCT-004, SATIN-ACCT-011, SATIN-ACCT-014).",
+                 spec=CURRENT_SPEC, gas=50_000_000, absent_sender=True, returned_state=True,
                  code=sstore(0, 1) + delegatecall(GAS, DESCENDANT) + b"\x50" + STOP,
                  accounts={DESCENDANT: model.Account(nonce=1, code=sstore(0, 0) + child_end)}))
 
@@ -5737,10 +5739,13 @@ def system_pages_gap_cases() -> list[Case]:
              + call(200_000, model.ORACLE, 0, len(second_hint)) + b"\x50" + STOP))
     full_hints = (send_hint(int.from_bytes(bytes([0x11]) * 32, "big"), b"\xaa\xbb"),
                   send_hint(int.from_bytes(bytes([0x22]) * 32, "big"), b"\xcc\xdd"))
-    add(Case("satin/oracle/send-hint/full-topics-in-order", "The service receives both hints in order, with their "
-             "full topics, distinct two-byte payloads and calling address (SATIN-ORCL-006, SATIN-ORCL-007).",
+    hint_offset = 0x100
+    add(Case("satin/oracle/send-hint/full-topics-in-order", "Both CALLs read their hint input at memory offset 0x100. "
+             "The service receives both hints in order, with their full topics, distinct two-byte payloads and "
+             "calling address (SATIN-ORCL-006, SATIN-ORCL-007).",
              spec=CURRENT_SPEC, returned_state=True, system=True, system_pages=True, reads=True,
-             code=b"".join(bytes_to_memory(data) + call(1_000_000, model.ORACLE, 0, len(data)) + b"\x50"
+             code=b"".join(bytes_to_memory(data, hint_offset)
+                           + call_op(0xF1, model.ORACLE, inp=(hint_offset, len(data)), gas=1_000_000) + b"\x50"
                            for data in full_hints) + STOP))
     unfunded_hint = send_hint(int.from_bytes(bytes([0x7a]) * 32, "big"), b"unfunded")
     add(Case("satin/oracle/send-hint/stipend-unfunded-full-payload", "The stipend admits the complete hint before "

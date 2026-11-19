@@ -3312,3 +3312,15 @@ constructor at 100 Gwei and send both outer transactions at seven wei. The
 second constructor write stores GASPRICE in slot one. Both cases request
 returned state and allow the plain adapter to use the default execution loop
 (`SATIN-KEY-011`, `SATIN-WIT-008`).
+
+**D-230. Read ordered Oracle hints from the CALL input offset.** Place each
+payload at memory offset 256 in the calling frame and leave the prefix zero.
+Both zero-value calls use that offset. Compare the same ordered pair of full
+topics and payloads and their calling address (`SATIN-ORCL-007`).
+
+**D-231. Observe ordinary nonce updates on absent senders.** Run both
+GAS-forwarded fresh-slot write-backs as ordinary nonce-zero transactions with
+zero gas price and value from an absent sender. The nonce update adds zero
+state growth. The child that clears the slot and succeeds leaves zero growth.
+The child that halts rolls back the clear, leaving the parent's one unit of
+growth (`SATIN-ACCT-004`, `SATIN-ACCT-011`, `SATIN-ACCT-014`).

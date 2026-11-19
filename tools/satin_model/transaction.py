@@ -317,6 +317,8 @@ class TransactionMixin:
         sender_acct.balance -= tx.gas_limit * price
         if not create:
             sender_acct.nonce += 1
+            if tx.sender not in self.pre:
+                d.add("resources", "the absent ordinary sender's nonce update adds zero state growth", "SATIN-ACCT-014")
 
         # SATIN-SCHED-010, all of it: a transaction that runs out of gas before its first frame takes back everything
         # applied before that frame except what validation did to its sender (its fee and a call's nonce bump) and a
