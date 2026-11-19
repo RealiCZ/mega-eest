@@ -633,8 +633,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/beneficiary/gated-authority-not-detained] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/r-at-order] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |

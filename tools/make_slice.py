@@ -6511,12 +6511,13 @@ def accounting_cases() -> list[Case]:
          "records and two transfer logs (SATIN-ACCT-005, SATIN-ACCT-014, SATIN-LIM-008)",
          spec=CURRENT_SPEC, returned_state=True,
          contract_balance=10, code=create(1, STOP) + send(PAYEE_R) + STOP)
-    case("records/empty-initcode-creation-then-transfer", "A frame executes a successful CREATE of length zero "
-         "with one wei and then funds a different absent account by CALL with GAS. The creator's nonce and balance "
-         "changes share one record. Both recipients have a new record, growth unit and transfer log "
+    empty_create_and_send = create(1, b"") + call(GAS, PAYEE_R, 1, 0) + b"\x50" + STOP
+    case("records/empty-initcode-creation-then-transfer", "A nonce-zero contract executes a successful CREATE of "
+         "length zero with one wei and then funds a different absent account by CALL with GAS. The creator's nonce "
+         "and balance changes share one record. Both recipients have a new record, growth unit and transfer log "
          "(SATIN-SIZE-005, SATIN-ACCT-004, SATIN-ACCT-005, SATIN-ACCT-014).", spec=CURRENT_SPEC,
-         gas=50_000_000, returned_state=True, contract_balance=10,
-         code=create(1, b"") + call(GAS, PAYEE_R, 1, 0) + b"\x50" + STOP)
+         gas=50_000_000, returned_state=True,
+         accounts={CONTRACT: model.Account(balance=10, code=empty_create_and_send)})
     case("records/halted-transfer-then-absent-recipient", "a value call starts a child that executes INVALID. The "
          "parent catches the halt and then sends value to an absent recipient on the stipend alone. Only the second "
          "start's records and log stand (SATIN-ACCT-005, SATIN-ACCT-011, SATIN-POOL-014)",
@@ -6548,11 +6549,12 @@ def accounting_cases() -> list[Case]:
          spec=CURRENT_SPEC, contract_balance=10, returned_state=True,
          accounts={PAYEE_Q: model.Account(nonce=1, code=call(0, PAYEE_R, 1, 0) + b"\x50" + STOP)},
          code=send(PAYEE_Q) + STOP)
-    case("records/pass-on-exact-to-absent-gas", "Both value calls request GAS. The middle account passes on the "
-         "one wei it received and restores its balance to zero, taking back its record. The absent recipient "
-         "keeps the wei and both transfers log (SATIN-FWD-003, SATIN-ACCT-004, SATIN-ACCT-005).",
+    case("records/pass-on-exact-to-absent-gas", "Both value calls request GAS. The middle account starts with code "
+         "and zero nonce and balance. It passes on the wei it received and restores its balance to zero, taking back "
+         "its record. The absent recipient keeps the wei and both transfers log "
+         "(SATIN-FWD-003, SATIN-ACCT-004, SATIN-ACCT-005).",
          spec=CURRENT_SPEC, gas=50_000_000, contract_balance=10, returned_state=True,
-         accounts={PAYEE_Q: model.Account(nonce=1, code=call(GAS, PAYEE_R, 1, 0) + b"\x50" + STOP)},
+         accounts={PAYEE_Q: model.Account(code=call(GAS, PAYEE_R, 1, 0) + b"\x50" + STOP)},
          code=call(GAS, PAYEE_Q, 1, 0) + b"\x50" + STOP)
     # SATIN-ACCT-004, -006, -011, SATIN-HIST-006, -007: a SELFDESTRUCT of an account the transaction did not create that
     # returns accounts to what the transaction loaded takes their records back.

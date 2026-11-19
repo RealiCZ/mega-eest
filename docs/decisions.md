@@ -3264,7 +3264,8 @@ failure word and empty return data directly. The Oracle service receives the
 returned balances stay zero (`SATIN-ORCL-006`, `SATIN-ORCL-007`, `SATIN-ORCL-009`).
 
 **D-222. Pair wildcard authorization with a one-wei transfer.** Sign a chain-id-zero
-authorization at nonce zero for an absent authority and a nonzero delegate.
+authorization at nonce zero for an absent authority and a nonzero delegate. The
+derivation cites the chain gate separately from the checks for applying the entry.
 Funding the authority shares its authorization record and growth unit. Funding
 a different absent account adds a record and growth unit. Both cases observe
 the history ledger, the transfer log and the returned accounts
@@ -3278,8 +3279,9 @@ two records and one growth unit (`SATIN-FWD-003`, `SATIN-ACCT-005`,
 `SATIN-ACCT-011`, `SATIN-POOL-014`).
 
 **D-224. Pass the entire received wei onward with GAS.** Request GAS for the
-incoming and onward calls. The middle account's returned balance is zero and
-the new recipient's is one. The middle account's record is taken back and
+incoming and onward calls. The middle account starts with code, nonce zero and
+zero balance. Its returned balance is zero and the new recipient's is one.
+The middle account's record is taken back and
 both transfer logs stay (`SATIN-FWD-003`, `SATIN-ACCT-004`, `SATIN-ACCT-005`).
 
 **D-225. Compare sender and beneficiary transfers with GAS.** Each capped value
@@ -3295,9 +3297,9 @@ INVALID rolls the clear back, preserving the parent's one, record and growth
 (`SATIN-FWD-003`, `SATIN-ACCT-004`, `SATIN-ACCT-011`).
 
 **D-227. Follow a successful endowed CREATE of length zero with a value call.**
-The creation's empty initcode takes the zero-length path. The caller later
-funds a different absent account. The creator's nonce and balance changes
-share its record, both recipients keep their balances, and both transfers log
+The creator starts at nonce zero. Its empty initcode takes the zero-length path.
+The caller later funds a different absent account. The creator's nonce and balance
+changes share its record. Both recipients keep their balances, and both transfers log
 (`SATIN-SIZE-005`, `SATIN-ACCT-004`, `SATIN-ACCT-005`).
 
 **D-228. Require slot zero in the returned keyless deploy account.** Make ORIGIN
