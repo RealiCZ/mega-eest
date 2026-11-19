@@ -110,6 +110,16 @@ for a in adapters:
         if p["status"] != i["status"] or p["observationsDigest"] != i["observationsDigest"] or p["observationsDigest"] is None:
             mismatches += 1
 
+def matches_failure(report, **expected):
+    if not report or any(report.get(key) != value for key, value in expected.items()):
+        return False
+    if report.get("defaultLoopPassed") is not False:
+        return True
+    # A failed default-loop run is covered only by the same expected difference.
+    default = report.get("defaultLoop")
+    return (default is not None and default["recordedPassed"] is False
+            and all(default.get(key) == value for key, value in expected.items()))
+
 # Quarantine: each case fails exactly as recorded on its recorded implementation, passes on the other.
 index = json.load(open(os.path.join(root, "slice", "index.json"), encoding="utf-8"))
 names = {"mega-eest-adapter-revm": "revm", "mega-eest-adapter-evm2": "evm2"}
@@ -120,8 +130,8 @@ for q in index["quarantine"]:
     bad = names[k["adapter"]]
     other = "evm2" if bad == "revm" else "revm"
     got, good = held[bad].get(q["caseId"]), held[other].get(q["caseId"])
-    if (got and got["status"] == "fail" and got["path"] == k["path"] and got["expected"] == k["expected"]
-            and got["actual"] == k["actual"] and good and good["status"] == "pass"):
+    if (matches_failure(got, status="fail", path=k["path"], expected=k["expected"], actual=k["actual"])
+            and good and good["status"] == "pass"):
         recorded += 1
 print(f"run-slice: quarantine: {recorded} of {len(index['quarantine'])} fail exactly as recorded on their implementation "
       f"and pass on the other", file=sys.stderr)
@@ -138,11 +148,14 @@ for a in adapters:
         for case_id in results.keys() & negative.keys():
             c, want = results[case_id], negative[case_id]
             if "error" in want:
-                matched = c["status"] == "error" and c.get("message") == want["error"]
+                matched = matches_failure(c, status="error", message=want["error"])
                 matched_errors += matched
                 verdicts.add("fail" if matched else "wrong-error")
             else:
-                verdicts.add(c["status"] if c["status"] != "fail" or c.get("path") == want["wrongAt"] else "fail-elsewhere")
+                status = c["status"]
+                if status == "fail" and not matches_failure(c, status="fail", path=want["wrongAt"]):
+                    status = "fail-elsewhere"
+                verdicts.add(status)
 verdict = verdicts.pop() if len(verdicts) == 1 else "mixed"
 print(f"run-slice: negative adapter errors: {matched_errors} matched", file=sys.stderr)
 

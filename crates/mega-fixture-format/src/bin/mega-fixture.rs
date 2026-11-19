@@ -230,6 +230,8 @@ fn run_consume(o: Options) -> ExitCode {
     };
     let mode = if o.instrumented { "instrumented" } else { "plain" };
     let mut counts = std::collections::BTreeMap::<&str, usize>::new();
+    let mut derived_runs = 0;
+    let mut derived_passes = 0;
     let mut reports = Vec::new();
     ordered_jobs(
         &files,
@@ -250,6 +252,14 @@ fn run_consume(o: Options) -> ExitCode {
             let id = report.case_id.clone().unwrap_or_else(|| file.display().to_string());
             let input = report.input_digest.clone().unwrap_or_default();
             println!("{} {id} input={input}", report.status.name());
+            if let Some(default_loop) = &report.default_loop {
+                let passed = default_loop.status == Status::Pass;
+                derived_runs += 1;
+                derived_passes += usize::from(passed);
+                if !passed {
+                    println!("  default-loop check failed");
+                }
+            }
             match &report.status {
                 Status::Fail { path, expected, actual, rules } => {
                     let show =
@@ -267,6 +277,13 @@ fn run_consume(o: Options) -> ExitCode {
         },
     );
     let get = |k: &str| counts.get(k).copied().unwrap_or(0);
+    if derived_runs != 0 {
+        println!(
+            "DERIVED adapter={} mode={mode} cases={derived_runs} pass={derived_passes} fail={}",
+            caps.name,
+            derived_runs - derived_passes
+        );
+    }
     println!(
         "CONSUME adapter={} mode={mode} cases={} pass={} fail={} unsupported={} error={}",
         caps.name,

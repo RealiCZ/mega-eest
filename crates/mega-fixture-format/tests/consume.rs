@@ -4,11 +4,14 @@
 mod common;
 
 use mega_fixture_format::consume::{self, Adapter, Capabilities, Status};
+use mega_fixture_format::model::Profile;
 use mega_fixture_format::{json, sha256_digest, Case, Value};
 use std::cell::RefCell;
 use std::path::Path;
 
 const EXAMPLE: &str = "examples/state-transition-sstore-fresh-slot.json";
+const POOLS_CASE: &str = "slice/cases/satin/keyless/pools/nested-contract-call/below-cap.json";
+const DEPLOYED: &str = "0xc699ace5b42a9fc4503003e3cde437cf53f09440";
 
 /// A test double standing in for an implementation: it answers every run with fixed
 /// observations, and records the requests it was sent.
@@ -126,6 +129,179 @@ fn an_invalid_case_is_an_error_of_the_release() {
     let report = consume::consume_case("x.json", b"{\"format\":1}", &common::store(), &adapter, &caps, false);
     assert!(matches!(report.status, Status::Error { .. }));
     assert!(adapter.requests.borrow().is_empty());
+}
+
+struct PoolRuns {
+    recorded: Value,
+    default_loop: Value,
+    requests: RefCell<Vec<(Value, bool)>>,
+}
+
+impl Adapter for PoolRuns {
+    fn capabilities(&self) -> Result<Value, String> {
+        unreachable!("the test supplies capabilities")
+    }
+
+    fn run(&self, request: &Value, instrumented: bool) -> Result<Value, String> {
+        self.requests.borrow_mut().push((request.clone(), instrumented));
+        let Value::Array(requires) = request.get("requires").unwrap() else { panic!("requires must be an array") };
+        let recorded = requires.iter().any(|value| value.as_str() == Some("group:gas-pools"));
+        let observations = if recorded { &self.recorded } else { &self.default_loop };
+        let digest = sha256_digest(&json::to_canonical(request.get("input").unwrap()));
+        Ok(object(vec![("status", Value::String("ok".into())), ("inputDigest", Value::String(digest)), ("observations", observations.clone())]))
+    }
+}
+
+fn pool_capabilities(case: &Case) -> Capabilities {
+    let requirements = case.fixture.requires.iter().map(|r| r.as_str()).collect::<Vec<_>>();
+    let mut declared = capabilities(&requirements);
+    common::set(&mut declared, "/profiles", strings(&[case.fixture.profile.as_str()]));
+    common::set(&mut declared, "/modes", strings(&["plain", "instrumented"]));
+    Capabilities::from_value(declared).unwrap()
+}
+
+fn run_requests(case: &Case) -> (Value, Value) {
+    let original = consume::run_request(case);
+    let mut derived = original.clone();
+    let remaining = case.fixture.requires.iter().map(|r| r.as_str()).filter(|r| *r != "group:gas-pools").collect::<Vec<_>>();
+    common::set(&mut derived, "/requires", strings(&remaining));
+    (original, derived)
+}
+
+fn dropped_slot_runs(case: &Case) -> (PoolRuns, String) {
+    let mut recorded = case.value.get("expected").unwrap().clone();
+    let accounts = recorded.get("returnedState").unwrap().get("accounts").unwrap();
+    let Value::Object(mut accounts) = accounts.clone() else { panic!("accounts must be an object") };
+    accounts.retain(|_, account| *account != Value::Null);
+    common::set(&mut recorded, "/returnedState/accounts", Value::Object(accounts));
+    let Value::Object(mut default_loop) = recorded.clone() else { panic!("expected must be an object") };
+    default_loop.remove("gasPools");
+    let Value::Object(mut slots) = default_loop["returnedState"].get("storage").unwrap().get(DEPLOYED).unwrap().clone() else {
+        panic!("storage slots must be an object");
+    };
+    let zero_slot = format!("0x{:064x}", 0);
+    assert_eq!(slots.remove(&zero_slot), Some(Value::String("0x0".into())));
+    let mut default_loop = Value::Object(default_loop);
+    let storage_path = format!("/returnedState/storage/{DEPLOYED}");
+    common::set(&mut default_loop, &storage_path, Value::Object(slots));
+    (PoolRuns { recorded, default_loop, requests: RefCell::new(Vec::new()) }, format!("/expected{storage_path}/{zero_slot}"))
+}
+
+#[test]
+fn a_plain_gas_pool_case_fails_when_the_default_loop_drops_a_slot() {
+    let bytes = common::read(POOLS_CASE);
+    let store = common::store();
+    let case = Case::from_bytes(&bytes, &store).unwrap();
+    let caps = pool_capabilities(&case);
+    let (adapter, slot_path) = dropped_slot_runs(&case);
+
+    let report = consume::consume_case(POOLS_CASE, &bytes, &store, &adapter, &caps, false);
+    assert_eq!(report.to_value().pointer("/defaultLoop/recordedPassed"), Some(&Value::Bool(true)));
+    match &report.status {
+        Status::Fail { path, expected, actual, .. } => {
+            assert_eq!(path, &slot_path);
+            assert_eq!(expected.as_ref().and_then(Value::as_str), Some("0x0"));
+            assert_eq!(*actual, None);
+        }
+        other => panic!("{other:?}"),
+    }
+    let (original, derived) = run_requests(&case);
+    assert_eq!(adapter.requests.replace(Vec::new()), [(original.clone(), false), (derived, false)]);
+
+    let report = consume::consume_case(POOLS_CASE, &bytes, &store, &adapter, &caps, true);
+    assert_eq!(report.status, Status::Pass);
+    assert!(report.default_loop.is_none());
+    assert_eq!(*adapter.requests.borrow(), [(original, true)]);
+}
+
+#[test]
+fn a_recorded_pool_failure_preserves_the_independent_default_loop_failure() {
+    let bytes = common::read(POOLS_CASE);
+    let store = common::store();
+    let case = Case::from_bytes(&bytes, &store).unwrap();
+    let (mut adapter, slot_path) = dropped_slot_runs(&case);
+    let bad_spill = Value::String("0x8d4b3".into());
+    common::set(&mut adapter.recorded, "/gasPools/spilled", bad_spill.clone());
+
+    let report = consume::consume_case(POOLS_CASE, &bytes, &store, &adapter, &pool_capabilities(&case), false).to_value();
+    assert_eq!(report.get("status").and_then(Value::as_str), Some("fail"));
+    assert_eq!(report.get("path").and_then(Value::as_str), Some("/expected/gasPools/spilled"));
+    assert_eq!(report.get("expected"), case.value.pointer("/expected/gasPools/spilled"));
+    assert_eq!(report.get("actual"), Some(&bad_spill));
+    let default_loop = report.get("defaultLoop").unwrap();
+    assert_eq!(default_loop.get("recordedPassed"), Some(&Value::Bool(false)));
+    assert_eq!(default_loop.get("status").and_then(Value::as_str), Some("fail"));
+    assert_eq!(default_loop.get("path").and_then(Value::as_str), Some(slot_path.as_str()));
+    assert_eq!(default_loop.get("expected").and_then(Value::as_str), Some("0x0"));
+    assert_eq!(default_loop.get("actual"), Some(&Value::Null));
+}
+
+fn block_with_transaction(profile: Profile, build: &Value) -> Value {
+    let example = match profile {
+        Profile::BlockBuild => return build.clone(),
+        Profile::BlockImport => "examples/invalid-block-foreign-registry-code.json",
+        Profile::StatelessBlock => "examples/stateless-block-witness-wrong-parent-anchor.json",
+        _ => unreachable!(),
+    };
+    let mut case = json::parse(&common::read(example)).unwrap();
+    let raw = build.pointer("/input/candidates/0/raw").unwrap().clone();
+    common::set(&mut case, "/input/blocks/0/transactions", Value::Array(vec![raw]));
+    let block = object(vec![
+        ("status", Value::String("valid".into())),
+        ("activeSpec", case.pointer("/specRef/name").unwrap().clone()),
+        ("depositOnly", Value::Bool(false)),
+        ("activation", Value::Bool(false)),
+        ("preBlock", Value::Array(Vec::new())),
+        ("transactions", build.pointer("/expected/transactions").unwrap().clone()),
+        ("counters", build.pointer("/expected/counters").unwrap().clone()),
+        ("commitments", build.pointer("/expected/commitments").unwrap().clone()),
+        ("state", build.pointer("/expected/state").unwrap().clone()),
+    ]);
+    let head = object(vec![
+        ("number", case.pointer("/input/blocks/0/header/number").unwrap().clone()),
+        ("hash", case.pointer("/input/blocks/0/header/parentHash").unwrap().clone()),
+    ]);
+    common::set(&mut case, "/expected/blocks", Value::Array(vec![block]));
+    common::set(&mut case, "/expected/head", head);
+    common::set(&mut case, "/expected/state", build.pointer("/expected/state").unwrap().clone());
+    if profile == Profile::StatelessBlock {
+        let parent = case.pointer("/input/blocks/0/header/parentHash").unwrap().clone();
+        common::set(&mut case, "/input/witness/parentHash", parent);
+        common::set(&mut case, "/expected/witness", object(vec![("status", Value::String("verified".into())), ("proof", Value::Null)]));
+    }
+    case
+}
+
+#[test]
+fn the_default_loop_checks_block_transactions_without_pools() {
+    let store = common::store();
+    let build = json::parse(&common::read("examples/block-build-policy-skip.json")).unwrap();
+    let pool_case = json::parse(&common::read(POOLS_CASE)).unwrap();
+    let pools = pool_case.pointer("/expected/gasPools").unwrap();
+    for profile in [Profile::BlockBuild, Profile::BlockImport, Profile::StatelessBlock] {
+        let tx = if profile == Profile::BlockBuild { "/transactions/0" } else { "/blocks/0/transactions/0" };
+        let mut fixture = block_with_transaction(profile, &build);
+        let mut default_loop = fixture.get("expected").unwrap().clone();
+        common::set(&mut fixture, &format!("/expected{tx}/gasPools"), pools.clone());
+        let Value::Array(mut requires) = fixture.get("requires").unwrap().clone() else { panic!("requires must be an array") };
+        requires.push(Value::String("group:gas-pools".into()));
+        requires.sort_by(|a, b| a.as_str().cmp(&b.as_str()));
+        common::set(&mut fixture, "/requires", Value::Array(requires));
+        let bytes = json::to_canonical(&fixture);
+        let case = Case::from_bytes(&bytes, &store).unwrap_or_else(|e| panic!("{profile:?}: {e}"));
+        let caps = pool_capabilities(&case);
+        let output = format!("{tx}/outcome/execution/output");
+        common::set(&mut default_loop, &output, Value::String("0x01".into()));
+        let adapter = PoolRuns { recorded: fixture.get("expected").unwrap().clone(), default_loop, requests: RefCell::new(Vec::new()) };
+
+        let report = consume::consume_case(profile.as_str(), &bytes, &store, &adapter, &caps, false).to_value();
+        let (original, derived) = run_requests(&case);
+        assert_eq!(*adapter.requests.borrow(), [(original, false), (derived, false)], "{profile:?}");
+        assert_eq!(report.pointer("/defaultLoop/recordedPassed"), Some(&Value::Bool(true)), "{profile:?}");
+        assert_eq!(report.pointer("/defaultLoop/path").and_then(Value::as_str), Some(format!("/expected{output}").as_str()), "{profile:?}");
+        assert_eq!(report.pointer("/defaultLoop/expected").and_then(Value::as_str), Some("0x"));
+        assert_eq!(report.pointer("/defaultLoop/actual").and_then(Value::as_str), Some("0x01"));
+    }
 }
 
 #[test]

@@ -3243,3 +3243,11 @@ the parent. A companion case leaves the same child one gas short of the initcode
 The fee crosses before the offset check and returns the child's unspent gas. An early
 offset check would halt. The receipts distinguish both orders (`SATIN-DET-001`,
 `SATIN-DET-018`, `SATIN-SIZE-005`).
+
+**D-210. Check the default loop for gas-pool cases.** Asking for gas pools enables a recorder
+in both adapters. In plain mode the consumer also runs the same input without the gas-pool
+requirement and checks every other expectation. It removes the top-level gas pools for a state
+transition and the pools of each transaction result for block-build, block-import and
+stateless-block. Both runs must pass. A known failure in the original run can be waived only
+when the additional run passes or has the same known difference. The instrumented consumer
+checks the original fixture once.
