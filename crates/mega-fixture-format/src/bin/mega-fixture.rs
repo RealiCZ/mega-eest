@@ -252,7 +252,8 @@ fn run_consume(o: Options) -> ExitCode {
             let id = report.case_id.clone().unwrap_or_else(|| file.display().to_string());
             let input = report.input_digest.clone().unwrap_or_default();
             println!("{} {id} input={input}", report.status.name());
-            if let Some(passed) = report.default_loop_passed {
+            if let Some(default_loop) = &report.default_loop {
+                let passed = default_loop.status == Status::Pass;
                 derived_runs += 1;
                 derived_passes += usize::from(passed);
                 if !passed {

@@ -13,7 +13,7 @@
 use crate::compare::{compare, Verdict};
 use crate::error::{Error, ErrorCode};
 use crate::json::{self, Value};
-use crate::model::{Group, Requirement};
+use crate::model::{Group, Profile, Requirement};
 use crate::registry::SpecStore;
 use crate::{sha256_digest, Case};
 use std::collections::{BTreeMap, BTreeSet};
@@ -297,6 +297,33 @@ impl Status {
             Status::Error { .. } => "error",
         }
     }
+
+    fn report_fields(&self) -> BTreeMap<String, Value> {
+        let mut fields = BTreeMap::from([("status".into(), Value::String(self.name().into()))]);
+        match self {
+            Status::Fail { path, expected, actual, rules } => {
+                fields.insert("path".into(), Value::String(path.clone()));
+                fields.insert("expected".into(), expected.clone().unwrap_or(Value::Null));
+                fields.insert("actual".into(), actual.clone().unwrap_or(Value::Null));
+                fields.insert("rules".into(), Value::Array(rules.iter().cloned().map(Value::String).collect()));
+            }
+            Status::Unsupported { missing } => {
+                fields.insert("missing".into(), Value::Array(missing.iter().cloned().map(Value::String).collect()));
+            }
+            Status::Error { message } => {
+                fields.insert("message".into(), Value::String(message.clone()));
+            }
+            Status::Pass => {}
+        }
+        fields
+    }
+}
+
+/// The verdict of the additional run without the gas-pool recorder.
+#[derive(Clone, Debug)]
+pub struct DefaultLoopReport {
+    pub status: Status,
+    recorded_passed: bool,
 }
 
 /// The record of one case on one consumer.
@@ -312,8 +339,7 @@ pub struct CaseReport {
     /// SHA-256 of the canonical bytes of the actual observations.
     pub observations_digest: Option<String>,
     pub status: Status,
-    /// Whether the additional run without the gas-pool recorder passed, if run.
-    pub default_loop_passed: Option<bool>,
+    pub default_loop: Option<DefaultLoopReport>,
 }
 
 impl CaseReport {
@@ -327,14 +353,14 @@ impl CaseReport {
             adapter_input_digest: None,
             observations_digest: None,
             status: Status::Error { message },
-            default_loop_passed: None,
+            default_loop: None,
         }
     }
 
     /// The report as JSON.
     pub fn to_value(&self) -> Value {
         let opt = |v: &Option<String>| v.clone().map_or(Value::Null, Value::String);
-        let mut m = BTreeMap::new();
+        let mut m = self.status.report_fields();
         m.insert("file".into(), Value::String(self.file.clone()));
         m.insert("caseId".into(), opt(&self.case_id));
         m.insert("fileDigest".into(), opt(&self.file_digest));
@@ -342,24 +368,11 @@ impl CaseReport {
         m.insert("inputDigest".into(), opt(&self.input_digest));
         m.insert("adapterInputDigest".into(), opt(&self.adapter_input_digest));
         m.insert("observationsDigest".into(), opt(&self.observations_digest));
-        m.insert("status".into(), Value::String(self.status.name().into()));
-        if self.default_loop_passed == Some(false) {
+        if let Some(default_loop) = self.default_loop.as_ref().filter(|check| check.status != Status::Pass) {
+            let mut fields = default_loop.status.report_fields();
+            fields.insert("recordedPassed".into(), Value::Bool(default_loop.recorded_passed));
+            m.insert("defaultLoop".into(), Value::Object(fields));
             m.insert("defaultLoopPassed".into(), Value::Bool(false));
-        }
-        match &self.status {
-            Status::Fail { path, expected, actual, rules } => {
-                m.insert("path".into(), Value::String(path.clone()));
-                m.insert("expected".into(), expected.clone().unwrap_or(Value::Null));
-                m.insert("actual".into(), actual.clone().unwrap_or(Value::Null));
-                m.insert("rules".into(), Value::Array(rules.iter().cloned().map(Value::String).collect()));
-            }
-            Status::Unsupported { missing } => {
-                m.insert("missing".into(), Value::Array(missing.iter().cloned().map(Value::String).collect()));
-            }
-            Status::Error { message } => {
-                m.insert("message".into(), Value::String(message.clone()));
-            }
-            Status::Pass => {}
         }
         Value::Object(m)
     }
@@ -380,7 +393,7 @@ pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn A
         adapter_input_digest: None,
         observations_digest: None,
         status: Status::Pass,
-        default_loop_passed: None,
+        default_loop: None,
     };
     check_case(&case, adapter, caps, instrumented, &mut report);
     let gas_pools = Requirement::Group(Group::GasPools);
@@ -391,7 +404,20 @@ pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn A
         let Some(Value::Array(requires)) = projected.get_mut("requires") else { unreachable!("validated requires array") };
         requires.retain(|r| r.as_str() != Some(gas_pools.as_str()));
         let Some(Value::Object(expected)) = projected.get_mut("expected") else { unreachable!("validated expected object") };
-        expected.remove("gasPools");
+        match case.fixture.profile {
+            Profile::StateTransition => {
+                expected.remove("gasPools");
+            }
+            Profile::BlockBuild => remove_transaction_pools(expected),
+            Profile::BlockImport | Profile::StatelessBlock => {
+                let Some(Value::Array(blocks)) = expected.get_mut("blocks") else { unreachable!("validated blocks array") };
+                for block in blocks {
+                    let Value::Object(block) = block else { unreachable!("validated block result") };
+                    remove_transaction_pools(block);
+                }
+            }
+            Profile::TransactionValidation => unreachable!("transaction validation has no gas-pool results"),
+        }
 
         let mut default_loop = report.clone();
         default_loop.adapter_input_digest = None;
@@ -400,14 +426,24 @@ pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn A
             Ok(projected) => check_case(&projected, adapter, caps, false, &mut default_loop),
             Err(e) => default_loop.status = Status::Error { message: format!("the default-loop projection does not validate: {e}") },
         }
-        report.default_loop_passed = Some(default_loop.status == Status::Pass);
-        if report.status == Status::Pass && default_loop.status != Status::Pass {
-            report.status = default_loop.status;
+        let recorded_passed = report.status == Status::Pass;
+        if recorded_passed && default_loop.status != Status::Pass {
+            report.status = default_loop.status.clone();
             report.adapter_input_digest = default_loop.adapter_input_digest;
             report.observations_digest = default_loop.observations_digest;
         }
+        report.default_loop = Some(DefaultLoopReport { status: default_loop.status, recorded_passed });
     }
     report
+}
+
+fn remove_transaction_pools(result: &mut BTreeMap<String, Value>) {
+    if let Some(Value::Array(transactions)) = result.get_mut("transactions") {
+        for transaction in transactions {
+            let Value::Object(transaction) = transaction else { unreachable!("validated transaction result") };
+            transaction.remove("gasPools");
+        }
+    }
 }
 
 fn check_case(case: &Case, adapter: &dyn Adapter, caps: &Capabilities, instrumented: bool, report: &mut CaseReport) {

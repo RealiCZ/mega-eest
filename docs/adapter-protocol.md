@@ -39,12 +39,15 @@ For every case of the selected manifest subset:
    `{}` requires the key to be present, and a quantity also checks its value. See the
    [returned-state comparison rules](format.md#returned-transaction-state).
 5. In plain mode, also run each supported case that requires `group:gas-pools` with that
-   requirement and its `expected.gasPools` removed. Send the same input in plain mode so the
-   adapter can use the engine's default loop. Compare the remaining observations against the
-   fixture. Both executions must pass. Instrumented consumption runs the original case once.
-6. Map the verdict: `pass`; `fail` with the first differing semantic path and both values;
-   `known-fail` when the consumer's own waiver list names this case and exactly this difference;
-   `unsupported`; `error`.
+   requirement and its gas-pool expectations removed. Remove `expected.gasPools` for
+   state-transition, or the `gasPools` of every transaction result for block-build,
+   block-import and stateless-block. Send the same input in plain mode so the adapter can use
+   the engine's default loop. Compare the remaining observations against the fixture. Both
+   executions must pass. Instrumented consumption runs the original case once.
+6. Map the verdict to `pass`, `fail`, `known-fail`, `unsupported` or `error`. A failure reports
+   the first differing semantic path and both values. A known failure must match a waiver for
+   the recorded run. The default-loop run must pass or hit exactly the same difference. A
+   waiver for a pool field therefore requires the default-loop run to pass.
 
 ## Result statuses
 
@@ -107,7 +110,10 @@ sit at `slice/cases/<caseId>.json`, is one argument.
 
 If the consumer checks the default loop for gas-pool cases, a `DERIVED` summary before
 `CONSUME` counts these additional checks and their results. The JSON report keeps one row per
-fixture, with `defaultLoopPassed: false` when the additional check fails.
+fixture. When the additional check fails, the row includes `defaultLoopPassed: false` and
+a `defaultLoop` object with its verdict details. The object's `recordedPassed` flag tells
+whether the original run passed. The row's main verdict carries the original failure if
+both checks fail.
 
 `mega-fixture fill` runs an adapter on authoring documents (fixtures without `requires` and
 `expected`) and writes each filled fixture, `provenance.status` `candidate` with the filler's
@@ -228,7 +234,8 @@ passive recorder of frame starts and ends that changes nothing the run does; it 
 case that does not require it.
 
 The plain consumer runs a second request without the gas-pool requirement to check the default
-execution loop against the same fixture's other expectations (D-210).
+execution loop against the same fixture's other expectations. For block profiles those
+expectations retain the other fields of each transaction result (D-210).
 
 - `regular.initial` and `reservoir.initial`: the regular gas and the reservoir the first frame starts
   with, after every charge made before it (the authorities', the pre-frame history, a new or created
