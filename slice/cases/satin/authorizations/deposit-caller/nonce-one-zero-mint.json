@@ -160,6 +160,8 @@
     "group:state"
   ],
   "rules": [
+    "SATIN-DEP-003",
+    "SATIN-STATE-011",
     "SATIN-WIT-005",
     "SATIN-WIT-008"
   ],

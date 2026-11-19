@@ -5607,6 +5607,16 @@ def returndata_to(offset: int) -> bytes:
     return b"\x3d" + push(0) + push(offset) + b"\x3e"
 
 
+def return_call_result(measure: bytes = b"") -> bytes:
+    """Take the call's success bit and return it, an optional measured word, and the return data."""
+    code = push(0) + b"\x52"
+    offset = 32
+    if measure:
+        code += measure + push(32) + b"\x52"
+        offset += 32
+    return code + returndata_to(offset) + b"\x3d" + push(offset) + b"\x01\x5f\xf3"
+
+
 HINT_CHILD = bytes.fromhex("00000000000000000000000000000000000c0e20")  # a child that sends a hint, then reverts
 STATIC_RELAY = bytes.fromhex("00000000000000000000000000000000000c0e21")  # a frame a STATICCALL started that sends a hint
 ASKER = bytes.fromhex("00000000000000000000000000000000000c0e22")  # a child that asks remainingComputeGas()
@@ -5983,7 +5993,7 @@ def system_pages_gap_cases() -> list[Case]:
                  "recognition needs a CALL at depth 0, so the held code runs and succeeds (SATIN-ICPT-006)",
                  code=bytes_to_memory(keyless_input) + op + record_result() + STOP, accounts=dict(held), **sys_pages))
     keyless_input = keyless_data(carried(init_returning(STOP)), 1_000_000)
-    parent_result = push(0) + b"\x52" + returndata_to(32) + b"\x3d" + push(32) + b"\x01\x5f\xf3"
+    parent_result = return_call_result()
     for name, opcode in (("call", 0xF1), ("staticcall", 0xFA), ("callcode", 0xF2), ("delegatecall", 0xF4)):
         add(Case(f"satin/interception/keyless/{name}-runs-keyless-code", f"a contract's {name.upper()} with a valid "
                  "keylessDeploy argument runs the system contract's bytecode, without the deployment overhead. The "
@@ -7281,14 +7291,7 @@ def delegate_refusal_cases() -> list[Case]:
     refusal = f"VolatileDataAccessDisabled({model.ACCESS_TYPE_BENEFICIARY})"
     stop = f"MegaLimitExceeded({model.DETENTION_STOP}, limit)"
 
-    def frame_answer(probe_balance: bool = False) -> bytes:
-        """Return the call's success word, optional BALANCE gas measurement, and exact return data."""
-        code = b"\x5f\x52"  # MSTORE(0, success)
-        offset = 32
-        if probe_balance:
-            code += b"\x5a" + balance + b"\x5a\x90\x03" + push(32) + b"\x52"
-            offset += 32
-        return code + returndata_to(offset) + b"\x3d" + push(offset) + b"\x01\x5f\xf3"
+    balance_return = return_call_result(b"\x5a" + balance + b"\x5a\x90\x03")
 
     def refusing(code: bytes, left: int, name: str, intent: str, before: bytes = b"", after: bytes = b"",
                  accounts: dict | None = None, boundary: str = "", probe: str = "refusal-call", spare: int = 10_000,
@@ -7606,27 +7609,28 @@ def delegate_refusal_cases() -> list[Case]:
                  f"A zero-forward {opcode} loads the cold delegator and is refused at its beneficiary delegate. "
                  "The parent returns the failure bit and refusal data without reading the delegator afterwards "
                  "(SATIN-MAC-004, SATIN-MAC-007, SATIN-WIT-012).",
-                 tail=frame_answer(), reads=True, returned_state=True)
+                 tail=return_call_result(), reads=True, returned_state=True)
     refusing(static, cold + warm, "cold-refusal-status-with-probe", "The zero-forward STATICCALL of a cold delegator "
              "is refused. The parent returns the failure bit, the measured gas for a cold BALANCE and the refusal data "
-             "(SATIN-MAC-004, SATIN-SCHED-003).", tail=frame_answer(probe_balance=True), returned_state=True)
+             "(SATIN-MAC-004, SATIN-SCHED-003).", tail=balance_return, returned_state=True)
     for suffix, probe_balance in (("", False), ("-with-probe", True)):
         refusing(static, 2 * warm, "listed-warm-refusal-status" + suffix, "A zero-forward STATICCALL can pay the "
                  "guard for a delegator already warmed by the access list. The parent returns the failure bit "
-                 + ("and the warm BALANCE measurement with the refusal data" if probe_balance else
-                    "and the refusal data without reading the loaded target again") + " (SATIN-MAC-004, SATIN-WIT-012).",
-                 tail=frame_answer(probe_balance), reads=True, returned_state=True, **listed)
+                 + ("and the warm BALANCE measurement with the refusal data (SATIN-MAC-004, SATIN-SCHED-003)."
+                    if probe_balance else "and the refusal data without reading the loaded target again "
+                    "(SATIN-MAC-004, SATIN-WIT-012)."),
+                 tail=balance_return if probe_balance else return_call_result(), reads=True, returned_state=True, **listed)
     for op in (0xF1, 0xF2):
         opcode = CALL_OPS[op]
         refusing(call_op(op, BENEFICIARY_DELEGATOR, value=1), 15_000, f"{opcode.lower()}-value-refusal-status",
                  f"A {opcode} carrying one wei from a frame with zero balance reaches the beneficiary delegate. "
                  "The parent returns the failure bit and refusal data. The transfer charge comes back before the "
                  "call checks funds (SATIN-MAC-004, SATIN-MAC-007, SATIN-WIT-012).",
-                 tail=frame_answer(), reads=True, returned_state=True)
+                 tail=return_call_result(), reads=True, returned_state=True)
     refusing(static, cold + warm, "reverted-warmth-refusal-status", "The first child warms the target and reverts. "
              "The second child pays the cold access again before its delegate is refused. The parent returns its "
              "failure bit, the measured gas for another cold BALANCE, and its refusal data (SATIN-MAC-004, "
-             "SATIN-SCHED-003).", before=call(50_000, WARMER, 0, 0) + b"\x50", tail=frame_answer(probe_balance=True),
+             "SATIN-SCHED-003).", before=call(50_000, WARMER, 0, 0) + b"\x50", tail=balance_return,
              accounts={WARMER: model.Account(nonce=1, code=balance + revert(0, 0))}, returned_state=True)
 
     for code, room, name, coverage in (
@@ -7637,7 +7641,7 @@ def delegate_refusal_cases() -> list[Case]:
         detained_refusal(code, 5_200, room, name, "The delegator is loaded and its cold surcharge is the detention "
                          f"crossing after refusal settlement: {coverage}. The parent returns the child's failure bit "
                          "and stop data without another access to the target (SATIN-MAC-004, SATIN-MAC-007, "
-                         "SATIN-OUT-008, SATIN-STOP-020, SATIN-WIT-012).", tail=frame_answer(), returned_state=True)
+                         "SATIN-OUT-008, SATIN-STOP-020, SATIN-WIT-012).", tail=return_call_result(), returned_state=True)
     add(Case("satin/detention/delegate-refusal/memory-crossing-status", "The STATICCALL's input memory charge crosses "
              "detention before its delegator is loaded. The parent returns the child's failure bit and stop data, "
              "and the target is absent from the returned keys (SATIN-MAC-007, SATIN-DET-001, SATIN-STOP-020, "
@@ -7645,7 +7649,7 @@ def delegate_refusal_cases() -> list[Case]:
              accounts={**delegator, REFUSING: model.Account(nonce=1, code=call_op(0xFA, BENEFICIARY_DELEGATOR,
                                                                                   inp=(0, size)) + STOP)},
              forbidden_accounts=(BENEFICIARY_DELEGATOR,), code=b"\x42\x50" + disable + call(forward, REFUSING, 0, 0)
-             + frame_answer(), **page))
+             + return_call_result(), **page))
 
     # SATIN-PCMP-008: a precompile's address delegating to the beneficiary ends at or before the delegate's load, at the
     # edge of the delegation guard, and never reaches dispatch.

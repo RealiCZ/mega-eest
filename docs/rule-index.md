@@ -1150,6 +1150,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/empty-leaf-zero-mint] | gating | unqualified | [satin-83c0d26] |
+| [satin/authorizations/deposit-caller/nonce-one-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/deposits/empty-caller/paid] | gating | unqualified | [satin-bcf260d] |
 | [satin/deposits/empty-caller/unpaid] | gating | unqualified | [satin-bcf260d] |
 | [satin/deposits/failed/new-caller-halts] | gating | unqualified | [satin-bcf260d] |
@@ -8091,6 +8092,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/one-hop-delegate-runs-access-on] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
@@ -9570,6 +9572,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/empty-leaf] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/deposit-caller/empty-leaf-zero-mint] | gating | unqualified | [satin-83c0d26] |
+| [satin/authorizations/deposit-caller/nonce-one-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/frame/origin-and-gas-price] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
@@ -10851,7 +10854,6 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
-| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/memory-halts-before-the-target] | gating | unqualified | [satin-83c0d26] |

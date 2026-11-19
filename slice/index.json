@@ -7616,8 +7616,10 @@
       "area": "authorizations",
       "caseId": "satin/authorizations/deposit-caller/nonce-one-zero-mint",
       "file": "cases/satin/authorizations/deposit-caller/nonce-one-zero-mint.json",
-      "fileDigest": "sha256:1c27490f558601d44a435f0fd8375561680f83ca77d8decefcb821f888f3fa9b",
+      "fileDigest": "sha256:871db643e665c960be6d9bde2e814be9155526e5228dcc8400a0de118a255a99",
       "rules": [
+        "SATIN-DEP-003",
+        "SATIN-STATE-011",
         "SATIN-WIT-005",
         "SATIN-WIT-008"
       ],
@@ -22364,7 +22366,7 @@
       "area": "access-control",
       "caseId": "satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe",
       "file": "cases/satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe.json",
-      "fileDigest": "sha256:700e2a7c6c2cad1c5e086fae77250dd38865123d267115e5b3f04ae80b62801d",
+      "fileDigest": "sha256:20cdcdc45936369346853e3daa634791ff655a9d9c599445323e1a5298dc2989",
       "rules": [
         "SATIN-MAC-001",
         "SATIN-MAC-002",
@@ -22372,9 +22374,9 @@
         "SATIN-MAC-004",
         "SATIN-MAC-005",
         "SATIN-MAC-007",
+        "SATIN-SCHED-003",
         "SATIN-WIT-005",
-        "SATIN-WIT-008",
-        "SATIN-WIT-012"
+        "SATIN-WIT-008"
       ],
       "spec": {
         "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",

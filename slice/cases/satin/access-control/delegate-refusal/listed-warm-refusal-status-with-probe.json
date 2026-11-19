@@ -270,7 +270,7 @@
   "profile": "state-transition",
   "provenance": {
     "authoring": {
-      "intent": "A zero-forward STATICCALL can pay the guard for a delegator already warmed by the access list. The parent returns the failure bit and the warm BALANCE measurement with the refusal data (SATIN-MAC-004, SATIN-WIT-012)."
+      "intent": "A zero-forward STATICCALL can pay the guard for a delegator already warmed by the access list. The parent returns the failure bit and the warm BALANCE measurement with the refusal data (SATIN-MAC-004, SATIN-SCHED-003)."
     },
     "definition": "tools/make_slice.py::delegate_refusal_cases",
     "generator": "tools/make_slice.py",
@@ -295,9 +295,9 @@
     "SATIN-MAC-004",
     "SATIN-MAC-005",
     "SATIN-MAC-007",
+    "SATIN-SCHED-003",
     "SATIN-WIT-005",
-    "SATIN-WIT-008",
-    "SATIN-WIT-012"
+    "SATIN-WIT-008"
   ],
   "schemaVersion": "2.0",
   "specRef": {
