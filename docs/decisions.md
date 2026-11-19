@@ -3251,3 +3251,64 @@ transition and the pools of each transaction result for block-build, block-impor
 stateless-block. Both runs must pass. A known failure in the original run can be waived only
 when the additional run passes or has the same known difference. The instrumented consumer
 checks the original fixture once.
+
+**D-220. Check the full width and order of Oracle hint topics.** Send distinct
+two-byte payloads with 32-byte topics filled with 0x11 and 0x22. Compare both
+service callbacks in order, including their calling address, topic and payload
+(`SATIN-ORCL-006`, `SATIN-ORCL-007`).
+
+**D-221. Check the complete unfunded hint admitted on a stipend.** Request zero
+gas and carry one wei from a contract with zero balance. Return the child's
+failure word and empty return data directly. The Oracle service receives the
+32-byte topic and eight-byte payload, the full ABI input stays counted, and both
+returned balances stay zero (`SATIN-ORCL-006`, `SATIN-ORCL-007`, `SATIN-ORCL-009`).
+
+**D-222. Pair wildcard authorization with a one-wei transfer.** Sign a chain-id-zero
+authorization at nonce zero for an absent authority and a nonzero delegate. The
+derivation cites the chain gate separately from the checks for applying the entry.
+Funding the authority shares its authorization record and growth unit. Funding
+a different absent account adds a record and growth unit. Both cases observe
+the history ledger, the transfer log and the returned accounts
+(`SATIN-AUTH-002`, `SATIN-AUTH-008`, `SATIN-ACCT-005`, `SATIN-ACCT-009`).
+
+**D-223. Resume after INVALID consumes a capped value forward.** Use GAS for
+the first value call and request zero for the second. Size the transaction so
+the caller's retained regular gas can pay the second call's new-account
+charge and writes. A successful parent keeps only the second transfer's log,
+two records and one growth unit (`SATIN-FWD-003`, `SATIN-ACCT-005`,
+`SATIN-ACCT-011`, `SATIN-POOL-014`).
+
+**D-224. Pass the entire received wei onward with GAS.** Request GAS for the
+incoming and onward calls. The middle account starts with code, nonce zero and
+zero balance. Its returned balance is zero and the new recipient's is one.
+The middle account's record is taken back and
+both transfer logs stay (`SATIN-FWD-003`, `SATIN-ACCT-004`, `SATIN-ACCT-005`).
+
+**D-225. Compare sender and beneficiary transfers with GAS.** Each capped value
+forward leaves one transfer log. The transaction sender's account is covered by
+the body, while the existing block beneficiary's execution balance change makes
+a record. Check both returned balances and the settled gas and resource ledgers
+(`SATIN-FWD-003`, `SATIN-ACCT-008`, `SATIN-ACCT-010`).
+
+**D-226. Exercise both endings of a capped DELEGATECALL that clears a fresh
+slot.** The parent writes one to slot zero and forwards using GAS. STOP after
+the clear returns the original zero slot and takes back its record and growth.
+INVALID rolls the clear back, preserving the parent's one, record and growth
+(`SATIN-FWD-003`, `SATIN-ACCT-004`, `SATIN-ACCT-011`).
+
+**D-227. Follow a successful endowed CREATE of length zero with a value call.**
+The creator starts at nonce zero. Its empty initcode takes the zero-length path.
+The caller later funds a different absent account. The creator's nonce and balance
+changes share its record. Both recipients keep their balances, and both transfers log
+(`SATIN-SIZE-005`, `SATIN-ACCT-004`, `SATIN-ACCT-005`).
+
+**D-228. Require slot zero in the returned keyless deploy account.** Make ORIGIN
+the first constructor write, to slot zero. Run a below-cap and above-cap
+transaction and require the relayer's address in that returned slot
+(`SATIN-KEY-011`, `SATIN-WIT-008`).
+
+**D-229. Require the outer gas price in returned slot one.** Sign the carried
+constructor at 100 Gwei and send both outer transactions at seven wei. The
+second constructor write stores GASPRICE in slot one. Both cases request
+returned state and allow the plain adapter to use the default execution loop
+(`SATIN-KEY-011`, `SATIN-WIT-008`).

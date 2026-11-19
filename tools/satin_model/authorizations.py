@@ -72,6 +72,10 @@ class AuthorizationsMixin:
         crossed = ((KV_UPDATE_STOP, TX_KV_UPDATE_LIMIT) if kv > kv_left else
                    (STATE_GROWTH_STOP, TX_STATE_GROWTH_LIMIT) if growth > growth_left else None)
         if self.lists:
+            if any(chain_id == 0 for chain_id, _, _, _ in tx.authorizations):
+                d.add("limit", "entries with chain id zero pass the chain-id gate. The signature and nonce gates "
+                      "and the authority's code and effective nonce still decide which entries can be applied",
+                      "SATIN-AUTH-002")
             gated = [self.entry_gate(c, n, a) for c, _, n, a in tx.authorizations]
             gated = [g for g in gated if g is not None]
             consulted = len(absent)

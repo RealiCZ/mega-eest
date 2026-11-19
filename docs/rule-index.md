@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1183** (1183 gating, 0 quarantined).
+Cases: **1196** (1196 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -37,6 +37,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/body/access-list-duplicate-entries] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/body/access-list-one-entry] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/failed-deposit/empty-leaf-caller] | gating | unqualified | [satin-bcf260d] |
@@ -50,6 +52,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/fee-account/destruction-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/value-call-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/fee-account/value-call-to-beneficiary-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
@@ -74,12 +77,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/destruction-returns-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-failed-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-kept-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/failed-transfer-then-same-recipient] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/failed-transfer-then-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/partial-return] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-recipients] | gating | unqualified | [satin-bcf260d] |
@@ -88,6 +94,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/sender/delegated-sender-transfers] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/delegated-sender-transfers-and-writes] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/sender/value-call-to-sender-gas] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-ACCT-003
 
@@ -128,6 +135,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/fee-account/destruction-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/value-call-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/fee-account/value-call-to-beneficiary-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/growth/child-net-below-zero-then-rise] | gating | unqualified | [satin-bcf260d] |
@@ -148,12 +156,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/destruction-returns-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-failed-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-kept-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/failed-transfer-then-same-recipient] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/failed-transfer-then-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/partial-return] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-recipients] | gating | unqualified | [satin-bcf260d] |
@@ -162,6 +173,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/sender/delegated-sender-transfers] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/delegated-sender-transfers-and-writes] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/sender/value-call-to-sender-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/clear/specification-example] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-slot/bucket-x16] | gating | unqualified | [satin-d34e626] |
@@ -179,7 +191,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/sstore/two-fresh-slots/two-buckets] | gating | unqualified | [satin-d34e626] |
 | [satin/system-tx/origin/user-deposit-history-sites] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/sent-back/round-trip-from-zero] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-ACCT-005
@@ -189,10 +203,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/beneficiary-is-applied-authority] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/beneficiary-is-sender] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/value-call-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/fee-account/value-call-to-beneficiary-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
@@ -206,12 +223,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/destruction-returns-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-failed-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-kept-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/failed-transfer-then-same-recipient] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/failed-transfer-then-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/partial-return] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-recipients] | gating | unqualified | [satin-bcf260d] |
@@ -220,6 +240,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/sender/delegated-sender-transfers] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/delegated-sender-transfers-and-writes] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/sender/value-call-to-sender-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/creation/code-bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/empty-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/initcode-reverts] | gating | unqualified | [satin-d34e626] |
@@ -251,6 +272,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/destruction-takes-back-in-kept-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/sstore/clear-then-reset] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored] | gating | unqualified | [satin-d34e626] |
 | [satin/sstore/fresh-then-restored-gas] | gating | unqualified | [satin-5fb2688] |
@@ -272,6 +294,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/fee-account/destruction-to-beneficiary-as-sender] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/delegated-sender-funds-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/sender/value-call-to-sender-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/system-tx/promoted/set-slots-absent-caller] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-ACCT-009
@@ -280,6 +303,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/beneficiary-is-applied-authority] | gating | unqualified | [satin-bcf260d] |
 
 ### SATIN-ACCT-010
@@ -293,6 +317,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/fee-account/destruction-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/value-call-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/fee-account/value-call-to-beneficiary-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
@@ -319,18 +344,23 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/destruction-returns-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-failed-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-kept-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/failed-transfer-then-same-recipient] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/failed-transfer-then-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/partial-return] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-recipients] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/two-transfers-one-recipient] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/delegated-sender-transfers] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/delegated-sender-transfers-and-writes] | gating | unqualified | [satin-bcf260d] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-ACCT-012
 
@@ -339,6 +369,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/authority/value-call-after-list] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/body/access-list-duplicate-entries] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/body/access-list-one-entry] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/beneficiary-is-applied-authority] | gating | unqualified | [satin-bcf260d] |
@@ -350,6 +382,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/fee-account/destruction-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/fee-account/value-call-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/fee-account/value-call-to-beneficiary-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
@@ -374,12 +407,15 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/destruction-returns-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-failed-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/destruction-takes-back-in-kept-frame] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/failed-transfer-then-same-recipient] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/failed-transfer-then-sibling] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/partial-return] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-recipients] | gating | unqualified | [satin-bcf260d] |
@@ -388,6 +424,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/sender/delegated-sender-transfers] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/delegated-sender-transfers-and-writes] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/sender/value-call-to-sender] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/sender/value-call-to-sender-gas] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-ACCT-013
 
@@ -397,6 +434,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/creation-onto-funded-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/creation-unfunded-control] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/creation/code-bucket-x2] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/empty-code] | gating | unqualified | [satin-d34e626] |
 | [satin/creation/initcode-writes-slot] | gating | unqualified | [satin-d34e626] |
@@ -409,6 +447,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-to-absent-base-fee-vault] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/merge/creation-endowment-unfunded] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/merge/creator-record-survives-failed-creation] | gating | unqualified | [satin-bcf260d] |
@@ -418,8 +458,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/creation-onto-funded-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/creation-unfunded-control] | gating | unqualified | [satin-bcf260d] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/delegated-sender-funds-absent-recipient] | gating | unqualified | [satin-83c0d26] |
@@ -590,8 +633,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/beneficiary/gated-authority-not-detained] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/chain-id-other] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/gates/chain-id-zero] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/nonce-max] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/r-at-order] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/gates/signature-recovers-nothing] | gating | unqualified | [satin-c130558] |
@@ -801,6 +847,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/absent-authority-sequential-nonces] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/beneficiary/gated-authority-not-detained] | gating | unqualified | [satin-c130558] |
@@ -2679,6 +2727,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/accounting/fee-account/value-call-to-beneficiary-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/sender/value-call-to-sender-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/gas-forwarding/call/request-above-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/call/request-below-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/callcode/no-value-request-above-cap] | gating | unqualified | [satin-bcf260d] |
@@ -2708,6 +2760,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/gas-forwarding/staticcall/request-below-cap] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/system-originated/reservoir-share-of-99] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-forwarding/value-call/ten-thousand-left] | gating | unqualified | [satin-bcf260d] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 
 ### SATIN-FWD-004
 
@@ -3593,6 +3647,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -3817,6 +3873,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -4011,6 +4069,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -4192,6 +4252,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/buckets] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -4343,6 +4405,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -4537,6 +4601,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -4750,6 +4816,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -4982,6 +5050,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -5130,6 +5200,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -5268,6 +5340,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -5416,6 +5490,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -5565,6 +5641,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/deploy/carried-value] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/collision] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/constructor-log] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/delegated-signer] | gating | unqualified | [satin-c130558] |
 | [satin/keyless/deploy/destroyed-in-constructor] | gating | unqualified | [satin-c130558] |
@@ -6730,6 +6808,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/from-contract] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/full-topics-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/multicall-payload] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/own-call] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/selector-only] | gating | unqualified | [satin-bcf260d] |
@@ -6814,6 +6893,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/delegatecall] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/from-contract] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/full-topics-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/gas-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/gas-zero] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/multicall-payload] | gating | unqualified | [satin-bcf260d] |
@@ -6824,6 +6904,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/send-hint/staticcall-in-static-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/stipend-funded] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/stipend-unfunded-full-payload] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/trailing-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/two-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/unpadded] | gating | unqualified | [satin-bcf260d] |
@@ -6836,6 +6917,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/from-contract] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/full-topics-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/gas-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/no-gas-past-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/own-call] | gating | unqualified | [satin-bcf260d] |
@@ -6843,6 +6925,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/send-hint/staticcall-in-static-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/stipend-funded] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/stipend-unfunded-full-payload] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/trailing-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/two-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/unpadded] | gating | unqualified | [satin-bcf260d] |
@@ -6870,6 +6953,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/from-contract] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/full-topics-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/gas-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/no-gas-past-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/own-call] | gating | unqualified | [satin-bcf260d] |
@@ -6878,6 +6962,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/send-hint/staticcall-in-static-frame] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/stipend-funded] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/stipend-unfunded-full-payload] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/trailing-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/two-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/unpadded] | gating | unqualified | [satin-bcf260d] |
@@ -6893,12 +6978,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/from-contract] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/full-topics-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/gas-one] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/gas-zero] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/no-gas-past-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/selector-only] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/stipend-funded] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/stipend-unfunded-full-payload] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/trailing-byte] | gating | unqualified | [satin-bcf260d] |
 | [satin/oracle/send-hint/two-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/unpadded] | gating | unqualified | [satin-bcf260d] |
@@ -7687,6 +7774,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/gas-pools/created-account-give-back/initcode-halts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/created-account-give-back/initcode-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/gas-pools/first-frame-revert/authorization-charges-kept] | gating | unqualified | [satin-bcf260d] |
@@ -9110,6 +9198,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/accounting/merge/empty-initcode-endowment-unfunded] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/create/deployed-code-at-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/create/deployed-code-over-limit] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/create/deployed-code-over-limit-detained] | gating | unqualified | [satin-bcf260d] |
@@ -10140,7 +10229,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/take-backs/descendant/both-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | gating | unqualified | [satin-cdded1e] |
 
@@ -10151,7 +10242,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/take-backs/descendant/both-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | gating | unqualified | [satin-cdded1e] |
 
@@ -10162,7 +10255,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/take-backs/descendant/both-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/destroyed-creation/new-beneficiary] | gating | unqualified | [satin-cdded1e] |
@@ -10184,7 +10279,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/take-backs/descendant/both-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/kept] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/writer-halted] | gating | unqualified | [satin-cdded1e] |
 
@@ -10234,6 +10331,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/take-backs/descendant/both-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/descendant-reverted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/writer-halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-child/halted] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/failed-child/reverted] | gating | unqualified | [satin-cdded1e] |
@@ -10461,21 +10559,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-beneficiary-as-sender] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/fee-account/value-call-to-beneficiary-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/merge/creation-endowment-unfunded] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/merge/empty-initcode-endowment-unfunded] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/delegated-sender-funds-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/sender/value-call-to-sender-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/nonce-one-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/reads/absent-authorities-out-of-gas] | gating | unqualified | [satin-83c0d26] |
@@ -10500,6 +10605,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/below-cap] | gating | unqualified | [satin-83c0d26] |
@@ -10589,7 +10696,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
+| [satin/oracle/send-hint/full-topics-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/stipend-unfunded-full-payload] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/two-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/reads/balance-cold-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
@@ -10631,7 +10740,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/system-tx/promoted/set-slots-absent-caller] | gating | unqualified | [satin-83c0d26] |
 | [satin/system-tx/promoted/set-slots-funded-caller] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/sent-back/round-trip] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/round-trip-from-zero] | gating | unqualified | [satin-83c0d26] |
 
@@ -10659,21 +10770,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/authority/value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-delegated-absent-authority] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/authority/wildcard-value-to-distinct-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-beneficiary-as-sender] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/fee-account/value-call-to-beneficiary-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-l1-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/value-call-to-operator-fee-vault] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/merge/creation-endowment-unfunded] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/merge/empty-initcode-endowment-unfunded] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/empty-initcode-creation-then-transfer] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/halted-transfer-then-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/halted-transfer-then-absent-recipient-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/pass-on-exact-to-absent] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/records/pass-on-exact-to-absent-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/delegated-sender-funds-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/accounting/sender/value-call-to-sender-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/nonce-one-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/reads/absent-authorities-out-of-gas] | gating | unqualified | [satin-83c0d26] |
@@ -10698,6 +10816,8 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/keyless/budget/constructor-keeps-slot-and-log] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/budget/nonce-zero-stop-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/contract-call/no-value] | gating | unqualified | [satin-c130558] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/above-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/keyless/deploy/constructor-origin-and-gasprice/below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/deploy/constructor-word-log-below-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/above-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/keyless/pools/balance-only-address/below-cap] | gating | unqualified | [satin-83c0d26] |
@@ -10787,7 +10907,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/oracle/get-slots/recorded-answer-then-fallback] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-no-value] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/caller-reverts-stipend] | gating | unqualified | [satin-83c0d26] |
+| [satin/oracle/send-hint/full-topics-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/stipend-unfunded] | gating | unqualified | [satin-bcf260d] |
+| [satin/oracle/send-hint/stipend-unfunded-full-payload] | gating | unqualified | [satin-83c0d26] |
 | [satin/oracle/send-hint/two-in-order] | gating | unqualified | [satin-83c0d26] |
 | [satin/reads/balance-cold-paid] | gating | unqualified | [satin-5fb2688] |
 | [satin/reads/balance-cold-unpaid] | gating | unqualified | [satin-5fb2688] |
@@ -10829,7 +10951,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/system-tx/promoted/set-slots-absent-caller] | gating | unqualified | [satin-83c0d26] |
 | [satin/system-tx/promoted/set-slots-funded-caller] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-halted] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-halted-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/descendant/fresh-slot-restore-kept] | gating | unqualified | [satin-83c0d26] |
+| [satin/take-backs/descendant/fresh-slot-restore-kept-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/take-backs/sent-back/round-trip] | gating | unqualified | [satin-cdded1e] |
 | [satin/take-backs/sent-back/round-trip-from-zero] | gating | unqualified | [satin-83c0d26] |
 
@@ -11065,6 +11189,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/accounting/authority/value-call-after-list]: ../slice/cases/satin/accounting/authority/value-call-after-list.json
 [satin/accounting/authority/value-to-delegated-absent-authority]: ../slice/cases/satin/accounting/authority/value-to-delegated-absent-authority.json
 [satin/accounting/authority/value-to-distinct-absent-recipient]: ../slice/cases/satin/accounting/authority/value-to-distinct-absent-recipient.json
+[satin/accounting/authority/wildcard-value-to-delegated-absent-authority]: ../slice/cases/satin/accounting/authority/wildcard-value-to-delegated-absent-authority.json
+[satin/accounting/authority/wildcard-value-to-distinct-absent-recipient]: ../slice/cases/satin/accounting/authority/wildcard-value-to-distinct-absent-recipient.json
 [satin/accounting/body/access-list-duplicate-entries]: ../slice/cases/satin/accounting/body/access-list-duplicate-entries.json
 [satin/accounting/body/access-list-one-entry]: ../slice/cases/satin/accounting/body/access-list-one-entry.json
 [satin/accounting/failed-deposit/empty-leaf-caller]: ../slice/cases/satin/accounting/failed-deposit/empty-leaf-caller.json
@@ -11078,6 +11204,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/accounting/fee-account/destruction-to-operator-fee-vault]: ../slice/cases/satin/accounting/fee-account/destruction-to-operator-fee-vault.json
 [satin/accounting/fee-account/value-call-to-base-fee-vault]: ../slice/cases/satin/accounting/fee-account/value-call-to-base-fee-vault.json
 [satin/accounting/fee-account/value-call-to-beneficiary]: ../slice/cases/satin/accounting/fee-account/value-call-to-beneficiary.json
+[satin/accounting/fee-account/value-call-to-beneficiary-gas]: ../slice/cases/satin/accounting/fee-account/value-call-to-beneficiary-gas.json
 [satin/accounting/fee-account/value-call-to-l1-fee-vault]: ../slice/cases/satin/accounting/fee-account/value-call-to-l1-fee-vault.json
 [satin/accounting/fee-account/value-call-to-operator-fee-vault]: ../slice/cases/satin/accounting/fee-account/value-call-to-operator-fee-vault.json
 [satin/accounting/fee-account/value-to-absent-base-fee-vault]: ../slice/cases/satin/accounting/fee-account/value-to-absent-base-fee-vault.json
@@ -11102,12 +11229,15 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/accounting/records/destruction-returns-one]: ../slice/cases/satin/accounting/records/destruction-returns-one.json
 [satin/accounting/records/destruction-takes-back-in-failed-frame]: ../slice/cases/satin/accounting/records/destruction-takes-back-in-failed-frame.json
 [satin/accounting/records/destruction-takes-back-in-kept-frame]: ../slice/cases/satin/accounting/records/destruction-takes-back-in-kept-frame.json
+[satin/accounting/records/empty-initcode-creation-then-transfer]: ../slice/cases/satin/accounting/records/empty-initcode-creation-then-transfer.json
 [satin/accounting/records/failed-transfer-then-same-recipient]: ../slice/cases/satin/accounting/records/failed-transfer-then-same-recipient.json
 [satin/accounting/records/failed-transfer-then-sibling]: ../slice/cases/satin/accounting/records/failed-transfer-then-sibling.json
 [satin/accounting/records/halted-transfer-then-absent-recipient]: ../slice/cases/satin/accounting/records/halted-transfer-then-absent-recipient.json
+[satin/accounting/records/halted-transfer-then-absent-recipient-gas]: ../slice/cases/satin/accounting/records/halted-transfer-then-absent-recipient-gas.json
 [satin/accounting/records/partial-return]: ../slice/cases/satin/accounting/records/partial-return.json
 [satin/accounting/records/pass-on-exact]: ../slice/cases/satin/accounting/records/pass-on-exact.json
 [satin/accounting/records/pass-on-exact-to-absent]: ../slice/cases/satin/accounting/records/pass-on-exact-to-absent.json
+[satin/accounting/records/pass-on-exact-to-absent-gas]: ../slice/cases/satin/accounting/records/pass-on-exact-to-absent-gas.json
 [satin/accounting/records/three-transfers-one-absent-recipient]: ../slice/cases/satin/accounting/records/three-transfers-one-absent-recipient.json
 [satin/accounting/records/two-absent-recipients]: ../slice/cases/satin/accounting/records/two-absent-recipients.json
 [satin/accounting/records/two-recipients]: ../slice/cases/satin/accounting/records/two-recipients.json
@@ -11116,6 +11246,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/accounting/sender/delegated-sender-transfers]: ../slice/cases/satin/accounting/sender/delegated-sender-transfers.json
 [satin/accounting/sender/delegated-sender-transfers-and-writes]: ../slice/cases/satin/accounting/sender/delegated-sender-transfers-and-writes.json
 [satin/accounting/sender/value-call-to-sender]: ../slice/cases/satin/accounting/sender/value-call-to-sender.json
+[satin/accounting/sender/value-call-to-sender-gas]: ../slice/cases/satin/accounting/sender/value-call-to-sender-gas.json
 [satin/authorizations/absent-authority]: ../slice/cases/satin/authorizations/absent-authority.json
 [satin/authorizations/absent-authority-sequential-nonces]: ../slice/cases/satin/authorizations/absent-authority-sequential-nonces.json
 [satin/authorizations/beneficiary/gated-authority-not-detained]: ../slice/cases/satin/authorizations/beneficiary/gated-authority-not-detained.json
@@ -11538,6 +11669,8 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/keyless/deploy/carried-value]: ../slice/cases/satin/keyless/deploy/carried-value.json
 [satin/keyless/deploy/collision]: ../slice/cases/satin/keyless/deploy/collision.json
 [satin/keyless/deploy/constructor-log]: ../slice/cases/satin/keyless/deploy/constructor-log.json
+[satin/keyless/deploy/constructor-origin-and-gasprice/above-cap]: ../slice/cases/satin/keyless/deploy/constructor-origin-and-gasprice/above-cap.json
+[satin/keyless/deploy/constructor-origin-and-gasprice/below-cap]: ../slice/cases/satin/keyless/deploy/constructor-origin-and-gasprice/below-cap.json
 [satin/keyless/deploy/constructor-word-log-below-cap]: ../slice/cases/satin/keyless/deploy/constructor-word-log-below-cap.json
 [satin/keyless/deploy/delegated-signer]: ../slice/cases/satin/keyless/deploy/delegated-signer.json
 [satin/keyless/deploy/destroyed-in-constructor]: ../slice/cases/satin/keyless/deploy/destroyed-in-constructor.json
@@ -11780,6 +11913,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/oracle/send-hint/caller-reverts-stipend]: ../slice/cases/satin/oracle/send-hint/caller-reverts-stipend.json
 [satin/oracle/send-hint/delegatecall]: ../slice/cases/satin/oracle/send-hint/delegatecall.json
 [satin/oracle/send-hint/from-contract]: ../slice/cases/satin/oracle/send-hint/from-contract.json
+[satin/oracle/send-hint/full-topics-in-order]: ../slice/cases/satin/oracle/send-hint/full-topics-in-order.json
 [satin/oracle/send-hint/gas-one]: ../slice/cases/satin/oracle/send-hint/gas-one.json
 [satin/oracle/send-hint/gas-zero]: ../slice/cases/satin/oracle/send-hint/gas-zero.json
 [satin/oracle/send-hint/multicall-payload]: ../slice/cases/satin/oracle/send-hint/multicall-payload.json
@@ -11790,6 +11924,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/oracle/send-hint/staticcall-in-static-frame]: ../slice/cases/satin/oracle/send-hint/staticcall-in-static-frame.json
 [satin/oracle/send-hint/stipend-funded]: ../slice/cases/satin/oracle/send-hint/stipend-funded.json
 [satin/oracle/send-hint/stipend-unfunded]: ../slice/cases/satin/oracle/send-hint/stipend-unfunded.json
+[satin/oracle/send-hint/stipend-unfunded-full-payload]: ../slice/cases/satin/oracle/send-hint/stipend-unfunded-full-payload.json
 [satin/oracle/send-hint/trailing-byte]: ../slice/cases/satin/oracle/send-hint/trailing-byte.json
 [satin/oracle/send-hint/two-in-order]: ../slice/cases/satin/oracle/send-hint/two-in-order.json
 [satin/oracle/send-hint/unpadded]: ../slice/cases/satin/oracle/send-hint/unpadded.json
@@ -12127,7 +12262,9 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/take-backs/descendant/both-reverted]: ../slice/cases/satin/take-backs/descendant/both-reverted.json
 [satin/take-backs/descendant/descendant-reverted]: ../slice/cases/satin/take-backs/descendant/descendant-reverted.json
 [satin/take-backs/descendant/fresh-slot-restore-halted]: ../slice/cases/satin/take-backs/descendant/fresh-slot-restore-halted.json
+[satin/take-backs/descendant/fresh-slot-restore-halted-gas]: ../slice/cases/satin/take-backs/descendant/fresh-slot-restore-halted-gas.json
 [satin/take-backs/descendant/fresh-slot-restore-kept]: ../slice/cases/satin/take-backs/descendant/fresh-slot-restore-kept.json
+[satin/take-backs/descendant/fresh-slot-restore-kept-gas]: ../slice/cases/satin/take-backs/descendant/fresh-slot-restore-kept-gas.json
 [satin/take-backs/descendant/kept]: ../slice/cases/satin/take-backs/descendant/kept.json
 [satin/take-backs/descendant/writer-halted]: ../slice/cases/satin/take-backs/descendant/writer-halted.json
 [satin/take-backs/destroyed-creation/new-beneficiary]: ../slice/cases/satin/take-backs/destroyed-creation/new-beneficiary.json
