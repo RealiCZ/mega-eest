@@ -3125,3 +3125,53 @@ D-89, the stopped frame receives and returns the pools left after intrinsic and 
 A creation transaction short of the account charge reports the no-frame pools under
 D-64 and `SATIN-SCHED-010`. The exact-charge creation and a frame that enters and then halts
 exercise the other paths.
+
+**D-180. Observe growth after a destruction through a surviving account.** A fresh slot in the
+creator adds one unit after the destruction table finishes. This exposes an extra fall that a
+reported zero would hide. The CREATE2 cases keep separate constructors for a retained log, a
+destruction before any deposit, a deposit before destruction, a restored slot, and a reverted
+destruction followed by a kept one. A second zero-balance destruction has its own case
+(`SATIN-LIM-007`, `SATIN-SD-010`, `SATIN-SD-011`).
+
+**D-181. Preserve the history of code deposited after a mark.** The constructor marks the
+CREATE2 address through DELEGATECALL before returning its runtime. Compare calling that runtime
+again with stopping after deposit. Both keep the bytecode's history and data size, no state gas
+for the marked account, and only the creator's record. The reservoir variants each add the
+surviving creator's slot (`SATIN-SD-011`, `SATIN-SD-014`).
+
+**D-182. Observe CREATE2 wiring and ordered logs.** Use the address derived from the actual
+creator, salt and initcode and include hashing in the regular ledger. The funded call after a
+destruction emits a second LOG3 and moves its value to the beneficiary. Distinct data words
+disambiguate the two events from the deployed code in the receipt. Independent rollback and
+slot cases check the branches that use the same wiring (`SATIN-SIZE-005`, `SATIN-SD-015`).
+
+**D-183. Observe both high-tier keyless endings from nonce zero.** The successful constructor
+keeps a fresh slot and a full data word from the deploy address. The stopped constructor crosses
+its growth budget, rolls back its slots and returns the stop through a successful parent.
+The signer keeps its nonce bump and sole write record. Both cases observe the parent's final
+regular gas and reservoir as well as the deployment ABI (`SATIN-KEY-015`, `SATIN-KEY-016`,
+`SATIN-POOL-014`, `SATIN-POOL-015`).
+
+**D-184. Read the reset storage of a CREATE2 target.** A zero-nonce leaf holds a slot before
+CREATE2. The first call of the deployed code loads the slot as zero, and the parent returns
+that word and both call statuses. The second call destroys the account. The original leaf's
+charge and rise remain, and the returned state preserves only the destroyed account and slot
+keys (`SATIN-SD-017`, `SATIN-WIT-008`).
+
+**D-185. Observe the prepaid creation leaf at the initcode cap.** An exact-limit creation
+transaction opens the first-frame pools above the execution cap. Body history and the
+prepaid leaf draw the reservoir without a regular legacy share. The earlier exact-limit and
+over-limit gate cases still distinguish admission (`SATIN-SIZE-004`, `SATIN-POOL-024`).
+
+**D-186. Distinguish discarded and repeated destruction.** A wrapper that reverts discards its
+descendant's mark and leaves the deployed account. A wrapper that halts also discards the mark
+while it consumes its forwarded regular gas. Keep each ending's pool and ledger assertions
+as well as the surviving code and any slot. A funded repeated destruction of a marked target
+instead creates a new beneficiary and keeps only that leaf charge and rise (`SATIN-SD-010`,
+`SATIN-SD-011`, `SATIN-POOL-014`, `SATIN-STATE-001`).
+
+**D-187. Observe the constructor's full log word below the execution cap.** The pure-log
+constructor stores a word of 0xab bytes in memory, emits it from the deploy address and
+deposits code without writing storage. The receipt checks the emitter and the full word
+below the cap. The above-cap constructor with a slot supplies the other tier's log
+assertion (`SATIN-KEY-011`, `SATIN-LOG-002`).

@@ -1,0 +1,259 @@
+{
+  "caseId": "satin/selfdestruct/create2/deposit-after-mark-with-survivor-store",
+  "expected": {
+    "gasLedgers": {
+      "blockGas": "0xc414",
+      "floor": "0x3a98",
+      "gasUsed": "0x2c9ac",
+      "history": "0x8718",
+      "historyBytes": "0x189",
+      "refund": "0x0",
+      "regular": "0xc414",
+      "state": "0x17e80",
+      "total": "0x2c9ac"
+    },
+    "gasPools": {
+      "regular": {
+        "final": "0xbea88bc",
+        "initial": "0xbeb8768"
+      },
+      "reservoir": {
+        "final": "0xbea3198",
+        "initial": "0xbeb5770"
+      },
+      "returned": "0x17d4ba54",
+      "spilled": "0x7530"
+    },
+    "limit": null,
+    "outcome": {
+      "admission": {
+        "status": "admitted"
+      },
+      "commit": {
+        "status": "committed"
+      },
+      "execution": {
+        "createdAddress": null,
+        "output": "0x",
+        "status": "success"
+      }
+    },
+    "receipt": {
+      "depositNonce": null,
+      "depositReceiptVersion": null,
+      "gasUsed": "0x2c9ac",
+      "logs": [],
+      "status": "0x1",
+      "type": "0x0"
+    },
+    "resources": {
+      "dataSize": {
+        "limit": "0xc80000",
+        "net": "393",
+        "reported": "0x189"
+      },
+      "kvUpdates": {
+        "limit": "0x7a120",
+        "net": "2",
+        "reported": "0x2"
+      },
+      "stateGrowth": {
+        "limit": "0x3e8",
+        "net": "1",
+        "reported": "0x1"
+      }
+    },
+    "returnedState": {
+      "accounts": {
+        "0x00000000000000000000000000000000000000e1": {
+          "balance": "0x1",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "codeHash": "0x3ee99f20a1997c1bf49ce5230789a8b0fd911317dcff80e209c836c567b1f8b3",
+          "nonce": "0x2"
+        },
+        "0x00000000000000000000000000000000000c0dec": {
+          "balance": "0x0",
+          "codeHash": "0xd0edb2a6f60600e9ab630fec927b8007635ed16a7ff900ccb20d00f953ca33fb",
+          "nonce": "0x1"
+        },
+        "0x4200000000000000000000000000000000000011": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x4200000000000000000000000000000000000019": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001a": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x420000000000000000000000000000000000001b": {
+          "balance": "0x0",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x0"
+        },
+        "0x7689c7a0acc92246a8d2d8357e9a98999ecb41a8": {},
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "codeHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+          "nonce": "0x1"
+        }
+      },
+      "storage": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "0x0000000000000000000000000000000000000000000000000000000000000000": "0x1"
+        }
+      }
+    },
+    "state": {
+      "accounts": {
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f5f5f5f5f620c0dec620186a1f4507f60e1ff00000000000000000000000000005f52705f5260035ff300000000000000000000006020525f60355f5ff55060015f5500",
+          "nonce": "0x2",
+          "storage": {
+            "0x0000000000000000000000000000000000000000000000000000000000000000": "0x1"
+          }
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x1",
+          "storage": {}
+        }
+      }
+    }
+  },
+  "format": "mega-execution-fixture",
+  "input": {
+    "block": {
+      "activation": false,
+      "baseFee": "0x0",
+      "blobBaseFee": "0x1",
+      "coinbase": "0x4200000000000000000000000000000000000011",
+      "depositOnly": false,
+      "extraData": "0x",
+      "gasLimit": "0x2540be400",
+      "number": "0x2",
+      "parentBeaconBlockRoot": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "parentHash": "0x00000000000000000000000000000000000000000000000000000000000a11ce",
+      "parentTimestamp": "0x6553f101",
+      "prevRandao": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "slotNumber": "0x0",
+      "timestamp": "0x6553f102"
+    },
+    "blockHashes": {},
+    "chain": {
+      "chainId": "0x1"
+    },
+    "pre": {
+      "accounts": {
+        "0x00000000000000000000000000000000000000e1": {
+          "balance": "0x1",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0de1": {
+          "balance": "0x0",
+          "code": "0x7f5f5f5f5f620c0dec620186a1f4507f60e1ff00000000000000000000000000005f52705f5260035ff300000000000000000000006020525f60355f5ff55060015f5500",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x00000000000000000000000000000000000c0dec": {
+          "balance": "0x0",
+          "code": "0x60e1ff",
+          "nonce": "0x1",
+          "storage": {}
+        },
+        "0x4200000000000000000000000000000000000015": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0x6342000000000000000000000000000000000006": {
+          "balance": "0x0",
+          "code": "0xfe",
+          "nonce": "0x0",
+          "storage": {}
+        },
+        "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b": {
+          "balance": "0xde0b6b3a7640000",
+          "code": "0x",
+          "nonce": "0x0",
+          "storage": {}
+        }
+      },
+      "completeness": "complete"
+    },
+    "salt": {
+      "buckets": {},
+      "complete": true,
+      "mapping": "salt-v1"
+    },
+    "transaction": {
+      "kind": "signed",
+      "raw": "0xf86180808417d784009400000000000000000000000000000000000c0de1808025a069a8b9a76d1b088c970c068faf514710bc82016222c17a166ee24be9e2d06429a04e03b8368adac07db59bef5049c8c17e2054b8da64073f5b317d3e91f27691a3"
+    }
+  },
+  "profile": "state-transition",
+  "provenance": {
+    "authoring": {
+      "boundary": "CREATE2's own address and initcode hashing are observed (SATIN-SIZE-005). The first frame observes its two pools (SATIN-POOL-008).",
+      "intent": "The constructor marks its account through DELEGATECALL before returning the runtime. The deposit keeps code history and data size without state gas. The surviving creator's fresh slot leaves one unit of growth (SATIN-LIM-007)."
+    },
+    "definition": "tools/make_slice.py::create2_destruction_cases",
+    "generator": "tools/make_slice.py",
+    "specCommit": "83c0d269a92aaa580bb1805e3168d3cbd4b290aa",
+    "status": "candidate"
+  },
+  "requires": [
+    "feature:salt",
+    "group:gas-ledgers",
+    "group:gas-pools",
+    "group:limit",
+    "group:outcome",
+    "group:receipts",
+    "group:resources",
+    "group:returned-state",
+    "group:state"
+  ],
+  "rules": [
+    "SATIN-LIM-007",
+    "SATIN-POOL-008",
+    "SATIN-SD-001",
+    "SATIN-SD-002",
+    "SATIN-SD-004",
+    "SATIN-SD-005",
+    "SATIN-SD-006",
+    "SATIN-SD-007",
+    "SATIN-SD-008",
+    "SATIN-SD-009",
+    "SATIN-SD-010",
+    "SATIN-SD-014",
+    "SATIN-SD-015",
+    "SATIN-SD-019",
+    "SATIN-SIZE-005",
+    "SATIN-STATE-001",
+    "SATIN-STATE-002",
+    "SATIN-STATE-003",
+    "SATIN-STATE-008",
+    "SATIN-STATE-012",
+    "SATIN-WIT-005",
+    "SATIN-WIT-008"
+  ],
+  "schemaVersion": "2.0",
+  "specRef": {
+    "descriptor": "sha256:e7730ff362d74f04266bfd6062ca464ecfd9d2f00971fd5942e9a54416e14a84",
+    "name": "megaeth/Satin"
+  }
+}

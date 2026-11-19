@@ -31,6 +31,8 @@ class ReadsMixin:
         if self.returned_state and not external:
             self.journal_slots.add((address, key))
         if (address, key) not in self.loaded_slots and self.pre.get(address) is not None:
+            if self.reads and not external and address in self.zero_storage and address in self.created:
+                raise Unmodelled("reads of storage reset by creation at a pre-existing leaf")
             self.loaded_slots[(address, key)] = self.pre[address].storage.get(key, 0)
             if self.reads:
                 self.d.add("reads", f"slot {key} of {h(address)} is loaded: {why}", *rules)
