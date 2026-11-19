@@ -87,10 +87,22 @@ class ReadsMixin:
                           (L1_FEE_VAULT, "the L1 fee vault"), (OPERATOR_FEE_VAULT, "the operator fee vault")):
             self.load(who, f"{what}, a fee recipient the settlement credits", "SATIN-WIT-008", "SATIN-BASE-001")
 
+    def ask_oracle(self, slot: int) -> int | None:
+        """Consumes and records the next answer to an Oracle service request."""
+        if self.oracle_entries is None:
+            raise Unmodelled("an Oracle read without service input")
+        if not self.oracle_entries:
+            raise Unmodelled(f"unexpected Oracle request for slot {slot}")
+        expected, answer = self.oracle_entries.popleft()
+        if expected != slot:
+            raise Unmodelled(f"Oracle requested slot {slot}, transcript has {expected}")
+        self.oracle_answers.append((slot, answer))
+        return answer
+
     def reads_observation(self) -> dict:
         """The `reads` group: the accounts and slots loaded, the code of every loaded account that has code
         (the witness holds it whether or not the load brought it, SATIN-WIT-001), and the SALT capacities
-        served; no block hash, oracle service answer or hint is in this model's cases."""
+        served, alongside the Oracle service answers and hints, each in order."""
         accounts = {h(a): None if x is None else account_values(x)
                     for a, x in sorted(self.loaded_accounts.items())}
         storage: dict = {}
@@ -102,14 +114,24 @@ class ReadsMixin:
                        "system address once, before its transactions, so neither the registry's account nor its slot 0 "
                        "is in the reads", "SATIN-REG-002")
         self.d.add("reads", f"reads: accounts {len(accounts)}, slots {len(self.loaded_slots)}, codes {len(codes)}, SALT "
-                   f"capacities {len(self.served_buckets)}; no block hash, oracle answer or hint",
+                   f"capacities {len(self.served_buckets)}",
                    "SATIN-WIT-001", "SATIN-WIT-005", "SATIN-WIT-013")
         hints = [{"from": h(f), "topic": h(t), "data": h(dt)} for f, t, dt in getattr(self, "hints", [])]
         if hints:
             self.d.add("reads", f"the hints handed to the oracle service, in order: {len(hints)}, each with its topic, its "
                        "data and the address of the frame that made the call", "SATIN-ORCL-007", "SATIN-WIT-001")
+        oracle = [{"slot": word(slot), "value": q(answer)}
+                  for slot, answer in self.oracle_answers if answer is not None]
         return {"accounts": accounts, "storage": storage, "codes": codes, "blockHashes": {},
-                "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": [], "hints": hints}
+                "buckets": {q(b): q(c) for b, c in sorted(self.served_buckets.items())}, "oracle": oracle, "hints": hints}
+
+    def oracle_requests_observation(self) -> list[dict]:
+        """Records each service request in order, including one that received no answer."""
+        if self.oracle_answers:
+            self.d.add("oracleRequests", "the service answered these requests in order, a null answer "
+                       "recording a request that received no value", "SATIN-ORCL-002", "SATIN-ORCL-005")
+        return [{"slot": word(slot), "answer": None if answer is None else q(answer)}
+                for slot, answer in self.oracle_answers]
 
     def returned_state_observation(self, forbidden_accounts: tuple[bytes, ...]) -> dict:
         """The journal's loaded keys and the values fixed by the model's settled state."""

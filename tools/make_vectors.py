@@ -74,6 +74,15 @@ def load_slice_case(case_id: str) -> dict:
         return json.load(f)
 
 
+def legacy_oracle_case() -> dict:
+    case = load_slice_case("satin/oracle/get-slots/recorded-answer-then-fallback")
+    case["caseId"] = "satin/oracle/get-slots/legacy-recorded-answer"
+    case["schemaVersion"] = "2.0"
+    case["requires"].remove("group:oracle-requests")
+    del case["expected"]["oracleRequests"]
+    return case
+
+
 def case_rejects() -> dict[str, tuple[bytes, str, str]]:
     base = load_example("state-transition-sstore-fresh-slot.json")
     sender = "0xa94f5374fce5edbc8e2a8697c15331677e6ebf0b"
@@ -142,6 +151,12 @@ def case_rejects() -> dict[str, tuple[bytes, str, str]]:
            lambda c: c["input"]["transaction"].__setitem__("kind", "deposit"))
     mutate("case-assertions-member", "unknown-field", "/assertions",
            lambda c: c.__setitem__("assertions", [{"path": "/expected/gasLedgers", "rules": c["rules"][:1]}]))
+    oracle = load_slice_case("satin/oracle/get-slot/recorded-null-answer")
+    oracle["schemaVersion"] = "2.0"
+    out["case-oracle-requests-before-2.1"] = (dump(oracle), "unsupported-schema-version", "/schemaVersion")
+    legacy = legacy_oracle_case()
+    legacy["expected"]["reads"]["oracle"][0]["value"] = None
+    out["case-legacy-oracle-null"] = (dump(legacy), "wrong-type", "/expected/reads/oracle/0/value")
     returned = load_slice_case("satin/keyless/contract-call/no-value")
     returned_state = returned["expected"]["returnedState"]
     owner, = returned_state["storage"]
@@ -249,6 +264,9 @@ def main(argv: list[str]) -> int:
     for name in MANIFEST_EXAMPLES:
         with open(os.path.join(ROOT, "examples", name), "rb") as f:
             accept("case-" + name[:-5], "case", f.read())
+    accept("case-oracle-transcript", "case",
+           dump(load_slice_case("satin/oracle/get-slots/recorded-answer-then-fallback")))
+    accept("case-oracle-transcript-legacy", "case", dump(legacy_oracle_case()))
     accept("case-returned-state", "case", dump(load_slice_case("satin/keyless/contract-call/no-value")))
     accept("case-returned-state-destroyed", "case",
            dump(load_slice_case("satin/selfdestruct/marked/fresh-slot-on-little-gas")))

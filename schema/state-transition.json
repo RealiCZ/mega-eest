@@ -82,6 +82,7 @@
         "gasPools": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/GasPools"}]},
         "detention": {"oneOf": [{"type": "null"}, {"$ref": "common.json#/$defs/Detention"}]},
         "reads": {"$ref": "common.json#/$defs/Reads"},
+        "oracleRequests": {"$ref": "common.json#/$defs/OracleRequests"},
         "returnedState": {"$ref": "#/$defs/ReturnedState"},
         "checkpoints": {"type": "array", "items": {"$ref": "common.json#/$defs/Checkpoint"}}
       }

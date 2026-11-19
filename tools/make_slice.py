@@ -293,7 +293,7 @@ class Case:
                  detention=False, block_hashes=None, stops=False, lists=False, outcomes=False, chain=CHAIN_ID,
                  system_flag=False, gas_used_check=None, system_tx=False, source_hash=None, synthetic=False,
                  sender=None, block_number=BLOCK_NUMBER, system_pages=False, precompile_page=False,
-                 size_page=False, pricing=False, returned_state=False, forbidden_accounts=()):
+                 size_page=False, pricing=False, returned_state=False, forbidden_accounts=(), oracle_entries=None, empty_envelope=False):
         self.case_id, self.intent, self.boundary = case_id, intent, boundary
         self.code, self.to, self.value, self.data, self.gas = code, to, value, data, gas
         self.gas_price, self.base_fee, self.ty = gas_price, base_fee, ty
@@ -324,6 +324,8 @@ class Case:
         # into the burn (`settle_burn`).
         self.make, self.params, self.retune = make, dict(params or {}), list(retune or [])
         self.reads = reads  # the case carries the reads group (D-61)
+        self.oracle_entries = oracle_entries
+        self.empty_envelope = empty_envelope
         self.returned_state = returned_state or bool(forbidden_accounts)
         self.forbidden_accounts = forbidden_accounts
         self.pools = pools  # the case carries the gasPools group (D-64)
@@ -489,6 +491,16 @@ def cases() -> list[Case]:
     add(Case("satin/validation/fee-cap-below-base-fee", "a gas price below the base fee", gas_price=999_999, base_fee=1_000_000))
     add(Case("satin/validation/priority-above-max-fee", "an EIP-1559 priority fee above its fee cap", ty=2,
              max_priority=3_000_000, max_fee=2_000_000))
+    # Requested Oracle observations on transaction refusals are present and empty.
+    add(Case("satin/validation/oracle-requests/empty-envelope", "empty signed transaction bytes are refused at "
+             "decoding with no Oracle request (SATIN-BASE-001).", spec=CURRENT_SPEC, oracle_entries=[],
+             empty_envelope=True))
+    add(Case("satin/validation/oracle-requests/below-intrinsic-regular", "validation refuses a gas limit below "
+             "intrinsic regular gas and makes no Oracle request (SATIN-VAL-003).", spec=CURRENT_SPEC,
+             gas=model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS - 1, oracle_entries=[]))
+    add(Case("satin/validation/oracle-requests/gas-limit-above-block", "inclusion refuses a gas limit above "
+             "the block's remaining gas and makes no Oracle request (SATIN-BLK-013).", spec=CURRENT_SPEC,
+             gas=BLOCK_GAS_LIMIT + 1, oracle_entries=[]))
     # Deposits.
     add(Case("satin/deposits/new-caller/minimum-bucket", "a deposit from an absent caller: its new-account state gas once, "
              "before the frame; the deposit pays history gas", deposit=(ETH, 1_000_000), absent_sender=True))
@@ -4609,6 +4621,10 @@ def keyless_cases() -> list[Case]:
     signed = 90_000
     case("refusal/nonce-and-override", "a carried nonce of 1 and a gasLimitOverride below the signed gas limit: step 4 "
          "answers before step 6", carried(code, nonce=1), override=signed - 1)
+    case("refusal/nonzero-carried-nonce", "a carried nonce of 1 with an override that covers the signed gas limit. "
+         "Step 4 returns NonZeroTxNonce before either the signer or deploy address is loaded (SATIN-KEY-005).",
+         carried(code, nonce=1), override=signed, spec=CURRENT_SPEC, reads=True,
+         forbidden_accounts=(SIGNER, DEPLOY))
     case("refusal/override-and-signer-nonce", "a gasLimitOverride one below the signed gas limit and a signer at nonce "
          "2: step 6 answers before step 8", carried(code), override=signed - 1, accounts=signer(nonce=2))
     case("refusal/signer-nonce-two", "a signer at nonce 2: step 8 refuses it, the signer's account read and the "
@@ -4620,7 +4636,7 @@ def keyless_cases() -> list[Case]:
          accounts=signer(nonce=1, code=b"\x60\x00"))
     case("refusal/nonce-zero-signer-has-code", "a nonce-zero signer holds STOP code and cannot fund the carried value. "
          "Step 9 answers SignerHasCode before step 13 and no deployment changes the state (SATIN-KEY-005, SATIN-KEY-006)",
-         carried(code, value=1), spec=CURRENT_SPEC, returned_state=True, accounts=signer(code=STOP))
+         carried(code, value=1), spec=CURRENT_SPEC, reads=True, forbidden_accounts=(DEPLOY,), accounts=signer(code=STOP))
     taken = {DEPLOY: model.Account(nonce=1, code=STOP)}
     case("refusal/override-before-taken", "an override one below the signed gas limit and an occupied deploy address: "
          "step 6 answers GasLimitTooLow before step 12", carried(code), spec=CURRENT_SPEC, override=signed - 1,
@@ -5421,6 +5437,22 @@ def oracle_page_cases() -> list[Case]:
              "in the order asked, each read by SLOAD in the Oracle's own frame, charged as a cold access and asking no "
              "service (SATIN-ORCL-001)", deposit=(0, 1_000_000), sender_nonce=3, to=model.ORACLE, code=None,
              data=sel("getSlots(uint256[])") + abi_words(0x20, 2, 2, 1), accounts=dict(oracle), **pages))
+    slot, held, served = 3, 42, 91
+    add(Case("satin/oracle/get-slots/recorded-answer-then-fallback", "an ordinary transaction runs the Oracle's "
+             "getSlots bytecode on the same slot twice. The first service answer differs from the journal value "
+             "and is pushed. The second request receives no answer, so that read pushes the journal value "
+             "(SATIN-ORCL-002, SATIN-ORCL-005).",
+             spec=CURRENT_SPEC, system_pages=True, system=True, to=model.ORACLE, code=None, gas=300_000,
+             data=sel("getSlots(uint256[])") + abi_words(0x20, 2, slot, slot), reads=True, returned_state=True,
+             accounts={model.ORACLE: model.Account(code=system_contracts()[model.ORACLE], storage={slot: held})},
+             oracle_entries=[(slot, served), (slot, None)]))
+    add(Case("satin/oracle/get-slot/recorded-null-answer", "an ordinary transaction calls the Oracle's getSlot "
+             "bytecode. The service is asked for the slot and gives no value, so the returned word is the journal "
+             "value (SATIN-ORCL-002, SATIN-ORCL-005).",
+             spec=CURRENT_SPEC, system=True, to=model.ORACLE, code=None, gas=300_000,
+             data=sel("getSlot(uint256)") + word(slot), reads=True, returned_state=True,
+             accounts={model.ORACLE: model.Account(code=system_contracts()[model.ORACLE], storage={slot: held})},
+             oracle_entries=[(slot, None)]))
     set_slot = sel("setSlot(uint256,bytes32)") + abi_words(3, 7)
     add(Case("satin/oracle/set-slot/user-not-system-address", "a user's transaction calls the Oracle's setSlot(3, 7), its "
              "sender not the address the registry names: the body writes the fresh slot and is charged for it, then the "
@@ -7817,7 +7849,10 @@ def build(c: Case, *, observe_returned: bool = False):
     env = model.Env(c.chain, c.coinbase, c.base_fee, BLOCK_GAS_LIMIT, buckets, timestamp=BLOCK_TIMESTAMP,
                     number=c.block_number, block_hashes=dict(c.block_hashes))
 
-    if c.deposit:
+    if c.empty_envelope:
+        source = {"kind": "signed", "raw": "0x"}
+        tx = None
+    elif c.deposit:
         mint, gas = c.deposit
         to = c.to if c.to is not None else b""  # a creating deposit's recipient field is empty
         raw = (ex.deposit(c.source_hash, sender, to, mint, c.value, gas, c.data) if not c.system_flag else
@@ -7844,17 +7879,28 @@ def build(c: Case, *, observe_returned: bool = False):
                       max_fee=c.max_fee, max_priority=c.max_priority, access_list=c.access_list,
                       authorizations=[(e[1], e[2], e[3], authority_of(e)) for e in c.authorizations])
         source = {"kind": "signed", "raw": h(raw)}
-    run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
-                    destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists,
-                    outcomes=c.outcomes, system_tx=c.system_tx, current=c.spec in CURRENT_SPECS,
-                    system_pages=c.system_pages, precompile_page=c.precompile_page, size_page=c.size_page,
-                    pricing=c.pricing, returned_state=observe_returned)
-    result = run.run()
-    if observe_returned:
-        if result.observations["outcome"]["commit"]["status"] != "committed":
-            raise SystemExit(f"{c.case_id}: no transaction state was returned")
-        result.observations["returnedState"] = run.returned_state_observation(c.forbidden_accounts)
-    result.probe = run.probe
+    if tx is None:
+        if c.oracle_entries:
+            raise model.Unmodelled("the rejected envelope leaves unused Oracle transcript entries")
+        derivation = model.Derivation()
+        derivation.add("outcome", "the base layer rejects an empty signed envelope before execution",
+                       "SATIN-BASE-001")
+        result = model.Result(model.refused("decode", "malformed-envelope"), derivation)
+        result.probe = {}
+        requests = []
+    else:
+        run = model.Run(env, pre, tx, salt_bucket, principles=c.spec in PRINCIPLES_SPECS, reads=c.reads, pools=c.pools,
+                        destruction=c.destruction, detention=c.detention, stops=c.stops, lists=c.lists,
+                        outcomes=c.outcomes, system_tx=c.system_tx, current=c.spec in CURRENT_SPECS,
+                        system_pages=c.system_pages, precompile_page=c.precompile_page, size_page=c.size_page,
+                        pricing=c.pricing, returned_state=observe_returned, oracle_entries=c.oracle_entries)
+        result = run.run()
+        if observe_returned:
+            if result.observations["outcome"]["commit"]["status"] != "committed":
+                raise SystemExit(f"{c.case_id}: no transaction state was returned")
+            result.observations["returnedState"] = run.returned_state_observation(c.forbidden_accounts)
+        result.probe = run.probe
+        requests = run.oracle_requests_observation() if c.oracle_entries is not None else []
 
     inp = {
         "chain": {"chainId": q(c.chain)},
@@ -7870,6 +7916,13 @@ def build(c: Case, *, observe_returned: bool = False):
         "transaction": source,
         "salt": {"mapping": "salt-v1", "complete": c.salt_complete, "buckets": {q(b): q(cap) for b, cap in sorted(buckets.items())}},
     }
+    if c.oracle_entries is not None:
+        result.observations["oracleRequests"] = requests
+        inp["oracle"] = {"mode": "recorded",
+                         "entries": [{"slot": h(word(slot)), "answer": None if answer is None else q(answer)}
+                                     for slot, answer in c.oracle_entries]}
+    if tx is None:
+        return inp, result, {}
     decoded = {"type": q(tx.ty), "sender": h(sender), "to": h(c.to) if c.to else None, "nonce": q(tx.nonce),
                "gasLimit": q(tx.gas_limit), "value": q(tx.value), "data": h(tx.data)}
     if c.deposit:
@@ -7893,7 +7946,8 @@ QUARANTINE: dict[str, dict] = {}
 
 GROUP_PATHS = {"outcome": "/expected/outcome", "state": "/expected/state", "receipt": "/expected/receipt",
                "gasLedgers": "/expected/gasLedgers", "resources": "/expected/resources", "reads": "/expected/reads",
-               "limit": "/expected/limit", "gasPools": "/expected/gasPools", "returnedState": "/expected/returnedState"}
+               "limit": "/expected/limit", "gasPools": "/expected/gasPools", "returnedState": "/expected/returnedState",
+               "oracleRequests": "/expected/oracleRequests"}
 
 
 def settle_burn(params: dict) -> None:
@@ -8052,11 +8106,12 @@ def fixture(c: Case, descriptor_digest: str, rule_texts: dict, retired: set, spe
                 "feature:salt"] + (["feature:deposit"] if c.deposit else []) + (["group:reads"] if c.reads else []) \
         + (["group:limit-stop"] if result.observations["limit"] else []) + (["group:gas-pools"] if c.pools else []) \
         + (["feature:synthetic-transaction"] if c.synthetic else []) \
-        + (["group:returned-state"] if c.returned_state else [])
+        + (["group:returned-state"] if c.returned_state else []) \
+        + (["feature:oracle-transcript", "group:oracle-requests"] if c.oracle_entries is not None else [])
     authoring = {"intent": c.intent, **({"boundary": c.boundary} if c.boundary else {})}
     fx = {
         "format": "mega-execution-fixture",
-        "schemaVersion": "2.0",
+        "schemaVersion": "2.1" if c.oracle_entries is not None else "2.0",
         "caseId": c.case_id,
         "specRef": {"name": "megaeth/Satin", "descriptor": descriptor_digest},
         "profile": "state-transition",
@@ -8115,6 +8170,19 @@ def negative(base: dict) -> dict:
     return bad
 
 
+def empty_oracle_transcript(base: dict) -> dict:
+    """A single getSlot query whose recorded service has no entry to consume."""
+    bad = json.loads(json.dumps(base))
+    bad["caseId"] = "satin/negative/oracle/empty-recorded-queue"
+    bad["input"]["oracle"]["entries"] = []
+    bad["provenance"] = {
+        "status": "example",
+        "generator": "tools/make_slice.py",
+        "note": "The ordinary getSlot still asks the service. With an empty recorded queue it must report an error.",
+    }
+    return bad
+
+
 def pretty(value) -> str:
     return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
 
@@ -8158,13 +8226,20 @@ def outputs(explained: dict | None = None) -> dict[str, str]:
     neg = negative(by_id["satin/sstore/fresh-slot/minimum-bucket"])
     neg_rel = f"negative/{neg['caseId']}.json"
     files[neg_rel] = pretty(neg)
+    empty_oracle = empty_oracle_transcript(by_id["satin/oracle/get-slot/recorded-null-answer"])
+    empty_rel = f"negative/{empty_oracle['caseId']}.json"
+    files[empty_rel] = pretty(empty_oracle)
+    slot = int(empty_oracle["expected"]["oracleRequests"][0]["slot"], 16)
     files["index.json"] = pretty({
         "format": "mega-fixture-slice-index",
         "spec": {"name": "megaeth/Satin", "descriptor": descriptor_digest},
         "profile": "state-transition",
         "cases": index,
         "quarantine": quarantine,
-        "negative": [{"caseId": neg["caseId"], "file": neg_rel, "wrongAt": "/expected/gasLedgers/state"}],
+        "negative": [
+            {"caseId": neg["caseId"], "file": neg_rel, "wrongAt": "/expected/gasLedgers/state"},
+            {"caseId": empty_oracle["caseId"], "file": empty_rel, "error": f"unexpected oracle request for slot {slot:#x}"},
+        ],
     })
     return files
 
@@ -8234,7 +8309,8 @@ def main(argv: list[str]) -> int:
             f.write(text)
     cases_n = sum(1 for rel in files if rel.startswith("cases/"))
     held = sum(1 for rel in files if rel.startswith("quarantine/"))
-    print(f"make_slice: wrote {len(files)} files to slice/: {cases_n} cases, {held} quarantined, 1 negative")
+    negative_n = sum(1 for rel in files if rel.startswith("negative/"))
+    print(f"make_slice: wrote {len(files)} files to slice/: {cases_n} cases, {held} quarantined, {negative_n} negative")
     return 0
 
 

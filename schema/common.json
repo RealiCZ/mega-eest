@@ -206,17 +206,19 @@
       "required": ["mode", "entries"],
       "properties": {
         "mode": {"const": "recorded"},
-        "entries": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["slot", "answer"],
-            "properties": {
-              "slot": {"$ref": "#/$defs/B256"},
-              "answer": {"description": "null: the service answers none.", "oneOf": [{"type": "null"}, {"$ref": "#/$defs/U256"}]}
-            }
-          }
+        "entries": {"$ref": "#/$defs/OracleRequests"}
+      }
+    },
+    "OracleRequests": {
+      "description": "Requests in service order. A null answer means the service was asked and gave no value.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["slot", "answer"],
+        "properties": {
+          "slot": {"$ref": "#/$defs/B256"},
+          "answer": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/U256"}]}
         }
       }
     },
@@ -666,7 +668,7 @@
           "additionalProperties": {"$ref": "#/$defs/U64"}
         },
         "oracle": {
-          "description": "Oracle reads in the order made, with the value each pushed.",
+          "description": "Oracle service answers that supplied a value, in request order.",
           "type": "array",
           "items": {
             "type": "object",

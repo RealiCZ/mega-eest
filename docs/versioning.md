@@ -5,11 +5,19 @@ Four identities are kept apart:
 | Identity | Form | Changes when |
 | --- | --- | --- |
 | Protocol spec | `specRef`: name and descriptor digest | the specification text or registry changes (a new commit is a new digest) |
-| Fixture schema | `format` and `schemaVersion` (`mega-execution-fixture` 2.x; 2.0 removed schema 1's `assertions`, D-76) | major: incompatible meaning or shape; minor: additions behind a new `feature:` requirement |
+| Fixture schema | `format` and `schemaVersion` (`mega-execution-fixture` 2.x; 2.0 removed schema 1's `assertions`, D-76) | major: incompatible meaning or shape; minor: additions behind a new `feature:` or `group:` requirement |
 | Suite release | `suite.name` and a semantic `suite.version` in the manifest, under a spec line | minor: reviewed cases added; patch: fixture corrections with a visible diff; major: an incompatible suite contract |
 | Content | SHA-256 of canonical case bytes, blobs and the manifest | any byte |
 
 Tags, file paths and download URLs are locators, not identities.
+
+Schema 2.1 adds the ordered Oracle request observation behind `group:oracle-requests`
+(D-190). Existing 2.0 transcript cases keep the `reads.oracle` projection of non-null
+answers.
+
+Upgrade the consumer before installing adapters that advertise `group:oracle-requests`,
+or upgrade both together. Older consumers reject unknown advertised capabilities at
+startup, even when the selected fixtures use schema 2.0.
 
 ## Manifest
 

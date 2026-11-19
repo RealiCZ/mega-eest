@@ -51,7 +51,7 @@ fn optional_groups(profile: Profile, path: &str) -> &'static [&'static str] {
         || matches!(segments.as_slice(), ["expected", "blocks", _, "transactions", _, "limit"])
         || matches!(segments.as_slice(), ["expected", "transactions", _, "limit"]);
     if profile == Profile::StateTransition && path == "/expected" {
-        &["gasPools", "detention", "reads", "returnedState", "checkpoints"]
+        &["gasPools", "detention", "reads", "oracleRequests", "returnedState", "checkpoints"]
     } else if block_tx {
         &BLOCK_TX_OPTIONAL
     } else if limit {

@@ -8,7 +8,7 @@ Consumers declare the profiles and requirements they support; anything else is r
 
 | Profile | Input | Expected | Typical consumer |
 | --- | --- | --- | --- |
-| `state-transition` | One transaction (signed, deposit or synthetic) against the state immediately before it, with explicit block context, chain id, block hashes and optional SALT, oracle transcript and faults | Its outcome, state diff, receipt, gas ledgers, resources and limit stop; optionally pools, detention, reads, returned state and checkpoints | An EVM engine through its transaction entry point |
+| `state-transition` | One transaction (signed, deposit or synthetic) against the state immediately before it, with explicit block context, chain id, block hashes and optional SALT, oracle transcript and faults | Its outcome, state diff, receipt, gas ledgers, resources and limit stop; optionally pools, detention, reads, Oracle requests, returned state and checkpoints | An EVM engine through its transaction entry point |
 | `transaction-validation` | Raw EIP-2718 bytes (malformed ones included), chain id, optional block context and optional pre-state | Accepted with sender, hash and intrinsic gas, or rejected with phase and acceptable reasons | A decoder and validator; no execution |
 | `block-import` | Chain schedule, anchor header, pre-state, ancestors, optional SALT and faults, ordered blocks | Per block: valid with derived flags, pre-block effects, per-transaction outcomes and receipts, counters, commitments and state diff, or invalid with failure phase and reason; the last accepted head; the state diff to it | A node's import path |
 | `block-build` | Chain schedule, anchor, pre-state, the builder's header fields, policy budgets, candidates and an execute/commit/abandon action sequence; optional SALT, oracle transcript and faults | One decision per candidate (included, skipped or rejected, with reasons), committed order, results of the committed transactions, counters, commitments, state diff | A block builder |
@@ -35,6 +35,7 @@ transaction result. —: not part of the profile.
 | gas-pools | O | — | O (T) | O (T) | O (T) |
 | detention | O | — | O (T) | O (T) | O (T) |
 | reads | O | — | O (T) | O (T) | O (T) |
+| oracle-requests | O | — | — | — | — |
 | returned-state | O | — | — | — | — |
 | checkpoints | O | — | — | — | — |
 | validation | — | M | — | — | — |

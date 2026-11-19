@@ -11,7 +11,7 @@
 # follows the model's constants (tools/check_derived_text.py),
 # consumes slice/cases with each adapter plain and instrumented (read-only), checks that the
 # quarantined cases still fail exactly as recorded on the implementation they are recorded
-# against and pass on the other, runs the deliberately wrong expectation, and fills candidates
+# against and pass on the other, runs the negative controls, and fills candidates
 # from both implementations into candidates/ to compare them with the spec-derived expectations.
 # It exits nonzero when any of that does not hold.
 set -euo pipefail
@@ -49,11 +49,13 @@ for a in revm evm2; do
     fi
     tail -1 "$work/$a-$mode.log" >&2
     grep -v '^pass ' "$work/$a-$mode.log" | grep -v '^CONSUME ' >&2 || true
+    negative=negative
+    [ "$mode" = instrumented ] && negative=negative-instrumented
+    "$cli" consume --adapter "$(adapter $a)" ${flag[@]+"${flag[@]}"} --specs "$root/specs" \
+      --report "$work/$a-$negative.json" "$root/slice/negative" > "$work/$a-$negative.log" || true
   done
   "$cli" consume --adapter "$(adapter $a)" --specs "$root/specs" --report "$work/$a-quarantine.json" \
     "$root/slice/quarantine" > "$work/$a-quarantine.log" || true
-  "$cli" consume --adapter "$(adapter $a)" --specs "$root/specs" --report "$work/$a-negative.json" \
-    "$root/slice/negative" > "$work/$a-negative.log" || true
 done
 
 # Fill candidates from the slice's own inputs (expectations and requirements removed) with each
@@ -124,13 +126,25 @@ for q in index["quarantine"]:
 print(f"run-slice: quarantine: {recorded} of {len(index['quarantine'])} fail exactly as recorded on their implementation "
       f"and pass on the other", file=sys.stderr)
 
-# The wrong expectation: every adapter fails it at the recorded path.
+# Every negative control must reach its recorded mismatch or adapter error.
+negative = {x["caseId"]: x for x in index["negative"]}
 verdicts = set()
+matched_errors = 0
 for a in adapters:
-    for c in load(f"{a}-negative.json")["cases"]:
-        wrong_at = {x["caseId"]: x["wrongAt"] for x in index["negative"]}.get(c["caseId"])
-        verdicts.add(c["status"] if c["status"] != "fail" or c.get("path") == wrong_at else "fail-elsewhere")
+    for suffix in ("negative", "negative-instrumented"):
+        results = {c["caseId"]: c for c in load(f"{a}-{suffix}.json")["cases"]}
+        if results.keys() != negative.keys():
+            verdicts.add("missing-control")
+        for case_id in results.keys() & negative.keys():
+            c, want = results[case_id], negative[case_id]
+            if "error" in want:
+                matched = c["status"] == "error" and c.get("message") == want["error"]
+                matched_errors += matched
+                verdicts.add("fail" if matched else "wrong-error")
+            else:
+                verdicts.add(c["status"] if c["status"] != "fail" or c.get("path") == want["wrongAt"] else "fail-elsewhere")
 verdict = verdicts.pop() if len(verdicts) == 1 else "mixed"
+print(f"run-slice: negative adapter errors: {matched_errors} matched", file=sys.stderr)
 
 # The candidates the filler wrote, against the spec-derived expectations.
 for a in adapters:

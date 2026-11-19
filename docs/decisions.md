@@ -3175,3 +3175,39 @@ constructor stores a word of 0xab bytes in memory, emits it from the deploy addr
 deposits code without writing storage. The receipt checks the emitter and the full word
 below the cap. The above-cap constructor with a slot supplies the other tier's log
 assertion (`SATIN-KEY-011`, `SATIN-LOG-002`).
+
+**D-190. Record Oracle requests with a value or a null answer.**
+Both adapters consume the existing Oracle transcript in request order through the service
+boundary. Schema 2.1's `group:oracle-requests` adds the `oracleRequests` list, with one
+entry per request. A null answer means the service was asked and supplied no value.
+The `reads.oracle` projection continues to list non-null answers in every version.
+Older readers reject the new capability as an unknown requirement. The ordinary transaction's Oracle bytecode
+reads the same slot twice and exposes both pushed values in its output. The returned
+state retains the loaded slot's journal value (`SATIN-ORCL-002`, `-004`, `-005`,
+`SATIN-WIT-005`, `SATIN-WIT-008`). This extends the evm2 adapter capability recorded in
+D-45. The two different values from an unchanged slot are an engine-isolation input.
+Block inclusion requires a replayable value for each slot, so `SATIN-ORCL-013` excludes
+this input. For included transactions, `SATIN-ORCL-012` governs persistence of the values
+the service supplied and the reads pushed.
+
+**D-191. Require absence at the unread keyless deploy address.**
+The carried-nonce refusal, the nonce-two signer refusal, and the nonce-zero signer
+with code all end before the step-12 deploy-address load (`SATIN-KEY-005`,
+`SATIN-KEY-007`, `SATIN-WIT-012`). Each uses the existing exact returned-state key
+expectation. A null account entry makes the deploy address's required absence
+explicit and rejects a fabricated non-empty code hash. The new carried-nonce input
+has a sufficient override. The existing precedence input still puts both refusals
+in competition.
+
+**D-192. Dispatch Oracle SLOAD by the frame's storage address.**
+SLOAD selects the Oracle rules whenever the current frame uses the Oracle's storage.
+Code borrowed by DELEGATECALL from another address reads that caller's storage.
+An ordinary getSlot with a null transcript answer pushes the journal value. The
+same input with an empty recorded queue errors at the request. Both paths apply
+without an authoring flag (`SATIN-ORCL-002`, `-004`, `-005`).
+
+**D-193. Preserve the requested Oracle group on a refusal.**
+A transaction refused at decoding, validation or inclusion makes no service request.
+When the case requires `group:oracle-requests`, the adapter includes an empty list
+after checking the transcript for unused entries. Each of these refusal paths has
+a fixture with an empty recorded queue.

@@ -8,7 +8,7 @@
   "properties": {
     "format": {"const": "mega-execution-fixture", "x-error": "unsupported-format"},
     "schemaVersion": {
-      "description": "major.minor; this schema reads major 2. A minor addition is used only behind a feature listed in requires.",
+      "description": "major.minor; this schema reads major 2. A minor addition is used only behind a requirement listed in requires.",
       "type": "string",
       "pattern": "^2\\.(0|[1-9][0-9]*)$",
       "x-error": "unsupported-schema-version"
@@ -78,6 +78,7 @@
         "group:limit",
         "group:limit-diagnostics",
         "group:limit-stop",
+        "group:oracle-requests",
         "group:outcome",
         "group:reads",
         "group:receipts",

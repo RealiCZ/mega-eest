@@ -421,26 +421,32 @@ class InterpreterMixin:
                 steps.append(f"MSTORE {G_VERYLOW} + memory to {mem_words} words")
             elif op == 0x54:  # SLOAD
                 # The Oracle's own frame: a child at its address, or the transaction's own call of it (D-109).
-                if address == ORACLE and (ctx or self.system_pages):
+                if address == ORACLE:
                     key = pop()
-                    if frame.get("access_off") and self.system_pages:
+                    if frame.get("access_off"):
                         d.add("outcome", f"the Oracle's SLOAD of slot {key} is an Oracle read in a frame whose volatile-data "
                               "access is off: refused, asking no service and marking nothing", "SATIN-ORCL-004",
                               "SATIN-HPTS-002")
                         return refuse(ACCESS_TYPE_ORACLE, "the Oracle's SLOAD")
-                    if frame.get("access_off"):
-                        raise Unmodelled("an Oracle read refused")
                     value = self.state.get(ORACLE, Account()).storage.get(key, 0)
                     self.warm_slots.add((ORACLE, key))
                     self.load_slot(ORACLE, key, "the Oracle's SLOAD, which loads the slot before its charge, whatever the "
                                    "charge then does", "SATIN-ORCL-004", "SATIN-WIT-012")
                     if tx.kind != "deposit" and not self.promoted:
-                        raise Unmodelled("an Oracle read that asks the oracle service")
-                    whose = "a Mega System Transaction's" if self.promoted else "a deposit's"
-                    d.add("gasLedgers", f"the Oracle's SLOAD of slot {key}, with {fmt(frame['regular'])} of regular gas in "
-                          "the frame: the read is made before its charge, the slot loaded and warm, and the read marked; "
-                          f"{whose} read asks no oracle service, so the slot's value is pushed", "SATIN-ORCL-002",
-                          "SATIN-ORCL-003", "SATIN-ORCL-004", "SATIN-ORCL-005")
+                        answer = self.ask_oracle(key)
+                        if answer is not None:
+                            value = answer
+                        selected = ("the service gives no answer, so the journal value is selected" if answer is None
+                                    else "the service's answer is selected")
+                        d.add("gasLedgers", f"the Oracle's SLOAD of slot {key} loads the journal slot and asks the service "
+                              f"before its charge: {selected}", "SATIN-ORCL-002", "SATIN-ORCL-003",
+                              "SATIN-ORCL-004", "SATIN-ORCL-005")
+                    else:
+                        whose = "a Mega System Transaction's" if self.promoted else "a deposit's"
+                        d.add("gasLedgers", f"the Oracle's SLOAD of slot {key}, with {fmt(frame['regular'])} of regular gas in "
+                              "the frame: the read is made before its charge, the slot loaded and warm, and the read marked; "
+                              f"{whose} read asks no oracle service, so the slot's value is pushed", "SATIN-ORCL-002",
+                              "SATIN-ORCL-003", "SATIN-ORCL-004", "SATIN-ORCL-005")
                     self.mark(ORACLE_ACCESS_COMPUTE_GAS, f"the Oracle's SLOAD of slot {key}")
                     self.probe.setdefault("oracle-sload", frame["regular"])
                     if frame.get("spendable") is not None:

@@ -175,6 +175,8 @@ pub enum Group {
     Limit,
     LimitDiagnostics,
     LimitStop,
+    /// The ordered calls that reached the recorded Oracle service.
+    OracleRequests,
     Outcome,
     Reads,
     Receipts,
@@ -200,7 +202,7 @@ pub enum Feature {
     SyntheticTransaction,
 }
 
-pub const REQUIREMENTS: [(&str, Requirement); 26] = [
+pub const REQUIREMENTS: [(&str, Requirement); 27] = [
     ("feature:deposit", Requirement::Feature(Feature::Deposit)),
     ("feature:injected-faults", Requirement::Feature(Feature::InjectedFaults)),
     ("feature:oracle-transcript", Requirement::Feature(Feature::OracleTranscript)),
@@ -219,6 +221,7 @@ pub const REQUIREMENTS: [(&str, Requirement); 26] = [
     ("group:limit", Requirement::Group(Group::Limit)),
     ("group:limit-diagnostics", Requirement::Group(Group::LimitDiagnostics)),
     ("group:limit-stop", Requirement::Group(Group::LimitStop)),
+    ("group:oracle-requests", Requirement::Group(Group::OracleRequests)),
     ("group:outcome", Requirement::Group(Group::Outcome)),
     ("group:reads", Requirement::Group(Group::Reads)),
     ("group:receipts", Requirement::Group(Group::Receipts)),
@@ -477,14 +480,17 @@ fn oracle(v: &Value, p: &str) -> Result<Oracle> {
     }
     o.shape(&["mode", "entries"], &[])?;
     let (e, ep) = o.req("entries");
-    let entries = array(e, &ep, 0, None, |v, p| {
+    Ok(Oracle::Recorded(oracle_requests(e, &ep)?))
+}
+
+fn oracle_requests(v: &Value, p: &str) -> Result<Vec<(B256, Option<U256>)>> {
+    array(v, p, 0, None, |v, p| {
         let mut o = Obj::new(v, p)?;
         o.shape(&["slot", "answer"], &[])?;
         let (s, sp) = o.req("slot");
         let (a, ap) = o.req("answer");
         Ok((b256(s, &sp)?, nullable(a, &ap, u256)?))
-    })?;
-    Ok(Oracle::Recorded(entries))
+    })
 }
 
 /// The key of a provider read.
@@ -1691,6 +1697,8 @@ pub struct StateTransitionExpected {
     pub gas_pools: Option<Option<GasPools>>,
     pub detention: Option<Option<Detention>>,
     pub reads: Option<Reads>,
+    /// Requested slots and their answers in service order, including unanswered requests.
+    pub oracle_requests: Option<Vec<(B256, Option<U256>)>>,
     /// The account and slot keys and values returned for commitment.
     pub returned_state: Option<ReturnedState>,
     pub checkpoints: Option<Vec<Checkpoint>>,
@@ -1718,7 +1726,7 @@ fn st_input(v: &Value, p: &str) -> Result<StateTransitionInput> {
 
 fn st_expected(v: &Value, p: &str, expectation: bool) -> Result<StateTransitionExpected> {
     let mut o = Obj::new(v, p)?;
-    o.shape(&["outcome", "state", "receipt", "gasLedgers", "resources", "limit"], &["gasPools", "detention", "reads", "returnedState", "checkpoints"])?;
+    o.shape(&["outcome", "state", "receipt", "gasLedgers", "resources", "limit"], &["gasPools", "detention", "reads", "oracleRequests", "returnedState", "checkpoints"])?;
     let (oc, ocp) = o.req("outcome");
     let (s, sp) = o.req("state");
     let (r, rp) = o.req("receipt");
@@ -1735,6 +1743,7 @@ fn st_expected(v: &Value, p: &str, expectation: bool) -> Result<StateTransitionE
         gas_pools: o.opt("gasPools").map(|(v, p)| nullable(v, &p, gas_pools)).transpose()?,
         detention: o.opt("detention").map(|(v, p)| nullable(v, &p, detention)).transpose()?,
         reads: o.opt("reads").map(|(v, p)| reads(v, &p)).transpose()?,
+        oracle_requests: o.opt("oracleRequests").map(|(v, p)| oracle_requests(v, &p)).transpose()?,
         returned_state: o.opt("returnedState").map(|(v, p)| returned_state(v, &p, expectation)).transpose()?,
         checkpoints: o.opt("checkpoints").map(|(v, p)| array(v, &p, 0, None, checkpoint)).transpose()?,
     })

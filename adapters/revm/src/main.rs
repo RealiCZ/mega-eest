@@ -57,7 +57,7 @@ const SPEC: &str = "megaeth/Satin";
 
 /// The requirements this adapter supports: the mandatory groups of state-transition and the
 /// input features it converts.
-const SUPPORTED: [&str; 14] = [
+const SUPPORTED: [&str; 15] = [
     "feature:deposit",
     "feature:oracle-transcript",
     "feature:salt",
@@ -66,6 +66,7 @@ const SUPPORTED: [&str; 14] = [
     "group:gas-pools",
     "group:limit",
     "group:limit-stop",
+    "group:oracle-requests",
     "group:outcome",
     "group:reads",
     "group:receipts",
@@ -198,7 +199,7 @@ struct Loaded {
     codes: BTreeSet<B256>,
     block_hashes: BTreeMap<u64, B256>,
     buckets: BTreeMap<u64, u64>,
-    oracle: Vec<(U256, U256)>,
+    oracle: Vec<(U256, Option<U256>)>,
     hints: Vec<(Address, B256, Bytes)>,
 }
 
@@ -356,6 +357,19 @@ struct FixtureOracle {
     loaded: Loads,
 }
 
+impl FixtureOracle {
+    fn check(&self) -> Res<()> {
+        if let Some(error) = self.errors.borrow().first() {
+            return Err(bad(error.clone()));
+        }
+        let left = self.entries.borrow().len();
+        if left > 0 {
+            return Err(bad(format!("{left} oracle transcript entries were not requested")));
+        }
+        Ok(())
+    }
+}
+
 impl OracleEnv for FixtureOracle {
     fn get_oracle_storage(&self, slot: U256) -> Option<U256> {
         match self.mode {
@@ -366,9 +380,7 @@ impl OracleEnv for FixtureOracle {
             }
             OracleMode::Recorded => match self.entries.borrow_mut().pop_front() {
                 Some((expected, answer)) if expected == slot => {
-                    if let Some(value) = answer {
-                        self.loaded.borrow_mut().oracle.push((slot, value));
-                    }
+                    self.loaded.borrow_mut().oracle.push((slot, answer));
                     answer
                 }
                 Some((expected, _)) => {
@@ -702,20 +714,30 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
         _ => return Err(bad("request: requires is not a list")),
     };
     let wants = |group| requires.iter().any(|x| x.as_str() == Some(group));
+    let observe_oracle_requests = |observations: &mut Value| {
+        if wants("group:oracle-requests") {
+            if let Value::Object(m) = observations {
+                m.insert("oracleRequests".into(), oracle_requests(&loaded.borrow()));
+            }
+        }
+    };
     let ctx = context(input, db)?;
     let (tx, facts) = match transaction(member(input, "transaction")?)? {
         Ok(t) => t,
         Err(refusal) => {
-            return Ok(Run { observations: refused(refusal.phase, refusal.reason), diagnostics: obj(vec![]) })
+            ctx.external_envs().oracle_env.check()?;
+            let mut observations = refused(refusal.phase, refusal.reason);
+            observe_oracle_requests(&mut observations);
+            return Ok(Run { observations, diagnostics: obj(vec![]) });
         }
     };
     let wants_pools = wants("group:gas-pools");
     let gas_limit = facts.gas_limit;
     let mut pools = None;
-    let (executed, oracle_errors, frames): (Executed, Vec<String>, Option<u64>) = if instrumented || wants_pools {
+    let (executed, frames): (Executed, Option<u64>) = if instrumented || wants_pools {
         let mut evm = MegaEvm::new(ctx).with_inspector(FrameRecorder::default());
         let r = evm.execute_transaction(tx);
-        let errors = oracle_errors_of(&evm.ctx().external_envs().oracle_env);
+        evm.ctx().external_envs().oracle_env.check()?;
         let rec = evm.inspector();
         if rec.open != 0 {
             return Err(bad("instrumentation: unbalanced frames"));
@@ -725,16 +747,13 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
                 pools = Some(pools_observation(rec, gas_limit, o.gas.gas_used)?);
             }
         }
-        (r, errors, instrumented.then_some(rec.frames))
+        (r, instrumented.then_some(rec.frames))
     } else {
         let mut evm = MegaEvm::new(ctx);
         let r = evm.execute_transaction(tx);
-        let errors = oracle_errors_of(&evm.ctx().external_envs().oracle_env);
-        (r, errors, None)
+        evm.ctx().external_envs().oracle_env.check()?;
+        (r, None)
     };
-    if let Some(e) = oracle_errors.first() {
-        return Err(bad(e.clone()));
-    }
     let mut observations = match executed {
         Ok(outcome) => {
             let returned = wants("group:returned-state").then(|| returned_state(&outcome));
@@ -756,6 +775,7 @@ fn run(request: &Value, instrumented: bool) -> Res<Run> {
             m.insert("reads".into(), reads(&loaded.borrow(), &pre));
         }
     }
+    observe_oracle_requests(&mut observations);
     if let (Some(p), Value::Object(m)) = (pools, &mut observations) {
         m.insert("gasPools".into(), p);
     }
@@ -804,7 +824,17 @@ fn reads(l: &Loaded, pre: &BTreeMap<Address, PreAccount>) -> Value {
         ("buckets", Value::Object(l.buckets.iter().map(|(b, c)| (format!("{b:#x}"), qty_u64(*c))).collect())),
         (
             "oracle",
-            Value::Array(l.oracle.iter().map(|(k, v)| obj(vec![("slot", b256(&B256::from(k.to_be_bytes::<32>()))), ("value", qty_u256(*v))])).collect()),
+            Value::Array(
+                l.oracle
+                    .iter()
+                    .filter_map(|(slot, answer)| {
+                        answer.map(|value| obj(vec![
+                            ("slot", b256(&B256::from(slot.to_be_bytes::<32>()))),
+                            ("value", qty_u256(value)),
+                        ]))
+                    })
+                    .collect(),
+            ),
         ),
         (
             "hints",
@@ -818,15 +848,13 @@ fn reads(l: &Loaded, pre: &BTreeMap<Address, PreAccount>) -> Value {
     ])
 }
 
-/// What went wrong with the oracle transcript: a request it does not answer, or an entry no request
-/// used (a recorded transcript must be used exactly).
-fn oracle_errors_of(oracle: &FixtureOracle) -> Vec<String> {
-    let mut errors = oracle.errors.borrow().clone();
-    let left = oracle.entries.borrow().len();
-    if left > 0 {
-        errors.push(format!("{left} oracle transcript entries were not requested"));
-    }
-    errors
+fn oracle_requests(loaded: &Loaded) -> Value {
+    Value::Array(loaded.oracle.iter().map(|(slot, answer)| {
+        obj(vec![
+            ("slot", b256(&B256::from(slot.to_be_bytes::<32>()))),
+            ("answer", answer.map_or(Value::Null, qty_u256)),
+        ])
+    }).collect())
 }
 
 /// The refusal reason of an implementation error, by the variant's name.
