@@ -7,7 +7,7 @@ Uncited-rule registry: [satin-83c0d26], source commit `83c0d269a92aaa580bb1805e3
 (committed `2026-11-16T22:24:48+08:00`). This is the newest source commit timestamp among
 the Satin snapshots these cases reference; equal timestamps are ordered by snapshot name.
 
-Cases: **1166** (1166 gating, 0 quarantined).
+Cases: **1182** (1182 gating, 0 quarantined).
 Cited rule IDs: **325**. Uncited rule IDs in that registry: **86**
 (76 active, 10 retired).
 
@@ -446,6 +446,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/no-record/callcode-with-value] | gating | unqualified | [satin-bcf260d] |
 | [satin/accounting/records/creation-onto-funded-address] | gating | unqualified | [satin-bcf260d] |
 | [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/empty-leaf] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/deposit-caller/empty-leaf-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
@@ -1043,6 +1044,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/empty-leaf] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/deposit-caller/empty-leaf-zero-mint] | gating | unqualified | [satin-83c0d26] |
 
@@ -1146,6 +1148,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/empty-leaf-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/deposits/empty-caller/paid] | gating | unqualified | [satin-bcf260d] |
 | [satin/deposits/empty-caller/unpaid] | gating | unqualified | [satin-bcf260d] |
@@ -1378,6 +1381,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/accounting/fee-account/destruction-to-beneficiary] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/fee-account/destruction-to-beneficiary-as-sender] | gating | unqualified | [satin-83c0d26] |
+| [satin/contract-limits/create2/short-of-salt-offset-out-of-range] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/access-off/call-short-of-an-operand] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/access-off/callcode-short-of-an-operand] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/balance-static-crossing] | gating | unqualified | [satin-5fb2688] |
@@ -1428,11 +1432,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -1546,11 +1553,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -1677,11 +1687,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cold-load-crossing/call-crossing-keeps-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -1823,11 +1836,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -1927,11 +1943,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -2036,11 +2055,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -2111,11 +2133,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -2211,11 +2236,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -2275,11 +2303,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cold-load-crossing/call-crossing-keeps-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -2370,11 +2401,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/creation/beneficiary-selfbalance] | gating | unqualified | [satin-cdded1e] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -2417,11 +2451,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/completed-read/child-reverts] | gating | unqualified | [satin-bcf260d] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
@@ -6084,20 +6121,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6111,8 +6156,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-marks-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-value-call-halts] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
@@ -6135,20 +6182,28 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6162,8 +6217,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-marks-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-value-call-halts] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
@@ -6185,15 +6242,23 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6206,7 +6271,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-marks-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6227,15 +6294,23 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6246,7 +6321,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-marks-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6260,8 +6337,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/refused-read-under-static-gas] | gating | unqualified | [satin-5fb2688] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6273,15 +6352,23 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-call-under-static-gas] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6292,7 +6379,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-marks-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6316,18 +6405,26 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warm-from-application] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -6341,7 +6438,9 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/refusal-marks-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-value-call-halts] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
@@ -6356,11 +6455,14 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/zero-length-ranges-at-the-top] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/warm-whole-gas-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/warm-whole-gas-one-short-of-the-guard] | gating | unqualified | [satin-83c0d26] |
@@ -6935,8 +7037,10 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-call-pays-its-surcharge] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
@@ -7984,9 +8088,11 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/one-hop-delegate-runs-access-on] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
@@ -9018,6 +9124,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/contract-limits/create2/initcode-over-limit-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/create2/one-byte-initcode-offset-out-of-range-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/create2/short-of-salt-memory-crossing] | gating | unqualified | [satin-bcf260d] |
+| [satin/contract-limits/create2/short-of-salt-offset-out-of-range] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/static-frame/create-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/contract-limits/static-frame/create2-detained] | gating | unqualified | [satin-bcf260d] |
 | [satin/selfdestruct/create2/deposit-after-mark] | gating | unqualified | [satin-83c0d26] |
@@ -9460,6 +9567,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/authorizations/absent-authority] | gating | unqualified | [satin-d334ef8] |
 | [satin/authorizations/absent-authority-sequential-nonces] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/code/delegated-authority] | gating | unqualified | [satin-c130558] |
+| [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/deposit-caller/empty-leaf] | gating | unqualified | [satin-c130558] |
 | [satin/authorizations/deposit-caller/empty-leaf-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/empty-leaf-authority] | gating | unqualified | [satin-d334ef8] |
@@ -9965,10 +10073,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/warm-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-at-the-guard] | gating | unqualified | [satin-83c0d26] |
@@ -10302,6 +10413,7 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/access-control/delegate-refusal/static-frame-value-call-halts] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-load-one-short] | gating | unqualified | [satin-83c0d26] |
@@ -10323,11 +10435,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
@@ -10348,12 +10470,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/delegated-sender-funds-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
+| [satin/authorizations/deposit-caller/nonce-one-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/reads/absent-authorities-out-of-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/contract-limits/create2/short-of-salt-offset-out-of-range] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/history/allowance/full-log3-second-log-exhausts] | gating | unqualified | [satin-83c0d26] |
 | [satin/history/allowance/full-log3-stipend-and-forward] | gating | unqualified | [satin-83c0d26] |
@@ -10504,11 +10632,21 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/cold-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/reverted-warmth-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
@@ -10529,12 +10667,18 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/accounting/records/three-transfers-one-absent-recipient] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/records/two-absent-recipients] | gating | unqualified | [satin-83c0d26] |
 | [satin/accounting/sender/delegated-sender-funds-absent-recipient] | gating | unqualified | [satin-83c0d26] |
+| [satin/authorizations/deposit-caller/absent-zero-mint] | gating | unqualified | [satin-83c0d26] |
+| [satin/authorizations/deposit-caller/nonce-one-zero-mint] | gating | unqualified | [satin-83c0d26] |
 | [satin/authorizations/reads/absent-authorities-out-of-gas] | gating | unqualified | [satin-83c0d26] |
+| [satin/contract-limits/create2/short-of-salt-offset-out-of-range] | gating | unqualified | [satin-83c0d26] |
 | [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-paid] | gating | unqualified | [satin-83c0d26] |
 | [satin/history/allowance/full-log3-second-log-exhausts] | gating | unqualified | [satin-83c0d26] |
 | [satin/history/allowance/full-log3-stipend-and-forward] | gating | unqualified | [satin-83c0d26] |
@@ -10697,14 +10841,22 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | Case | Status | Citation | Registry |
 | --- | --- | --- | --- |
 | [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/call-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/call-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/callcode-value-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/cold-target-load-skipped] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/delegatecall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-cold-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/max-forward-warm-target-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/memory-halts-before-the-target] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/static-frame-value-call-halts] | gating | unqualified | [satin-83c0d26] |
+| [satin/access-control/delegate-refusal/staticcall-cold-refusal-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-call-refused] | gating | unqualified | [satin-83c0d26] |
 | [satin/access-control/delegate-refusal/value-callcode-refused] | gating | unqualified | [satin-83c0d26] |
@@ -10714,10 +10866,13 @@ establish coverage of a newer rule's wording. Deliberately wrong negative cases 
 | [satin/detention/cold-load-crossing/call-crossing-keeps-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-before-the-load] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/memory-crossing-reads-nothing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/memory-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/static-cost-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-after-memory-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/surcharge-crossing-one-short] | gating | unqualified | [satin-83c0d26] |
+| [satin/detention/delegate-refusal/surcharge-crossing-status] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/value-transfer-crossing] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-at-the-guard] | gating | unqualified | [satin-83c0d26] |
 | [satin/detention/delegate-refusal/whole-gas-load-one-short] | gating | unqualified | [satin-83c0d26] |
@@ -10846,20 +11001,28 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold]: ../slice/cases/satin/access-control/delegate-refusal/authority-gated-entry-leaves-it-cold.json
 [satin/access-control/delegate-refusal/authority-warm-from-application]: ../slice/cases/satin/access-control/delegate-refusal/authority-warm-from-application.json
 [satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry]: ../slice/cases/satin/access-control/delegate-refusal/authority-warmed-by-a-skipped-entry.json
+[satin/access-control/delegate-refusal/call-cold-refusal-status]: ../slice/cases/satin/access-control/delegate-refusal/call-cold-refusal-status.json
 [satin/access-control/delegate-refusal/call-cold-target-refusal-reads]: ../slice/cases/satin/access-control/delegate-refusal/call-cold-target-refusal-reads.json
 [satin/access-control/delegate-refusal/call-cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/call-cold-target-refused.json
+[satin/access-control/delegate-refusal/call-value-refusal-status]: ../slice/cases/satin/access-control/delegate-refusal/call-value-refusal-status.json
+[satin/access-control/delegate-refusal/callcode-cold-refusal-status]: ../slice/cases/satin/access-control/delegate-refusal/callcode-cold-refusal-status.json
 [satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads]: ../slice/cases/satin/access-control/delegate-refusal/callcode-cold-target-refusal-reads.json
 [satin/access-control/delegate-refusal/callcode-cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/callcode-cold-target-refused.json
+[satin/access-control/delegate-refusal/callcode-value-refusal-status]: ../slice/cases/satin/access-control/delegate-refusal/callcode-value-refusal-status.json
+[satin/access-control/delegate-refusal/cold-refusal-status-with-probe]: ../slice/cases/satin/access-control/delegate-refusal/cold-refusal-status-with-probe.json
 [satin/access-control/delegate-refusal/cold-target-load-skipped]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-load-skipped.json
 [satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-load-skipped-caller-probe.json
 [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-loaded-at-the-load.json
 [satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-loaded-at-the-load-caller-probe.json
 [satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-one-short-of-the-guard.json
 [satin/access-control/delegate-refusal/cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/cold-target-refused.json
+[satin/access-control/delegate-refusal/delegatecall-cold-refusal-status]: ../slice/cases/satin/access-control/delegate-refusal/delegatecall-cold-refusal-status.json
 [satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads]: ../slice/cases/satin/access-control/delegate-refusal/delegatecall-cold-target-refusal-reads.json
 [satin/access-control/delegate-refusal/delegatecall-cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/delegatecall-cold-target-refused.json
 [satin/access-control/delegate-refusal/direct-call-under-static-gas]: ../slice/cases/satin/access-control/delegate-refusal/direct-call-under-static-gas.json
 [satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas]: ../slice/cases/satin/access-control/delegate-refusal/direct-delegatecall-under-static-gas.json
+[satin/access-control/delegate-refusal/listed-warm-refusal-status]: ../slice/cases/satin/access-control/delegate-refusal/listed-warm-refusal-status.json
+[satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe]: ../slice/cases/satin/access-control/delegate-refusal/listed-warm-refusal-status-with-probe.json
 [satin/access-control/delegate-refusal/max-forward-cold-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/max-forward-cold-target-refused.json
 [satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/max-forward-value-call-at-the-guard.json
 [satin/access-control/delegate-refusal/max-forward-warm-target-refused]: ../slice/cases/satin/access-control/delegate-refusal/max-forward-warm-target-refused.json
@@ -10874,8 +11037,10 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/access-control/delegate-refusal/refusal-after-a-give-back]: ../slice/cases/satin/access-control/delegate-refusal/refusal-after-a-give-back.json
 [satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap]: ../slice/cases/satin/access-control/delegate-refusal/refusal-after-a-give-back-above-the-cap.json
 [satin/access-control/delegate-refusal/refusal-marks-nothing]: ../slice/cases/satin/access-control/delegate-refusal/refusal-marks-nothing.json
+[satin/access-control/delegate-refusal/reverted-warmth-refusal-status]: ../slice/cases/satin/access-control/delegate-refusal/reverted-warmth-refusal-status.json
 [satin/access-control/delegate-refusal/static-frame-direct-value-call-refused]: ../slice/cases/satin/access-control/delegate-refusal/static-frame-direct-value-call-refused.json
 [satin/access-control/delegate-refusal/static-frame-value-call-halts]: ../slice/cases/satin/access-control/delegate-refusal/static-frame-value-call-halts.json
+[satin/access-control/delegate-refusal/staticcall-cold-refusal-status]: ../slice/cases/satin/access-control/delegate-refusal/staticcall-cold-refusal-status.json
 [satin/access-control/delegate-refusal/unaligned-output-at-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/unaligned-output-at-the-guard.json
 [satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/unaligned-output-one-short-of-the-guard.json
 [satin/access-control/delegate-refusal/value-call-at-the-guard]: ../slice/cases/satin/access-control/delegate-refusal/value-call-at-the-guard.json
@@ -10950,8 +11115,10 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/authorizations/beneficiary/skipped-authority-not-detained]: ../slice/cases/satin/authorizations/beneficiary/skipped-authority-not-detained.json
 [satin/authorizations/code/contract-authority]: ../slice/cases/satin/authorizations/code/contract-authority.json
 [satin/authorizations/code/delegated-authority]: ../slice/cases/satin/authorizations/code/delegated-authority.json
+[satin/authorizations/deposit-caller/absent-zero-mint]: ../slice/cases/satin/authorizations/deposit-caller/absent-zero-mint.json
 [satin/authorizations/deposit-caller/empty-leaf]: ../slice/cases/satin/authorizations/deposit-caller/empty-leaf.json
 [satin/authorizations/deposit-caller/empty-leaf-zero-mint]: ../slice/cases/satin/authorizations/deposit-caller/empty-leaf-zero-mint.json
+[satin/authorizations/deposit-caller/nonce-one-zero-mint]: ../slice/cases/satin/authorizations/deposit-caller/nonce-one-zero-mint.json
 [satin/authorizations/empty-leaf-authority]: ../slice/cases/satin/authorizations/empty-leaf-authority.json
 [satin/authorizations/frame/origin-and-gas-price]: ../slice/cases/satin/authorizations/frame/origin-and-gas-price.json
 [satin/authorizations/gates/chain-id-other]: ../slice/cases/satin/authorizations/gates/chain-id-other.json
@@ -11025,6 +11192,7 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/contract-limits/create2/initcode-over-limit-detained]: ../slice/cases/satin/contract-limits/create2/initcode-over-limit-detained.json
 [satin/contract-limits/create2/one-byte-initcode-offset-out-of-range-detained]: ../slice/cases/satin/contract-limits/create2/one-byte-initcode-offset-out-of-range-detained.json
 [satin/contract-limits/create2/short-of-salt-memory-crossing]: ../slice/cases/satin/contract-limits/create2/short-of-salt-memory-crossing.json
+[satin/contract-limits/create2/short-of-salt-offset-out-of-range]: ../slice/cases/satin/contract-limits/create2/short-of-salt-offset-out-of-range.json
 [satin/contract-limits/creation-tx/deployed-code-at-limit]: ../slice/cases/satin/contract-limits/creation-tx/deployed-code-at-limit.json
 [satin/contract-limits/creation-tx/initcode-at-limit]: ../slice/cases/satin/contract-limits/creation-tx/initcode-at-limit.json
 [satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir]: ../slice/cases/satin/contract-limits/creation-tx/initcode-at-limit-with-reservoir.json
@@ -11143,11 +11311,14 @@ Retired rules are labeled separately from active rules; their absence is not an 
 [satin/detention/creation/creator-at-beneficiary-access-off]: ../slice/cases/satin/detention/creation/creator-at-beneficiary-access-off.json
 [satin/detention/delegate-refusal/memory-crossing-before-the-load]: ../slice/cases/satin/detention/delegate-refusal/memory-crossing-before-the-load.json
 [satin/detention/delegate-refusal/memory-crossing-reads-nothing]: ../slice/cases/satin/detention/delegate-refusal/memory-crossing-reads-nothing.json
+[satin/detention/delegate-refusal/memory-crossing-status]: ../slice/cases/satin/detention/delegate-refusal/memory-crossing-status.json
 [satin/detention/delegate-refusal/static-cost-crossing]: ../slice/cases/satin/detention/delegate-refusal/static-cost-crossing.json
 [satin/detention/delegate-refusal/surcharge-crossing]: ../slice/cases/satin/detention/delegate-refusal/surcharge-crossing.json
 [satin/detention/delegate-refusal/surcharge-crossing-above-the-cap]: ../slice/cases/satin/detention/delegate-refusal/surcharge-crossing-above-the-cap.json
+[satin/detention/delegate-refusal/surcharge-crossing-after-memory-status]: ../slice/cases/satin/detention/delegate-refusal/surcharge-crossing-after-memory-status.json
 [satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory]: ../slice/cases/satin/detention/delegate-refusal/surcharge-crossing-keeps-the-memory.json
 [satin/detention/delegate-refusal/surcharge-crossing-one-short]: ../slice/cases/satin/detention/delegate-refusal/surcharge-crossing-one-short.json
+[satin/detention/delegate-refusal/surcharge-crossing-status]: ../slice/cases/satin/detention/delegate-refusal/surcharge-crossing-status.json
 [satin/detention/delegate-refusal/surcharge-paid]: ../slice/cases/satin/detention/delegate-refusal/surcharge-paid.json
 [satin/detention/delegate-refusal/value-call-pays-its-surcharge]: ../slice/cases/satin/detention/delegate-refusal/value-call-pays-its-surcharge.json
 [satin/detention/delegate-refusal/value-transfer-crossing]: ../slice/cases/satin/detention/delegate-refusal/value-transfer-crossing.json
