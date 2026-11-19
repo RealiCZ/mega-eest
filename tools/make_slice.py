@@ -3288,6 +3288,15 @@ def authorization_cases() -> list[Case]:
         "recipient and succeeds. It keeps exactly one new-account state charge and one unit of state growth "
         "(SATIN-DEP-003, SATIN-STATE-011, SATIN-ACCT-014)",
         spec=CURRENT_SPEC, ty=0, deposit=(0, 1_000_000), absent_sender=True, accounts={OTHER: model.Account()})
+    for name, accounts, intent in (
+        ("absent-zero-mint", {}, "An absent caller becomes a new leaf, with one state charge and one rise."),
+        ("nonce-one-zero-mint", {OTHER: model.Account(nonce=1)},
+         "The caller has nonce one, zero balance and no code. Its existing nonce makes it nonempty, so no state "
+         "charge or rise is made for it."),
+    ):
+        add(f"deposit-caller/{name}", "The same zero-mint, zero-value deposit runs a STOP recipient and succeeds. "
+            f"{intent} (SATIN-DEP-003, SATIN-STATE-011)", spec=CURRENT_SPEC, ty=0, deposit=(0, 1_000_000),
+            absent_sender=True, accounts=accounts, returned_state=True)
     out += authorization_gap_cases()
     return out
 
@@ -5598,6 +5607,16 @@ def returndata_to(offset: int) -> bytes:
     return b"\x3d" + push(0) + push(offset) + b"\x3e"
 
 
+def return_call_result(measure: bytes = b"") -> bytes:
+    """Take the call's success bit and return it, an optional measured word, and the return data."""
+    code = push(0) + b"\x52"
+    offset = 32
+    if measure:
+        code += measure + push(32) + b"\x52"
+        offset += 32
+    return code + returndata_to(offset) + b"\x3d" + push(offset) + b"\x01\x5f\xf3"
+
+
 HINT_CHILD = bytes.fromhex("00000000000000000000000000000000000c0e20")  # a child that sends a hint, then reverts
 STATIC_RELAY = bytes.fromhex("00000000000000000000000000000000000c0e21")  # a frame a STATICCALL started that sends a hint
 ASKER = bytes.fromhex("00000000000000000000000000000000000c0e22")  # a child that asks remainingComputeGas()
@@ -5974,7 +5993,7 @@ def system_pages_gap_cases() -> list[Case]:
                  "recognition needs a CALL at depth 0, so the held code runs and succeeds (SATIN-ICPT-006)",
                  code=bytes_to_memory(keyless_input) + op + record_result() + STOP, accounts=dict(held), **sys_pages))
     keyless_input = keyless_data(carried(init_returning(STOP)), 1_000_000)
-    parent_result = push(0) + b"\x52" + returndata_to(32) + b"\x3d" + push(32) + b"\x01\x5f\xf3"
+    parent_result = return_call_result()
     for name, opcode in (("call", 0xF1), ("staticcall", 0xFA), ("callcode", 0xF2), ("delegatecall", 0xF4)):
         add(Case(f"satin/interception/keyless/{name}-runs-keyless-code", f"a contract's {name.upper()} with a valid "
                  "keylessDeploy argument runs the system contract's bytecode, without the deployment overhead. The "
@@ -7104,6 +7123,22 @@ def size_cases() -> list[Case]:
              "have halted it", boundary="the spendable part one below the charges before the salt", gas=21_000_000,
              accounts={DETAINED: model.Account(nonce=1, code=salt_short)}, make=detained_call, params=dict(start),
              retune=[("child-room", spendable + model.G_VERYLOW + 2 * model.G_BASE, "pad", -1)], **page))
+    short_bad_offset = push(1) + push(top) + push(0) + b"\xf5" + STOP
+    short_offset_case = {**page, "spec": CURRENT_SPEC, "gas": 21_000_000, "returned_state": True,
+                         "accounts": {DETAINED: model.Account(nonce=1, code=short_bad_offset)},
+                         "make": detained_call, "params": start}
+    short_offset_pushes = 2 * model.G_VERYLOW + model.G_BASE
+    add(Case("satin/contract-limits/create2/short-of-salt-offset-out-of-range", "The detained child runs CREATE2 with "
+             "one byte of initcode at offset 2^256 - 1 and no salt. It can pay for the initcode word, then "
+             "halts on the offset before making a memory charge or reading the salt. Treating the offset as zero "
+             "would cross detention at the memory charge and return gas to the parent (SATIN-SIZE-005, "
+             "SATIN-DET-001, SATIN-DET-018).",
+             retune=[("child-room", spendable + short_offset_pushes, "pad", -1)], **short_offset_case))
+    add(Case("satin/contract-limits/create2/short-of-salt-initcode-crossing-before-offset", "The detained child runs "
+             "the same salt-short CREATE2 with one byte of initcode at offset 2^256 - 1 and a spendable allowance one "
+             "below the initcode fee. The fee crosses detention before the offset is checked, so the child returns "
+             "its unspent gas to the parent. Checking the offset first would halt it (SATIN-SIZE-005, SATIN-DET-018).",
+             retune=[("child-room", initcode - 1 + short_offset_pushes, "pad", -1)], **short_offset_case))
     static_create = push(32) + push(0) + push(0) + b"\xf0" + STOP
     add(Case("satin/contract-limits/static-frame/create-detained", "a detained child that a STATICCALL started, with 1 of "
              "spendable gas at a CREATE of 32 bytes of initcode: the static context is checked before the operands and "
@@ -7263,16 +7298,18 @@ def delegate_refusal_cases() -> list[Case]:
     refusal = f"VolatileDataAccessDisabled({model.ACCESS_TYPE_BENEFICIARY})"
     stop = f"MegaLimitExceeded({model.DETENTION_STOP}, limit)"
 
+    balance_return = return_call_result(b"\x5a" + balance + b"\x5a\x90\x03")
+
     def refusing(code: bytes, left: int, name: str, intent: str, before: bytes = b"", after: bytes = b"",
                  accounts: dict | None = None, boundary: str = "", probe: str = "refusal-call", spare: int = 10_000,
-                 via: int = 0xF1, switch: bool = True, **kw) -> None:
+                 via: int = 0xF1, switch: bool = True, tail: bytes = RETURN_RETURNDATA, **kw) -> None:
         """A case whose transaction's own frame switches its access off (unless `switch` is false), runs `before`,
         calls REFUSING by `via`, REFUSING's `code` holding `left` of regular gas at its call opcode, then runs `after`
-        and returns REFUSING's return data."""
+        and `tail`. The default tail returns REFUSING's return data."""
         add(Case(f"satin/access-control/delegate-refusal/{name}", intent, boundary=boundary,
                  accounts={**delegator, REFUSING: model.Account(nonce=1, code=code + STOP), **(accounts or {})},
                  make=lambda gas: (disable if switch else b"") + before + call_op(via, REFUSING, gas=gas) + after
-                 + RETURN_RETURNDATA,
+                 + tail,
                  params={"gas": left + spare}, retune=[(probe, left, "gas", 1)], **page, **kw))
 
     static = call_op(0xFA, BENEFICIARY_DELEGATOR)
@@ -7572,6 +7609,54 @@ def delegate_refusal_cases() -> list[Case]:
              accounts={**delegator, REFUSING: model.Account(nonce=1, code=call_op(0xFA, BENEFICIARY_DELEGATOR,
                                                                                   inp=(0, size)) + STOP)},
              forbidden_accounts=(BENEFICIARY_DELEGATOR,), code=b"\x42\x50" + disable + call(forward, REFUSING, 0, 0) + RETURN_RETURNDATA, **page))
+
+    # When a parent consumes the child's success bit, equal return data and gas do not make two outcomes equivalent.
+    for op, opcode in CALL_OPS.items():
+        refusing(call_op(op, BENEFICIARY_DELEGATOR), cold + warm, f"{opcode.lower()}-cold-refusal-status",
+                 f"A zero-forward {opcode} loads the cold delegator and is refused at its beneficiary delegate. "
+                 "The parent returns the failure bit and refusal data without reading the delegator afterwards "
+                 "(SATIN-MAC-004, SATIN-MAC-007, SATIN-WIT-012).",
+                 tail=return_call_result(), reads=True, returned_state=True)
+    refusing(static, cold + warm, "cold-refusal-status-with-probe", "The zero-forward STATICCALL of a cold delegator "
+             "is refused. The parent returns the failure bit, the measured gas for a cold BALANCE and the refusal data "
+             "(SATIN-MAC-004, SATIN-SCHED-003).", tail=balance_return, returned_state=True)
+    for suffix, probe_balance in (("", False), ("-with-probe", True)):
+        refusing(static, 2 * warm, "listed-warm-refusal-status" + suffix, "A zero-forward STATICCALL can pay the "
+                 "guard for a delegator already warmed by the access list. The parent returns the failure bit "
+                 + ("and the warm BALANCE measurement with the refusal data (SATIN-MAC-004, SATIN-SCHED-003)."
+                    if probe_balance else "and the refusal data without reading the loaded target again "
+                    "(SATIN-MAC-004, SATIN-WIT-012)."),
+                 tail=balance_return if probe_balance else return_call_result(), reads=True, returned_state=True, **listed)
+    for op in (0xF1, 0xF2):
+        opcode = CALL_OPS[op]
+        refusing(call_op(op, BENEFICIARY_DELEGATOR, value=1), 15_000, f"{opcode.lower()}-value-refusal-status",
+                 f"A {opcode} carrying one wei from a frame with zero balance reaches the beneficiary delegate. "
+                 "The parent returns the failure bit and refusal data. The transfer charge comes back before the "
+                 "call checks funds (SATIN-MAC-004, SATIN-MAC-007, SATIN-WIT-012).",
+                 tail=return_call_result(), reads=True, returned_state=True)
+    refusing(static, cold + warm, "reverted-warmth-refusal-status", "The first child warms the target and reverts. "
+             "The second child pays the cold access again before its delegate is refused. The parent returns its "
+             "failure bit, the measured gas for another cold BALANCE, and its refusal data (SATIN-MAC-004, "
+             "SATIN-SCHED-003).", before=call(50_000, WARMER, 0, 0) + b"\x50", tail=balance_return,
+             accounts={WARMER: model.Account(nonce=1, code=balance + revert(0, 0))}, returned_state=True)
+
+    for code, room, name, coverage in (
+        (static, 2 * warm, "surcharge-crossing-status", "the static charge stays paid and the cold surcharge crosses"),
+        (ranged, 3 * warm, "surcharge-crossing-after-memory-status", "the static and memory charges stay paid "
+         "and the cold surcharge then crosses"),
+    ):
+        detained_refusal(code, 5_200, room, name, "The delegator is loaded and its cold surcharge is the detention "
+                         f"crossing after refusal settlement: {coverage}. The parent returns the child's failure bit "
+                         "and stop data without another access to the target (SATIN-MAC-004, SATIN-MAC-007, "
+                         "SATIN-OUT-008, SATIN-STOP-020, SATIN-WIT-012).", tail=return_call_result(), returned_state=True)
+    add(Case("satin/detention/delegate-refusal/memory-crossing-status", "The STATICCALL's input memory charge crosses "
+             "detention before its delegator is loaded. The parent returns the child's failure bit and stop data, "
+             "and the target is absent from the returned keys (SATIN-MAC-007, SATIN-DET-001, SATIN-STOP-020, "
+             "SATIN-WIT-012).", detention=True, reads=True, gas=50_000_000,
+             accounts={**delegator, REFUSING: model.Account(nonce=1, code=call_op(0xFA, BENEFICIARY_DELEGATOR,
+                                                                                  inp=(0, size)) + STOP)},
+             forbidden_accounts=(BENEFICIARY_DELEGATOR,), code=b"\x42\x50" + disable + call(forward, REFUSING, 0, 0)
+             + return_call_result(), **page))
 
     # SATIN-PCMP-008: a precompile's address delegating to the beneficiary ends at or before the delegate's load, at the
     # edge of the delegation guard, and never reaches dispatch.

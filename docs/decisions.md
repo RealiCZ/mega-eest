@@ -3211,3 +3211,35 @@ A transaction refused at decoding, validation or inclusion makes no service requ
 When the case requires `group:oracle-requests`, the adapter includes an empty list
 after checking the transcript for unused entries. Each of these refusal paths has
 a fixture with an empty recorded queue.
+
+**D-200. Expose the refused frame's status to its parent.** The parent returns one word
+containing the call success bit followed by the exact return data. Cold, access-listed and
+value-bearing refusal cases use their own forwards and inherited access settings. A revert
+and a successful return with identical bytes then differ in the parent's output
+(`SATIN-MAC-004`, `SATIN-MAC-007`, `SATIN-OUT-008`).
+
+**D-201. Separate completed target loads from later warmth probes.** The zero-forward
+refusal cases observe the returned key without any later load. Separate measured cases
+have the parent also return the gas difference across a real BALANCE of the target.
+The cold, access-listed and reverted-warming paths preserve their respective cold and
+warm charges (`SATIN-SCHED-003`, `SATIN-WIT-005`, `SATIN-WIT-012`).
+
+**D-202. Expose the status of a detained child.** The parent returns the failed call's
+success word and the stop data. The two surcharge crossings retain the loaded target,
+with the memory charge already paid in one case. The memory-first crossing forbids
+the target key. The receipt and ledgers account for the regular gas the child hands
+back (`SATIN-MAC-007`, `SATIN-OUT-008`, `SATIN-STOP-020`, `SATIN-WIT-012`).
+
+**D-203. Compare all three caller leaves with the same zero-mint deposit.** The same
+envelope succeeds from an absent caller, a present empty leaf and a nonce-one account
+with zero balance and no code. The absent and empty callers take the new-account state
+charge and rise. The nonce-one caller is nonempty and takes neither
+(`SATIN-DEP-003`, `SATIN-STATE-011`).
+
+**D-204. Check a missing-salt CREATE2 at a nonempty out-of-range offset under detention.**
+The child can pay the single initcode word, then halts when checking the offset. A memory
+charge at offset zero would cross its spendable allowance and return the unspent gas to
+the parent. A companion case leaves the same child one gas short of the initcode fee.
+The fee crosses before the offset check and returns the child's unspent gas. An early
+offset check would halt. The receipts distinguish both orders (`SATIN-DET-001`,
+`SATIN-DET-018`, `SATIN-SIZE-005`).

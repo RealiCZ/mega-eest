@@ -298,6 +298,9 @@ class SettlementMixin:
                       ("its leaf, which the state holds empty, " if tx.sender in self.pre else "it ") +
                       "is new; it is charged no ACCOUNT_WRITE and makes no write record, its account being a fixed record "
                       "of the body", "SATIN-AUTH-017", "SATIN-STATE-011", "SATIN-ACCT-015", "SATIN-ACCT-008")
+        elif self.lists:
+            d.add("gasLedgers", "the deposit's caller was nonempty under EIP-161 before its mint and nonce bump, "
+                  "so it adds no new-account state charge or rise", "SATIN-DEP-003", "SATIN-STATE-011")
         self.state_gas += caller_state
         if self.unbumpable:
             d.add("state", f"the mint {fmt(tx.mint)} is credited to the sender, whose nonce, MAX_NONCE, the deposit "
