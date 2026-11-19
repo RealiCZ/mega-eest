@@ -181,6 +181,7 @@ def revert(offset: int, size: int) -> bytes:
 
 STOP = b"\x00"
 INVALID = b"\xfe"
+GAS = b"\x5a"
 
 
 def init_returning(code: bytes) -> bytes:
@@ -536,9 +537,10 @@ def bytes_to_memory(b: bytes) -> bytes:
     return b"".join(mstore(i, int.from_bytes(b[i:i + 32].ljust(32, b"\x00"), "big")) for i in range(0, len(b), 32))
 
 
-def call(gas: int, target: bytes, value: int, in_size: int) -> bytes:
-    """CALL(gas, target, value, 0, in_size, 0, 0)."""
-    return push(0) + push(0) + push(in_size) + push(0) + push(value) + push(int.from_bytes(target, "big")) + push(gas) + b"\xf1"
+def call(gas: int | bytes, target: bytes, value: int, in_size: int) -> bytes:
+    """CALL(gas, target, value, 0, in_size, 0, 0), using an immediate or GAS."""
+    operand = gas if isinstance(gas, bytes) else push(gas)
+    return push(0) + push(0) + push(in_size) + push(0) + push(value) + push(int.from_bytes(target, "big")) + operand + b"\xf1"
 
 
 def record_result() -> bytes:
@@ -1987,9 +1989,10 @@ def pricing_cases() -> list[Case]:
 # --- The take-back page's worked examples (SATIN-TAKE-005 to -012), one case each ----------------
 
 
-def delegatecall(gas: int, target: bytes) -> bytes:
-    """DELEGATECALL(gas, target, 0, 0, 0, 0)."""
-    return push(0) + push(0) + push(0) + push(0) + push(int.from_bytes(target, "big")) + push(gas) + b"\xf4"
+def delegatecall(gas: int | bytes, target: bytes) -> bytes:
+    """DELEGATECALL(gas, target, 0, 0, 0, 0), using an immediate or GAS."""
+    operand = gas if isinstance(gas, bytes) else push(gas)
+    return push(0) + push(0) + push(0) + push(0) + push(int.from_bytes(target, "big")) + operand + b"\xf4"
 
 
 def create(value: int, init: bytes) -> bytes:
@@ -2074,6 +2077,16 @@ def take_back_cases() -> list[Case]:
              "across the frame boundary (SATIN-ACCT-004, SATIN-ACCT-011)", spec=CURRENT_SPEC, returned_state=True,
              code=sstore(1, 1) + delegatecall(50_000, DESCENDANT) + b"\x50" + STOP,
              accounts={DESCENDANT: model.Account(nonce=1, code=sstore(1, 0) + STOP)}))
+    for name, child_end, result in (
+            ("kept", STOP, "The child succeeds and takes back the slot's record, state charge and growth."),
+            ("halted", INVALID, "The child consumes its capped forward and its rollback restores the parent's "
+             "slot, record and growth.")):
+        add(Case(f"satin/take-backs/descendant/fresh-slot-restore-{name}-gas", "A parent writes one to fresh slot zero "
+                 "and requests GAS for the DELEGATECALL that clears it. " + result
+                 + " The parent succeeds (SATIN-FWD-003, SATIN-ACCT-004, SATIN-ACCT-011).",
+                 spec=CURRENT_SPEC, gas=50_000_000, returned_state=True,
+                 code=sstore(0, 1) + delegatecall(GAS, DESCENDANT) + b"\x50" + STOP,
+                 accounts={DESCENDANT: model.Account(nonce=1, code=sstore(0, 0) + child_end)}))
 
     # SATIN-TAKE-006, sent-back: P (the first frame) calls Q with 1 wei, and Q calls P back with 1 wei.
     back = call(MAX_GAS, CONTRACT, 1, 0) + b"\x50" + STOP
@@ -5247,6 +5260,12 @@ def keyless_pool_cases() -> list[Case]:
     pair("pools/constructor-environment", "The constructor stores GAS, ORIGIN, GASPRICE and CALLER in slots four "
          "through seven. It sees the uncapped forward, the relayer's address and price, and the signer as caller "
          "(SATIN-KEY-011)", env_words + one, gas_price=7)
+    origin_and_price = b"\x32" + push(0) + b"\x55\x3a" + push(1) + b"\x55"
+    env_data = keyless_data(carried(origin_and_price + one, gas=signed_limit), large_override)
+    for tier, gas in (("below-cap", below), ("above-cap", above)):
+        case(f"deploy/constructor-origin-and-gasprice/{tier}", "The constructor's first writes put ORIGIN in slot "
+             "zero and GASPRICE in slot one. The returned deploy account has the relayer's address and outer "
+             "price of seven in those slots (SATIN-KEY-011, SATIN-WIT-008).", env_data, gas=gas, gas_price=7)
     return out
 
 
@@ -5716,6 +5735,21 @@ def system_pages_gap_cases() -> list[Case]:
              spec=CURRENT_SPEC, returned_state=True, system=True, system_pages=True, reads=True,
              code=laid + call(200_000, model.ORACLE, 0, len(hint)) + b"\x50" + bytes_to_memory(second_hint)
              + call(200_000, model.ORACLE, 0, len(second_hint)) + b"\x50" + STOP))
+    full_hints = (send_hint(int.from_bytes(bytes([0x11]) * 32, "big"), b"\xaa\xbb"),
+                  send_hint(int.from_bytes(bytes([0x22]) * 32, "big"), b"\xcc\xdd"))
+    add(Case("satin/oracle/send-hint/full-topics-in-order", "The service receives both hints in order, with their "
+             "full topics, distinct two-byte payloads and calling address (SATIN-ORCL-006, SATIN-ORCL-007).",
+             spec=CURRENT_SPEC, returned_state=True, system=True, system_pages=True, reads=True,
+             code=b"".join(bytes_to_memory(data) + call(1_000_000, model.ORACLE, 0, len(data)) + b"\x50"
+                           for data in full_hints) + STOP))
+    unfunded_hint = send_hint(int.from_bytes(bytes([0x7a]) * 32, "big"), b"unfunded")
+    add(Case("satin/oracle/send-hint/stipend-unfunded-full-payload", "The stipend admits the complete hint before "
+             "the unfunded one-wei call fails with empty return data. The caller returns the child failure, the "
+             "hint's full ABI input stays counted, and both returned balances stay zero "
+             "(SATIN-ORCL-006, SATIN-ORCL-007, SATIN-ORCL-009).",
+             spec=CURRENT_SPEC, returned_state=True, system=True, system_pages=True, reads=True,
+             code=bytes_to_memory(unfunded_hint) + call(0, model.ORACLE, 1, len(unfunded_hint))
+             + return_call_result()))
 
     # 4. Malformed and noncanonical input (SATIN-ORCL-009).
     unpadded = model.SEND_HINT + word(7) + word(0x40) + word(1) + b"\xaa"
@@ -6349,6 +6383,11 @@ def accounting_cases() -> list[Case]:
          "account, a fixed record of the body, is not recorded again, so the transfer records the contract's account "
          "alone, one KV update, with a transfer log", contract_balance=10,
          code=call(0, SENDER, 1, 0) + b"\x50" + STOP)
+    case("sender/value-call-to-sender-gas", "A contract transfers one wei to the transaction sender with GAS as "
+         "the request. The transfer logs and keeps the contract's record alone "
+         "(SATIN-FWD-003, SATIN-ACCT-005, SATIN-ACCT-008).", spec=CURRENT_SPEC, returned_state=True,
+         gas=50_000_000, accounts={COINBASE: model.Account(balance=1)}, contract_balance=10,
+         code=call(GAS, SENDER, 1, 0) + b"\x50" + STOP)
     # SATIN-ACCT-009: an applied authority is changed by the list.
     authority = {AUTHORITY: model.Account(balance=1)}
     case("authority/value-call-after-list", "an EIP-7702 transaction whose one entry, signed by an existing account at its "
@@ -6472,12 +6511,25 @@ def accounting_cases() -> list[Case]:
          "records and two transfer logs (SATIN-ACCT-005, SATIN-ACCT-014, SATIN-LIM-008)",
          spec=CURRENT_SPEC, returned_state=True,
          contract_balance=10, code=create(1, STOP) + send(PAYEE_R) + STOP)
+    case("records/empty-initcode-creation-then-transfer", "A frame executes a successful CREATE of length zero "
+         "with one wei and then funds a different absent account by CALL with GAS. The creator's nonce and balance "
+         "changes share one record. Both recipients have a new record, growth unit and transfer log "
+         "(SATIN-SIZE-005, SATIN-ACCT-004, SATIN-ACCT-005, SATIN-ACCT-014).", spec=CURRENT_SPEC,
+         gas=50_000_000, returned_state=True, contract_balance=10,
+         code=create(1, b"") + call(GAS, PAYEE_R, 1, 0) + b"\x50" + STOP)
     case("records/halted-transfer-then-absent-recipient", "a value call starts a child that executes INVALID. The "
          "parent catches the halt and then sends value to an absent recipient on the stipend alone. Only the second "
          "start's records and log stand (SATIN-ACCT-005, SATIN-ACCT-011, SATIN-POOL-014)",
          spec=CURRENT_SPEC, returned_state=True,
          contract_balance=10, accounts={PAYEE_Q: model.Account(nonce=1, code=INVALID)},
          code=call(20_000, PAYEE_Q, 1, 0) + b"\x50" + call(0, PAYEE_R, 1, 0) + b"\x50" + STOP)
+    case("records/halted-transfer-then-absent-recipient-gas", "The first value call requests GAS and INVALID "
+         "consumes its capped forward. The parent pays for the second value call to an absent recipient out of "
+         "what it kept, requesting zero. Only the second call's two records, growth and log survive "
+         "(SATIN-FWD-003, SATIN-ACCT-005, SATIN-ACCT-011, SATIN-POOL-014).", spec=CURRENT_SPEC,
+         gas=50_000_000, returned_state=True, contract_balance=10,
+         accounts={PAYEE_Q: model.Account(nonce=1, code=INVALID)},
+         code=call(GAS, PAYEE_Q, 1, 0) + b"\x50" + call(0, PAYEE_R, 1, 0) + b"\x50" + STOP)
     back = lambda value: {PAYEE_Q: model.Account(nonce=1, code=call(0, CONTRACT, value, 0) + b"\x50" + STOP)}
     case("records/partial-return", "a contract holding 10 wei sends 2 wei to a contract, which sends 1 back: both "
          "balances differ from what the transaction loaded, so both records stand and nothing is taken back",
@@ -6496,6 +6548,12 @@ def accounting_cases() -> list[Case]:
          spec=CURRENT_SPEC, contract_balance=10, returned_state=True,
          accounts={PAYEE_Q: model.Account(nonce=1, code=call(0, PAYEE_R, 1, 0) + b"\x50" + STOP)},
          code=send(PAYEE_Q) + STOP)
+    case("records/pass-on-exact-to-absent-gas", "Both value calls request GAS. The middle account passes on the "
+         "one wei it received and restores its balance to zero, taking back its record. The absent recipient "
+         "keeps the wei and both transfers log (SATIN-FWD-003, SATIN-ACCT-004, SATIN-ACCT-005).",
+         spec=CURRENT_SPEC, gas=50_000_000, contract_balance=10, returned_state=True,
+         accounts={PAYEE_Q: model.Account(nonce=1, code=call(GAS, PAYEE_R, 1, 0) + b"\x50" + STOP)},
+         code=call(GAS, PAYEE_Q, 1, 0) + b"\x50" + STOP)
     # SATIN-ACCT-004, -006, -011, SATIN-HIST-006, -007: a SELFDESTRUCT of an account the transaction did not create that
     # returns accounts to what the transaction loaded takes their records back.
     def refund_to(beneficiary: bytes) -> bytes:
@@ -6575,6 +6633,11 @@ def accounting_cases() -> list[Case]:
              spec=CURRENT_SPEC, returned_state=True,
              destruction=True, contract_balance=1, accounts={target: model.Account(balance=1)},
              code=selfdestruct_to(target))
+    case("fee-account/value-call-to-beneficiary-gas", "A contract transfers one wei to the existing block "
+         "beneficiary with GAS as the request. The transfer logs and keeps two account records "
+         "(SATIN-FWD-003, SATIN-ACCT-005, SATIN-ACCT-010, SATIN-DET-001).", spec=CURRENT_SPEC,
+         gas=50_000_000, returned_state=True, accounts={COINBASE: model.Account(balance=1)}, contract_balance=10,
+         code=call(GAS, COINBASE, 1, 0) + b"\x50" + STOP)
     case("fee-account/destruction-to-beneficiary-as-sender", "the block beneficiary and sender are the same account. "
          "An existing contract destroys itself to that address. The clearing is recorded and the sender's account "
          "is already the body's record (SATIN-ACCT-008, SATIN-DET-001)",
@@ -6611,6 +6674,15 @@ def accounting_cases() -> list[Case]:
          "absent value recipient. The account and its indicator are charged once, and the value start keeps the same "
          "one record and rise (SATIN-ACCT-009, SATIN-AUTH-008, SATIN-AUTH-015)",
          to=AUTHORITY, **authorizing_transfer)
+    wildcard_transfer = {**authorizing_transfer, "authorizations": [(AUTH_KEY, 0, DELEGATE, 0)]}
+    case("authority/wildcard-value-to-distinct-absent-recipient", "A chain-zero authorization creates the "
+         "authority with a nonzero delegation. The transaction carries one wei to a different absent account, so "
+         "two records and two growth units stand (SATIN-AUTH-002, SATIN-AUTH-008, SATIN-ACCT-005).",
+         to=ABSENT, **wildcard_transfer)
+    case("authority/wildcard-value-to-delegated-absent-authority", "A chain-zero authorization creates the "
+         "authority with a nonzero delegation. The transaction sends it one wei, sharing the authority's one "
+         "record and growth unit (SATIN-AUTH-002, SATIN-AUTH-008, SATIN-ACCT-009).",
+         to=AUTHORITY, **wildcard_transfer)
     # SATIN-ACCT-020: a failed deposit's caller, empty under EIP-161, counts one unit of state growth, uncharged.
     intrinsic = model.TX_BASE_COST + model.COLD_ACCOUNT_ACCESS + model.TX_BODY_SIZE * model.COST_PER_HISTORY_BYTE
     for name, held, tail in (("failed-deposit/empty-leaf-caller", model.Account(), "an empty leaf, empty under EIP-161: "
