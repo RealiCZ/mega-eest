@@ -76,6 +76,10 @@ implementation into `vendor/`) and prints the `SLICE`, `PARITY` and `NEGATIVE` l
 into `candidates/exported/`; `mega-fixture fill` fills candidates, `mega-fixture consume` runs any
 cases on an adapter, read-only.
 
+For gas-pool cases, plain consumption also checks the engine's default loop without the recorder.
+It runs the same input and checks every expectation outside `gasPools`. The `DERIVED` summary
+counts these additional runs on each adapter.
+
 ## Status
 
 Phases 0 to 2 of the suite's plan. The slice's 474 cases pass on both implementations, plain and

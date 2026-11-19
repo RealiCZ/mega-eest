@@ -13,7 +13,7 @@
 use crate::compare::{compare, Verdict};
 use crate::error::{Error, ErrorCode};
 use crate::json::{self, Value};
-use crate::model::Requirement;
+use crate::model::{Group, Requirement};
 use crate::registry::SpecStore;
 use crate::{sha256_digest, Case};
 use std::collections::{BTreeMap, BTreeSet};
@@ -312,6 +312,8 @@ pub struct CaseReport {
     /// SHA-256 of the canonical bytes of the actual observations.
     pub observations_digest: Option<String>,
     pub status: Status,
+    /// Whether the additional run without the gas-pool recorder passed, if run.
+    pub default_loop_passed: Option<bool>,
 }
 
 impl CaseReport {
@@ -325,6 +327,7 @@ impl CaseReport {
             adapter_input_digest: None,
             observations_digest: None,
             status: Status::Error { message },
+            default_loop_passed: None,
         }
     }
 
@@ -340,6 +343,9 @@ impl CaseReport {
         m.insert("adapterInputDigest".into(), opt(&self.adapter_input_digest));
         m.insert("observationsDigest".into(), opt(&self.observations_digest));
         m.insert("status".into(), Value::String(self.status.name().into()));
+        if self.default_loop_passed == Some(false) {
+            m.insert("defaultLoopPassed".into(), Value::Bool(false));
+        }
         match &self.status {
             Status::Fail { path, expected, actual, rules } => {
                 m.insert("path".into(), Value::String(path.clone()));
@@ -359,7 +365,7 @@ impl CaseReport {
     }
 }
 
-/// Runs one case (its bytes as stored) on `adapter`: validate, check capabilities, run, compare.
+/// Runs a stored case on `adapter`, including the default loop for a plain gas-pool case.
 pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn Adapter, caps: &Capabilities, instrumented: bool) -> CaseReport {
     let case = match Case::from_bytes(bytes, store) {
         Ok(c) => c,
@@ -374,7 +380,37 @@ pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn A
         adapter_input_digest: None,
         observations_digest: None,
         status: Status::Pass,
+        default_loop_passed: None,
     };
+    check_case(&case, adapter, caps, instrumented, &mut report);
+    let gas_pools = Requirement::Group(Group::GasPools);
+    if !instrumented && case.fixture.requires.contains(&gas_pools) && !matches!(report.status, Status::Unsupported { .. }) {
+        // The gas-pool recorder selects the inspected engine loop even in plain mode.
+        // With just the pool group removed, the remaining model expectations apply to the default loop.
+        let Value::Object(mut projected) = case.value else { unreachable!("validated case object") };
+        let Some(Value::Array(requires)) = projected.get_mut("requires") else { unreachable!("validated requires array") };
+        requires.retain(|r| r.as_str() != Some(gas_pools.as_str()));
+        let Some(Value::Object(expected)) = projected.get_mut("expected") else { unreachable!("validated expected object") };
+        expected.remove("gasPools");
+
+        let mut default_loop = report.clone();
+        default_loop.adapter_input_digest = None;
+        default_loop.observations_digest = None;
+        match Case::from_value(Value::Object(projected), store) {
+            Ok(projected) => check_case(&projected, adapter, caps, false, &mut default_loop),
+            Err(e) => default_loop.status = Status::Error { message: format!("the default-loop projection does not validate: {e}") },
+        }
+        report.default_loop_passed = Some(default_loop.status == Status::Pass);
+        if report.status == Status::Pass && default_loop.status != Status::Pass {
+            report.status = default_loop.status;
+            report.adapter_input_digest = default_loop.adapter_input_digest;
+            report.observations_digest = default_loop.observations_digest;
+        }
+    }
+    report
+}
+
+fn check_case(case: &Case, adapter: &dyn Adapter, caps: &Capabilities, instrumented: bool, report: &mut CaseReport) {
     let mut missing: Vec<String> = Vec::new();
     let profile = case.value.get("profile").and_then(Value::as_str).unwrap_or_default();
     if !caps.profiles.contains(profile) {
@@ -390,13 +426,13 @@ pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn A
     missing.extend(case.fixture.requires.iter().filter(|r| !caps.requires.contains(r)).map(|r| r.as_str().to_string()));
     if !missing.is_empty() {
         report.status = Status::Unsupported { missing };
-        return report;
+        return;
     }
-    let response = match adapter.run(&run_request(&case), instrumented) {
+    let response = match adapter.run(&run_request(case), instrumented) {
         Ok(r) => r,
         Err(e) => {
             report.status = Status::Error { message: e };
-            return report;
+            return;
         }
     };
     match response.get("status").and_then(Value::as_str) {
@@ -404,29 +440,29 @@ pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn A
         Some("unsupported") => {
             let why = response.get("reason").and_then(Value::as_str).unwrap_or("unsupported").to_string();
             report.status = Status::Unsupported { missing: vec![why] };
-            return report;
+            return;
         }
         Some("error") => {
             let why = response.get("error").and_then(Value::as_str).unwrap_or("error").to_string();
             report.status = Status::Error { message: why };
-            return report;
+            return;
         }
         _ => {
             report.status = Status::Error { message: "the adapter's response has no status".into() };
-            return report;
+            return;
         }
     }
     report.adapter_input_digest = response.get("inputDigest").and_then(Value::as_str).map(str::to_string);
     if report.adapter_input_digest != report.input_digest {
         report.status = Status::Error { message: "the adapter reports running another input".into() };
-        return report;
+        return;
     }
     let Some(observations) = response.get("observations") else {
         report.status = Status::Error { message: "the adapter's response has no observations".into() };
-        return report;
+        return;
     };
     report.observations_digest = Some(sha256_digest(&json::to_canonical(observations)));
-    report.status = match compare(&case, observations, &caps.requires) {
+    report.status = match compare(case, observations, &caps.requires) {
         Verdict::Pass => Status::Pass,
         Verdict::Fail { path, expected, actual } => {
             let rules = case.fixture.rules.iter().map(|r| r.to_string()).collect();
@@ -435,7 +471,6 @@ pub fn consume_case(file: &str, bytes: &[u8], store: &SpecStore, adapter: &dyn A
         Verdict::Unsupported { missing } => Status::Unsupported { missing: missing.iter().map(|r| r.as_str().to_string()).collect() },
         Verdict::Error(e) => Status::Error { message: format!("malformed observations: {e}") },
     };
-    report
 }
 
 /// Whether a fill must not write into `dir`: an `examples` directory, or a directory whose name

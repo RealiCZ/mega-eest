@@ -3243,3 +3243,9 @@ the parent. A companion case leaves the same child one gas short of the initcode
 The fee crosses before the offset check and returns the child's unspent gas. An early
 offset check would halt. The receipts distinguish both orders (`SATIN-DET-001`,
 `SATIN-DET-018`, `SATIN-SIZE-005`).
+
+**D-210. Check the default loop for gas-pool cases.** Asking for gas pools enables a recorder
+in both adapters. In plain mode the consumer also runs the same input without the gas-pool
+requirement and checks every other expectation. Both runs must pass. The instrumented consumer
+checks the original fixture once. This gives the slice and callers of the shared consumer the
+same default-loop coverage without storing another fixture.

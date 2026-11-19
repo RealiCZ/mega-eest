@@ -38,7 +38,11 @@ For every case of the selected manifest subset:
    absent. Compare only the account fields the expectation lists. A slot expectation of
    `{}` requires the key to be present, and a quantity also checks its value. See the
    [returned-state comparison rules](format.md#returned-transaction-state).
-5. Map the verdict: `pass`; `fail` with the first differing semantic path and both values;
+5. In plain mode, also run each supported case that requires `group:gas-pools` with that
+   requirement and its `expected.gasPools` removed. Send the same input in plain mode so the
+   adapter can use the engine's default loop. Compare the remaining observations against the
+   fixture. Both executions must pass. Instrumented consumption runs the original case once.
+6. Map the verdict: `pass`; `fail` with the first differing semantic path and both values;
    `known-fail` when the consumer's own waiver list names this case and exactly this difference;
    `unsupported`; `error`.
 
@@ -99,8 +103,13 @@ consumer loop above: read-only, one line per case, a `CONSUME` summary line, and
 with each case's file, semantic, input and observation digests and its status (with the first
 differing path, both values and the case's pinned rules for a `fail`). Each path is a fixture file
 or a directory, searched for `*.json` at any depth in path order, so `slice/cases`, whose cases
-sit at `slice/cases/<caseId>.json`, is one argument. `mega-fixture fill` is the
-candidate filler: it runs an adapter on authoring documents (fixtures without `requires` and
+sit at `slice/cases/<caseId>.json`, is one argument.
+
+If the consumer checks the default loop for gas-pool cases, a `DERIVED` summary before
+`CONSUME` counts these additional checks and their results. The JSON report keeps one row per
+fixture, with `defaultLoopPassed: false` when the additional check fails.
+
+`mega-fixture fill` runs an adapter on authoring documents (fixtures without `requires` and
 `expected`) and writes each filled fixture, `provenance.status` `candidate` with the filler's
 identity, into a directory that is neither `examples/` nor a `release` directory.
 
@@ -217,6 +226,9 @@ accounted for separately by the witness rules.
 reports it for a case that requires `group:gas-pools`, in plain and instrumented runs alike, from a
 passive recorder of frame starts and ends that changes nothing the run does; it reports none for a
 case that does not require it.
+
+The plain consumer runs a second request without the gas-pool requirement to check the default
+execution loop against the same fixture's other expectations (D-210).
 
 - `regular.initial` and `reservoir.initial`: the regular gas and the reservoir the first frame starts
   with, after every charge made before it (the authorities', the pre-frame history, a new or created

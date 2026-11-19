@@ -9,6 +9,8 @@ use std::cell::RefCell;
 use std::path::Path;
 
 const EXAMPLE: &str = "examples/state-transition-sstore-fresh-slot.json";
+const POOLS_CASE: &str = "slice/cases/satin/keyless/pools/nested-contract-call/below-cap.json";
+const DEPLOYED: &str = "0xc699ace5b42a9fc4503003e3cde437cf53f09440";
 
 /// A test double standing in for an implementation: it answers every run with fixed
 /// observations, and records the requests it was sent.
@@ -126,6 +128,75 @@ fn an_invalid_case_is_an_error_of_the_release() {
     let report = consume::consume_case("x.json", b"{\"format\":1}", &common::store(), &adapter, &caps, false);
     assert!(matches!(report.status, Status::Error { .. }));
     assert!(adapter.requests.borrow().is_empty());
+}
+
+struct PoolRuns {
+    recorded: Value,
+    default_loop: Value,
+    requests: RefCell<Vec<(Value, bool)>>,
+}
+
+impl Adapter for PoolRuns {
+    fn capabilities(&self) -> Result<Value, String> {
+        unreachable!("the test supplies capabilities")
+    }
+
+    fn run(&self, request: &Value, instrumented: bool) -> Result<Value, String> {
+        self.requests.borrow_mut().push((request.clone(), instrumented));
+        let Value::Array(requires) = request.get("requires").unwrap() else { panic!("requires must be an array") };
+        let recorded = requires.iter().any(|value| value.as_str() == Some("group:gas-pools"));
+        let observations = if recorded { &self.recorded } else { &self.default_loop };
+        let digest = sha256_digest(&json::to_canonical(request.get("input").unwrap()));
+        Ok(object(vec![("status", Value::String("ok".into())), ("inputDigest", Value::String(digest)), ("observations", observations.clone())]))
+    }
+}
+
+#[test]
+fn a_plain_gas_pool_case_fails_when_the_default_loop_drops_a_slot() {
+    let bytes = common::read(POOLS_CASE);
+    let store = common::store();
+    let case = Case::from_bytes(&bytes, &store).unwrap();
+    let requirements = case.fixture.requires.iter().map(|r| r.as_str()).collect::<Vec<_>>();
+    let mut declared = capabilities(&requirements);
+    common::set(&mut declared, "/modes", strings(&["plain", "instrumented"]));
+    let caps = Capabilities::from_value(declared).unwrap();
+    let mut recorded = case.value.get("expected").unwrap().clone();
+    let accounts = recorded.get("returnedState").unwrap().get("accounts").unwrap();
+    let Value::Object(mut accounts) = accounts.clone() else { panic!("accounts must be an object") };
+    accounts.retain(|_, account| *account != Value::Null);
+    common::set(&mut recorded, "/returnedState/accounts", Value::Object(accounts));
+    let Value::Object(mut default_loop) = recorded.clone() else { panic!("expected must be an object") };
+    default_loop.remove("gasPools");
+    let Value::Object(mut slots) = default_loop["returnedState"].get("storage").unwrap().get(DEPLOYED).unwrap().clone() else {
+        panic!("storage slots must be an object");
+    };
+    let zero_slot = format!("0x{:064x}", 0);
+    assert_eq!(slots.remove(&zero_slot), Some(Value::String("0x0".into())));
+    let mut default_loop = Value::Object(default_loop);
+    let storage_path = format!("/returnedState/storage/{DEPLOYED}");
+    common::set(&mut default_loop, &storage_path, Value::Object(slots));
+    let adapter = PoolRuns { recorded, default_loop, requests: RefCell::new(Vec::new()) };
+
+    let report = consume::consume_case(POOLS_CASE, &bytes, &store, &adapter, &caps, false);
+    assert_eq!(report.default_loop_passed, Some(false));
+    match report.status {
+        Status::Fail { path, expected, actual, .. } => {
+            assert_eq!(path, format!("/expected{storage_path}/{zero_slot}"));
+            assert_eq!(expected, Some(Value::String("0x0".into())));
+            assert_eq!(actual, None);
+        }
+        other => panic!("{other:?}"),
+    }
+    let original = consume::run_request(&case);
+    let mut derived = original.clone();
+    let remaining = requirements.into_iter().filter(|r| *r != "group:gas-pools").collect::<Vec<_>>();
+    common::set(&mut derived, "/requires", strings(&remaining));
+    assert_eq!(adapter.requests.replace(Vec::new()), [(original.clone(), false), (derived, false)]);
+
+    let report = consume::consume_case(POOLS_CASE, &bytes, &store, &adapter, &caps, true);
+    assert_eq!(report.status, Status::Pass);
+    assert_eq!(report.default_loop_passed, None);
+    assert_eq!(*adapter.requests.borrow(), [(original, true)]);
 }
 
 #[test]
